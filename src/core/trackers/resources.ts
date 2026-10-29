@@ -9,7 +9,8 @@
  * - the MP minus button spends up to 10; RoleCall's `spendMp(10)` refuses when MP is under 10, so the button did nothing below 10.
  */
 import { isPlainObject } from "../guards";
-import { num as numShape, obj, opt, rec, str } from "./shape";
+import { num as numShape, obj, opt, parsed, rec, str, type Shape } from "./shape";
+import { repairOf, type StateSpec } from "./state";
 import { single, type RefreshSpec } from "./refresh";
 
 export const RESOURCE_KINDS = ["hp", "mp", "ap", "shield", "xp", "level", "currency"] as const;
@@ -96,8 +97,17 @@ export function parseResources(data: unknown): Resources | null {
   return { hp: hp!, maxHp: maxHp!, mp: mp!, maxMp: maxMp!, ap: ap!, maxAp: maxAp!, shield: shield!, xp: xp!, level: level!, currency: currency!, needs, log };
 }
 
+/** What the Stats slot holds field by field: the rule each named field passes alone (a current value within its maximum is the whole state's rule, parseResources). */
+const whole = (lo: number, hi = NUM_MAX): Shape<number> => parsed((v) => num(v, lo, hi));
+export const RESOURCES_STATE: StateSpec = {
+  lists: {},
+  fields: { hp: whole(0), maxHp: whole(1), mp: whole(0), maxMp: whole(0), ap: whole(0), maxAp: whole(0), shield: whole(0), xp: whole(0), level: whole(1, 9999), currency: whole(0), needs: parsed(parseNeeds), log: parsed(parseLog) },
+};
+
 /** The module's state as the panel and the prompt read it: what is stored, else the defaults (the module is on, so it is initialized). */
-export const readResources = (data: unknown): Resources => (data === undefined ? DEFAULT_RESOURCES : parseResources(data) ?? DEFAULT_RESOURCES);
+/** The module's one repair step (state.ts `repairOf`): every reader goes through `readResources`, which uses it, so no read ever shows the defaults in place of a state it can mostly keep. Null: nothing is salvageable. */
+export const repairResources = repairOf(RESOURCES_STATE, DEFAULT_RESOURCES, parseResources, (d) => ({ ...d, hp: Math.min(d["hp"] as number, d["maxHp"] as number), mp: Math.min(d["mp"] as number, d["maxMp"] as number), ap: Math.min(d["ap"] as number, d["maxAp"] as number) }));
+export const readResources = (data: unknown): Resources => (data === undefined ? DEFAULT_RESOURCES : repairResources(data) ?? DEFAULT_RESOURCES);
 
 export type ResourceAction =
   | { kind: "damage"; amount: number; reason?: string }

@@ -14,6 +14,7 @@
  */
 import { readDice, rollDice, rollText } from "../dice";
 import { arr, bool, dflt, num, obj, oneOf, opt, rec, str, type Of } from "./shape";
+import { repairOf, stateSpec } from "./state";
 import { appendItem, find, hasUniqueIds, liveOf, markRemoved, patchItem, unmarkRemoved } from "./list";
 import type { GenSpec } from "./generate";
 import { byName, entry, listOf, sync, type RefreshSpec } from "./refresh";
@@ -80,12 +81,17 @@ export type SpellMade = Omit<Stored, "id" | "isSignature" | "castHistory" | "mas
 export interface Spellbook { spells: Stored[]; subs: Record<string, boolean>; /** The note the next reply carries (RoleCall's spellCastInjection). */ pendingCast?: string }
 export const DEFAULT_SPELLBOOK: Spellbook = { spells: [], subs: {} };
 
-const stateShape = obj({ spells: arr(spellShape, MAX_SPELLS * 2), subs: dflt(rec(bool(), 4), {}), pendingCast: opt(text(6000)) });
+/** The module's whole state, field by field: what a state passes, and what a slot holds one field or row of (state.ts). */
+export const stateShape = obj({ spells: arr(spellShape, MAX_SPELLS * 2), subs: dflt(rec(bool(), 4), {}), pendingCast: opt(text(6000)) });
 export function parseSpellbook(data: unknown): Spellbook | null {
   const s = stateShape.check(data);
   return s && hasUniqueIds(s.spells) && subsKnown("spellbook", s.subs) ? s : null;
 }
-export const readSpellbook = (data: unknown): Spellbook => (data === undefined ? DEFAULT_SPELLBOOK : parseSpellbook(data) ?? DEFAULT_SPELLBOOK);
+/** What spellbook keeps in its slot (state.ts). */
+export const SPELLBOOK_STATE = stateSpec(stateShape, { spells: "id" });
+/** The module's one repair step (state.ts `repairOf`): every reader goes through `readSpellbook`, which uses it, so no read ever shows the defaults in place of a state it can mostly keep. Null: nothing is salvageable. */
+export const repairSpellbook = repairOf(SPELLBOOK_STATE, DEFAULT_SPELLBOOK, parseSpellbook);
+export const readSpellbook = (data: unknown): Spellbook => (data === undefined ? DEFAULT_SPELLBOOK : repairSpellbook(data) ?? DEFAULT_SPELLBOOK);
 export const liveSpells = (b: Spellbook): Stored[] => liveOf(b.spells);
 
 export const masteryLabel = (level: number): string => (level >= 76 ? "Master" : level >= 51 ? "Adept" : level >= 26 ? "Practiced" : "Novice");

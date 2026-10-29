@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-28",
+  "generated": "2026-10-29",
   "count": 127,
   "docs": [
     {
@@ -7688,7 +7688,7 @@
       "path": "docs/reference/entities/tool.md",
       "title": "Tool entity",
       "audience": "dev",
-      "summary": "The canonical piece for a tool a model may call while it writes, kept as data with no code. A scene links the tools it offers, and each call runs one first-party action, a roll, a linked dice piece, a linked formula or a record, through the scene's existing tool loop.",
+      "summary": "The canonical piece for a tool a model may call while it writes, kept as data with no code. A scene links the tools it offers, and each call runs one first-party action, a roll, a linked dice piece, a linked formula or a record, through the scene's existing tool loop. Every connection takes tools except models that refuse them, and a server's refusal is reported plainly, never retried without them.",
       "tags": [
         "entity",
         "tool",
@@ -7702,7 +7702,7 @@
         "reference/extending/new-kind",
         "reference/entities/README"
       ],
-      "semanticSummary": "The tool entity page covers CanonicalTool, a tool a model may call while it writes, kept as data and never code: a name, a description the model reads, a list of typed fields the model fills in, and one action from a fixed first-party set in src/core/tools.ts. The fields section explains field names, the four types, choices and required flags, and how the function schema and the strict argument check are both made from the one field list so they cannot disagree. The actions section covers roll, which rolls the dice the model writes into a text field, dice, which rolls a linked library dice piece, formula, which runs a linked formula on a copy of the turn's macro context, and record, which only records the call; all four are read-only. The scene section explains how a scene links tools by id in its prompting, the gates they share with the lorebook lookup, how linked tools are read and checked, how call names are made safe and unique, why the same seed rolls the same dice, and that the Control Booth links them, each as a tile with its icon, cost and a switch. Editing describes the tool editor, with its action choice, the shared field editor, and a rail that shows the tool as the AI meets it and tries it.",
+      "semanticSummary": "The tool entity page covers CanonicalTool, a tool a model may call while it writes, kept as data and never code: a name, a description the model reads, a list of typed fields the model fills in, and one action from a fixed first-party set in src/core/tools.ts. The fields section explains field names, the four types, choices and required flags, and how the function schema and the strict argument check are both made from the one field list so they cannot disagree. The actions section covers roll, which rolls the dice the model writes into a text field, dice, which rolls a linked library dice piece, formula, which runs a linked formula on a copy of the turn's macro context, and record, which only records the call; all four are read-only. The scene section explains how a scene links tools by id in its prompting, the gates they share with the lorebook lookup, how linked tools are read and checked, how call names are made safe and unique, why the same seed rolls the same dice, and that the Control Booth links them, each as a tile with its icon, cost and a switch. Editing describes the tool editor, with its action choice, the shared field editor, and a rail that shows the tool as the AI meets it and tries it. Every connection takes tools except refusing models, and a recognized server refusal is reported in one plain sentence, never retried without tools.",
       "topics": [
         "CanonicalTool",
         "tool fields",
@@ -7743,7 +7743,7 @@
           "text": "In a scene",
           "slug": "in-a-scene",
           "level": 2,
-          "summary": "A scene links tools by id in its prompting settings, ChatPrompting.tools, in order and without duplicates. They are offered only when Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, the same gates the lorebook lookup uses. src/studio/library-tools.ts reads each linked tool, and the dice piece or formula its action links, through their kinds' strict decoders, and leaves out a tool that is gone or unreadable or whose dice piece or formula is. A call name comes from the tool's name through callName: lowercase, starting with a letter with tool_ put in front otherwise, at most sixty characters, and a name already taken by the lookup, an earlier tool or the loop's invalid_tool gets a number. Rolls draw from randomness seeded for the turn, so the same seed rolls the same dice. The Control Booth links them as tiles with icon, token cost and a switch, with a per-reply sum, a Link a tool picker and New tool in the Workbench.",
+          "summary": "A scene links tools by id in its prompting settings, ChatPrompting.tools, in order and without duplicates. They are offered only when Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, the same gates the lorebook lookup uses. Every connection takes tools, local and custom servers included, except a model that refuses them whatever its host. When a server still refuses them, a list of recognized wordings (Ollama, llama.cpp, vLLM and two generic ones) gives one sentence naming the model and saying to turn off Narrator Tool Access or pick another model; any other refusal shows the server's own error. Nothing is saved as a reply and the turn is never retried without tools. The Story Director reports a recognized refusal as no tool calling, and a Final Cut pass advises tagged mode. library-tools.ts reads each linked tool through strict decoders, call names are made safe and unique, rolls are seeded per turn, and the Control Booth links tools as tiles.",
           "topics": [
             "ChatPrompting.tools",
             "Narrator Tool Access",
@@ -7887,7 +7887,7 @@
           "text": "What a reply changed",
           "slug": "what-a-reply-changed",
           "level": 2,
-          "summary": "A read route answers, for a take and a range of its live messages, what each message changed in the library trackers on the version it shows, with each tracker's name, style and icons. A record's change is a field with its value before and after, and a list's is a row, added, changed or removed, with the whole row. Values are exact, never cut. It is one forward pass: the store's range read gives the state before the first message and each message's deltas in fold order, and the state is folded forward, so a person's edit shows as a change on its message, choosing another version shows that version's changes, and a cut message drops out. Only an unreadable piece is reported by its id with the stored values, a changed layout keeps the name and style, past lines are read through the current piece, only tracker slots are loaded, a missing branch or message is a 404, a malformed to a 400, an empty to the tip.",
+          "summary": "A read route answers, for a take and a range of its live messages, what each message changed in the library trackers on the version it shows, with each tracker's name, style and icons, and bars: for each changed number that has a top, its bottom and the top it had when the message left it. A record's change is a field with its value before and after, and a list's is a row, added, changed or removed, with the whole row. Values are exact, never cut. It is one forward pass: the state before the first message is folded forward through each message's deltas, so a person's edit shows as a change on its message, another version shows its own changes, and a cut message drops out. Only an unreadable piece is reported by its id with the stored values, a changed layout keeps the name and style, past lines are read through the current piece, only tracker slots are loaded, a missing branch or message is a 404, a malformed to a 400, an empty to the tip.",
           "topics": [
             "tracker-changes route",
             "sceneDeltas",
@@ -13996,24 +13996,26 @@
       "summary": "What a scene remembers beyond its text, kept so that every way of changing the shown history (a new version of a reply, choosing a version, cutting, restoring, forking) leaves it where the history says. A piece of state is a",
       "tags": [],
       "related": [],
-      "semanticSummary": "Scene state is what a scene remembers beyond its text, kept so that regenerating, choosing a version, cutting, restoring and forking all leave it where the shown history says. A piece of state is a slot declared in one file and listed by a generator. What one reply version changed in a slot is a delta, a value at a path rather than an operation, stored on that version by swipe id so a fork shares its prefix's deltas without copying them. The state is rebuilt from the shown versions, from the nearest keyframe, inside the transaction of whatever changed the history. Phase 1 has one slot, the macro variables, and two slot families for the library trackers a scene links, whose state a tracker's update tool writes as pending deltas on the reply being written. Its sections cover slots, deltas and the three strategies, storage, rebuild, how a turn uses it (with the variables route and the chat import), what is tested, and what is not built yet. A range read of the same data shows what each message changed.",
+      "semanticSummary": "Scene state is what a scene remembers beyond its text, kept so that regenerating, choosing a version, cutting, restoring and forking all leave it where the shown history says. A piece of state is a slot declared in one file and listed by a generator. What one reply version changed in a slot is a delta, a value at a path rather than an operation, stored on that version by swipe id so a fork shares its prefix's deltas without copying them. The state is rebuilt from the shown versions, from the nearest keyframe, inside the transaction of whatever changed the history. Slots are single files (the macro variables and the chat summary), one list made from the module table (the Props trackers, whose Story Director updates, Spellbook tick and the person's edits all go through the same two write doors), and two families that serve the library trackers a scene links, whose state a tracker's update tool writes as pending deltas on the reply being written. Its sections cover slots, deltas and the three strategies, storage, rebuild, how a turn uses it (with the variables route and the chat import), the Props trackers, the chat summary, global variables derived from every scene's shown versions, who may write each slot, what is not built yet, and what is tested. A range read of the same data shows what each message changed.",
       "topics": [
         "slots",
         "per-version deltas",
         "keyframes and tip cache",
         "rebuild on every change",
-        "macro variables as the first slot",
-        "no per-version size cap",
         "what is not built yet",
-        "slot families",
-        "tool writes"
+        "macro variables",
+        "Props tracker slots",
+        "person wins on its own reply",
+        "chat summary layers",
+        "global variables as operations",
+        "tool and family writes"
       ],
       "anchors": [
         {
           "text": "Slots",
           "slug": "slots",
           "level": 2,
-          "summary": "A slot is one file under src/core/scene-state/slots that exports defineSlot with an id, a scope, a diff strategy and a default. defineSlot refuses an id outside the allowed pattern and a keyed-list without a key. The command bun run slots writes the generated list from the folder, slots:check fails when it is stale, and a completeness test fails when a slot file is missing from the list or an id repeats. The only scope is scene, meaning rebuilt from history. The one slot so far, vars, uses the fields strategy, so each variable keeps the time it was first written and the time it was last written, which is exactly what the macro engine's variable record holds. Its family form, for state made by library pieces, is the child section below.",
+          "summary": "A slot is one file under src/core/scene-state/slots that exports defineSlot with an id, a scope, a diff strategy and a default. defineSlot refuses an id outside the allowed pattern and a keyed-list without a key. The command bun run slots writes the generated list from the folder, slots:check fails when it is stale, and a completeness test fails when a slot file is missing from the list or an id repeats. The only scope is scene, meaning rebuilt from history. The vars slot uses the fields strategy, so each variable keeps the time it was first written and the time it was last written, which is exactly what the macro engine's variable record holds. A slot may declare a shape, the rule every value written to it passes, so the stores refuse a malformed value and an undeclared slot. The summary slot is described in its own section, and the Props trackers' slots are the first child below. The family form, for state made by library pieces, is the child section below.",
           "topics": [
             "defineSlot",
             "generated slot list",
@@ -14021,6 +14023,21 @@
             "vars slot"
           ],
           "children": [
+            {
+              "text": "The Props trackers' slots",
+              "slug": "the-props-trackers-slots",
+              "level": 3,
+              "summary": "Each Props tracker module that keeps state, the twelve legacy trackers, has one slot named tracker.module, made from the module table by one slot file that exports a list; the four Storyboards keep only a setting. A module with a list of rows keeps one wrapper row per list row and per other field in a keyed-list slot; a module with no list keeps one field per delta. A slot's shape comes from the module's own shapes. Whole-state rules stay with the module's parse, and each module has one repair step in its read that keeps every field it can and brings a broken rule inside, so a cut never makes a read show the defaults.",
+              "topics": [
+                "tracker.module slots",
+                "made from the module table",
+                "fields or keyed-list by module",
+                "wrapper rows",
+                "state versus settings",
+                "shape and parse"
+              ],
+              "children": []
+            },
             {
               "text": "Slot families",
               "slug": "slot-families",
@@ -14041,7 +14058,7 @@
           "text": "Deltas and the three strategies",
           "slug": "deltas-and-the-three-strategies",
           "level": 2,
-          "summary": "A delta names a slot, a path inside it, a value or a removal marker, and the time of the write. It is always a value, never an operation, so cutting a middle message takes back exactly what that message set and nothing a later message set again. Three strategies cut and fold deltas: value keeps the whole value, fields keeps one delta per named field, and keyed-list keeps one delta per row found by a key field. Only fields is used so far, though all three are implemented and tested. Fold skips a delta for an unknown slot or with a path its strategy cannot read, and the stores refuse such a delta outright. A variable named like an Object property is an ordinary own property.",
+          "summary": "A delta names a slot, a path inside it, a value or a removal marker, and the time of the write. It is always a value, never an operation, so cutting a middle message takes back exactly what that message set and nothing a later message set again. Three strategies cut and fold deltas: value keeps the whole value, fields keeps one delta per named field, and keyed-list keeps one delta per row found by a key field. Fields holds the variables, keyed-list holds the summary and the linked list trackers, and all three are implemented and tested. Fold skips a delta for an unknown slot or with a path its strategy cannot read, and the stores refuse such a delta outright. A variable named like an Object property is an ordinary own property.",
           "topics": [
             "delta shape",
             "value fields keyed-list",
@@ -14054,7 +14071,7 @@
           "text": "Storage",
           "slug": "storage",
           "level": 2,
-          "summary": "Migration 43 adds five tables and an index. swipe_deltas holds one row per delta keyed by swipe id and sequence and is never changed once written, so a fork that keeps swipe ids shares its prefix's deltas. message_deltas holds what a message carries whichever version shows, such as a person's edit on a reply, and a fork copies it with the new message id. branch_base is what a take starts with before any message, an import's variables, and is real data that refuses when damaged. branch_state is each take's tip cache, and state_keyframes keeps the whole state after every fiftieth shown message. Both are caches that every change rewrites, and a cache cell that will not open is rebuilt, never fatal. Paths, values, the base, keyframe and tip states and pending deltas are sealed like other chat payloads; slot, removal flag and time stay readable. The tables join the row fingerprints, the health check and the snapshot lists. A version has no size cap on its deltas; only what an import or a person's edit brings meets a hostile-input ceiling.",
+          "summary": "Migration 43 adds five tables and an index. swipe_deltas holds one row per delta keyed by swipe id and sequence and is never changed once written, so a fork that keeps swipe ids shares its prefix's deltas. message_deltas holds what a message carries, and migration 44 adds a swipe id to it: null is a person's edit, and a swipe id is a write made after a commit that names its version, kept with this take's message so a fork copies it. branch_base is what a take starts with, real data that refuses when damaged. branch_state is each take's tip cache, and state_keyframes keeps the whole state after every fiftieth shown message; both are caches rebuilt when unreadable. Paths, values, keyframes and pending deltas are sealed like other chat payloads. The tables join the row fingerprints, the health check and the snapshot lists. A version has no size cap on its deltas; only what an import or a person's edit brings meets a hostile-input ceiling.",
           "topics": [
             "swipe_deltas",
             "branch_state and keyframes",
@@ -14068,13 +14085,14 @@
           "text": "Rebuild",
           "slug": "rebuild",
           "level": 2,
-          "summary": "The store owns the rebuild and runs it inside the transaction of the change, so no caller can forget it. It starts from the nearest kept keyframe on the shown path, else the take's base, else nothing, folds the deltas of the shown versions after it in order, rewrites the keyframes it passes and writes the tip cache. Committing a reply, adding or choosing a version, and cutting or restoring each rebuild from the message they changed; a fork rebuilds the new take, and deleting a take drops its cache. A continue stamps no delta, and a failed turn has stamped nothing. sceneStateBefore answers what a new version of a message builds from. sceneDeltas is a range read of the same data: the state before the first message without its own deltas, and each live message's deltas in fold order, changing nothing.",
+          "summary": "The store owns the rebuild and runs it inside the transaction of the change, so no caller can forget it. It starts from the nearest kept keyframe on the shown path, else the take's base, else nothing, folds the deltas of the shown versions after it in order, rewrites the keyframes it passes and writes the tip cache. Committing a reply, adding or choosing a version, and cutting or restoring each rebuild from the message they changed; a fork rebuilds the new take, and deleting a take drops its cache. recordDeltas keeps a write that names a version with this take's message and rebuilds that take only. A continue stamps no delta, and a failed turn has stamped nothing. sceneStateBefore answers what a new version of a message builds from. sceneDeltas is a range read of the same data: the state before the first message without its own deltas, and each live message's deltas in fold order, changing nothing.",
           "topics": [
             "transactional rebuild",
             "nearest keyframe",
             "events that rebuild",
             "state before a message",
-            "range read"
+            "range read",
+            "writes onto a version"
           ],
           "children": []
         },
@@ -14082,15 +14100,77 @@
           "text": "How a turn uses it",
           "slug": "how-a-turn-uses-it",
           "level": 2,
-          "summary": "loadTurn reads the variables from sceneState for a new reply and from sceneStateBefore for a new version or a continue, so a regenerate never counts its own earlier writes twice. Assembly returns the local variable changes, and scene-turn turns them into vars deltas saved on the checkpoint with the trace; commitTurn stamps them on the version it stores and rebuilds the take. A continue makes no deltas. That save is awaited and waits up to 30 seconds for the write lock, so a lost save cannot commit a reply without its variables, and a turn's deltas are never refused for size. Global variables are untouched. The variables route reads the vars slot, and a chat import records its variables as the take's base. The trackers' update tool adds deltas mid-reply through the turn's one door, for tracker slots only, as the one stateScoped write. A write of a value the message already shows, its version's deltas included, adds nothing, so a person's tracker edit back to the value before a reply is kept on the tip message.",
+          "summary": "loadTurn reads the variables from sceneState for a new reply and from sceneStateBefore for a new version or a continue, so a regenerate never counts its own earlier writes twice. Assembly returns the local variable changes, and scene-turn turns them into vars deltas saved on the checkpoint with the trace; commitTurn stamps them on the version it stores and rebuilds the take. A continue makes no deltas. That save is awaited, so a lost save cannot commit a reply without its variables. The library's global variables ride the same pending set, so nothing is written before the request. The variables route reads the vars slot, and a chat import records its variables as the take's base. The trackers' update tool adds deltas mid-reply through the turn's one door, for tracker slots only, as the one stateScoped write. A write of a value the message already shows, its version's deltas included, adds nothing, so a person's tracker edit back to the value before a reply is kept on the tip message.",
           "topics": [
             "load before the reply",
             "deltas on the checkpoint",
             "continue and failure",
             "too-large refusal",
-            "globals unchanged",
+            "globals on the checkpoint",
             "tool writes",
             "stateScoped"
+          ],
+          "children": []
+        },
+        {
+          "text": "The Props trackers",
+          "slug": "the-props-trackers",
+          "level": 2,
+          "summary": "Every writer of a module's state goes through the two doors. The turn's own writes wait on the checkpoint and are stamped when the reply commits; the Spellbook's tick is computed in the turn, never on Stop or Continue, so a new version ticks once and a cut takes the tick with the reply. The Story Director's background round writes for the reply's version with recordDeltas, guarded by what it planned against; a field the person edited on that reply stays theirs, and the module's read repair never overrides that edit, so the module's update is skipped with a line in the activity. The person writes on the newest reply with recordMessageDeltas, several modules all or nothing, guarded by the stored values so a field the repair adjusted can still be edited. Anything the person clicks or accepts is that write, a cast rides only the next reply, and Undo writes the earlier data as the person's own edit.",
+          "topics": [
+            "turn tick in the checkpoint",
+            "Director round through recordDeltas",
+            "person wins on its own reply",
+            "person writes on the newest reply",
+            "all or nothing across modules",
+            "Undo as a person edit",
+            "layers in the range read"
+          ],
+          "children": []
+        },
+        {
+          "text": "The chat summary",
+          "slug": "the-chat-summary",
+          "level": 2,
+          "summary": "The summary slot is a keyed-list with a declared row shape and two layers that never write the same path. Generated pieces are rows keyed by the swipe id of the version they end at, written after the reply lands on that version in this take: an Every-exchange line is the row of its reply, and a rolling recap, growing timeline or backfill is a replacing block that removes the other generated rows, so regenerating or cutting its message gives them back. The person's text is one separate row written as an edit of the newest message, with a fresh edit id and the next number on every save. Each generated row records the id and number it saw, which orders the layers without a clock: rows that saw an older text are covered however many there are, and rows written after, or that saw a newer save since deleted, show. A fork inherits the prefix and its writes stay in the fork.",
+          "topics": [
+            "generated rows keyed by version",
+            "replacing blocks",
+            "person layer and edit id",
+            "rows record the edit they saw",
+            "clearing",
+            "fork scoping"
+          ],
+          "children": []
+        },
+        {
+          "text": "Global variables",
+          "slug": "global-variables",
+          "level": 2,
+          "summary": "The library's global variables are derived from every scene at once. A reply's global writes are operations (set, inc, append or delete) on the version that made them in the shared global slot, stamped at commit, so a failed or dropped turn writes none and a continue writes none of its own. A take's own fold skips a shared slot. A global's value is the fold, in write order, of the operations of every version shown in at least one live take, each counted once however many takes show it, leaving out cut versions and deleted takes or scenes. A new version of a reply builds without the version it replaces. Each operation is the write as the macro or lore Side Effect made it, so a set stays a set and two scenes that add to one number both count; a stored row that is not an operation refuses the read. The old variables document is no longer used, and the read is measured at about 110 ms for 10,000 operations, with no cache.",
+          "topics": [
+            "operations per version",
+            "shared slot",
+            "folded across live takes",
+            "counted once",
+            "regenerate excludes its version",
+            "operations as written",
+            "no cache"
+          ],
+          "children": []
+        },
+        {
+          "text": "Who may write",
+          "slug": "who-may-write",
+          "level": 2,
+          "summary": "Every slot names who may write it, and every store door is one writer decided by the door, never by a request: a turn's checkpoint is the reply, recordDeltas a background writer such as the Story Director or the summary's writer, recordMessageDeltas the person, and setBranchBase an import. A delta whose slot does not name that writer refuses the whole write with a sentence. A guard test holds who may call each door and the only places that insert delta rows. Two separations sit above the store: the background class covers both the Story Director and the summary's writer, kept apart by the guard on who calls recordDeltas, and a model's tool is held to library tracker slots by the turn's write door. The Compendium writes lorebooks after checking each book's access level, so it needs no slot. A wrong write is undone by a swipe or a cut.",
+          "topics": [
+            "slot writers",
+            "one writer per door",
+            "refused whole",
+            "door caller guard",
+            "separations above the store",
+            "Compendium book access"
           ],
           "children": []
         },
@@ -14098,12 +14178,13 @@
           "text": "Not built yet",
           "slug": "not-built-yet",
           "level": 2,
-          "summary": "Everything past the first slot is planned in the scene-state plan and absent from the code. That covers more slots such as the Spellbook, the summary, the Props trackers and the Director's rounds, global variables as a derived log, the Compendium's shared lane, writer classes and permissions, the Story Director updating library trackers, hand edits of any slot other than a library tracker's, and a state inspector. recordMessageDeltas is the store's door for a write that is not a turn's; its one caller is the person's tracker edit from the Messenger's Trackers panel. This section exists so that no reader takes a planned part of the design for current behavior.",
+          "summary": "Planned in the scene-state plan and absent from the code: lorebooks copied on fork (built and taken back out, waiting on decisions about per-scene settings, the Compendium wing and copies in the Library), a person's own edit of a global variable, the extension contract and a per-slot tier, which wait for an extension runtime and its manifest, the Story Director updating library trackers, hand edits of any slot other than a library tracker's, a Props tracker's and the summary, and a state inspector. The person's write door is recordMessageDeltas, called by the library tracker edit, the Props tracker write (an accepted Refresh included) and the person's summary text. The door for a write that names a version after its commit is recordDeltas, called by the chat summary's writer and the Story Director's tracker round. A slot's declared shape is checked on every delta either door takes, and a guard test holds the list of callers.",
           "topics": [
             "planned slots",
-            "global variables later",
+            "Compendium gate later",
             "permissions later",
-            "no interface yet"
+            "no interface yet",
+            "the two write doors"
           ],
           "children": []
         },
@@ -14111,14 +14192,15 @@
           "text": "What is tested",
           "slug": "what-is-tested",
           "level": 2,
-          "summary": "Unit tests prove each strategy's diff, fold with removal markers, and a rebuild from a keyframe equal to one from nothing. The ChatStore contract suite runs for both stores and covers choosing, cutting and restoring versions, a restore as a new take, a fork, dropped, committed and continued turns, refusals, and a two thousand message rebuild. A separate contract file holds the range read to both stores, including a person's edit on the first message of a range. A SQLite test adds the file-only facts: shared delta rows, keyframes, sealing, and a dense rebuild held to a two hundred millisecond budget. A busy-library test runs a real turn with the lock held, the turn tests prove a prompt's increment counts once, and a guard test fails when code outside the SQLite chat store names the tables.",
+          "summary": "Unit proofs cover each strategy, the fold and a keyframe rebuild. The contract suite runs on both stores: versions, cuts, restores, forks, turns, refusals and a 2,000-message rebuild held to a 200 ms budget. The SQLite file adds shared delta rows, keyframes, sealing and the dense case. A busy-library test runs a real turn with the write lock held. The Props trackers have their own contract suite on both stores, a core test of cutting into deltas and back, turn tests for the prompt and the Spellbook's tick, two Director round suites, and a suite for the person's write over a repaired state. The chat summary, the range read and the global variables have their own suites, the macro engine is held to recording each global write as the operation it was, and who may write is held on both stores and by a guard on who calls each door. A guard test holds recordDeltas to its callers: the two stores, their contract files including the tracker-state one, the summary's writer and the Director's tracker round.",
           "topics": [
             "unit proofs",
             "contract suite for both stores",
             "range read contract",
             "sqlite file tests",
             "turn tests",
-            "one-door guard"
+            "one-door guard",
+            "summary contract tests"
           ],
           "children": []
         }
@@ -15836,16 +15918,16 @@
           "text": "Scenes (the library's chats)",
           "slug": "scenes-the-librarys-chats",
           "level": 2,
-          "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A first-open chooser sets Full Chat or Messenger once; Messenger draws the same chat in a Discord-style shell whose programs open the wings' tabs; its Trackers program lists a scene's library trackers as editable cards. The take pill follows Scene Takes and links to the Branching Tree. Prompting has Preset, Guides, Scene Note and Writing Tools, and its Preset picker lists presets and Script Sheets; Final Cut has passes, Anti-Slop banks, Activity with Undo, and Regex; Stage has Appearance (with a backdrop blur slider), Music, Spotify and a Wardrobe. The Control Booth applies loadouts with a receipt and Undo and shows linked tools as tiles. Under each Messenger reply tracker changes draw as each tracker chose, a line names a macro that ran out of time, and Settings has two time-budget boxes. The AI wing has Model and Generation, World has Lorebook, Compendium and Storyboards, and Props holds twelve tracker Props. Participants has Reconcile and an Add participant form.",
+          "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A first-open chooser sets Full Chat or Messenger once; Messenger draws the same chat in a Discord-style shell whose programs open the wings' tabs, and its Trackers program lists a scene's library trackers as editable cards. The take pill follows Scene Takes and links to the Branching Tree. Prompting has Preset, Guides, Scene Note and Writing Tools; Final Cut has passes, Anti-Slop banks and Regex; Stage has Appearance, Music and a Wardrobe. The Control Booth applies loadouts with a receipt and Undo. Under each Messenger reply, tracker changes draw as each tracker chose. World has Lorebook, Compendium and Storyboards, and Props holds twelve tracker Props whose state is scene state on the reply versions, written as the person's edit on the newest reply (Cast spends Stats and notes the Spellbook in one step), with an Undo line for the last update a reply made. The Memory tab keeps the chat summary as scene state too.",
           "topics": [
             "Start Scene from a card",
             "World wing, Compendium and Storyboards",
-            "Stage wing tabs, backdrop blur, Music and Spotify Props",
+            "Stage wing tabs and Music",
             "Prompting presets, guides, note and writing tools",
             "Booth loadouts and tool tiles",
             "Final Cut passes, Activity and Regex",
             "Props wing and tracker Props",
-            "Take pill, Branching Tree, Messenger, reply changes and Add participant"
+            "Take pill, Messenger, reply changes and summary as scene state"
           ],
           "children": [
             {

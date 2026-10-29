@@ -8,7 +8,8 @@
  */
 import { readDice, rollDice, rollText } from "../dice";
 import { isPlainObject } from "../guards";
-import { bool, num as numShape, obj, oneOf, opt, refine, str } from "./shape";
+import { bool, num as numShape, obj, oneOf, opt, parsed, refine, str, type Shape } from "./shape";
+import { repairOf, type StateSpec } from "./state";
 import { byName, entry, listOf, single, sync, type RefreshSpec } from "./refresh";
 
 export const THREATS = ["low", "medium", "high", "critical"] as const;
@@ -58,7 +59,23 @@ export function parseBattle(data: unknown): Battle | null {
   return { inCombat: (data["inCombat"] ?? false) as boolean, enemies: enemies as Enemy[], turnOrder: [...(rawTurns as string[])], currentTurn: current as string | null, log: [...(rawLog as string[])], round, dice: dice as DiceRoll[] };
 }
 
-export const readBattle = (data: unknown): Battle => (data === undefined ? DEFAULT_BATTLE : parseBattle(data) ?? DEFAULT_BATTLE);
+const listOfRaw = <T>(parse: (v: unknown) => T | null, max: number): Shape<T[]> => parsed((v) => (Array.isArray(v) && v.length <= max && v.every((x) => parse(x) !== null) ? (v.map(parse) as T[]) : null));
+/** What the Combat slot holds field by field: the rule each named field passes alone (parseBattle is the whole state's). */
+export const BATTLE_STATE: StateSpec = {
+  lists: { enemies: { key: "id", row: parsed(parseEnemy) } },
+  fields: {
+    inCombat: parsed((v) => (typeof v === "boolean" ? v : null)),
+    turnOrder: listOfRaw((v) => text(v, 80, 1), ENEMIES_MAX),
+    currentTurn: parsed((v) => (v === null ? (null as string | null) : text(v, 80, 1))),
+    log: listOfRaw((v) => text(v, 300), LOG_MAX),
+    round: parsed((v) => num(v, 0, 100_000)),
+    dice: listOfRaw(parseDice, DICE_MAX),
+  },
+};
+
+/** The module's one repair step (state.ts `repairOf`): every reader goes through `readBattle`, which uses it, so no read ever shows the defaults in place of a state it can mostly keep. Null: nothing is salvageable. */
+export const repairBattle = repairOf(BATTLE_STATE, DEFAULT_BATTLE, parseBattle);
+export const readBattle = (data: unknown): Battle => (data === undefined ? DEFAULT_BATTLE : repairBattle(data) ?? DEFAULT_BATTLE);
 
 /** The enemies in the fight: a removed one is kept for Undo and never listed or sent. */
 export const liveEnemies = (b: Battle): Enemy[] => b.enemies.filter((e) => e.removedAt === undefined);

@@ -130,7 +130,7 @@ export interface Chat {
   regex?: ChatRegex;
   /** The scene's Final Cut switch, passes and tool overrides (spec rule 44), sparse; absent until one is changed. */
   finalCut?: ChatFinalCut;
-  /** What the scene's tracker Props remember (spec rule 43), sparse; absent until one is changed. */
+  /** What the scene's tracker Props remember as SETTINGS (spec rule 43), sparse; absent until one is changed. Their state is scene state, not here. */
   trackers?: ChatTrackers;
   /** The scene's summary settings and its last automatic run's failure (spec rule 45), sparse; absent until one is set. The texts are per take (`summaryOf`). */
   summary?: ChatSummary;
@@ -348,10 +348,14 @@ export interface ChatStore extends ChatStoreSummaries, ChatStoreDirector {
   sceneStateBefore(branchId: string, messageId: string): Promise<SceneState | null>;
   /** The live messages from `fromMessageId` through `toMessageId` (the tip when omitted) with the state before the first (everything shown before it, not its own deltas) and each message's deltas, its shown version's then its own: one forward pass shows what each message changed. Given `slotPrefixes`, only the deltas of slots starting with one are loaded (the state before is still whole). A range that ends before it starts is empty. Null when the branch is absent or deleted, or either message is absent or cut. */
   sceneDeltas(branchId: string, fromMessageId: string, toMessageId?: string, slotPrefixes?: readonly string[]): Promise<SceneDeltaRange | null>;
+  /** The library's global-variable operations (the shared `global` slot): every one a version shown in at least one live take carries, each once however many takes show it, in write order (time, then version, then the order written). `exceptSwipeIds` leaves out those versions' operations: what a new version of a reply builds from. */
+  globalOps(exceptSwipeIds?: readonly string[]): Promise<Delta[]>;
   /** Replaces what the take starts with, before any message (an import's variables): these deltas folded over nothing. It shows with no message, is what the first message builds from, survives a cut of every message, and a fork or a restored take gets its own copy. Refused whole when malformed or one write is past the hostile-input ceiling (unusually large); empty clears it; false when the branch is absent or deleted. */
   setBranchBase(branchId: string, deltas: Delta[]): Promise<boolean>;
   /** Appends deltas to a live message of this take, what it carries whichever version shows (a person's edit on a reply). They fold after the version's own and win on that message, `sceneStateBefore` includes them, a fork copies them, and a write of what the message already shows (its version's deltas included) adds nothing. Refused whole when malformed or when one write is past the hostile-input ceiling (unusually large; there is no per-message cap); false when the branch or message is absent or cut. A guard naming the branch version the caller read, or the values it read (`expect`), refuses a stale one with StudioConflictError and writes nothing. */
   recordMessageDeltas(branchId: string, messageId: string, deltas: Delta[], guard?: MessageDeltaGuard): Promise<boolean>;
+  /** A write made after a commit that names the version of a reply it is about (the chat summary's generated pieces). The rows belong to THIS take: they are kept with its message, tied to that version, apply only while that version is shown there, and are copied with the message when the take is forked (a fork inherits the prefix's writes; its own later writes stay in the fork, and a write here never reaches another take). The version's own deltas, which every take that shows it shares, are never appended to. The version may be shown or not; a swipe that is cut, absent, or on a message that is not live in this take is false. The guard is `recordMessageDeltas`'s and is judged against the state as if this version were the one shown; a write of what that state already holds adds nothing. Refused whole when malformed, when a value does not fit its slot's shape, or past the hostile-input ceiling. */
+  recordDeltas(branchId: string, swipeId: string, deltas: Delta[], guard?: MessageDeltaGuard): Promise<boolean>;
 
   /** A persona's running counters (rule 28); zeros for a persona nothing has played. */
   personaStats(personaId: string): Promise<PersonaStats>;
@@ -399,7 +403,7 @@ export interface ChatStore extends ChatStoreSummaries, ChatStoreDirector {
 
   /** Adds a re-run the person applied to the Final Cut run in a reply's trace (rule 46); false when the reply or its run is gone, refused when the entry is malformed or the reply already keeps 20. Touches nothing else. */
   appendFinalCutRerun(messageId: string, swipeId: string, entry: RerunEntry): Promise<boolean>;
-  /** Changes one tracker module of the scene (rule 43): a key of the patch given replaces it, null clears it, a key left out stays. `data` is checked by the module (core/trackers); refused whole when malformed. Bumps no version and moves no updatedAt; null for an absent or deleted scene. */
+  /** Changes one tracker module's SETTINGS (rule 43): `context` (AI Context), `auto` (the Story Director's choice), `subs` (the sub-feature switches) and, for a Storyboard, its profile as `data`; a key of the patch given replaces it, null clears it, a key left out stays. A module's state is not a setting: it is the scene-state slot `tracker.<module>` and is written with recordMessageDeltas or recordDeltas, so `data` on any other module is refused. Refused whole when malformed. Bumps no version and moves no updatedAt; null for an absent or deleted scene. */
   setTracker(chatId: string, module: TrackerModule, patch: ChatTrackerPatch): Promise<Chat | null>;
 
   /** Appends a Compendium receipt to a scene (rule 39); null for an absent or deleted scene. The store assigns id, at and settledAt. A running receipt never blocks another append. */

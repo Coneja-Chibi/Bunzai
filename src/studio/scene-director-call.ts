@@ -12,6 +12,7 @@ import { PLANNING_TOOL, PLANNING_TOOL_NAME, readPlanningRound } from "../core/di
 import { splitReasoning } from "../core/reasoning-tags";
 import type { DirectorCommandMode, PlanningRound } from "../stage/contracts/director-types";
 import { ProviderError, type ProviderCompletion, type ProviderMessage, type ProviderOptions } from "../stage/contracts/provider";
+import { refusesTools } from "../stage/provider/transport-core";
 import type { Connected } from "./scene-turn";
 
 export const PLANNER_TIMEOUT_MS = 600_000;
@@ -133,6 +134,7 @@ export async function planTurn(req: PlannerRequest, clock: PlannerClock): Promis
       attempts.push({ transport: req.mode, outcome: stopped ? "aborted" : "errored", ms: clock.now() - started, error: attemptError(error) });
       if (stopped) return { fail: "aborted" };
       if (timer.aborted) return { fail: "timeout" };
+      if (refusesTools(error)) return { fail: "no_tool_support" };
       return transient(error) ? { refused: true } : { fail: "inference_error" };
     }
   };

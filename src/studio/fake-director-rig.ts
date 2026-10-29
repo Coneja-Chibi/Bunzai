@@ -6,6 +6,7 @@ import { DIRECTOR_HEADER } from "../core/assembly/director";
 import { typedEntry } from "../core/compendium/fixture-book";
 import { DIRECTOR_PROP_ID } from "../core/director/settings";
 import { TRACKER_PROP_PREFIX } from "../stage/contracts/chat-tracker-types";
+import { trackerDataIn, trackerDeltas } from "../core/trackers";
 import { settleTrackerRounds } from "./scene-director-trackers";
 import { emptyLorebookBody } from "../core/lore";
 import type { ChatCompendiumPatch, ChatTrackerPatch, TrackerModule } from "../stage/contracts/chat-store";
@@ -28,8 +29,8 @@ export const call = (args: unknown, name = "commit_planning_round"): ProviderCom
 export const text = (content: string): ProviderCompletion => ({ content, finish_reason: "stop", raw: {} });
 
 export type Step = ProviderCompletion | Error | "hang" | Promise<ProviderCompletion>;
-/** `trackers` are the tracker Props that are on, with what each keeps; `tracker` queues the answers to the Director's tracker requests (an unscripted one answers `{}`: nothing moved). */
-export type SceneOptions = { compendium?: ChatCompendiumPatch; on?: boolean; settings?: DirectorSettingsPatch; tools?: boolean; planner?: Step[]; narrator?: "ok" | Error; trackers?: Partial<Record<TrackerModule, ChatTrackerPatch>>; tracker?: Step[] };
+/** `trackers` are the tracker Props that are on, with their settings and `state` (the module's data, kept as the person's edit on the opening message); `tracker` queues the answers to the Director's tracker requests (an unscripted one answers `{}`: nothing moved). */
+export type SceneOptions = { compendium?: ChatCompendiumPatch; on?: boolean; settings?: DirectorSettingsPatch; tools?: boolean; planner?: Step[]; narrator?: "ok" | Error; trackers?: Partial<Record<TrackerModule, ChatTrackerPatch & { state?: unknown }>>; tracker?: Step[] };
 export const isTrackerAsk = (r: ProviderRequest) => r.messages[0]!.content.startsWith("You are a precise JSON generator");
 /** The stores come from the caller (a test may name the memory backend; this stand-in may not): `stores(clock)` makes the chat store and the state store. */
 export async function buildScene(opts: SceneOptions, stores: (clock: () => number) => { chats: ChatStore; state: StateStore }) {
@@ -39,10 +40,11 @@ export async function buildScene(opts: SceneOptions, stores: (clock: () => numbe
   await chats.setConnection(chat.id, { id: "conn", model: "vera-1" });
   const trackerOn = Object.keys(opts.trackers ?? {}).map((m) => `${TRACKER_PROP_PREFIX}${m}`);
   if (opts.on !== false || trackerOn.length > 0) await chats.setProps(chat.id, { on: [...(opts.on !== false ? [DIRECTOR_PROP_ID] : []), ...trackerOn] });
-  for (const [module, patch] of Object.entries(opts.trackers ?? {})) await chats.setTracker(chat.id, module as TrackerModule, patch);
+  for (const [module, { state: _, ...patch }] of Object.entries(opts.trackers ?? {})) if (Object.keys(patch).length > 0) await chats.setTracker(chat.id, module as TrackerModule, patch);
   if (opts.settings) await chats.setDirectorSettings(chat.id, opts.settings);
   if (opts.compendium) await chats.setCompendium(chat.id, opts.compendium);
-  await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }, { role: "user", content: "Any storms?" }]);
+  const opening = await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }, { role: "user", content: "Any storms?" }]);
+  for (const [module, { state }] of Object.entries(opts.trackers ?? {})) if (state !== undefined) await chats.recordMessageDeltas(chat.activeBranchId, opening![0]!.id, trackerDeltas(module as TrackerModule, undefined, state, now));
   const planner: ProviderRequest[] = [];
   const narrator: ProviderRequest[] = [];
   const aborted: boolean[] = [];
@@ -93,3 +95,11 @@ export async function buildScene(opts: SceneOptions, stores: (clock: () => numbe
 }
 export const contents = (r: ProviderRequest) => r.messages.map((m) => m.content);
 export const directorBlocks = (r: ProviderRequest) => r.messages.filter((m) => m.content.startsWith(DIRECTOR_HEADER));
+
+/** A module's data at a take's tip, as the module's own reader gives it (undefined while nothing was written). */
+export const dataAt = async (chats: ChatStore, branchId: string, module: TrackerModule): Promise<unknown> => trackerDataIn(module, (await chats.sceneState(branchId))!);
+/** The person's edit of a module: its whole next data, kept on a message (the tip when none is named), judged against what the take shows now. */
+export async function personEdit(chats: ChatStore, branchId: string, module: TrackerModule, next: unknown, messageId?: string): Promise<boolean> {
+  const at = messageId ?? (await chats.readMessagesBefore(branchId, { limit: 1, liveOnly: true })).messages[0]!.id;
+  return chats.recordMessageDeltas(branchId, at, trackerDeltas(module, await dataAt(chats, branchId, module), next, 1));
+}

@@ -1,8 +1,8 @@
 {
-  "generated": "2026-10-28",
+  "generated": "2026-10-29",
   "targetChars": 90000,
   "totalPages": 127,
-  "totalSourceChars": 1587402,
+  "totalSourceChars": 1613545,
   "batches": [
     {
       "id": "batch-001",
@@ -282,7 +282,7 @@
     },
     {
       "id": "batch-003",
-      "sourceChars": 87670,
+      "sourceChars": 87824,
       "pages": [
         {
           "docId": "guide/platforms/risu",
@@ -353,7 +353,7 @@
           "sourcePath": "docs/reference/architecture.md",
           "sidecarPath": "docs/summaries/reference/architecture.json",
           "sectionCount": 13,
-          "sourceChars": 31527,
+          "sourceChars": 31681,
           "status": "APPROVED"
         }
       ]
@@ -576,7 +576,7 @@
     },
     {
       "id": "batch-008",
-      "sourceChars": 89023,
+      "sourceChars": 84707,
       "pages": [
         {
           "docId": "reference/entities/regex",
@@ -599,7 +599,7 @@
           "sourcePath": "docs/reference/entities/tool.md",
           "sidecarPath": "docs/summaries/reference/entities/tool.json",
           "sectionCount": 4,
-          "sourceChars": 6373,
+          "sourceChars": 7497,
           "status": "APPROVED"
         },
         {
@@ -607,7 +607,7 @@
           "sourcePath": "docs/reference/entities/tracker.md",
           "sidecarPath": "docs/summaries/reference/entities/tracker.json",
           "sectionCount": 7,
-          "sourceChars": 19967,
+          "sourceChars": 20410,
           "status": "APPROVED"
         },
         {
@@ -625,7 +625,13 @@
           "sectionCount": 15,
           "sourceChars": 29834,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-009",
+      "sourceChars": 77659,
+      "pages": [
         {
           "docId": "reference/extending/new-kind",
           "sourcePath": "docs/reference/extending/new-kind.md",
@@ -633,13 +639,7 @@
           "sectionCount": 2,
           "sourceChars": 5883,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-009",
-      "sourceChars": 89951,
-      "pages": [
+        },
         {
           "docId": "reference/formats/agnai",
           "sourcePath": "docs/reference/formats/agnai.md",
@@ -671,7 +671,13 @@
           "sectionCount": 13,
           "sourceChars": 16483,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-010",
+      "sourceChars": 70319,
+      "pages": [
         {
           "docId": "reference/formats/novelai",
           "sourcePath": "docs/reference/formats/novelai.md",
@@ -679,13 +685,7 @@
           "sectionCount": 10,
           "sourceChars": 18175,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-010",
-      "sourceChars": 74549,
-      "pages": [
+        },
         {
           "docId": "reference/formats/pygmalion",
           "sourcePath": "docs/reference/formats/pygmalion.md",
@@ -717,7 +717,13 @@
           "sectionCount": 8,
           "sourceChars": 14666,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-011",
+      "sourceChars": 68228,
+      "pages": [
         {
           "docId": "reference/formats/rolecall",
           "sourcePath": "docs/reference/formats/rolecall.md",
@@ -725,13 +731,7 @@
           "sectionCount": 9,
           "sourceChars": 22405,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-011",
-      "sourceChars": 85294,
-      "pages": [
+        },
         {
           "docId": "reference/formats/sillytavern",
           "sourcePath": "docs/reference/formats/sillytavern.md",
@@ -763,7 +763,13 @@
           "sectionCount": 0,
           "sourceChars": 901,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-012",
+      "sourceChars": 87163,
+      "pages": [
         {
           "docId": "reference/kit/tools",
           "sourcePath": "docs/reference/kit/tools.md",
@@ -771,13 +777,7 @@
           "sectionCount": 18,
           "sourceChars": 39471,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-012",
-      "sourceChars": 89680,
-      "pages": [
+        },
         {
           "docId": "reference/macro-engine",
           "sourcePath": "docs/reference/macro-engine.md",
@@ -825,7 +825,13 @@
           "sectionCount": 8,
           "sourceChars": 9765,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-013",
+      "sourceChars": 89011,
+      "pages": [
         {
           "docId": "reference/platforms/marinara/data-and-interop",
           "sourcePath": "docs/reference/platforms/marinara/data-and-interop.md",
@@ -881,13 +887,7 @@
           "sectionCount": 2,
           "sourceChars": 7691,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-013",
-      "sourceChars": 89820,
-      "pages": [
+        },
         {
           "docId": "reference/platforms/marinara/sprites-and-galleries",
           "sourcePath": "docs/reference/platforms/marinara/sprites-and-galleries.md",
@@ -943,7 +943,13 @@
           "sectionCount": 4,
           "sourceChars": 5501,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-014",
+      "sourceChars": 78818,
+      "pages": [
         {
           "docId": "reference/platforms/sillytavern/personas-and-data-bank",
           "sourcePath": "docs/reference/platforms/sillytavern/personas-and-data-bank.md",
@@ -999,21 +1005,21 @@
           "sectionCount": 3,
           "sourceChars": 3323,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-014",
-      "sourceChars": 80397,
-      "pages": [
+        },
         {
           "docId": "reference/scene-state",
           "sourcePath": "docs/reference/scene-state.md",
           "sidecarPath": "docs/summaries/reference/scene-state.json",
-          "sectionCount": 8,
-          "sourceChars": 13415,
+          "sectionCount": 13,
+          "sourceChars": 36021,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-015",
+      "sourceChars": 84631,
+      "pages": [
         {
           "docId": "reference/security/archives",
           "sourcePath": "docs/reference/security/archives.md",
@@ -1045,13 +1051,7 @@
           "sectionCount": 11,
           "sourceChars": 15031,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-015",
-      "sourceChars": 81183,
-      "pages": [
+        },
         {
           "docId": "reference/security/safe-rendering",
           "sourcePath": "docs/reference/security/safe-rendering.md",
@@ -1059,7 +1059,13 @@
           "sectionCount": 7,
           "sourceChars": 17649,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-016",
+      "sourceChars": 63534,
+      "pages": [
         {
           "docId": "reference/security/script-sandbox",
           "sourcePath": "docs/reference/security/script-sandbox.md",
@@ -1095,21 +1101,21 @@
       ]
     },
     {
-      "id": "batch-016",
-      "sourceChars": 277320,
+      "id": "batch-017",
+      "sourceChars": 279136,
       "pages": [
         {
           "docId": "reference/ui",
           "sourcePath": "docs/reference/ui.md",
           "sidecarPath": "docs/summaries/reference/ui.json",
           "sectionCount": 34,
-          "sourceChars": 277320,
+          "sourceChars": 279136,
           "status": "APPROVED"
         }
       ]
     },
     {
-      "id": "batch-017",
+      "id": "batch-018",
       "sourceChars": 4726,
       "pages": [
         {

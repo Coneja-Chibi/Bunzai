@@ -6,7 +6,10 @@ import { describe, expect, test } from "bun:test";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
+import { blockDeltas } from "../core/summary/rows";
 import { forecastRequest } from "./scene-forecast";
+import { enqueue } from "./compendium-queue";
+import { summarizeAfter } from "./scene-summary";
 import { runTurn, type Connected } from "./scene-turn";
 
 const vera = { kind: "character", id: "vera", body: { identity: { name: "Vera", description: "Keeps the light." }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {} } };
@@ -65,6 +68,69 @@ describe("the saved summary in a reply", () => {
     const take = await s.chats.fork(s.chat.activeBranchId, first.id, { name: "Take 2" });
     await s.chats.setActiveBranch(s.chat.id, take!.id);
     expect(await s.reply()).not.toContain(TEXT);
+  });
+});
+
+describe("a new version of a reply", () => {
+  // The take's summary a turn builds from is the state the turn loaded (everything before the reply it replaces), not the tip: the reply's own earlier block must not go to the model that writes its replacement.
+  test("does not send the summary piece the reply it replaces wrote", async () => {
+    const s = await scene();
+    await s.reply();
+    const branch = s.chat.activeBranchId;
+    const made = (await s.chats.readMessages(branch, { limit: 20 })).messages.at(-1)!;
+    const version = made.swipes[made.current]!.id;
+    const BLOCK = "A block the first answer wrote.";
+    await s.chats.recordDeltas(branch, version, blockDeltas(await s.chats.sceneState(branch), { version, text: BLOCK, through: 9, at: 2_000_000, replace: true }));
+    expect((await s.chats.summaryOf(branch))!.text).toBe(BLOCK);
+    const read = (await s.chats.readMessages(branch, { limit: 1 })).branchVersion!;
+    await runTurn(s.deps, { chatId: s.chat.id, kind: "swipe", expectedVersion: read }, () => undefined);
+    expect(s.sent.at(-1)!.messages.map((m) => m.content)).not.toContain(BLOCK);
+    expect(s.sent.at(-1)!.messages.map((m) => m.content).join(" ")).not.toContain(BLOCK);
+  });
+  test("a reply that follows a summarized one does send the piece (the check above can fail)", async () => {
+    const s = await scene();
+    await s.reply();
+    const branch = s.chat.activeBranchId;
+    const made = (await s.chats.readMessages(branch, { limit: 20 })).messages.at(-1)!;
+    const version = made.swipes[made.current]!.id;
+    await s.chats.recordDeltas(branch, version, blockDeltas(await s.chats.sceneState(branch), { version, text: "Kept for the next one.", through: 9, at: 2_000_000, replace: true }));
+    await s.ask();
+    expect((await s.reply()).join(" ")).toContain("Kept for the next one.");
+  });
+});
+
+describe("the summary after a turn", () => {
+  // The route runs the summary writer when the turn emits "done" (ui/server-chats-turn.ts); the same hook is wired here, and the writer's own lane is awaited, so nothing is left pending when the rows are read.
+  const withHook = async (s: Awaited<ReturnType<typeof scene>>, deps: Parameters<typeof runTurn>[0]) => {
+    await s.chats.setSummarySettings(s.chat.id, { auto: true, method: "pair" });
+    const events: string[] = [];
+    const version = (await s.chats.readMessages(s.chat.activeBranchId, { limit: 1 })).branchVersion!;
+    await runTurn(deps, { chatId: s.chat.id, kind: "reply", expectedVersion: version }, (e) => {
+      events.push(e.type);
+      if (e.type === "done") summarizeAfter({ chats: s.chats, connect: s.deps.connect }, s.chat.id, "reply", e.message);
+    });
+    await enqueue(s.chat.id, async () => undefined);
+    return events;
+  };
+  const rows = async (s: Awaited<ReturnType<typeof scene>>) => ((await s.chats.sceneState(s.chat.activeBranchId))!["summary"] ?? []) as unknown[];
+
+  test("a turn that fails leaves no summary row: the writer runs only when a reply lands", async () => {
+    const s = await scene();
+    const before = s.sent.length;
+    const down: Provider = { id: "down", async send() { s.sent.push({} as ProviderRequest); throw new Error("provider down"); } };
+    const events = await withHook(s, { ...s.deps, connect: async (): Promise<Connected | null> => ({ provider: down, kind: "openrouter", context: 32_000 }) });
+    expect(events).toContain("failed");
+    expect(events).not.toContain("done");
+    expect(s.sent.length - before).toBeGreaterThan(0); // the turn really tried the provider
+    expect(await rows(s)).toEqual([]);
+    expect((await s.chats.readMessages(s.chat.activeBranchId, { limit: 20 })).messages.at(-1)!.role).toBe("user");
+  });
+
+  test("a reply that lands does write its line (so the check above can fail)", async () => {
+    const s = await scene();
+    const events = await withHook(s, s.deps);
+    expect(events).toContain("done");
+    expect(await rows(s)).toHaveLength(1);
   });
 });
 

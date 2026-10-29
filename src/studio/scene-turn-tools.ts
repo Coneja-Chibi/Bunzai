@@ -10,10 +10,11 @@ import { mulberry32 } from "../core/lore/rng";
 import type { MacroContext } from "../core/macros";
 import type { Chat, JsonObject } from "../stage/contracts/chat-store";
 import type { ProviderCompletion, ProviderEvent, ProviderMessage, ProviderRequest } from "../stage/contracts/provider";
+import { refusesTools } from "../stage/provider/transport-core";
 import { sendWithTools, type NarratorTool, type ToolCallRecord } from "../stage/provider/tool-loop";
 import type { Connected } from "./scene-turn";
 import type { LoadedTurn, TurnKind } from "./scene-turn-load";
-import type { TurnWrites } from "./scene-turn-writes";
+import type { ToolWrites, TurnWrites } from "./scene-turn-writes";
 
 /**
  * What a turn's tools are made from: the scene, what the turn loaded, the turn's seeded randomness (the same seed rolls the same),
@@ -22,7 +23,7 @@ import type { TurnWrites } from "./scene-turn-writes";
  */
 export interface ToolsContext { chat: Chat; loaded: LoadedTurn; rand: () => number; macros: { context?: MacroContext } }
 /** The tools a scene's reply may call; the server supplies the real list. `writes` is the turn's scene-state door (scene-turn-writes.ts), for the trackers' tool only. */
-export type NarratorToolsFor = (ctx: ToolsContext, writes: TurnWrites) => NarratorTool<never>[] | Promise<NarratorTool<never>[]>;
+export type NarratorToolsFor = (ctx: ToolsContext, writes: ToolWrites) => NarratorTool<never>[] | Promise<NarratorTool<never>[]>;
 
 /** What one turn collects as its tool rounds run; read by the trace, the meter and the fallback rule. */
 export interface ToolTurn {
@@ -47,6 +48,10 @@ export async function toolTurn(find: NarratorToolsFor | undefined, kind: TurnKin
 /** The definitions the Prompt Inspector shows: only when this connection will actually be sent them. */
 export const sentTools = (turn: ToolTurn, connected: Connected): { name: string; description: string; parameters: JsonObject }[] =>
   connected.tools === true ? turn.tools.map((t) => ({ name: t.definition.function.name, description: t.definition.function.description, parameters: t.definition.function.parameters as JsonObject })) : [];
+
+/** What a failed send says when the server refused the tools it was sent: never a retry without them, the model named and the way out plain. Null for any other failure. */
+export const toolsRefusal = (error: unknown, model: string, turn: ToolTurn, connected: Connected): string | null =>
+  connected.tools === true && turn.tools.length > 0 && refusesTools(error) ? `${model} cannot use tools, so turn off this scene's Narrator Tool Access for it, or pick a model that supports tools.` : null;
 
 /** One send of the reply: through the tool loop when the connection takes the turn's tools, else the plain send. */
 export async function sendReply(

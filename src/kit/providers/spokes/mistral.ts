@@ -16,7 +16,7 @@ const mistral: ProviderSpoke = {
     return openAICompatModels(baseURL ?? "https://api.mistral.ai/v1", apiKey, fetch);
   },
   // docs.mistral.ai chat: the seed field is random_seed.
-  scene: { params: { frequency_penalty: true, presence_penalty: true, n: true, response_format: true, stop: true, seed: "random_seed" }, base: (c) => c.baseURL ?? "https://api.mistral.ai/v1", tools: true },
+  scene: { params: { frequency_penalty: true, presence_penalty: true, n: true, response_format: true, stop: true, seed: "random_seed" }, base: (c) => c.baseURL ?? "https://api.mistral.ai/v1" },
 };
 
 export default mistral;

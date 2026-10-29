@@ -206,6 +206,8 @@ export const api: AppContext["api"] = {
   saveFinalCutAgent: async (agent) => postJson("/api/chats/final-cut/library/agent", { agent }),
   deleteFinalCutAgent: async (id) => postJson("/api/chats/final-cut/library/agent/delete", { id }),
   setSceneTracker: async (chatId, module, patch) => postJson("/api/chats/trackers", { chatId, module, patch }),
+  getTrackerStates: async (chatId) => apiFetchJson(`/api/chats/tracker-state?chatId=${encodeURIComponent(chatId)}`, { requireToken: false }),
+  writeTrackerStates: async (input) => postJson("/api/chats/tracker-state", input),
   setSceneCompendium: async (chatId, compendium) => postJson("/api/chats/compendium", { chatId, compendium }),
   setSceneBackdrop: async (chatId, backdrop) => postJson("/api/chats/backdrop", { chatId, backdrop }),
   listGuides: async () => apiFetchJson("/api/chats/guides", { requireToken: false }),

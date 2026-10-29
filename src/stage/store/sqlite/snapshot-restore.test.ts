@@ -14,7 +14,6 @@ import { cellCipher } from "../../crypto/cell-cipher";
 import { createKeyring, LockedError } from "../../crypto/keyring";
 import { WrongSecretError } from "../../crypto/crypto";
 import { sqliteChatStore } from "../sqlite-chat-store";
-import { varsOf } from "../../../core/scene-state/vars-bridge";
 import { openStageDatabase } from "./database";
 import { addChat, asBeforeHealthCheck, card, makeRig, type Rig } from "../fake-snapshot-rig";
 import { MIGRATIONS } from "./migrations";
@@ -96,32 +95,6 @@ test("restore puts the library back as the snapshot had it, keeps a safety copy,
   await r.snapshots.restore(done.undo.id);
   expect({ chats: await titles(r), cards: await names(r) }).toEqual(afterMoveOn);
   expect((await r.chats.readMessages(branch, { limit: 50 })).messages).toHaveLength(3);
-});
-
-test("a restore round-trips scene state: the deltas and the take's state come back as the snapshot had them, and what was recorded after is gone", async () => {
-  const r = await rig();
-  const alpha = await seed(r);
-  const branch = (await r.chats.getChat(alpha))!.activeBranchId;
-  const reply = (await r.chats.readMessages(branch, { limit: 10 })).messages[1]!;
-  await r.chats.recordMessageDeltas(branch, reply.id, [{ slot: "vars", path: ["mood"], value: "calm", at: 1 }]);
-  const turn = await r.chats.beginTurn(branch, { kind: "reply" });
-  await r.chats.saveCheckpoint(turn!.id, { content: "r", deltas: [{ slot: "vars", path: ["n"], value: 1, at: 1 }] });
-  await r.chats.commitTurn(turn!.id, { content: "reply" });
-  await r.chats.setBranchBase(branch, [{ slot: "vars", path: ["start"], value: "first", at: 1 }]);
-  const snap = await r.snapshots.take();
-  const held = await r.chats.sceneState(branch);
-  await r.chats.recordMessageDeltas(branch, reply.id, [{ slot: "vars", path: ["mood"], value: "stormy", at: 2 }, { slot: "vars", path: ["later"], value: 1, at: 2 }]);
-  expect(varsOf(await r.chats.sceneState(branch)).get("mood")!.value).toBe("stormy");
-  await r.chats.setBranchBase(branch, [{ slot: "vars", path: ["start"], value: "changed", at: 3 }]);
-  await r.snapshots.restore(snap.id);
-  expect(await r.chats.sceneState(branch)).toEqual(held);
-  expect(varsOf(await r.chats.sceneState(branch)).get("start")!.value).toBe("first");
-  expect(r.d.statement("SELECT count(*) AS n FROM branch_base").get()).toEqual({ n: 1 });
-  expect(varsOf(await r.chats.sceneState(branch)).get("mood")!.value).toBe("calm");
-  expect([r.d.statement("SELECT count(*) AS n FROM swipe_deltas").get(), r.d.statement("SELECT count(*) AS n FROM message_deltas").get()]).toEqual([{ n: 1 }, { n: 1 }]);
-  // Nothing is left stale: a second take of the restored library rebuilds the same state from the restored deltas.
-  const take = await r.chats.fork(branch, (await r.chats.readMessages(branch, { limit: 10 })).messages.at(-1)!.id);
-  expect(await r.chats.sceneState(take!.id)).toEqual(held);
 });
 
 test("the cache hook fires once, after a restore commits, and not when a restore is refused", async () => {

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:b3a123e18c52adc76abadbf3392f7907985b4140c1d74cfea35baa4b98900143",
-  "semanticSummaryHash": "sha256:55be0808809b889a806278546dd60ae7f2ee07aaef32e209b9fbe694b6c49641",
+  "sourceHash": "sha256:d81469acd0929356cc32127158557cf32a3e0dfc958bc8c1cdd2ad4135f1564a",
+  "semanticSummaryHash": "sha256:4dcf48f60cfd9b1ce2f666db2435c3d9c87f99fab40c90631081e69a94b75bb6",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "New toast/booth text checked against code: use-reply-notes.tsx (CommittedTurn from use-scene-turn.ts, settling on the first read at a newer version including failed reads and no-read turns, tip message and swipe match, continue fires only when toast changes differ via deepEq, blocks kept until the new read lands) and booth-tools.tsx (per-tool read states with only a 404 saying Not in your library, re-read on piece-store change, latest read wins, 'not sent' with no bar while Tool Access is off, tiles kept). outOfTime ceilings match generation-rules.ts; bars exists in tracker-changes.ts. Scenes summary accurate. Short unflagged sections elsewhere are pre-existing.",
-  "reviewedAt": "2026-10-28T16:06:03.384Z"
+  "notes": "Tracker Props paragraph now says only the Story Director's round makes the 'Updated after reply N' update (updatesOf reads the generated layer), Undo as the person's own edit only while the module holds what the update left, GET/POST /api/chats/tracker-state with one step for several modules; the shared read matches the per-scene owner in props/trackers/tracker-states.ts (panels share one read per scene). Summaries accurate; short unflagged sections elsewhere are pre-existing.",
+  "reviewedAt": "2026-10-28T23:40:50.581Z"
 }

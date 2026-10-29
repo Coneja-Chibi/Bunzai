@@ -10,6 +10,7 @@ import { parseTrackerData } from "../core/trackers";
 import { StudioConflictError } from "./atomic-file";
 import { StudioNotFoundError, StudioValidationError } from "./errors";
 import { compendiumRig } from "./fake-compendium-rig";
+import { personEdit } from "./fake-director-rig";
 import { proposeTrackerRefresh } from "./scene-tracker-refresh";
 import { draftOnly } from "./scene-tracker-item";
 
@@ -23,7 +24,7 @@ const state = (r: Awaited<ReturnType<typeof rig>>) => r.chats.getChat(r.chat.id)
 describe("proposeTrackerRefresh", () => {
   test("asks the scene's model once, from the tracker as it is, and answers the proposal without writing anything", async () => {
     const r = await rig();
-    await r.chats.setTracker(r.chat.id, "inventory", { data: applyInventory(DEFAULT_INVENTORY, { kind: "add", item: { name: "Old Key", description: "", category: "key", rarity: "common", quantity: 1 }, id: "k1", at: 1 }) as never });
+    await personEdit(r.chats, r.chat.activeBranchId, "inventory", applyInventory(DEFAULT_INVENTORY, { kind: "add", item: { name: "Old Key", description: "", category: "key", rarity: "common", quantity: 1 }, id: "k1", at: 1 }), (await r.chats.readMessages(r.chat.activeBranchId, { limit: 1 })).messages[0]!.id);
     r.script.push(answer(sword()));
     const before = await state(r);
     const got = await proposeTrackerRefresh(refresh(r), ask(r.chat.id));

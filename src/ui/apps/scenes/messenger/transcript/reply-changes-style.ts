@@ -5,7 +5,7 @@
 const M = ":root .scs .msn";
 
 export const MSN_CHANGES_STYLE = `
-${M} .msn-rc{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+${M} .msn-rc{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:8px}
 ${M} .msn-rc-chips{display:flex;flex-wrap:wrap;gap:8px}
 ${M} .msn-rc [data-control="chip"]{gap:6px}
 ${M} .msn-rc-v{color:var(--msg-bright);font:600 12px/1 var(--font-mono)}

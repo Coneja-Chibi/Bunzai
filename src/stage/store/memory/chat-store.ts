@@ -15,6 +15,7 @@ import { folderMethods } from "./chat-store-folders";
 import { receiptMethods } from "./chat-store-receipts";
 import { settingsMethods } from "./chat-store-settings";
 import { summaryMethods } from "./chat-store-summary";
+import { summaryOnSlot } from "../summary-slot";
 import { directorMethods } from "./chat-store-director";
 import { turnMethods } from "./chat-store-turns";
 import { stateMethods } from "./chat-store-state";
@@ -127,7 +128,8 @@ export function memoryChatStoreBackend(
     ...castApi,
     ...stats.api,
     ...transcript,
-    ...receiptApi, ...settingsMethods({ chats, turnOpen, clock, newId }), ...summaryMethods({ chats, branches, deletedBranches, clock }), ...directorMethods({ chats, branches, messages, branchOrder, clock }),
+    ...receiptApi, ...settingsMethods({ chats, turnOpen, clock, newId }), ...summaryMethods({ chats }),
+    ...summaryOnSlot({ sceneState: scene.api.sceneState, tip: async (b) => (branchOrder.get(b) ?? []).map((id) => messages.get(id)!).findLast((m) => !m.cut)?.id ?? null, recordMessageDeltas: scene.api.recordMessageDeltas, now: clock, newId }), ...directorMethods({ chats, branches, messages, branchOrder, clock }),
     ...folderMethods({ clock, newId, chats, folders }),
     async createChat(input) {
       const title = checkTitle(input?.title);

@@ -1,6 +1,7 @@
 /** Sealed ChatStore SQL row shapes and column selectors shared by its backend methods. */
 import type { Chat, MessageRole } from "../../contracts/chat-store";
 import { publicSummary } from "../summary-rules";
+import { settingsOf } from "../tracker-rules";
 import type { SummaryCell } from "./chat-store-summary";
 
 export interface ChatSql {
@@ -69,13 +70,15 @@ export interface SwipeSql {
 }
 
 export const CHAT_COLUMNS = "id, title, cast_json, active_branch_id, created_at, updated_at, snapshot_version, deleted_at, previous_cast_json, connection_json, preset_json, lore_json, props_json, opening_json, prompting_json, backdrop_json, compendium_json, regex_json, trackers_json, final_cut_json, summary_json, director_json, participants_json, favored_at, folder_id, variant_id";
-/** The sealed cells added after rule 41, opened by the caller's cipher, so toChat takes them in one line. The summary cell holds the takes' texts too; only the settings and the failure ride on the chat. */
+/** The sealed cells added after rule 41, opened by the caller's cipher, so toChat takes them in one line. The summary cell holds the settings and the failure; both ride on the chat. */
 export function sceneCells(r: ChatSql, open: (column: string, cell: string) => unknown): Pick<Chat, "regex" | "trackers" | "finalCut" | "summary" | "director"> {
   const summary = r.summary_json === null ? undefined : (open("chats.summary_json", r.summary_json) as SummaryCell);
   const shown = summary ? publicSummary(summary.settings, summary.error) : undefined;
+  // A row written before a module's state moved into its slot may still carry it: only the settings are read.
+  const trackers = r.trackers_json === null ? undefined : settingsOf(open("chats.trackers_json", r.trackers_json) as NonNullable<Chat["trackers"]>);
   return {
     ...(r.regex_json === null ? {} : { regex: open("chats.regex_json", r.regex_json) as NonNullable<Chat["regex"]> }),
-    ...(r.trackers_json === null ? {} : { trackers: open("chats.trackers_json", r.trackers_json) as NonNullable<Chat["trackers"]> }),
+    ...(trackers ? { trackers } : {}),
     ...(r.final_cut_json === null ? {} : { finalCut: open("chats.final_cut_json", r.final_cut_json) as NonNullable<Chat["finalCut"]> }),
     ...(shown ? { summary: shown } : {}),
     ...(r.director_json === null ? {} : { director: open("chats.director_json", r.director_json) as NonNullable<Chat["director"]> }),

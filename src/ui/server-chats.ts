@@ -19,7 +19,6 @@ import { presetReader } from "../studio/scene-turn-load";
 import { StudioLockedError } from "../studio/errors";
 import { WHOLE_BRANCH } from "../studio/scene-branch";
 import { resumeScene } from "../studio/scene-turn";
-import { syncTrackersToTake } from "../studio/scene-tracker-undo";
 import type { SceneLore, SceneLoreBook, SceneLoreChoice, SceneLoreFired } from "./app-contract-scenes";
 import {
   cutInScene,
@@ -66,6 +65,7 @@ import { handleDraftRoute } from "./server-chats-draft";
 import { regexReaderOf, trackerReaderOf } from "./server-scene-readers";
 import { handleLibraryTrackersRoute } from "./server-chats-library-trackers";
 import { handleTrackerChangesRoute } from "./server-chats-tracker-changes";
+import { handleTrackerStateRoute } from "./server-chats-tracker-state";
 import { handleCompareRoute } from "./server-chats-compare";
 import { handleFinalCutRoute } from "./server-chats-final-cut";
 import { handleTrackerItemRoute } from "./server-chats-tracker-item";
@@ -250,7 +250,6 @@ const WRITES: Record<string, (chats: ChatStore, store: StudioStoreLike, b: Body,
   },
   "/api/chats/restore-take": async (chats, _store, b) => {
     const take = await chats.restoreBranch(str(b["id"]));
-    if (take) await syncTrackersToTake(chats, take.chatId);
     return take ? json(take) : err("the Trash no longer holds that take", 404);
   },
   "/api/chats/start": async (chats, store, b, settings) => json(await startSceneWithNotes(chats, store, settings, str(b["characterId"])).then(({ chat, notes }) => (notes.length > 0 ? { ...chat, startNotes: notes } : chat))),
@@ -388,11 +387,13 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
         return chat ? json(await sceneLoreFor(chats, readLorebook, chat)) : err("that scene is gone", 404);
       }
       if (p === "/api/chats/trace") return await handleTraceRoute(url, chats, readLorebook, readPreset);
-      if (p === "/api/chats/variables") return await handleVariablesRoute(url, chats, state);
+      if (p === "/api/chats/variables") return await handleVariablesRoute(url, chats);
       if (p === "/api/chats/variable-history") return await handleVariableHistoryRoute(url, chats);
       if (p === "/api/chats/tracker-changes") return await handleTrackerChangesRoute(url, chats, trackerReaderOf(store));
       const libraryTrackers = await handleLibraryTrackersRoute(req, url, chats, trackerReaderOf(store), Date.now, null);
       if (libraryTrackers) return libraryTrackers;
+      const trackerStates = await handleTrackerStateRoute(req, url, chats, Date.now, null);
+      if (trackerStates) return trackerStates;
       if (p === "/api/chats/props") {
         const chat = await chats.getChat(url.searchParams.get("chatId") ?? "");
         return chat ? json(propsOf(chat)) : err("that scene is gone", 404);
@@ -427,6 +428,8 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
     if (draft) return draft;
     const libraryTrackers = await handleLibraryTrackersRoute(req, url, chats, trackerReaderOf(store), Date.now, b);
     if (libraryTrackers) return libraryTrackers;
+    const trackerStates = await handleTrackerStateRoute(req, url, chats, Date.now, b);
+    if (trackerStates) return trackerStates;
     const trackerItem = await handleTrackerItemRoute(req, p, chats, b, store);
     if (trackerItem) return trackerItem;
     const trackerRefresh = await handleTrackerRefreshRoute(req, p, chats, b, store);

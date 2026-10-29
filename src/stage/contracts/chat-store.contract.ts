@@ -29,7 +29,10 @@ import { chatStoreParticipantsContract } from "./chat-store.contract-participant
 import { chatStoreRegexContract } from "./chat-store.contract-regex";
 import { chatStoreFinalCutContract } from "./chat-store.contract-final-cut";
 import { chatStoreTrackersContract } from "./chat-store.contract-trackers";
+import { chatStoreTrackerStateContract } from "./chat-store.contract-tracker-state";
 import { chatStoreSummaryContract } from "./chat-store.contract-summary";
+import { chatStoreGlobalsContract } from "./chat-store.contract-globals";
+import { chatStoreWritersContract } from "./chat-store.contract-writers";
 import { chatStoreDirectorContract } from "./chat-store.contract-director";
 import { chatStoreBackdropContract } from "./chat-store.contract-backdrop";
 import { chatStoreRequestContract } from "./chat-store.contract-request";
@@ -411,7 +414,10 @@ export function chatStoreContract(label: string, make: (clock: () => number) => 
     chatStoreRegexContract(make);
     chatStoreFinalCutContract(make);
     chatStoreTrackersContract(make);
+    chatStoreTrackerStateContract(make);
     chatStoreSummaryContract(make);
+    chatStoreGlobalsContract(make);
+    chatStoreWritersContract(make);
     chatStoreDirectorContract(make);
     chatStoreRequestContract(make);
     chatStoreFoldersContract(make);

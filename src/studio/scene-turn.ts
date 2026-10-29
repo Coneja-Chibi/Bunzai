@@ -13,7 +13,7 @@ import { running } from "./scene-turn-running";
 export { stopTurn } from "./scene-turn-running";
 export { commitAnyway, discardWaiting, resumeScene } from "./scene-turn-resume";
 import { outOfTimeOf } from "../core/assembly/macro-report";
-import { rebaseDiff } from "../core/assembly/lore-effects";
+import { globalDeltas } from "../core/scene-state/globals";
 import { varsDeltas } from "../core/scene-state/vars-bridge";
 import { PresetPlanError } from "../core/assembly/preset";
 import { GUIDANCE_MAX } from "../core/assembly/guided-swipe";
@@ -29,8 +29,8 @@ import type { StateStore } from "../stage/contracts/state-store";
 import { StudioConflictError } from "./atomic-file";
 import { StudioNotFoundError, StudioValidationError } from "./errors";
 import { assembleRequest, openedWith, overflowMessage, prepareRequest, shapeRequest } from "./scene-turn-build";
-import { carriedBy, trackersAfterReply } from "./scene-turn-after-trackers";
-import { loadTurn, writeGlobals, type ReadPreset, type TurnKind } from "./scene-turn-load";
+import { tickDeltas } from "./scene-turn-ticks";
+import { loadTurn, type ReadPreset, type TurnKind } from "./scene-turn-load";
 import { isFallbackWorthy } from "./scene-turn-fallback";
 import { learnReply } from "./scene-turn-meter";
 import { applyEdits, awaitReview } from "./scene-turn-review";
@@ -43,11 +43,10 @@ import { directorOn } from "../core/director/settings";
 import type { DirectorActivity } from "../stage/contracts/director-types";
 import { summaryOf } from "../core/director/tracker-round";
 import { cancelTrackerRound, startTrackerRound } from "./scene-director-trackers";
-import { reconcileTrackers } from "./scene-tracker-undo";
 import { commitDirector, runDirector, type DirectorDeps, type DirectorRun } from "./scene-director";
 import type { ReadTracker } from "./library-trackers";
 import { turnWrites } from "./scene-turn-writes";
-import { sendReply, sentTools, toolTurn, withToolCalls, type NarratorToolsFor } from "./scene-turn-tools";
+import { sendReply, sentTools, toolsRefusal, toolTurn, withToolCalls, type NarratorToolsFor } from "./scene-turn-tools";
 import { failedAttempt, requestParams, routeOf, splitEntryKey, traceOf, traceOptions, type RequestParams, type RouteAttempt } from "./scene-turn-trace";
 
 export { splitEntryKey };
@@ -82,7 +81,7 @@ export interface Connected {
   kind: string;
   /** The model's context window, when the connection states one. */
   context?: number;
-  /** Whether a scene may send this connection tool calls (the spoke declares them; absent means no). */
+  /** Whether a scene sends this connection tool calls: it has a scene endpoint and the model is not one that refuses tools (sceneTools). */
   tools?: boolean;
 }
 
@@ -186,10 +185,6 @@ async function runTurnBody(
   // Once the reply is in hand, nothing may throw it away: an error saving it keeps the checkpoint,
   // and the reply comes back when the scene next opens (rule 4).
   let answered = false;
-  let putBackEffects: () => Promise<void> = async () => undefined;
-  /** Puts back the Director's tracker updates a new version undid, when that version never lands. */
-  let putBackTrackers: (() => Promise<void>) | null = null;
-  let landed = false;
   /** The Story Director's plan for this reply; its snapshot is stored when, and only when, the reply commits. */
   let director: DirectorRun | null = null;
   /** The Director's call is stopped with the turn, and also whenever the turn ends for any other reason: a failure after it started must not leave it running, billed, behind a turn that is over. */
@@ -198,7 +193,7 @@ async function runTurnBody(
   try {
     const started = deps.now();
     const prep = await prepareRequest(deps, chat, loaded, connected, model, started);
-    const { window, options, presetName, reasoningFormat, meter, key, storedGlobals, undo, startGlobal } = prep;
+    const { window, options, presetName, reasoningFormat, meter, key, startGlobal } = prep;
     // Recall (compendium-recall.ts) runs once, here: the Inspector's pause, the fallback model and a draft never ask it again.
     // The Director plans beside the Compendium's recall; both finish before anything is assembled. A Director that fails never fails the reply.
     if (directorOn(chat) && input.kind !== "continue") emit({ type: "director", status: "planning" });
@@ -215,12 +210,6 @@ async function runTurnBody(
     }
     if (recall) emit({ type: "world", status: recall.status === "empty" ? "recalled" : recall.status, count: recall.entries.length, ...(recall.reason ? { reason: recall.reason } : {}) });
     if (director) emit({ type: "director", status: director.status, ...(director.reason ? { reason: director.reason } : {}), entries: director.entries });
-    // The trackers carry only what the replies and versions that are shown did (plan 16): a cut reply's update, another version's, and the one a new version replaces, are undone first.
-    if (input.kind !== "continue") {
-      putBackTrackers = await reconcileTrackers(chats, chat.id, input.kind === "swipe" ? replacedId : undefined).catch(() => null);
-      const fresh = putBackTrackers ? await chats.getChat(chat.id) : null;
-      if (fresh?.trackers && fresh.props) loaded.trackers = { entries: fresh.trackers, on: fresh.props.on };
-    }
     const built = await assembleRequest(deps, { chat, loaded, prep, started, kind: input.kind, original, guidance, recall, ...(director?.directive ? { director: director.directive } : {}), reserved: sentTools(toolsTurn, connected).map((t) => JSON.stringify(t)) });
     const { result, asked, guided } = built;
     const outOfTime = outOfTimeOf(result.macros);
@@ -243,8 +232,8 @@ async function runTurnBody(
     const estimate = estimateFor(meter, key, countPrompt(messages.map((m) => m.content)), started);
     const recalled = recall ? recallSection(recall, result.recall) : undefined;
     let route: RouteAttempt[] = [{ connectionId: chat.connection.id, kind: connected.kind, model }];
-    // The turn's local variable changes, as scene-state deltas (rule 17): a continue makes none of its own. Their size is bounded by their source (the macro engine's output cap), so nothing is refused here.
-    const deltas = input.kind === "continue" ? [] : varsDeltas(result.local, started);
+    // The turn's local variable changes, as scene-state deltas (rule 17), and its global ones, as operations in the shared `global` slot (core/scene-state/globals.ts): both wait on the checkpoint and reach the version only when the turn commits, so a turn that does not commit has written none, and a continue makes none of its own. Their size is bounded by their source (the macro engine's output cap), so nothing is refused here.
+    const deltas = input.kind === "continue" ? [] : [...varsDeltas(result.local, started), ...globalDeltas(result.globalWrites, started, () => crypto.randomUUID())];
     let trace = (traceOf(recounted(result, regexEdits), model, window, estimate, traceOptions(options, connected.provider.params, model), guided, recalled));
     if (input.inspect) {
       // F16: the one pause gate. Cancel and Stop drop the checkpoint, so nothing was written, saved or sent.
@@ -258,14 +247,6 @@ async function runTurnBody(
       edits = { ...regexEdits, ...decision.edits };
       messages = shape(model);
     }
-    // Step 4: RoleCall writes the variables before the request goes out. The library's global ones are written now; the scene's own wait on the checkpoint below and reach the version only when the turn commits, so a turn that does not commit has written none (rule 17).
-    await writeGlobals(state, rebaseDiff(storedGlobals, startGlobal, result.global), started);
-    /** A turn that does not commit (failure, Stop with nothing, nothing added) puts back every global variable the lore effects of this attempt or of the reply it replaces touched, to what the library held before the turn; the others stay as RoleCall keeps them. */
-    putBackEffects = async (): Promise<void> => {
-      const touched = [...new Set([...undo, ...(result.lore?.undo ?? [])].filter((u) => u.scope === "global").map((u) => u.name))];
-      const back = { set: Object.fromEntries(touched.filter((n) => storedGlobals.has(n)).map((n) => [n, storedGlobals.get(n)!.value])), delete: touched.filter((n) => !storedGlobals.has(n)) };
-      await writeGlobals(state, back, started).catch(() => undefined);
-    };
     // ChatStore rule 22: the take's latest request text, aligned with the stored trace's blocks
     // (result.messages and result.trace share the same order and length, section 9's own build).
     const request = { texts: applyEdits(asked, edits).map((m) => m.content) };
@@ -341,7 +322,6 @@ async function runTurnBody(
       if (controller.signal.aborted) {
         // Stop keeps what arrived; with nothing (or, for a continue, nothing but an echo), nothing is stored.
         if (!stored(text)) {
-          await putBackEffects();
           await chats.dropTurn(turn.id);
           emit({ type: "stopped", message: null });
           return;
@@ -350,14 +330,13 @@ async function runTurnBody(
         await commit({ content: stored(text), generation: { model, finishReason: "stopped", presetName, generationMs: deps.now() - started, ...(guidance ? { guidance } : {}), ...(outOfTime ? { outOfTime } : {}) }, ...(input.kind === "continue" ? {} : withToolCalls(toolsTurn, { ...trace, route: routeOf(route, "stopped") }, request)) }, "stopped");
         return;
       }
-      await putBackEffects();
       await chats.dropTurn(turn.id);
       const failure = error instanceof ProviderError ? error : null;
       emit({
         type: "failed",
         category: failure?.category ?? "api_error",
         code: failure?.code ?? "backend_error",
-        message: toErrorMessage(error, "the reply failed"),
+        message: toolsRefusal(error, model, toolsTurn, connected) ?? toErrorMessage(error, "the reply failed"),
         draft: text,
       });
       return;
@@ -372,7 +351,6 @@ async function runTurnBody(
     const thoughtOnly = input.kind !== "continue" && !text && Boolean(completion.reasoning?.trim());
     if (!stored(text) && !thoughtOnly) {
       // A continue the model answered with nothing new: nothing to store, and the person is told.
-      await putBackEffects();
       await chats.dropTurn(turn.id);
       emit({ type: "failed", category: "invalid_request_error", code: "nothing_to_add", message: "The model had nothing to add to this reply.", draft: "" });
       return;
@@ -404,7 +382,7 @@ async function runTurnBody(
     // Through JSON, so the stored trace is JSON exactly (the store refuses anything else).
     const usage = completion.usage ? (JSON.parse(JSON.stringify(completion.usage)) as JsonObject) : undefined;
     const cut = input.kind === "continue" ? null : await finalCutStage({ deps, chat, text, history: [...loaded.history, loaded.current], format: reasoningFormat, signal: controller.signal, emit, turnId: turn.id, ...(deps.finalCutBanks ? { userBanks: deps.finalCutBanks } : {}) });
-    if (cut && "stop" in cut) { await putBackEffects(); await chats.dropTurn(turn.id); emit(cut.stop); return; }
+    if (cut && "stop" in cut) { await chats.dropTurn(turn.id); emit(cut.stop); return; }
     if (cut) text = cut.text;
     const committed = await commit({ content: stored(text), generation: { ...generation, ...(cut ? { finalCut: cut.summary } : {}) }, ...(input.kind === "continue" ? {} : withToolCalls(toolsTurn, { ...trace, route: routeOf(route, "answered", completion.model), ...(usage ? { usage } : {}), ...(cut ? { finalCut: cut.trace } : {}) }, request)) }, "done");
     // Step 7, best-effort: a lost calibration sample is harmless.
@@ -418,7 +396,6 @@ async function runTurnBody(
       await chats.saveCheckpoint(turn.id, { content: stored(text) }).catch(() => undefined);
       emit({ type: "failed", category: "api_error", code: "backend_error", message: "The reply arrived but could not be saved yet. It is kept, and comes back when the scene reopens.", draft: stored(text) });
     } else {
-      await putBackEffects();
       await chats.dropTurn(turn.id).catch(() => undefined);
       // A preset block the assembler cannot place fails the same way every time: not worth a Retry.
       const plan = error instanceof PresetPlanError;
@@ -427,7 +404,6 @@ async function runTurnBody(
   } finally {
     directorStop.abort();
     running.delete(turn.id);
-    if (!landed && putBackTrackers) await putBackTrackers().catch(() => undefined);
   }
 
   /** Commits guarded by the version the turn began from; a conflict keeps the checkpoint, holding the whole text. */
@@ -435,6 +411,11 @@ async function runTurnBody(
     try {
       // The version being replaced, read before it is: an edit the person made to it while the Director's call was out is carried onto the new one.
       const replaced = director && replacedId ? await chats.getDirector(input.chatId, replacedId).catch(() => null) : null;
+      // The Spellbook counts down with the reply (rule 43): its tick joins the deltas the checkpoint holds, so the version it is stamped on is the version that carried the cast. Not on Stop or Continue.
+      if (as === "done" && input.kind !== "continue") {
+        const failed = await writes.tick(tickDeltas(loadedTurn, deps.now()));
+        if (failed) throw new Error(failed);
+      }
       const message = await chats.commitTurn(turn!.id, result, { expectedVersion: turn!.baseVersion });
       if (!message) {
         await chats.dropTurn(turn!.id);
@@ -445,13 +426,10 @@ async function runTurnBody(
       // A snapshot that could not be stored is said so; the reply is safe and the next turn plans from the last state that was.
       const stored = director ? await commitDirector(deps, input.chatId, director, message, replaced) : true;
       if (stored !== true) emit({ type: "director", status: "failed", reason: stored });
-      landed = true;
-      // The Spellbook counts down first (rule 43), so the Director's round below plans against the state the next turn will see, and `done` goes out after both.
-      if (as === "done") await trackersAfterReply(chats, input.chatId, carriedBy(loadedTurn)).catch(() => undefined);
       // After the reply, in the background: the Director updates the trackers that are on and due from the exchange that just happened. Never on Stop or Continue.
       if (as === "done" && stored === true && director?.status === "planned" && input.kind !== "continue") {
         startTrackerRound({ chats, connect: deps.connect, now: deps.now }, {
-          chatId: input.chatId, messageId: message.id, swipeId: message.swipes[message.current]!.id, turn: director.turn, ...exchange, reply: message.swipes[message.current]?.content ?? result.content, ...(director.directive ? { directive: summaryOf(director.directive) } : {}),
+          chatId: input.chatId, branchId: loadedTurn.branchId, messageId: message.id, swipeId: message.swipes[message.current]!.id, turn: director.turn, ...exchange, reply: message.swipes[message.current]?.content ?? result.content, ...(director.directive ? { directive: summaryOf(director.directive) } : {}),
         });
       }
       emit(as === "done" ? { type: "done", message } : { type: "stopped", message });

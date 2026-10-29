@@ -42,7 +42,7 @@ function spied(chats: ChatStore): { chats: ChatStore; calls: string[] } {
   const proxy = new Proxy(chats, { get: (target, key) => { calls.push(String(key)); return Reflect.get(target, key); } });
   return { chats: proxy, calls };
 }
-const READS = new Set(["getChat", "lightCastSnapshot", "readMessages", "sceneState", "sceneStateBefore", "swipeTrace", "then"]);
+const READS = new Set(["getChat", "lightCastSnapshot", "readMessages", "sceneState", "sceneStateBefore", "swipeTrace", "globalOps", "then"]);
 
 async function scene(over: { preset?: PresetBody; reply?: string; fail?: Error; connected?: boolean; persona?: boolean } = {}) {
   let now = 1_000;

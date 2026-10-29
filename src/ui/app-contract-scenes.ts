@@ -20,6 +20,7 @@ import type { FormulaTry } from "../studio/scene-forecast";
 import type { LinkedScene } from "../studio/piece-links";
 import type { SceneTrackers } from "../studio/scene-trackers";
 import type { TrackerEditInput } from "../studio/tracker-edit";
+import type { TrackerStates, TrackerWriteInput } from "../studio/tracker-state";
 import type { MessageTrackerChanges } from "../studio/tracker-changes";
 import type { SceneSearchResult } from "../studio/scene-search";
 import type { OpenScene, SceneAction, SceneGrave, SceneMessagePage, SceneSummary, SceneTailMessage } from "../studio/scenes";
@@ -120,8 +121,12 @@ export interface ScenesApi {
   deleteFinalCutBank(id: string): Promise<{ deleted: boolean }>;
   saveFinalCutAgent(agent: Record<string, unknown>): Promise<AgentRecord>;
   deleteFinalCutAgent(id: string): Promise<{ deleted: boolean }>;
-  /** One tracker module of the scene (ChatStore rule 43), the one writer: `data` is the module's whole state, `context` its AI Context; a key given replaces it, null clears it, a key left out stays. */
+  /** One tracker module's SETTINGS (ChatStore rule 43): `context` its AI Context, `auto` its automatic-update choice, `subs` its sub-feature switches, and a Storyboard's profile as `data`; a key given replaces it, null clears it, a key left out stays. A module's state is written with `writeTrackerStates`. */
   setSceneTracker(chatId: string, module: TrackerModule, patch: ChatTrackerPatch): Promise<Chat>;
+  /** The Props trackers' state at the take's tip (studio/tracker-state.ts): each module's data, the last update a reply made to each, and the branch version and tip message a write must name back (read only). */
+  getTrackerStates(chatId: string): Promise<TrackerStates>;
+  /** Writes the state of one or more Props trackers in one step (all or nothing), as the person's edit on the tip message or, for an accepted Refresh, for the tip's shown version; answers the trackers as they now stand and the fields left alone because the person edited them on this reply. Rejects with the sentence that says why when it is refused. */
+  writeTrackerStates(input: TrackerWriteInput): Promise<TrackerStates>;
   /** The scene's backdrop, a pack and one item in it (ChatStore rule 36), or null to forget it. */
   setSceneBackdrop(chatId: string, backdrop: ChatBackdrop | null): Promise<Chat>;
   /** The guide library, most recently changed first; a deleted guide is not listed. */
@@ -197,7 +202,7 @@ export interface ScenesApi {
   getSceneDirector(chatId: string, opts?: { at?: string }): Promise<DirectorPanel>;
   /** One edit of the Director's story (resolve or remove an item, plant a hidden arc, add a note, clear the activity, Reset), guarded by the version the panel showed; rejects with a conflict when the story moved on. */
   editSceneDirector(chatId: string, edit: DirectorEdit, expectedVersion: number | null): Promise<DirectorPanel>;
-  /** Undoes the Story Director's update of one tracker made by the reply `messageId` (the panel's `trackerUpdates[module].messageId`): the tracker goes back to before it, only while it still holds exactly what the update left; rejects with a conflict, changing nothing, when it has changed since. Answers the panel. */
+  /** Undoes the update a reply made to one tracker on its own (the Trackers states' `updates[module].messageId`): the tracker goes back to before it, written as the person's own edit on that reply, only while it still holds exactly what the update left; rejects with a conflict, changing nothing, when it has changed since. Answers the panel. */
   undoSceneTrackerUpdate(chatId: string, module: TrackerModule, messageId: string): Promise<DirectorPanel>;
   /** Changes the scene's Director settings (a key given as null goes back to its default) and answers the panel. */
   setSceneDirectorSettings(chatId: string, patch: DirectorSettingsPatch): Promise<DirectorPanel>;

@@ -17,7 +17,7 @@ const panel = (initial?: Spellbook): JSX.Element => {
   return <SpellbookPanel ctx={r.ctx()} chat={r.state.chat} id="props.tracker.spellbook" />;
 };
 const tab = (name: string): Element => r.qa(".st-tabs button").find((b) => b.textContent?.trim().startsWith(name))!;
-const withStats = (): void => { r.state.chat = { ...r.state.chat, trackers: { ...r.state.chat.trackers, resources: { data: DEFAULT_RESOURCES as never } } }; };
+const withStats = (): void => r.seed(DEFAULT_RESOURCES, "resources");
 
 describe("what it shows", () => {
   test("the frame and the empty state", async () => {
@@ -45,6 +45,14 @@ describe("what it shows", () => {
   });
 });
 
+describe("the trackers' state is read once", () => {
+  test("the Spellbook panel reads Stats beside its own book, and the scene's panels share one read of the state, not one each", async () => {
+    withStats();
+    await r.mount(panel(book({})));
+    expect(r.state.reads).toBe(1);
+  });
+});
+
 describe("Cast", () => {
   test("Invoke pays the mana out of Stats, starts the cooldown, adds mastery and history, and leaves a note for the next reply with a way to cancel it", async () => {
     withStats();
@@ -55,7 +63,9 @@ describe("Cast", () => {
     await r.press(fs, r.qa("button").filter((b) => b.textContent?.trim() === "Invoke")[0]!);
     const stats = r.state.writes.find((w) => w.module === "resources")!.patch.data as { mp: number };
     expect(stats.mp).toBe(40);
-    const sb = r.lastData<Spellbook>();
+    // Stats and the Spellbook are one decision: one step of the store carried both, so neither can land alone.
+    expect(r.state.calls[0]).toEqual(["spellbook", "resources"]);
+    const sb = r.state.writes.find((w) => w.module === "spellbook")!.patch.data as unknown as Spellbook;
     expect(sb.spells[0]).toMatchObject({ cooldownRemaining: 3, masteryLevel: 2 });
     expect(sb.pendingCast).toContain(`Player's intent: "burn the door"`);
     expect(r.text()).toContain("Firebolt cast successfully! (3 turn cooldown)");

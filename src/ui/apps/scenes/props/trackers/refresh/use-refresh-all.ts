@@ -10,6 +10,7 @@ import type { TrackerRefresh } from "../../../../../../studio/scene-tracker-refr
 import { toErrorMessage } from "../../../../../_shared/error-message";
 import type { AppContext } from "../../../../../app-contract";
 import { isEmpty } from "./use-refresh";
+import { useTrackerStates } from "../tracker-states";
 
 export interface Board { module: TrackerModule; label: string }
 export interface Host { ctx: AppContext; chat: Chat; onChat?(chat: Chat): void }
@@ -33,7 +34,7 @@ export type Run =
   | { at: "cancelled"; entries: Entry[]; n: number }
   | { at: "none" };
 
-const stateOf = (chat: Chat, m: TrackerModule): string => JSON.stringify(chat.trackers?.[m]?.data ?? null);
+const stateOf = (data: Partial<Record<TrackerModule, JsonValue>> | undefined, m: TrackerModule): string => JSON.stringify(data?.[m] ?? null);
 const OTHER_SCENE = "Dropped: this was read for another scene.";
 
 export function useRefreshAll(host: Host, boards: readonly Board[]) {
@@ -41,12 +42,16 @@ export function useRefreshAll(host: Host, boards: readonly Board[]) {
   const abort = useRef<AbortController | null>(null);
   const latest = useRef(host);
   latest.current = host;
+  // The trackers are read only while there is a board to refresh.
+  const sync = useTrackerStates(host.ctx, host.chat, boards.length > 0);
+  const syncRef = useRef(sync);
+  syncRef.current = sync;
   const chatId = host.chat.id;
   useEffect(() => () => abort.current?.abort(), []);
   useEffect(() => { abort.current?.abort(); setRun({ at: "idle" }); }, [chatId]);
 
   const ask = async (b: Board, signal: AbortSignal): Promise<Entry> => {
-    const base = stateOf(latest.current.chat, b.module);
+    const base = stateOf(syncRef.current.states?.data, b.module);
     try {
       const got = await latest.current.ctx.api.proposeTrackerRefresh({ chatId: latest.current.chat.id, module: b.module }, signal);
       if (got.chatId !== latest.current.chat.id) return { ...b, base, status: "dropped", why: OTHER_SCENE };
@@ -82,13 +87,13 @@ export function useRefreshAll(host: Host, boards: readonly Board[]) {
   const accept = async (m: TrackerModule): Promise<void> => {
     const entry = current(m);
     if (!entry || entry.status !== "ready" || !entry.proposal) return;
-    const { ctx, chat, onChat } = latest.current;
+    const { chat } = latest.current;
     if (entry.proposal.chatId !== chat.id) { patch(m, { status: "dropped", why: OTHER_SCENE }); return; }
-    if (entry.base !== stateOf(chat, m)) { patch(m, { status: "dropped", why: `Dropped: ${entry.label} changed while it was reading.` }); return; }
-    const before = chat.trackers?.[m]?.data;
+    if (entry.base !== stateOf(syncRef.current.states?.data, m)) { patch(m, { status: "dropped", why: `Dropped: ${entry.label} changed while it was reading.` }); return; }
+    const before = syncRef.current.states?.data[m];
     try {
-      const next = await ctx.api.setSceneTracker(chat.id, m, { data: entry.proposal.proposed as JsonValue });
-      onChat?.(next);
+      // An accepted board is the person's own write on the newest reply, like any edit they make.
+      await syncRef.current.write([{ module: m, data: entry.proposal.proposed as JsonValue, base: before ?? null }]);
       patch(m, { status: "accepted", ...(before === undefined ? {} : { before }) });
     } catch (e) { patch(m, { status: "failed", why: toErrorMessage(e, `${entry.label} could not be saved.`) }); }
   };
@@ -99,10 +104,8 @@ export function useRefreshAll(host: Host, boards: readonly Board[]) {
   const undo = async (m: TrackerModule): Promise<void> => {
     const entry = current(m);
     if (!entry || entry.status !== "accepted") return;
-    const { ctx, chat, onChat } = latest.current;
     try {
-      const next = await ctx.api.setSceneTracker(chat.id, m, { data: entry.before === undefined ? null : entry.before });
-      onChat?.(next);
+      await syncRef.current.write([{ module: m, data: entry.before === undefined ? null : entry.before, base: entry.proposal?.proposed as JsonValue }]);
       patch(m, { status: "undone" });
     } catch (e) { patch(m, { status: "failed", why: toErrorMessage(e, `${entry.label} could not be restored.`) }); }
   };

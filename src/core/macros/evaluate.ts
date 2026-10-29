@@ -34,6 +34,7 @@ import type {
   MacroExpansion,
   MacroResult,
   MacroSideEffect,
+  GlobalWrite,
   MacroVariable,
 } from "./types";
 
@@ -234,13 +235,27 @@ function evaluateMacro(node: MacroCallNode, context: MacroContext, state: EvalSt
   return value;
 }
 
+/**
+ * A global write as the operation it was: a delete, an add of a number onto a number (or onto nothing), an append of text onto text (or
+ * onto nothing), or a set. An add onto a value of another kind (numeric text, null, an object) is kept as a set of the value the engine
+ * made, so folding the operation always gives what this reply's prompt saw.
+ */
+const globalWriteOf = (fx: MacroSideEffect, before: MacroVariable["value"] | undefined): GlobalWrite =>
+  fx.type === "deleteGlobalVar" ? { name: fx.key, op: "delete" }
+  : typeof fx.add === "number" && (before === undefined || typeof before === "number") ? { name: fx.key, op: "inc", v: fx.add }
+  : typeof fx.add === "string" && (before === undefined || typeof before === "string") ? { name: fx.key, op: "append", v: fx.add }
+  : { name: fx.key, op: "set", v: fx.value! };
+
 /** Apply variable changes to the context now, so later macros in the run see them. */
 export function applySideEffects(effects: readonly MacroSideEffect[], context: MacroContext): void {
   const now = context.now ?? 0;
   for (const fx of effects) {
-    const map = fx.type === "setGlobalVar" || fx.type === "deleteGlobalVar" ? context.globalVariables : context.localVariables;
+    const global = fx.type === "setGlobalVar" || fx.type === "deleteGlobalVar";
+    const map = global ? context.globalVariables : context.localVariables;
+    const before = map.get(fx.key)?.value;
     if (fx.type === "deleteLocalVar" || fx.type === "deleteGlobalVar") map.delete(fx.key);
     else if (fx.value !== undefined) map.set(fx.key, { value: fx.value, createdAt: map.get(fx.key)?.createdAt ?? now, updatedAt: now });
+    if (global && context.globalWrites && (fx.type === "deleteGlobalVar" || fx.value !== undefined)) context.globalWrites.push(globalWriteOf(fx, before));
   }
 }
 

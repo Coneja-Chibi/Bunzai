@@ -6,7 +6,6 @@
  */
 import { assemble } from "../core/assembly/assemble";
 import { appBudgeter } from "../core/assembly/budget-app";
-import { revertEffects, type LoreUndo } from "../core/assembly/lore-effects";
 import { appendGuidedSwipe, guidedBlocks } from "../core/assembly/guided-swipe";
 import { CONTINUE_CUE, continuationPrefill } from "../core/assembly/continuation";
 import { lastAsUser, modelTakesPrefill, presetWindow, sceneOptions, turnWindow, withPrefill } from "../core/assembly/request";
@@ -36,8 +35,6 @@ export interface Prep {
   reasoningFormat: ReturnType<typeof resolveReasoning>;
   meter: Meter;
   key: string;
-  storedGlobals: Map<string, MacroVariable>;
-  undo: LoreUndo[];
   startGlobal: Map<string, MacroVariable>;
   /** The take's saved chat summary as the assembler takes it; absent when the take has none or Include in AI context is off. */
   summary?: AssemblyInput["chatSummary"];
@@ -45,33 +42,25 @@ export interface Prep {
 
 const NO_PRESET = "No Preset (Defaults)";
 
-/** What the Side Effects of the reply being redone replaced (the `lore.undo` its trace kept); none for a trace without it. */
-async function effectsOf(chats: Pick<ChatStore, "swipeTrace">, target: Message): Promise<LoreUndo[]> {
-  const trace = await chats.swipeTrace(target.id, target.swipes[target.current]!.id);
-  const undo = trace && typeof trace["lore"] === "object" && trace["lore"] !== null ? (trace["lore"] as { undo?: unknown }).undo : undefined;
-  return Array.isArray(undo) ? (undo as LoreUndo[]) : [];
-}
-
-export async function prepareRequest(deps: { chats: Pick<ChatStore, "swipeTrace" | "summaryOf">; state: Pick<StateStore, "read"> }, chat: Chat, loaded: LoadedTurn, connected: Connected | undefined, model: string, started: number): Promise<Prep> {
+export async function prepareRequest(deps: { chats: Pick<ChatStore, "globalOps">; state: Pick<StateStore, "read"> }, chat: Chat, loaded: LoadedTurn, connected: Connected | undefined, model: string, started: number): Promise<Prep> {
   // With no connection (a formula's Try reads the scene without asking a model) the window is the unstated default; assembly is then run unbudgeted.
   const base = turnWindow(connected?.context);
   const window = { ...presetWindow(base, loaded.preset), stated: base.stated };
   const options = { ...sceneOptions(loaded.preset, loaded.generation ?? {}, chat.prompting), stream: true, max_tokens: window.reply };
   const meter = await readMeter(deps.state);
-  // A new version of a reply starts its local variables from the state before the reply it replaces (scene-turn-load.ts); the
-  // library's global ones are put back from what that reply's lore Side Effects recorded in its trace, so they are never counted twice (lore-effects.ts).
-  const storedGlobals = await readGlobals(deps.state);
-  const undo = loaded.target ? await effectsOf(deps.chats, loaded.target) : [];
+  // A new version of a reply starts its local variables from the state before the reply it replaces (scene-turn-load.ts), and the library's
+  // global ones from every shown version but the one it replaces (core/scene-state/globals.ts), so nothing is counted twice.
+  const startGlobal = await readGlobals(deps.chats, loaded.target ? [loaded.target.swipes[loaded.target.current]!.id] : []);
   // The take's own summary (ChatStore rule 45), sent only while Include in AI context is on; hiding what it covers keeps Keep recent messages (RoleCall resolveSummaryContextWindowSize).
   const settings = resolveSummary(chat.summary?.settings);
-  const take = settings.include ? await deps.chats.summaryOf(loaded.branchId) : null;
+  const take = settings.include ? (loaded.savedSummary ?? null) : null;
   const summary = take && take.text.trim() ? { text: take.text, through: take.through, ...(settings.hideOld ? { hideKeep: contextWindow(settings) ?? SUMMARY_DEFAULTS.keepRecent } : {}) } : undefined;
   return {
-    window, options, meter, storedGlobals, undo, ...(summary ? { summary } : {}),
+    window, options, meter, ...(summary ? { summary } : {}),
     presetName: loaded.preset?.name ?? NO_PRESET,
     reasoningFormat: resolveReasoning(loaded.preset?.reasoning, chat.prompting),
     key: readKey(meter, connected?.kind ?? "", model),
-    startGlobal: revertEffects(storedGlobals, undo, "global", started),
+    startGlobal,
   };
 }
 

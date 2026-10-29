@@ -24,6 +24,7 @@ import { hiddenMethods } from "./chat-store-hidden";
 import { swipeCutMethods } from "./chat-store-swipe-cuts";
 import { folderMethods } from "./chat-store-folders";
 import { compendiumMethods } from "./chat-store-compendium";
+import { summaryOnSlot } from "../summary-slot";
 import { splitQuarantine } from "./chat-store-quarantine";
 import { turnMethods } from "./chat-store-turns";
 import { stateMethods } from "./chat-store-state";
@@ -177,7 +178,7 @@ export function sqliteChatStoreBackend(
       copyId, m.id,
     );
     // What the message carries is per take, so its copy gets its own rows (a version's deltas are shared by swipe id and are not copied).
-    run("INSERT INTO message_deltas (message_id, seq, slot, path_json, value_json, removed, at) SELECT ?, seq, slot, path_json, value_json, removed, at FROM message_deltas WHERE message_id = ?", copyId, m.id);
+    run("INSERT INTO message_deltas (message_id, seq, slot, path_json, value_json, removed, at, swipe_id) SELECT ?, seq, slot, path_json, value_json, removed, at, swipe_id FROM message_deltas WHERE message_id = ?", copyId, m.id);
     run(`INSERT INTO director_states (message_id, position, version, cell) SELECT ?, ${liveBefore("d", "d.position")}, d.version, d.cell FROM director_states d JOIN swipes s ON s.message_id = d.message_id AND s.position = d.position WHERE d.message_id = ? AND ${liveOf("s")}`, copyId, m.id);
     run(
       `INSERT INTO swipe_traces (message_id, position, trace_json)
@@ -439,5 +440,9 @@ export function sqliteChatStoreBackend(
     ...turnMethods({ ...kit, insertSwipe, appendMany }),
     ...folderMethods(kit),
     ...compendiumMethods(kit),
+    ...summaryOnSlot({
+      sceneState: state.api.sceneState, recordMessageDeltas: state.api.recordMessageDeltas, now: clock, newId,
+      tip: async (b) => one<{ id: string }>("SELECT id FROM messages WHERE branch_id = ? AND cut_id IS NULL ORDER BY seq DESC LIMIT 1", b)?.id ?? null,
+    }),
   } satisfies ChatStore, database.idle);
 }

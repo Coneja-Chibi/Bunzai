@@ -1,41 +1,45 @@
 /**
  * The Story Director keeps the trackers up to date (plan 16; RoleCall `runDM.ts` phase 3b, moved to after the reply because RoleCall's runs before it and so tracks the PREVIOUS reply's prose,
  * map 13 #15). Once a reply has committed, in the background (the reply never waits for it and never fails over it), one request per batch of the trackers that are on and due reads the exchange
- * that just happened and each tracker as it is, and answers an UPDATE. Each module's part is merged by core/director/tracker-round.ts (never removing by omission) and written straight away
- * through the store's tracker write, guarded by the state it was planned against: a change the person made in the meantime drops that module's update, it never overwrites it.
+ * that just happened and each tracker as it is, and answers an UPDATE. Each module's part is merged by core/director/tracker-round.ts (never removing by omission), cut into scene-state deltas
+ * of the module's slot (`tracker.<module>`), and written for THE REPLY'S VERSION with `ChatStore.recordDeltas`: the write is tied to that version in this take, so it shows while that version is
+ * shown, a swipe or a regenerate leaves it behind, a cut takes it, and a fork inherits it with the reply. Nothing here undoes anything: there is no tracker-side record to keep in step.
  *
- * Every applied update is recorded on the tracker itself (`update`: which version of which reply, before and after) and as a receipt in THAT version's Director snapshot, never another's. An update
- * without a receipt never stays: if the version is no longer the shown one, or the receipts would not fit or cannot be saved, the updates are undone (scene-tracker-undo.ts). Calls per reply
- * counts every call this round makes, a repair of an unreadable answer included; planning's own retries stay outside it. A failure of any kind writes nothing for that module and says why in the
- * activity feed (RoleCall's "Tracker" entries). Not on Continue, Stop, or a reply that did not commit.
+ * The write names what it was planned against (`expect`, the values the round read): a change made since, by the person or another writer, drops that module's update, it never overwrites it.
+ * A field or row the person edited on this same reply is theirs: the update leaves it as it is and the activity feed says so (the person wins), and an update left with nothing to write is not made.
+ * Calls per reply counts every call this round makes, a repair of an unreadable answer included; planning's own retries stay outside it. A failure of any kind writes nothing for that module and says why
+ * in the activity feed (RoleCall's "Tracker" entries). Not on Continue, Stop, or a reply that did not commit.
  */
-import { describeDiff, batchesOf, changes, dueTrackers, mergeUpdate, readRound, receiptOf, roundMessages, type RoundModule } from "../core/director/tracker-round";
+import { describeDiff, batchesOf, changes, dueTrackers, mergeUpdate, readRound, roundMessages, type RoundModule } from "../core/director/tracker-round";
 import { directorOn, resolveDirector } from "../core/director/settings";
-import { parseTrackerData, refreshSpecOf, subsOf } from "../core/trackers";
+import { heldAs } from "../core/scene-state/fold";
+import { parseTrackerData, refreshSpecOf, trackerDeltas, trackerOverlay } from "../core/trackers";
 import { REFRESH_TEMPERATURE } from "../core/trackers/refresh";
 import { repairItem, type Read } from "../core/trackers/generate";
 import { isRecord } from "../core/guards";
 import { attemptError } from "../core/director/attempt-error";
 import { toErrorMessage } from "../error-message";
-import { DIRECTOR_RECEIPT_SIDE_MAX, DIRECTOR_STATE_BYTES_MAX, type TrackerReceipt } from "../stage/contracts/director-types";
-import type { ChatConnection, JsonValue } from "../stage/contracts/chat-store";
-import type { TrackerModule, TrackerUpdate } from "../stage/contracts/chat-tracker-types";
-import { StudioConflictError } from "./atomic-file";
+import { slotOf } from "../generated/slots";
+import { DIRECTOR_ACTIVITY_MAX, type DirectorActivity, type DirectorState } from "../stage/contracts/director-types";
+import type { ChatConnection, ChatStore } from "../stage/contracts/chat-store";
+import type { TrackerModule } from "../stage/contracts/chat-tracker-types";
+import { isStudioConflictError } from "./atomic-file";
 import { askText, type Ask, type Messages } from "./compendium-ask";
 import { tierRefusal, type DirectorTiers } from "./scene-director-tier";
 import { publishSceneTrackers, type TrackerOutcome, type TrackerOutcomes } from "./scene-events";
-import { dataOf, shownIn, syncTrackersToShown, undoUpdate, withLines, type Line, type UndoChats } from "./scene-tracker-undo";
+import { keepUnedited } from "./tracker-state";
 import type { Connected } from "./scene-turn";
 
 /** One request's time budget, so a hung provider cannot hold the next turn (which waits for this round to end). */
 export const TRACKER_ROUND_TIMEOUT_MS = 120_000;
-/** How many times the receipts are written again after a conflict with an edit made at the same moment. */
+/** How many times the activity lines are written again after a conflict with an edit made at the same moment. */
 const RECORD_ATTEMPTS = 3;
-/** Room kept for the activity lines a batch adds when its receipts are checked against the snapshot's size limit. */
-const LINES_ROOM = 800;
+
+export type RoundChats = Pick<ChatStore, "getChat" | "sceneState" | "sceneDeltas" | "recordDeltas" | "getDirector" | "putDirector">;
+export type Line = Omit<DirectorActivity, "id">;
 
 export interface TrackerRoundDeps {
-  chats: UndoChats;
+  chats: RoundChats;
   connect(connection: ChatConnection): Promise<Connected | null>;
   now(): number;
   tiers?: DirectorTiers;
@@ -45,7 +49,9 @@ export interface TrackerRoundDeps {
 
 export interface TrackerRoundInput {
   chatId: string;
-  /** The reply that just committed and the version of it that was shown: the update and its receipts belong to that version and no other. */
+  /** The take the reply was committed on: the round reads and writes there whichever take is shown by the time it finishes. */
+  branchId: string;
+  /** The reply that just committed and the version of it that was shown: the update belongs to that version and no other. */
   messageId: string;
   swipeId: string;
   /** The Director's turn counter for this reply. */
@@ -58,10 +64,12 @@ export interface TrackerRoundInput {
   directive?: string;
 }
 
-/** The trackers already reported as too large to update, by their size, so a tracker that stays too large is said once (until its size changes). */
-const tooLarge = new Map<string, number>();
-
-interface Applied { module: TrackerModule; update: TrackerUpdate; receipt: TrackerReceipt }
+/** Adds activity lines to a state, ids from its own counter. */
+export function withLines(state: DirectorState, lines: readonly Line[]): DirectorState {
+  const s = structuredClone(state);
+  s.activity = [...s.activity, ...lines.map((l) => ({ ...l, id: `act-${s.nextId++}` }))].slice(-DIRECTOR_ACTIVITY_MAX);
+  return s;
+}
 
 /** The round's calls left: every request counts, the repair of an unreadable answer too. */
 interface Budget { left: number }
@@ -78,97 +86,79 @@ async function askRound(connected: Connected, request: Ask, first: Messages, bud
   return again.ok ? again : { ok: false, error: `the model's answer could not be read: ${again.error}` };
 }
 
-/** What one batch did: what it wrote, what it has to say, and whether the reply stopped being the one shown (the round then ends and undoes its writes). */
-interface Batch { applied: Applied[]; lines: Line[]; outcomes: TrackerOutcomes[]; abandon: boolean }
+/** What one batch did: what it has to say, how each tracker fared, and whether the reply is gone from the take (the round then ends). */
+interface Batch { lines: Line[]; outcomes: TrackerOutcomes[]; abandon: boolean }
 
-async function runBatch(deps: TrackerRoundDeps, input: TrackerRoundInput, connected: Connected, model: string, modules: readonly TrackerModule[], signal: AbortSignal, budget: Budget, before: readonly Applied[], earlier: readonly Line[]): Promise<Batch> {
-  const out: Batch = { applied: [], lines: [], outcomes: [], abandon: false };
+async function runBatch(deps: TrackerRoundDeps, input: TrackerRoundInput, connected: Connected, model: string, modules: readonly TrackerModule[], signal: AbortSignal, budget: Budget): Promise<Batch> {
+  const out: Batch = { lines: [], outcomes: [], abandon: false };
   const outcome = (module: TrackerModule, o: TrackerOutcome): void => void out.outcomes.push({ module, outcome: o });
   const say = (result: Line["result"], description: string, details?: string): void => void out.lines.push({ at: deps.now(), turn: input.turn, type: "tracker", result, description, ...(details ? { details: details.slice(0, 600) } : {}), model });
   const chat = await deps.chats.getChat(input.chatId);
-  if (!chat) return out;
-  // A tracker whose saved state is too large to keep a way back for is never updated; that is said once, then not again until its size changes.
-  const askable = modules.filter((module) => {
-    const size = JSON.stringify(dataOf(chat, module)).length;
-    const key = `${input.chatId}:${module}`;
-    if (size <= DIRECTOR_RECEIPT_SIDE_MAX) { tooLarge.delete(key); return true; }
-    if (tooLarge.get(key) !== size) { tooLarge.set(key, size); say("error", `Tracker update for ${module} skipped: the tracker is too large to keep a way back for`); }
-    outcome(module, "skipped");
-    return false;
-  });
-  if (askable.length === 0) return out;
-  const ask: RoundModule[] = askable.map((module) => ({ module, data: chat.trackers?.[module]?.data, subs: subsOf(module, chat.trackers?.[module]?.data) }));
-  const maxTokens = Math.min(8000, askable.reduce((n, m) => n + refreshSpecOf(m)!.maxTokens, 0));
+  const state = chat ? await deps.chats.sceneState(input.branchId) : null;
+  if (!chat || !state) return out;
+  // What the request is built from, and what a write is judged against.
+  const entries = trackerOverlay(chat.trackers, state);
+  const ask: RoundModule[] = modules.map((module) => ({ module, data: entries[module]?.data, subs: entries[module]?.subs ?? {} }));
+  const maxTokens = Math.min(8000, modules.reduce((n, m) => n + refreshSpecOf(m)!.maxTokens, 0));
   let answer: Record<string, unknown>;
   try {
     const read = await askRound(connected, { model, options: { temperature: REFRESH_TEMPERATURE, max_tokens: maxTokens }, signal: AbortSignal.any([signal, AbortSignal.timeout(deps.timeoutMs ?? TRACKER_ROUND_TIMEOUT_MS)]) },
       roundMessages({ characterName: input.characterName, personaName: input.personaName, userMessage: input.userMessage, reply: input.reply, ...(input.directive ? { directive: input.directive } : {}), modules: ask }), budget);
-    if (!read.ok) { say("error", `Tracker update failed (${askable.join(", ")}): ${read.error}`); askable.forEach((m) => outcome(m, "failed")); return out; }
+    if (!read.ok) { say("error", `Tracker update failed (${modules.join(", ")}): ${read.error}`); modules.forEach((m) => outcome(m, "failed")); return out; }
     answer = read.value;
   } catch (error) {
     if (signal.aborted) throw error;
     // A provider's own text is untrusted (it can echo the request): the story keeps only its kind, as the planner's log does.
-    say("error", `Tracker update failed (${askable.join(", ")}): ${attemptError(error)}`);
-    askable.forEach((m) => outcome(m, "failed"));
+    say("error", `Tracker update failed (${modules.join(", ")}): ${attemptError(error)}`);
+    modules.forEach((m) => outcome(m, "failed"));
     return out;
   }
-  for (const module of askable) {
+  for (const module of modules) {
     const part = answer[module];
     if (part === undefined) continue;
     if (!isRecord(part)) { say("error", `Tracker update for ${module} skipped: its part of the answer is not an object`); outcome(module, "failed"); continue; }
-    // The reply must still be the version shown, and its snapshot still this turn's, before anything is written.
-    const fresh = await deps.chats.getChat(input.chatId);
-    const shown = fresh ? await shownIn(deps.chats, fresh, input.messageId) : "gone";
-    const snap = await deps.chats.getDirector(input.chatId, input.messageId);
-    if (typeof shown === "string" || shown.swipeId !== input.swipeId || !snap || snap.messageId !== input.messageId || snap.state.turn !== input.turn) { out.abandon = true; return out; }
-    // Planned against the state the request was built from: a change made since is a conflict at the write, never planned over.
-    const was = chat.trackers?.[module]?.data;
+    const was = entries[module]?.data;
     const merged = mergeUpdate(refreshSpecOf(module)!, was, part, { id: () => crypto.randomUUID(), now: deps.now() }, (s) => parseTrackerData(module, s));
     if (!merged.ok) { say("error", `Tracker update for ${module} skipped: ${merged.error}`); outcome(module, "failed"); continue; }
     if (!changes(merged.diff)) continue;
-    const receipt = receiptOf(module, was, merged.state, input.turn, deps.now());
-    if (!receipt) { say("error", `Tracker update for ${module} skipped: the tracker would be too large to keep a way back for`); outcome(module, "skipped"); continue; }
-    // Its way back must fit in the reply's snapshot before the tracker is touched.
-    const receipts = [...before, ...out.applied].map((a) => a.receipt).concat(receipt);
-    const size = JSON.stringify({ ...snap.state, trackerUpdates: receipts }).length + LINES_ROOM * (earlier.length + out.lines.length + 1);
-    if (size > DIRECTOR_STATE_BYTES_MAX) { say("error", `Tracker update for ${module} skipped: its way back would not fit in the saved story`); outcome(module, "skipped"); continue; }
-    const update: TrackerUpdate = { messageId: input.messageId, swipeId: input.swipeId, turn: input.turn, at: receipt.at, before: receipt.before, after: receipt.after };
+    const planned = trackerDeltas(module, was, merged.state, deps.now());
+    // The person wins on their own reply: what they edited there is left as it is, and said so.
+    const mine = await keepUnedited(deps.chats, input.branchId, input.messageId, module, planned, state, entries[module]?.subs);
+    if (!mine) { out.abandon = true; return out; }
+    const { kept, left, blocked } = mine;
+    if (blocked.length > 0) say("info", `Tracker update for ${module} was not made: ${blocked.join("; ")}`);
+    else if (left.length > 0) say("info", `Tracker update for ${module} left your edit of ${left.join(", ")} as it is`);
+    if (kept.length === 0) { outcome(module, "skipped"); continue; }
     try {
-      // The write names the state this was planned against: the person's change made since is never overwritten.
-      await deps.chats.setTracker(input.chatId, module, { data: merged.state as JsonValue, update, expectedData: receipt.before });
+      // The write names the state this was planned against: a change made since is never overwritten.
+      if (!(await deps.chats.recordDeltas(input.branchId, input.swipeId, kept, { expect: heldAs(state, kept, slotOf) }))) { out.abandon = true; return out; }
     } catch (error) {
-      outcome(module, error instanceof StudioConflictError ? "dropped" : "failed");
-      say("error", error instanceof StudioConflictError ? `Tracker update for ${module} dropped: it changed while the update was being planned` : `Tracker update for ${module} could not be saved: ${toErrorMessage(error, "the write failed")}`);
+      outcome(module, isStudioConflictError(error) ? "dropped" : "failed");
+      say("error", isStudioConflictError(error) ? `Tracker update for ${module} dropped: it changed while the update was being planned` : `Tracker update for ${module} could not be saved: ${toErrorMessage(error, "the write failed")}`);
       continue;
     }
-    out.applied.push({ module, update, receipt });
     outcome(module, "applied");
     say("success", describeDiff(module, merged.diff), merged.skipped.length > 0 ? `Left out of the answer: ${merged.skipped.map((s) => `${s.name} (${s.reason})`).join("; ")}` : undefined);
   }
   return out;
 }
 
-/** Writes the receipts and activity lines into the reply's own snapshot; false when the reply is no longer the shown version or the snapshot could not be written. */
-async function record(deps: TrackerRoundDeps, input: TrackerRoundInput, applied: readonly Applied[], lines: readonly Line[]): Promise<boolean> {
+/** Writes the activity lines into the reply's own snapshot; false when the snapshot is no longer this turn's or could not be written. */
+async function record(deps: TrackerRoundDeps, input: TrackerRoundInput, lines: readonly Line[]): Promise<boolean> {
   for (let attempt = 0; attempt < RECORD_ATTEMPTS; attempt++) {
-    const chat = await deps.chats.getChat(input.chatId);
-    const shown = chat ? await shownIn(deps.chats, chat, input.messageId) : "gone";
-    if (typeof shown === "string" || shown.swipeId !== input.swipeId) return false;
     const snap = await deps.chats.getDirector(input.chatId, input.messageId);
     if (!snap || snap.messageId !== input.messageId || snap.state.turn !== input.turn) return false;
-    const state = withLines(snap.state, lines);
-    if (applied.length > 0) state.trackerUpdates = applied.map((a) => a.receipt);
     try {
-      return (await deps.chats.putDirector(input.chatId, input.messageId, state, { expectedVersion: snap.version })) !== null;
+      return (await deps.chats.putDirector(input.chatId, input.messageId, withLines(snap.state, lines), { expectedVersion: snap.version })) !== null;
     } catch (error) {
-      // Another version selected meanwhile has a different stamp, so the guard refuses and the shown version is looked at again; anything else is final.
-      if (!(error instanceof StudioConflictError)) return false;
+      // Another version selected meanwhile has a different stamp, so the guard refuses and the snapshot is looked at again; anything else is final.
+      if (!isStudioConflictError(error)) return false;
     }
   }
   return false;
 }
 
-/** The round for one committed reply; resolves when everything it did is written or undone. Throws only the abort. */
+/** The round for one committed reply; resolves when everything it did is written. Throws only the abort. */
 export async function runTrackerRound(deps: TrackerRoundDeps, input: TrackerRoundInput, signal: AbortSignal): Promise<TrackerOutcomes[]> {
   const chat = await deps.chats.getChat(input.chatId);
   if (!chat || !directorOn(chat) || !chat.props) return [];
@@ -179,7 +169,7 @@ export async function runTrackerRound(deps: TrackerRoundDeps, input: TrackerRoun
   const lines: Line[] = [];
   const stop = async (description: string): Promise<TrackerOutcomes[]> => {
     lines.push({ at: deps.now(), turn: input.turn, type: "tracker", result: "error", description });
-    await record(deps, input, [], lines);
+    await record(deps, input, lines);
     return batches.flat().map((module) => ({ module, outcome: "skipped" as const }));
   };
   const denied = tierRefusal("director.trackers", deps.tiers);
@@ -188,34 +178,24 @@ export async function runTrackerRound(deps: TrackerRoundDeps, input: TrackerRoun
   const connected = target ? await deps.connect(target) : null;
   if (!target || !connected) return stop("Tracker update skipped: the Story Director has no connection to ask");
   const budget: Budget = { left: settings.callsPerReply };
-  const applied: Applied[] = [];
   const outcomes: TrackerOutcomes[] = [];
-  let abandon = false;
   try {
     for (const modules of batches) {
       if (signal.aborted) break;
       if (budget.left <= 0) { lines.push({ at: deps.now(), turn: input.turn, type: "tracker", result: "error", description: `Tracker update skipped (${modules.join(", ")}): Calls per reply was used up` }); modules.forEach((module) => outcomes.push({ module, outcome: "skipped" })); continue; }
-      const batch = await runBatch(deps, input, connected, target.model, modules, signal, budget, applied, lines);
-      applied.push(...batch.applied);
+      const batch = await runBatch(deps, input, connected, target.model, modules, signal, budget);
       lines.push(...batch.lines);
       outcomes.push(...batch.outcomes);
       if (batch.abandon) {
-        abandon = true;
         for (const module of modules) if (!batch.outcomes.some((o) => o.module === module)) outcomes.push({ module, outcome: "skipped" });
         break;
       }
     }
   } catch (error) {
-    // Stopped mid-round: whatever was written has its receipt or is undone, never left without one.
+    // Stopped mid-round: whatever was written is tied to the reply's version and stays with it.
     if (!signal.aborted) throw error;
   }
-  if (!abandon && applied.length === 0 && lines.length === 0) return outcomes;
-  if (abandon || !(await record(deps, input, applied, lines))) {
-    for (const a of applied) await undoUpdate(deps.chats, input.chatId, a.module, a.update);
-    // The version that is shown now is the one whose trackers matter: it gets its own update back.
-    await syncTrackersToShown(deps.chats, input.chatId, input.messageId, deps.now);
-    for (const a of applied) outcomes.push({ module: a.module, outcome: "undone" });
-  }
+  if (lines.length > 0) await record(deps, input, lines);
   return outcomes;
 }
 
@@ -237,7 +217,7 @@ export function startTrackerRound(deps: TrackerRoundDeps, input: TrackerRoundInp
   running.set(input.chatId, { controller, done });
 }
 
-/** Stops the scene's round, if one is running, and waits for it to have written or undone everything: a new turn reads the trackers only after this. */
+/** Stops the scene's round, if one is running, and waits for it to have written everything it wrote: a new turn reads the trackers only after this. */
 export async function cancelTrackerRound(chatId: string): Promise<void> {
   const round = running.get(chatId);
   if (!round) return;

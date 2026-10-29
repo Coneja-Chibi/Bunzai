@@ -7,6 +7,7 @@ import { describe, expect, test } from "bun:test";
 import { typedEntry } from "../core/compendium/fixture-book";
 import { emptyLorebookBody } from "../core/lore";
 import { DEFAULT_RESOURCES } from "../core/trackers/resources";
+import { dataAt, personEdit } from "./fake-director-rig";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
@@ -26,13 +27,17 @@ async function scene(card: Record<string, unknown> = {}, readLorebook: (id: stri
   await chats.setConnection(chat.id, { id: "conn", model: "vera-1" });
   await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }, { role: "user", content: "Any storms?" }]);
   const sent: ProviderRequest[] = [];
-  const provider: Provider = { id: "fake", async send(request) { sent.push(request); return { content: "Maybe.", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
+  const flags = { failing: false };
+  const provider: Provider = { id: "fake", async send(request) { sent.push(request); if (flags.failing) throw new Error("down"); return { content: "Maybe.", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
   const deps = { chats, state: memoryStateStore(), connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }), readPreset: async () => null, readLorebook, now: () => (now += 10), randomSeed: () => 7 };
   const turn = async () => {
     const version = (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion!;
     await runTurn(deps, { chatId: chat.id, kind: "reply", expectedVersion: version }, () => undefined);
   };
-  return { chats, chat, sent, turn };
+  /** A module's whole next data, kept as the person's edit of the newest message. */
+  const keep = (module: Parameters<typeof personEdit>[2], data: unknown) => personEdit(chats, chat.activeBranchId, module, data);
+  const read = (module: Parameters<typeof personEdit>[2]) => dataAt(chats, chat.activeBranchId, module);
+  return { chats, chat, sent, turn, keep, read, flags, deps };
 }
 const hurt = { ...DEFAULT_RESOURCES, hp: 40 };
 const sentTrackers = (r: ProviderRequest) => r.messages.filter((m) => m.content.startsWith("### Current Game State"));
@@ -41,7 +46,7 @@ describe("a turn with tracker Props", () => {
   test("a tracker that is on sends its state in front of the conversation", async () => {
     const s = await scene();
     await s.chats.setProps(s.chat.id, { on: ["tracker-resources"] });
-    await s.chats.setTracker(s.chat.id, "resources", { data: hurt });
+    await s.keep("resources", hurt);
     await s.turn();
     const blocks = sentTrackers(s.sent[0]!);
     expect(blocks).toHaveLength(1);
@@ -52,10 +57,10 @@ describe("a turn with tracker Props", () => {
 
   test("a tracker that was switched off sends nothing, though its state is still kept, and switching it on again brings it back", async () => {
     const s = await scene();
-    await s.chats.setTracker(s.chat.id, "resources", { data: hurt });
+    await s.keep("resources", hurt);
     await s.turn();
     expect(sentTrackers(s.sent[0]!)).toHaveLength(0);
-    expect((await s.chats.getChat(s.chat.id))!.trackers?.resources?.data).toEqual(hurt);
+    expect(await s.read("resources")).toEqual(hurt);
     await s.chats.setProps(s.chat.id, { on: ["tracker-resources"] });
     await s.chats.appendMessage(s.chat.activeBranchId, { role: "user", content: "Again" });
     await s.turn();
@@ -133,10 +138,11 @@ describe("a turn with the Combat tracker", () => {
     const s = await scene();
     await s.chats.setProps(s.chat.id, { on: ["tracker-resources", "tracker-battle"] });
     const gone = { id: "e2", name: "Rat", hp: 5, maxHp: 5, isBoss: false, statusEffects: [], threat: "low", removedAt: 9 };
-    await s.chats.setTracker(s.chat.id, "battle", { data: { inCombat: false, enemies: [], turnOrder: [], currentTurn: null, log: [], round: 0, dice: [] } });
+    await s.keep("resources", hurt);
+    await s.keep("battle", { inCombat: false, enemies: [], turnOrder: [], currentTurn: null, log: [], round: 0, dice: [] });
     await s.turn();
     expect(sentTrackers(s.sent[0]!)[0]!.content).not.toContain("**Combat**");
-    await s.chats.setTracker(s.chat.id, "battle", { data: { inCombat: true, enemies: [{ id: "e1", name: "Gorm", hp: 30, maxHp: 50, isBoss: true, statusEffects: [], threat: "high" }, gone], turnOrder: ["e1"], currentTurn: "e1", log: [], round: 3, dice: [] } });
+    await s.keep("battle", { inCombat: true, enemies: [{ id: "e1", name: "Gorm", hp: 30, maxHp: 50, isBoss: true, statusEffects: [], threat: "high" }, gone], turnOrder: ["e1"], currentTurn: "e1", log: [], round: 3, dice: [] });
     await s.chats.appendMessage(s.chat.activeBranchId, { role: "user", content: "Strike" });
     await s.turn();
     const lines = sentTrackers(s.sent[1]!)[0]!.content.split("\n");
@@ -150,10 +156,10 @@ describe("a turn with the Inventory tracker", () => {
   test("what is carried is sent as RoleCall's Inventory block, a deleted item is left out, and an empty inventory sends nothing", async () => {
     const s = await scene();
     await s.chats.setProps(s.chat.id, { on: ["tracker-inventory"] });
-    await s.chats.setTracker(s.chat.id, "inventory", { data: { items: [], equipment: {}, currency: 0 } });
+    await s.keep("inventory", { items: [], equipment: {}, currency: 0 });
     await s.turn();
     expect(s.sent[0]!.messages.some((m) => String(m.content).includes("[MECHANICS: INVENTORY]"))).toBe(false);
-    await s.chats.setTracker(s.chat.id, "inventory", { data: { items: [item("a", { name: "Fire Sword", category: "weapon", rarity: "rare" }), item("b", { name: "Old Map", removedAt: 5 })], equipment: {}, currency: 12 } });
+    await s.keep("inventory", { items: [item("a", { name: "Fire Sword", category: "weapon", rarity: "rare" }), item("b", { name: "Old Map", removedAt: 5 })], equipment: {}, currency: 12 });
     await s.chats.appendMessage(s.chat.activeBranchId, { role: "user", content: "Look" });
     await s.turn();
     const block = sentTrackers(s.sent[1]!)[0]!.content;
@@ -162,7 +168,7 @@ describe("a turn with the Inventory tracker", () => {
   });
   test("switched off, it sends nothing however much it kept", async () => {
     const s = await scene();
-    await s.chats.setTracker(s.chat.id, "inventory", { data: { items: [item("a", {})], equipment: {}, currency: 0 } });
+    await s.keep("inventory", { items: [item("a", {})], equipment: {}, currency: 0 });
     await s.turn();
     expect(s.sent[0]!.messages.some((m) => String(m.content).includes("[MECHANICS: INVENTORY]"))).toBe(false);
   });
@@ -171,26 +177,68 @@ describe("a turn with the Inventory tracker", () => {
 describe("a turn with the Spellbook tracker", () => {
   const spell = { id: "s1", name: "Firebolt", template: "attack", description: "d", level: 3, status: "learned", cooldownRemaining: 2 };
   const NOTE = '[SPELL CAST] The player invokes "Firebolt" (attack, Level 3).';
+  const book = () => ({ spells: [spell], subs: {}, pendingCast: NOTE });
   test("a cast waiting for the next reply rides it once and is then spent; the reply that carried it does not count down a cooldown", async () => {
     const s = await scene();
     await s.chats.setProps(s.chat.id, { on: ["tracker-spellbook"] });
-    await s.chats.setTracker(s.chat.id, "spellbook", { data: { spells: [spell], subs: {}, pendingCast: NOTE } });
+    await s.keep("spellbook", book());
     await s.turn();
     expect(s.sent[0]!.messages.filter((m) => m.content === NOTE)).toHaveLength(1);
-    const after = (await s.chats.getChat(s.chat.id))!.trackers!.spellbook!.data as { spells: { cooldownRemaining: number }[]; pendingCast?: string };
+    const after = (await s.read("spellbook")) as { spells: { cooldownRemaining: number }[]; pendingCast?: string };
     expect(after.pendingCast).toBeUndefined();
     expect(after.spells[0]!.cooldownRemaining).toBe(2);
     await s.chats.appendMessage(s.chat.activeBranchId, { role: "user", content: "Again" });
     await s.turn();
     expect(s.sent[1]!.messages.some((m) => m.content === NOTE)).toBe(false);
-    expect(((await s.chats.getChat(s.chat.id))!.trackers!.spellbook!.data as { spells: { cooldownRemaining: number }[] }).spells[0]!.cooldownRemaining).toBe(1);
+    expect(((await s.read("spellbook")) as { spells: { cooldownRemaining: number }[] }).spells[0]!.cooldownRemaining).toBe(1);
   });
-  test("a turn that fails keeps the cast for the retry, and a Spellbook that is off neither sends nor counts down", async () => {
+  test("the countdown is the reply's own: a new version of the reply ticks once, not twice, and a cut reply takes its tick with it", async () => {
     const s = await scene();
-    await s.chats.setTracker(s.chat.id, "spellbook", { data: { spells: [spell], subs: {}, pendingCast: NOTE } });
+    await s.chats.setProps(s.chat.id, { on: ["tracker-spellbook"] });
+    await s.keep("spellbook", { spells: [spell], subs: {} });
+    const cooling = async () => ((await s.read("spellbook")) as { spells: { cooldownRemaining: number }[] }).spells[0]!.cooldownRemaining;
+    await s.turn();
+    expect(await cooling()).toBe(1);
+    const reply = (await s.chats.readMessagesBefore(s.chat.activeBranchId, { limit: 1, liveOnly: true })).messages[0]!;
+    const version = (await s.chats.readMessages(s.chat.activeBranchId, { limit: 1 })).branchVersion!;
+    const { runTurn } = await import("./scene-turn");
+    await runTurn(s.deps, { chatId: s.chat.id, kind: "swipe", expectedVersion: version }, () => undefined);
+    await runTurn(s.deps, { chatId: s.chat.id, kind: "swipe", expectedVersion: (await s.chats.readMessages(s.chat.activeBranchId, { limit: 1 })).branchVersion! }, () => undefined);
+    expect(await cooling()).toBe(1);
+    await s.chats.selectSwipe(reply.id, 0);
+    expect(await cooling()).toBe(1);
+    await s.chats.cutMessages(s.chat.activeBranchId, reply.id, "one");
+    expect(await cooling()).toBe(2);
+  });
+  test("a continue does not run the countdown again", async () => {
+    const s = await scene();
+    await s.chats.setProps(s.chat.id, { on: ["tracker-spellbook"] });
+    await s.keep("spellbook", { spells: [spell], subs: {} });
+    await s.turn();
+    const { runTurn } = await import("./scene-turn");
+    await runTurn(s.deps, { chatId: s.chat.id, kind: "continue", expectedVersion: (await s.chats.readMessages(s.chat.activeBranchId, { limit: 1 })).branchVersion! }, () => undefined);
+    expect(((await s.read("spellbook")) as { spells: { cooldownRemaining: number }[] }).spells[0]!.cooldownRemaining).toBe(1);
+  });
+  test("a turn that fails keeps the cast and the cooldown for the retry", async () => {
+    const s = await scene();
+    await s.chats.setProps(s.chat.id, { on: ["tracker-spellbook"] });
+    await s.keep("spellbook", book());
+    s.flags.failing = true;
+    await s.turn();
+    const kept = (await s.read("spellbook")) as { spells: { cooldownRemaining: number }[]; pendingCast?: string };
+    expect(kept.pendingCast).toBe(NOTE);
+    expect(kept.spells[0]!.cooldownRemaining).toBe(2);
+    s.flags.failing = false;
+    await s.turn();
+    expect(s.sent.at(-1)!.messages.filter((m) => m.content === NOTE)).toHaveLength(1);
+    expect(((await s.read("spellbook")) as { pendingCast?: string }).pendingCast).toBeUndefined();
+  });
+  test("a Spellbook that is off neither sends nor counts down", async () => {
+    const s = await scene();
+    await s.keep("spellbook", book());
     await s.turn();
     expect(s.sent[0]!.messages.some((m) => m.content === NOTE)).toBe(false);
-    const kept = (await s.chats.getChat(s.chat.id))!.trackers!.spellbook!.data as { spells: { cooldownRemaining: number }[]; pendingCast?: string };
+    const kept = (await s.read("spellbook")) as { spells: { cooldownRemaining: number }[]; pendingCast?: string };
     expect(kept.pendingCast).toBe(NOTE);
     expect(kept.spells[0]!.cooldownRemaining).toBe(2);
   });
@@ -211,7 +259,7 @@ describe("every legacy tracker that keeps something reaches the request, in Role
   } as const;
   test("their lines come after Stats, in the order the module list gives, and none appear with the Props off", async () => {
     const s = await scene();
-    for (const [module, data] of Object.entries(state)) await s.chats.setTracker(s.chat.id, module as never, { data: data as never });
+    for (const [module, data] of Object.entries(state)) await s.keep(module as never, data);
     await s.turn();
     expect(sentTrackers(s.sent[0]!)).toHaveLength(0);
     await s.chats.setProps(s.chat.id, { on: Object.keys(state).map((m) => `tracker-${m}`) });

@@ -60,7 +60,9 @@ const prefStore = new Map<string, unknown>();
 function makeCtx(): AppContext {
   return {
     prefs: { get: (k: string) => prefStore.get(k), set: (k: string, v: unknown) => { prefStore.set(k, v); } },
+    pieces: { subscribeList: () => () => undefined, streamState: () => ({ sceneTrackers: null }) },
     api: {
+      getTrackerStates: async () => ({ branchId: "b1", branchVersion: 1, tipId: "m1", data: {}, unreadable: [], updates: {} }),
       getSceneProps: async (chatId: string) => { getCalls.push(chatId); return getImpl(); },
       setSceneProps: async (chatId: string, on: string[]) => { setCalls.push({ chatId, on }); return setImpl(chatId, on); },
     },

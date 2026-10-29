@@ -134,6 +134,18 @@ const clip = (text: string, max: number) => {
   return flat.length > max ? `${flat.slice(0, max)}...` : flat;
 };
 
+/** The exact phrases a server uses to say it cannot take tools, lowercase. Matched narrowly: any other 400 stays as it came. */
+const TOOLS_REFUSED = [
+  "does not support tools", // Ollama: "<model> does not support tools"
+  "tools is not supported", // generic wording, not tied to a named server
+  "tool use is not supported", // generic wording, not tied to a named server
+  "tools param requires --jinja", // llama.cpp started without --jinja
+  "--enable-auto-tool-choice", // vLLM without tool flags: '"auto" tool choice requires --enable-auto-tool-choice ...'
+] as const;
+
+/** Whether this error is a server refusing the request's tools (an HTTP 400 that says so), the one place that decides it. */
+export const refusesTools = (error: unknown): boolean => error instanceof ProviderError && error.status === 400 && TOOLS_REFUSED.some((phrase) => error.message.toLowerCase().includes(phrase));
+
 /** RoleCall's BYOK rule: 401 is a bad key; everything else is a backend error with its status. */
 export function classifyHttpFailure(status: number, bodyText: string, label: string): ProviderError {
   if (status === 401) {

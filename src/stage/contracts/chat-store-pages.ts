@@ -72,12 +72,12 @@ export interface TranscriptSearchPage {
   branchVersion: number | null;
 }
 
-/** The range read of scene state (ChatStore.sceneDeltas): the state before the first message, then each live message's deltas in fold order. */
+/** The range read of scene state (ChatStore.sceneDeltas): the state before the first message, then each live message's deltas in fold order. A message's list is three layers: its shown version's own deltas (below `generatedFrom`), this take's generated writes tied to that version (from `generatedFrom` below `personFrom`), and the person's edits of the message (from `personFrom`); the later layer wins. */
 export interface SceneDeltaRange {
   /** Every slot's value after the shown messages before the first one, without its own deltas. */
   before: SceneState;
   /** The live messages from the first through the last asked for, oldest first; a message that changed nothing has an empty list. */
-  messages: { messageId: string; deltas: Delta[] }[];
+  messages: { messageId: string; deltas: Delta[]; generatedFrom: number; personFrom: number }[];
 }
 
 /** A message-delta write's guard: the branch version, and `expect`, what the caller read at each slot and path (deltas of the values it saw, or removals where there were none); a write whose expectation the message no longer shows is refused. Not stored. */

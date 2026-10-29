@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tracker",
   "sourcePath": "docs/reference/entities/tracker.md",
-  "sourceHash": "sha256:e344a80a4a674d47a3fed296037f0a82eb6a5a63cf06a984a120f221ac963540",
+  "sourceHash": "sha256:a8456d2f23cfcfe85c760bb42be1dc45c5112564fffe446537360cd918c6b510",
   "summary": "The tracker entity page covers CanonicalTracker, a library piece for state a scene keeps, such as a character's health or a party's roster, kept as data and never code. A tracker has a name, a description, a layout of record or list, typed fields, a note telling the model how to update it, an optional macro template for its prompt line, an optional icon and a change style the Messenger draws. The page explains the field rules shared with tools and held in one small module the decoder and the core both use, including a number's top taken from another field and field icons from the shipped glyph set, the absence of product limits beyond hostile-input ceilings, the two layouts, how the state lives in two scene-state slot families, how a scene links trackers, gets a Trackers block the budget measures and never cuts, and can switch change visuals off, the tracker macro, the single update_trackers tool, which applies a batch all or nothing and writes only deltas on the reply being written, and the read that answers what each reply changed. The Editing section describes the tracker editor, with its settings, the field editor a tool shares, and a rail showing what the AI gets, and says the Messenger's Trackers panel links, shows and edits them and that each reply shows what it changed in the style the tracker chose.",
   "topics": [
     "CanonicalTracker",
@@ -87,7 +87,7 @@
       "slug": "the-update-tool",
       "title": "The update tool",
       "level": 2,
-      "sourceHash": "sha256:6aa4a491efff2c84d8c813a4d974bec591e1c6b006733bfee9b7f8eabe71072c",
+      "sourceHash": "sha256:31b83e8c51770a20dbda4b0f9ec75fc023a144025d0df044c8543d2f76d45c4f",
       "summary": "When Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, a scene with linked trackers offers one tool, update_trackers, taking updates each naming a tracker with an optional row, remove flag and set object. Its description is one fixed sentence plus one line per tracker with every field's type, range or choices and meaning, and the note, never cut, naming a top taken from another field as in hp from zero to hp_max. Items apply in order and the batch is all or nothing; a number past its range or such a top is clamped. The model is answered with only what changed. The deltas join the turn's pending set through a door for tracker slots only with no size cap, and the loop runs the tool as the one stateScoped write, exempt from answer shortening and a spent budget.",
       "topics": [
         "update_trackers",
@@ -104,9 +104,9 @@
       "slug": "what-a-reply-changed",
       "title": "What a reply changed",
       "level": 2,
-      "sourceHash": "sha256:ccd7ce8050470ad25d8141b2e5e1426fe1af107da0bda69f22ef42d09d1bb005",
+      "sourceHash": "sha256:defe3198a13ccd41d381115b7ca5a9c4a1a2178ba78b4624692d30f5ba315eeb",
       "children": [],
-      "summary": "A read route answers, for a take and a range of its live messages, what each message changed in the library trackers on the version it shows, with each tracker's name, style and icons. A record's change is a field with its value before and after, and a list's is a row, added, changed or removed, with the whole row. Values are exact, never cut. It is one forward pass: the store's range read gives the state before the first message and each message's deltas in fold order, and the state is folded forward, so a person's edit shows as a change on its message, choosing another version shows that version's changes, and a cut message drops out. Only an unreadable piece is reported by its id with the stored values, a changed layout keeps the name and style, past lines are read through the current piece, only tracker slots are loaded, a missing branch or message is a 404, a malformed to a 400, an empty to the tip.",
+      "summary": "A read route answers, for a take and a range of its live messages, what each message changed in the library trackers on the version it shows, with each tracker's name, style and icons, and bars: for each changed number that has a top, its bottom and the top it had when the message left it. A record's change is a field with its value before and after, and a list's is a row, added, changed or removed, with the whole row. Values are exact, never cut. It is one forward pass: the state before the first message is folded forward through each message's deltas, so a person's edit shows as a change on its message, another version shows its own changes, and a cut message drops out. Only an unreadable piece is reported by its id with the stored values, a changed layout keeps the name and style, past lines are read through the current piece, only tracker slots are loaded, a missing branch or message is a 404, a malformed to a 400, an empty to the tip.",
       "topics": [
         "tracker-changes route",
         "sceneDeltas",

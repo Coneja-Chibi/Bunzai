@@ -246,3 +246,16 @@ describe("indexes", () => {
     expect(plan("DELETE FROM swipe_deltas WHERE swipe_id NOT IN (SELECT swipe_id FROM swipes)")).not.toMatch(/SCAN swipes/);
   });
 });
+
+describe("a scene row written before the Props trackers' state moved into slots", () => {
+  test("is read as settings alone: a module's old state and the Director's undo records are not read, and the next change to the module rewrites the cell without them", async () => {
+    const s = await longChat(2);
+    const old = { resources: { data: { hp: 3 }, update: { messageId: "m", swipeId: "s", turn: 1, at: 1, before: null, after: { hp: 3 } }, undone: [], parked: [], context: "never" }, inventory: { data: { items: [] } }, map: { data: { mode: "full" } } };
+    s.database.statement("UPDATE chats SET trackers_json = ? WHERE id = ?").run(s.cipher.seal("chats.trackers_json", JSON.stringify(old)), s.chat.id);
+    expect((await s.store.getChat(s.chat.id))!.trackers).toEqual({ resources: { context: "never" }, map: { data: { mode: "full" } } });
+    expect((await s.store.getChat(s.chat.id))!.trackers).toEqual((await s.store.listChats()).chats[0]!.trackers);
+    await s.store.setTracker(s.chat.id, "resources", { auto: { every: 2 } });
+    const cell = (s.database.statement("SELECT trackers_json FROM chats").get() as { trackers_json: string }).trackers_json;
+    expect(JSON.parse(s.cipher.open("chats.trackers_json", cell))).toEqual({ resources: { context: "never", auto: { every: 2 } }, map: { data: { mode: "full" } } });
+  });
+});

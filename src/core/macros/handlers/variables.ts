@@ -141,15 +141,18 @@ export function addHandler(resolve: VarResolver, echo: boolean): MacroHandler {
     const numericValue = parseFloat(rawValue);
 
     let newValue: string | number;
+    let added: string | number;
     if (!Number.isNaN(numericValue) && Number.isFinite(numericValue) && String(numericValue) === rawValue.trim()) {
       const currentNum = typeof current === "number" ? current : 0;
       newValue = currentNum + numericValue;
+      added = numericValue;
     } else {
       const currentStr = typeof current === "string" ? current : current != null ? String(current) : "";
       newValue = currentStr + rawValue;
+      added = rawValue;
     }
 
-    return { value: echo ? String(newValue) : "", success: true, sideEffects: [{ type: setType, key: target.key, value: newValue }] };
+    return { value: echo ? String(newValue) : "", success: true, sideEffects: [{ type: setType, key: target.key, value: newValue, add: added }] };
   };
 }
 
@@ -165,7 +168,7 @@ export function stepHandler(resolve: VarResolver, delta: 1 | -1): MacroHandler {
     const current = vars.get(target.key)?.value;
     const newValue = (typeof current === "number" ? current : 0) + delta;
 
-    return { value: newValue.toString(), success: true, sideEffects: [{ type: setType, key: target.key, value: newValue }] };
+    return { value: newValue.toString(), success: true, sideEffects: [{ type: setType, key: target.key, value: newValue, add: delta }] };
   };
 }
 

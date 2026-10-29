@@ -49,7 +49,8 @@ function apply(def: SlotDef, owned: JsonValue, d: Delta): JsonValue {
 export function foldInto(state: SceneState, deltas: readonly Delta[], slotOf: (id: string) => SlotDef | undefined, copied: Set<string>): void {
   for (const d of deltas) {
     const def = slotOf(d.slot);
-    if (!def || !readable(def, d)) continue;
+    // A shared slot is not one take's: its deltas ride with the version that made them, but its value is folded across every live take (globals.ts).
+    if (!def || def.scope === "shared" || !readable(def, d)) continue;
     if (!copied.has(d.slot)) {
       state[d.slot] = copyOf(def, state[d.slot] ?? def.default);
       copied.add(d.slot);

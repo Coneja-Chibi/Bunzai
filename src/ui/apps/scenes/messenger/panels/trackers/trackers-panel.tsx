@@ -25,6 +25,8 @@ import { LibraryPick } from "./library-pick";
 import { takeTrackerOpen, useRequestedTracker } from "./open-tracker";
 import { isOpenable, isTrackerProp, moduleOf, trackersSummary } from "./trackers-core";
 import { useLibraryTrackers } from "./use-library-trackers";
+import { useTrackerStates } from "../../../props/trackers/tracker-states";
+import { isStoryboard } from "../../../../../../core/trackers";
 
 const LIBRARY_CARD_PX = 150;
 
@@ -35,9 +37,9 @@ function PopOutButton({ prop, ctx }: { prop: SceneProp; ctx: PopoutContext["ctx"
   return <IconButton data-part={`scene.messenger.trackers.card.popout.${id}`} variant="quiet" size="sm" icon="lucide:external-link" label={`Pop out ${prop.name}`} onClick={po.open} />;
 }
 
-function Card({ prop, ctx, chat, onOpen }: { prop: SceneProp; ctx: PopoutContext["ctx"]; chat: PopoutContext["chat"]; onOpen(): void }): JSX.Element {
+function Card({ prop, ctx, chat, data, onOpen }: { prop: SceneProp; ctx: PopoutContext["ctx"]; chat: PopoutContext["chat"]; data: unknown; onOpen(): void }): JSX.Element {
   const id = moduleOf(prop);
-  const line = trackerSummary(id, chat.trackers?.[id]);
+  const line = trackerSummary(id, isStoryboard(id) ? chat.trackers?.[id]?.data : data, chat.trackers?.[id]?.context);
   return (
     <div className="msn-trk-card" data-part={`scene.messenger.trackers.card.${id}`} style={{ "--tone": prop.tone } as CSSProperties}>
       <ListRow data-part={`scene.messenger.trackers.card.open.${id}`} leading={<Ic name={prop.icon} size={16} />} label={prop.name} subtitle={prop.tier} variant="picker" onClick={onOpen} />
@@ -80,6 +82,7 @@ export function MessengerTrackersPanel({ ctx, chat, onChat, ids }: PopoutContext
   // A chip under a reply asked for this tracker (open-tracker.ts): open it, whatever the panel was showing.
   useEffect(() => { if (requested === null) return; setOpenLib(requested); setPicking(false); setOpenId(null); takeTrackerOpen(chat.id); }, [requested, chat.id]);
   const dm = useDirectorPanel(ctx, chat);
+  const sync = useTrackerStates(ctx, chat);
   const opened = openId === null ? undefined : shown.find((p) => p.id === openId && p.panel);
   const more = all.filter((p) => isTrackerProp(p) && isOpenable(p)).length - shown.length;
   const director = dm.load.state === "ready" ? dm.load.panel : null;
@@ -116,7 +119,7 @@ export function MessengerTrackersPanel({ ctx, chat, onChat, ids }: PopoutContext
             {linked.length > 0 && lib.load.state === "loading" && <p className="msn-trk-empty" role="status">Loading the trackers...</p>}
             {lib.load.state === "failed" && linked.length > 0 && <p className="dr-note-line bad" role="alert">{lib.load.why}<span className="dr-note-x"><Button size="sm" onClick={lib.reload}>Try again</Button></span></p>}
             {linked.length > 0 && lib.load.state === "ready" && <VirtualRows items={lib.load.data.trackers} keyOf={(t) => t.id} estimate={LIBRARY_CARD_PX} gap={8} render={(t) => <LibraryCard tracker={t} onOpen={() => setOpenLib(t.id)} />} />}
-            {shown.map(/* bounded-ok: fixed registry of panels / settings / props / platforms */ (p) => <Card key={p.id} prop={p} ctx={ctx} chat={chat} onOpen={() => open(p)} />)}
+            {shown.map(/* bounded-ok: fixed registry of panels / settings / props / platforms */ (p) => <Card key={p.id} prop={p} ctx={ctx} chat={chat} data={sync.states?.data[moduleOf(p)]} onOpen={() => open(p)} />)}
           </div>
           <Button data-part="scene.messenger.trackers.pick.open" size="sm" icon="lucide:plus" onClick={() => setPicking(true)}>Add or remove trackers</Button>
         </>

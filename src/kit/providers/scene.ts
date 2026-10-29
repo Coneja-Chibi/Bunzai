@@ -27,8 +27,8 @@ export function sceneRefusal(spoke: ProviderSpoke | undefined): string | null {
 /** Models that refuse tool calls whatever their host says. */
 const NO_TOOLS = /(^|[/:-])(o1-mini|o1-preview|text-embedding|whisper|tts|dall-e|gpt-image)/i;
 
-/** Whether a scene may send tools to this model: its spoke declares tool calls and the model is not one that refuses them. */
-export const sceneTools = (spoke: ProviderSpoke | undefined, model: string): boolean => spoke?.scene?.tools === true && !NO_TOOLS.test(model);
+/** Whether a scene sends tools to this model: its spoke has a scene endpoint and the model is not one that refuses them. */
+export const sceneTools = (spoke: ProviderSpoke | undefined, model: string): boolean => Boolean(spoke?.scene) && !NO_TOOLS.test(model);
 
 export async function sceneProvider(config: ProviderConfig): Promise<Provider> {
   const spoke = (await spokes()).get(config.kind);

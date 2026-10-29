@@ -1,32 +1,13 @@
 /**
  * The loader's rules (items 7 and 12; 2e-d4 plan step 2): the window a turn
- * fits into, the library's global variables, and which lorebooks a turn runs with the fires their
+ * fits into and which lorebooks a turn runs with the fires their
  * stored traces recorded.
  */
 import { describe, expect, test } from "bun:test";
 import type { LorebookBody } from "../entities/lorebook/schema";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
-import { loadTurn, readGlobals, writeGlobals } from "./scene-turn-load";
-
-describe("global variables", () => {
-  test("a diff sets and deletes names, keeping each name's first time", async () => {
-    const state = memoryStateStore();
-    await writeGlobals(state, { set: { mood: "calm", keep: 1 }, delete: [] }, 100);
-    await writeGlobals(state, { set: { mood: "stormy" }, delete: ["keep"] }, 200);
-    expect(Object.fromEntries(await readGlobals(state))).toEqual({ mood: { value: "stormy", createdAt: 100, updatedAt: 200 } });
-  });
-
-  test("a damaged document refuses the turn rather than reading as empty, and is never written over", async () => {
-    const state = memoryStateStore();
-    await state.write("variables", "{not json");
-    await expect(readGlobals(state)).rejects.toThrow("could not be read");
-    await expect(writeGlobals(state, { set: { a: 1 }, delete: [] }, 1)).rejects.toThrow("could not be read");
-    expect(await state.read("variables")).toBe("{not json");
-    await state.write("variables", JSON.stringify({ a: { value: 1 } }));
-    await expect(readGlobals(state)).rejects.toThrow("could not be read");
-  });
-});
+import { loadTurn } from "./scene-turn-load";
 
 describe("lore", () => {
   const vera = {

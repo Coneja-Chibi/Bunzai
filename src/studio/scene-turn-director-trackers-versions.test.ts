@@ -1,173 +1,248 @@
 /**
- * The Director's tracker updates follow the version of a reply that is SHOWN (plan 16, review round 1): selecting another version, cutting a reply and sending again, or regenerating never leaves a
- * discarded version's update in the trackers or puts a receipt on the wrong version; the round counts every call it makes against Max Tool Rounds, checks that its receipts fit before it writes,
- * and says once when a tracker is too large to update.
+ * The Director's tracker updates follow the shown history (plan 16, scene-state.md): an update is written for the reply version it is about, so a new version, a chosen version, a cut reply, a
+ * fork and a take switch each leave the trackers carrying what the shown versions did and nothing else, with no tracker-side record to keep in step. The person's Undo is their own edit on the
+ * reply and so survives all of those. The Spellbook's countdown is the reply's own write and lands before the round reads it. The page hears when the round is done.
+ * These replace the old suite of the tracker undo system (the parked and undone lists, the receipts, the sync wrappers) with the same meanings on the new behavior.
  */
 import { describe, expect, test } from "bun:test";
-import { DEFAULT_INVENTORY, applyInventory, liveItems, readInventory } from "../core/trackers/inventory";
-import { DEFAULT_RESOURCES } from "../core/trackers/resources";
-import type { JsonValue } from "../stage/contracts/chat-store";
-import { DIRECTOR_STATE_BYTES_MAX } from "../stage/contracts/director-types";
+import { readTrackerStates } from "./tracker-state";
+import { liveItems, readInventory, DEFAULT_INVENTORY, applyInventory } from "../core/trackers/inventory";
+import { DEFAULT_RESOURCES, readResources } from "../core/trackers/resources";
+import { DEFAULT_SPELLBOOK, SPELLBOOK_GEN, applySpellbook, readSpellbook, type SpellMade } from "../core/trackers/spellbook";
+import { ProviderError } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
-import { buildScene, text, type SceneOptions } from "./fake-director-rig";
-import { readDirectorPanel, undoDirectorTracker } from "./scene-director-edit";
-import { cutKeepingTrackers, selectKeepingTrackers } from "./scene-director-trackers-sync";
+import { buildScene, dataAt, personEdit, text, type SceneOptions } from "./fake-director-rig";
+import { undoDirectorTracker } from "./scene-director-edit";
+import { onSceneTrackers, type SceneTrackersEvent } from "./scene-events";
 
 const scene = (opts: SceneOptions = {}) => buildScene(opts, (clock) => ({ chats: memoryChatStore(clock), state: memoryStateStore() }));
 type Scene = Awaited<ReturnType<typeof scene>>;
-const item = (name: string, over: Record<string, unknown> = {}) => ({ name, description: "", category: "misc" as const, rarity: "common" as const, quantity: 1, ...over });
-const stocked = () => applyInventory(DEFAULT_INVENTORY, { kind: "add", item: item("Sword"), id: "s1", at: 1 }) as unknown as JsonValue;
-const answer = (o: unknown) => text(JSON.stringify(o));
-const adds = (name: string) => answer({ inventory: { items: [item(name)] } });
-const names = async (s: Scene) => liveItems(readInventory((await s.chats.getChat(s.chat.id))!.trackers!.inventory!.data)).map((i) => i.name).sort();
-const base = (name: string[]) => ({ trackers: { inventory: { data: stocked() } }, tracker: name.map(adds) });
-const lines = async (s: Scene) => (await s.stored())!.state.activity.filter((a) => a.type === "tracker");
-const reached = async (s: Scene, n = 1) => { for (let i = 0; i < 500 && s.tracker.length < n; i++) await Promise.resolve(); };
+const item = (name: string) => ({ name, description: "", category: "misc" as const, rarity: "common" as const, quantity: 1 });
+const stocked = () => applyInventory(DEFAULT_INVENTORY, { kind: "add", item: item("Sword"), id: "s1", at: 1 });
+const adds = (name: string) => text(JSON.stringify({ inventory: { items: [item(name)] } }));
+const names = async (s: Scene, branch = s.chat.activeBranchId) => liveItems(readInventory(await dataAt(s.chats, branch, "inventory"))).map((i) => i.name).sort();
+const base = (list: string[]) => ({ trackers: { inventory: { state: stocked() } }, tracker: list.map(adds) });
+const stateOf = async (s: Scene, branch = s.chat.activeBranchId) => (await readTrackerStates(s.chats, (await s.chats.getChat(s.chat.id))!, branch))!;
+/** The "trackers changed" pushes the app-wide channel would carry for this test. */
+const pushes = (): { list: SceneTrackersEvent[]; off: () => void } => { const list: SceneTrackersEvent[] = []; return { list, off: onSceneTrackers((e) => list.push(e)) }; };
+const reached = async (s: Scene, n: number) => { for (let i = 0; i < 500 && s.tracker.length < n; i++) await Promise.resolve(); };
 
-describe("the trackers follow the shown version, even when the store is driven directly", () => {
-  test("T1: v1 adds Rope, v2 adds Lamp, v1 is selected again and the reply regenerated: v3 starts from the story before the reply, so neither Rope nor Lamp is left", async () => {
-    const s = await scene(base(["Rope", "Lamp", "Key"]));
+describe("the trackers follow the shown version", () => {
+  test("T1: v1 adds Rope, v2 adds Lamp, v1 is chosen again and the reply regenerated: each version shows its own update, and v3 starts from the story before the reply", async () => {
+    const s = await scene(base(["Rope", "Lamp"]));
     await s.turn(); await s.settle();
+    const reply = await s.tip();
+    expect(await names(s)).toEqual(["Rope", "Sword"]);
     await s.turn("swipe"); await s.settle();
     expect(await names(s)).toEqual(["Lamp", "Sword"]);
-    await s.chats.selectSwipe((await s.tip()).id, 0);
+    await s.chats.selectSwipe(reply.id, 0);
+    expect(await names(s)).toEqual(["Rope", "Sword"]);
+    await s.chats.selectSwipe(reply.id, 1);
+    expect(await names(s)).toEqual(["Lamp", "Sword"]);
+    await s.turn("swipe");
+    expect(await names(s)).toEqual(["Sword"]);
+  });
+
+  test("a regenerate does not apply the update twice: the same add by every version leaves one item", async () => {
+    const s = await scene(base(["Rope", "Rope", "Rope"]));
+    await s.turn(); await s.settle();
     await s.turn("swipe"); await s.settle();
-    expect(await names(s)).toEqual(["Key", "Sword"]);
+    await s.turn("swipe"); await s.settle();
+    expect(await names(s)).toEqual(["Rope", "Sword"]);
+    expect((await names(s)).filter((n) => n === "Rope")).toHaveLength(1);
   });
 
   test("T2: a reply that was cut takes its update with it, so sending again does not apply it twice", async () => {
-    const s = await scene(base(["Rope", "Lamp"]));
+    const s = await scene(base(["Rope", "Rope"]));
     await s.turn(); await s.settle();
-    await s.chats.cutMessages(s.chat.activeBranchId, (await s.tip()).id, "one");
+    const reply = await s.tip();
+    await s.chats.cutMessages(s.chat.activeBranchId, reply.id, "one");
+    expect(await names(s)).toEqual(["Sword"]);
+    await s.chats.appendMessage(s.chat.activeBranchId, { role: "assistant", content: "Back." });
+    await s.chats.appendMessage(s.chat.activeBranchId, { role: "user", content: "Again." });
     await s.turn(); await s.settle();
-    expect(await names(s)).toEqual(["Lamp", "Sword"]);
+    expect(await names(s)).toEqual(["Rope", "Sword"]);
   });
 
-  test("T3: a version selected while another's round is out keeps its own receipts; the late update is undone and the shown version's update is back", async () => {
+  test("T3: a version chosen while another's round is out keeps its own update; the late update is tied to its own version and shows when that version does", async () => {
     let release!: (c: ReturnType<typeof text>) => void;
     const gate = new Promise<ReturnType<typeof text>>((resolve) => { release = resolve; });
-    const s = await scene({ trackers: { inventory: { data: stocked() } }, tracker: [adds("Rope"), gate as never] });
-    await s.turn(); await s.settle();
-    const v1 = (await s.stored())!.state.trackerUpdates;
-    await s.turn("swipe");
-    await reached(s, 2);
-    await s.chats.selectSwipe((await s.tip()).id, 0);
-    release(adds("Lamp"));
-    await s.settle();
-    expect((await s.stored())!.state.trackerUpdates).toEqual(v1);
-    expect(await names(s)).toEqual(["Rope", "Sword"]);
-  });
-});
-
-describe("selecting a version and cutting replies through the scene's own functions", () => {
-  test("selecting another version undoes the one that was shown and applies the one that is shown now, where the tracker still holds what that version started from", async () => {
-    const s = await scene(base(["Rope", "Lamp"]));
-    await s.turn(); await s.settle();
-    await s.turn("swipe"); await s.settle();
+    const s = await scene({ trackers: { inventory: { state: stocked() } }, tracker: [gate as never] });
+    await s.turn();
+    await reached(s, 1);
     const reply = await s.tip();
-    const guard = { expectedVersion: (await s.chats.readMessages(s.chat.activeBranchId, { limit: 1 })).branchVersion! };
-    await selectKeepingTrackers(s.chats, s.chat.id, s.chat.activeBranchId, reply.id, 0, guard);
+    await s.chats.addSwipe(reply.id, { content: "Another take." });
+    await s.chats.selectSwipe(reply.id, 1);
+    release(adds("Rope"));
+    await s.settle();
+    expect(await names(s)).toEqual(["Sword"]);
+    await s.chats.selectSwipe(reply.id, 0);
     expect(await names(s)).toEqual(["Rope", "Sword"]);
-    const guard2 = { expectedVersion: (await s.chats.readMessages(s.chat.activeBranchId, { limit: 1 })).branchVersion! };
-    await selectKeepingTrackers(s.chats, s.chat.id, s.chat.activeBranchId, reply.id, 1, guard2);
-    expect(await names(s)).toEqual(["Lamp", "Sword"]);
   });
 
-  test("a tracker the person changed since is left alone: the version is not applied over their change", async () => {
-    const s = await scene(base(["Rope", "Lamp"]));
-    await s.turn(); await s.settle();
-    await s.turn("swipe"); await s.settle();
-    const edited = applyInventory(readInventory((await s.chats.getChat(s.chat.id))!.trackers!.inventory!.data), { kind: "add", item: item("Mine"), id: "m1", at: 5 }) as unknown as JsonValue;
-    await s.chats.setTracker(s.chat.id, "inventory", { data: edited });
-    const guard = { expectedVersion: (await s.chats.readMessages(s.chat.activeBranchId, { limit: 1 })).branchVersion! };
-    await selectKeepingTrackers(s.chats, s.chat.id, s.chat.activeBranchId, (await s.tip()).id, 0, guard);
-    expect(await names(s)).toEqual(["Lamp", "Mine", "Sword"]);
-  });
-
-  test("cutting a reply and everything after it undoes each cut reply's update, newest first, and leaves what the person changed", async () => {
-    const s = await scene(base(["Rope", "Lamp"]));
-    await s.turn(); await s.settle();
-    const first = await s.tip();
-    await s.chats.appendMessage(s.chat.activeBranchId, { role: "user", content: "More" });
-    await s.turn(); await s.settle();
-    expect(await names(s)).toEqual(["Lamp", "Rope", "Sword"]);
-    const guard = { expectedVersion: (await s.chats.readMessages(s.chat.activeBranchId, { limit: 1 })).branchVersion! };
-    await cutKeepingTrackers(s.chats, s.chat.id, s.chat.activeBranchId, first.id, "from", guard);
+  test("a round whose reply was cut before it wrote reports the tracker as skipped and writes nothing", async () => {
+    const heard = pushes();
+    let release!: (c: ReturnType<typeof text>) => void;
+    const gate = new Promise<ReturnType<typeof text>>((resolve) => { release = resolve; });
+    const s = await scene({ trackers: { inventory: { state: stocked() } }, tracker: [gate as never] });
+    await s.turn();
+    await reached(s, 1);
+    await s.chats.cutMessages(s.chat.activeBranchId, (await s.tip()).id, "one");
+    release(adds("Rope"));
+    await s.settle();
+    heard.off();
+    expect(heard.list.at(-1)).toMatchObject({ modules: [{ module: "inventory", outcome: "skipped" }] });
     expect(await names(s)).toEqual(["Sword"]);
   });
 });
 
-describe("Undo", () => {
-  test("it works once the take has moved on, writes no snapshot onto a later message, and a second Undo says there is nothing to undo", async () => {
+describe("forking keeps the trackers", () => {
+  test("forking at the latest reply carries its update to the copy; the copy's later writes stay in the copy and the source is unchanged", async () => {
     const s = await scene(base(["Rope"]));
     await s.turn(); await s.settle();
     const reply = await s.tip();
-    const user = (await s.chats.appendMessage(s.chat.activeBranchId, { role: "user", content: "More" }))!;
-    const panel = await readDirectorPanel({ chats: s.chats }, s.chat.id);
-    expect(panel.trackerUpdates.inventory).toMatchObject({ messageId: reply.id });
-    const after = await undoDirectorTracker({ chats: s.chats, now: s.deps.now }, s.chat.id, "inventory", reply.id);
-    expect(await names(s)).toEqual(["Sword"]);
-    expect(after.trackerUpdates).toEqual({});
-    expect((await s.chats.getDirector(s.chat.id, user.id))!.messageId).toBe(reply.id);
-    await expect(undoDirectorTracker({ chats: s.chats, now: s.deps.now }, s.chat.id, "inventory", reply.id)).rejects.toThrow("no update");
+    const fork = (await s.chats.fork(s.chat.activeBranchId, reply.id, { name: "Take 2" }))!;
+    expect(await names(s, fork.id)).toEqual(["Rope", "Sword"]);
+    expect((await stateOf(s, fork.id)).updates.inventory).toMatchObject({ after: { items: expect.any(Array) } });
+    const copied = (await s.chats.readMessages(fork.id, { limit: 10 })).messages.at(-1)!;
+    await personEdit(s.chats, fork.id, "inventory", applyInventory(readInventory(await dataAt(s.chats, fork.id, "inventory")), { kind: "add", item: item("Mine"), id: "m1", at: 5 }), copied.id);
+    expect(await names(s, fork.id)).toEqual(["Mine", "Rope", "Sword"]);
+    expect(await names(s)).toEqual(["Rope", "Sword"]);
   });
-});
 
-describe("Calls per reply counts every call the tracker round makes", () => {
-  test("with the default 1 call per reply there is no spare to repair an unreadable answer; with 2 there is", async () => {
-    const one = await scene({ trackers: { inventory: { data: stocked() } }, tracker: [text("nope"), adds("Rope")] });
-    await one.turn(); await one.settle();
-    expect(one.tracker).toHaveLength(1);
-    expect(await names(one)).toEqual(["Sword"]);
-    expect((await lines(one))[0]).toMatchObject({ result: "error" });
-    const two = await scene({ settings: { callsPerReply: 2 }, trackers: { inventory: { data: stocked() } }, tracker: [text("nope"), adds("Rope")] });
-    await two.turn(); await two.settle();
-    expect(two.tracker).toHaveLength(2);
-    expect(await names(two)).toEqual(["Rope", "Sword"]);
-  });
-  test("a batch that used the spare leaves the next batch no call: it is skipped and says so", async () => {
-    const both = { inventory: { data: stocked() }, resources: { data: { ...DEFAULT_RESOURCES, hp: 80 } as unknown as JsonValue } };
-    const s = await scene({ settings: { callsPerReply: 2 }, trackers: both, tracker: [text("nope"), adds("Rope")] });
+  test("forking before the update leaves it behind, since the copy does not hold that reply; switching back brings the original's update back", async () => {
+    const s = await scene(base(["Rope"]));
     await s.turn(); await s.settle();
-    expect(s.tracker).toHaveLength(2);
-    expect((await lines(s)).some((l) => l.description.includes("Calls per reply"))).toBe(true);
+    const greeting = (await s.chats.readMessages(s.chat.activeBranchId, { limit: 1 })).messages[0]!;
+    const fork = (await s.chats.fork(s.chat.activeBranchId, greeting.id, { name: "Take 2" }))!;
+    expect(await names(s, fork.id)).toEqual(["Sword"]);
+    await s.chats.setActiveBranch(s.chat.id, fork.id);
+    expect(await names(s, fork.id)).toEqual(["Sword"]);
+    await s.chats.setActiveBranch(s.chat.id, s.chat.activeBranchId);
+    expect(await names(s)).toEqual(["Rope", "Sword"]);
   });
 });
 
-describe("receipts that would not fit are checked before anything is written", () => {
-  test("the update is skipped, nothing changes, and the line that says so is saved", async () => {
+describe("the person's Undo is their own edit on the reply", () => {
+  test("T6: an undone update stays undone however the person moves between versions afterwards, even once the reply is no longer the last message", async () => {
+    const s = await scene(base(["Rope"]));
+    await s.turn(); await s.settle();
+    const reply = await s.tip();
+    await undoDirectorTracker({ chats: s.chats, now: s.deps.now }, s.chat.id, "inventory", reply.id);
+    expect(await names(s)).toEqual(["Sword"]);
+    await s.chats.addSwipe(reply.id, { content: "Another take." });
+    await s.chats.selectSwipe(reply.id, 1);
+    expect(await names(s)).toEqual(["Sword"]);
+    await s.chats.selectSwipe(reply.id, 0);
+    expect(await names(s)).toEqual(["Sword"]); // the version that made the update is shown again, and the person's Undo still stands
+    await s.chats.appendMessage(s.chat.activeBranchId, { role: "user", content: "And then?" });
+    expect(await names(s)).toEqual(["Sword"]);
+  });
+
+  test("a hand edit of the tracker after the update means the update is not applied over it by a switch of version", async () => {
+    const s = await scene({ trackers: { resources: { state: { ...DEFAULT_RESOURCES, hp: 80 } } }, tracker: [text(JSON.stringify({ resources: { hp: 55 } }))] });
+    await s.turn(); await s.settle();
+    const reply = await s.tip();
+    await personEdit(s.chats, s.chat.activeBranchId, "resources", { ...DEFAULT_RESOURCES, hp: 12 });
+    await s.chats.addSwipe(reply.id, { content: "Another take." });
+    await s.chats.selectSwipe(reply.id, 1);
+    await s.chats.selectSwipe(reply.id, 0);
+    expect(readResources(await dataAt(s.chats, s.chat.activeBranchId, "resources")).hp).toBe(12);
+  });
+});
+
+describe("the Spellbook countdown lands with the reply, before the round reads it", () => {
+  test("T9: Frost is added, Firebolt has counted down, and no false 'changed while planning' line is written", async () => {
+    const frost = { name: "Frost", template: "attack", description: "Ice.", level: 1, status: "learned", manaCost: 4, cooldown: "none", damage: "1d6", element: "ice" };
+    const firebolt = SPELLBOOK_GEN.item.coerce({ name: "Firebolt", template: "attack", description: "Fire.", level: 3, status: "learned", manaCost: 10, cooldown: "3 turns" }) as SpellMade;
+    const added = applySpellbook(DEFAULT_SPELLBOOK, { kind: "add", spell: firebolt, id: "f1" });
+    const start = { ...added, spells: added.spells.map((x) => ({ ...x, cooldownRemaining: 3 })) };
     let release!: (c: ReturnType<typeof text>) => void;
     const gate = new Promise<ReturnType<typeof text>>((resolve) => { release = resolve; });
-    const big = Array.from({ length: 30 }, (_, i) => item(`Relic ${i}`, { description: "d".repeat(300) }));
-    const start = big.reduce((inv, it, i) => applyInventory(inv, { kind: "add", item: it, id: `r${i}`, at: i }), DEFAULT_INVENTORY) as unknown as JsonValue;
-    const s = await scene({ trackers: { inventory: { data: start } }, tracker: [gate as never] });
+    const s = await scene({ trackers: { spellbook: { state: start } }, tracker: [gate as never] });
     await s.turn();
-    await reached(s);
-    const snap = (await s.stored())!;
-    const notes = Array.from({ length: 190 }, (_, i) => ({ id: `n${i}`, content: "n".repeat(3_000), createdAt: i }));
-    const fill = (extra: number) => ({ ...snap.state, notes: notes.map((n, i) => (i === 0 ? { ...n, content: n.content + "n".repeat(extra) } : n)) });
-    const target = DIRECTOR_STATE_BYTES_MAX - 6_000;
-    const extra = target - JSON.stringify(fill(0)).length;
-    await s.chats.putDirector(s.chat.id, snap.messageId, fill(extra), { expectedVersion: snap.version });
-    release(adds("Rope"));
+    await reached(s, 1);
+    // The countdown is stamped with the reply, so it is in the book before the round is asked about it.
+    expect(readSpellbook(await dataAt(s.chats, s.chat.activeBranchId, "spellbook")).spells[0]!.cooldownRemaining).toBe(2);
+    release(text(JSON.stringify({ spellbook: { spells: [frost] } })));
     await s.settle();
-    expect(await names(s)).toHaveLength(30);
-    expect((await lines(s)).some((l) => l.result === "error" && l.description.includes("would not fit"))).toBe(true);
-    expect((await s.stored())!.state.trackerUpdates).toBeUndefined();
+    const spells = readSpellbook(await dataAt(s.chats, s.chat.activeBranchId, "spellbook")).spells;
+    expect(spells.map((x) => x.name).sort()).toEqual(["Firebolt", "Frost"]);
+    expect(spells.find((x) => x.name === "Firebolt")!.cooldownRemaining).toBe(2);
+    expect((await s.stored())!.state.activity.some((a) => a.type === "tracker" && a.description.includes("dropped"))).toBe(false);
   });
 });
 
-describe("a tracker too large to keep a way back for", () => {
-  test("is skipped with one line, then not mentioned again until its size changes", async () => {
-    const big = Array.from({ length: 90 }, (_, i) => item(`Relic ${i}`, { description: "d".repeat(480) }));
-    const start = big.reduce((inv, it, i) => applyInventory(inv, { kind: "add", item: it, id: `r${i}`, at: i }), DEFAULT_INVENTORY) as unknown as JsonValue;
-    const s = await scene({ trackers: { inventory: { data: start } }, tracker: [adds("Rope"), adds("Rope"), adds("Rope")] });
+describe("the app-wide channel hears when the background round is done", () => {
+  test("one push for the chat, after the round's writes landed, naming each module and what became of it", async () => {
+    const heard = pushes();
+    const s = await scene(base(["Rope"]));
+    await s.turn();
+    await s.settle();
+    heard.off();
+    expect(heard.list).toEqual([{ chatId: s.chat.id, modules: [{ module: "inventory", outcome: "applied" }] }]);
+    expect(await names(s)).toEqual(["Rope", "Sword"]);
+  });
+
+  test("a failed request is a failed outcome and a change made elsewhere meanwhile is a dropped one", async () => {
+    const heard = pushes();
+    const down = await scene({ trackers: { inventory: { state: stocked() } }, tracker: [new ProviderError("down", { category: "api_error", code: "backend_error", status: 500 })] });
+    await down.turn(); await down.settle();
+    expect(heard.list.at(-1)).toMatchObject({ chatId: down.chat.id, modules: [{ module: "inventory", outcome: "failed" }] });
+    // The person changes the very item the round is changing, on an earlier message, while the model is out: the row it planned against has moved.
+    const raise = (quantity: number) => text(JSON.stringify({ inventory: { items: [{ ...item("Sword"), quantity }] } }));
+    let release!: (c: ReturnType<typeof text>) => void;
+    const gate = new Promise<ReturnType<typeof text>>((resolve) => { release = resolve; });
+    const s = await scene({ trackers: { inventory: { state: stocked() } }, tracker: [gate as never] });
+    await s.turn();
+    await reached(s, 1);
+    const opening = (await s.chats.readMessages(s.chat.activeBranchId, { limit: 1 })).messages[0]!;
+    const now = readInventory(await dataAt(s.chats, s.chat.activeBranchId, "inventory"));
+    await personEdit(s.chats, s.chat.activeBranchId, "inventory", { ...now, items: now.items.map((i) => ({ ...i, quantity: 9 })) }, opening.id);
+    release(raise(5));
+    await s.settle();
+    heard.off();
+    expect(heard.list.at(-1)).toMatchObject({ chatId: s.chat.id, modules: [{ module: "inventory", outcome: "dropped" }] });
+    expect(readInventory(await dataAt(s.chats, s.chat.activeBranchId, "inventory")).items[0]!.quantity).toBe(9);
+  });
+
+  test("a change to another row meanwhile is no conflict: the tracker is kept by rows, so both stand", async () => {
+    let release!: (c: ReturnType<typeof text>) => void;
+    const gate = new Promise<ReturnType<typeof text>>((resolve) => { release = resolve; });
+    const s = await scene({ trackers: { inventory: { state: stocked() } }, tracker: [gate as never] });
+    await s.turn();
+    await reached(s, 1);
+    const opening = (await s.chats.readMessages(s.chat.activeBranchId, { limit: 1 })).messages[0]!;
+    await personEdit(s.chats, s.chat.activeBranchId, "inventory", applyInventory(readInventory(await dataAt(s.chats, s.chat.activeBranchId, "inventory")), { kind: "add", item: item("Mine"), id: "m1", at: 5 }), opening.id);
+    release(adds("Rope"));
+    await s.settle();
+    expect(await names(s)).toEqual(["Mine", "Rope", "Sword"]);
+  });
+
+  test("the person's Undo is pushed too", async () => {
+    const s = await scene(base(["Rope"]));
     await s.turn(); await s.settle();
-    await s.chats.appendMessage(s.chat.activeBranchId, { role: "user", content: "More" });
+    const heard = pushes();
+    await undoDirectorTracker({ chats: s.chats, now: s.deps.now }, s.chat.id, "inventory", (await s.tip()).id);
+    heard.off();
+    expect(heard.list).toEqual([{ chatId: s.chat.id, modules: [{ module: "inventory", outcome: "undone" }] }]);
+  });
+
+  test("nothing is pushed when no round ran", async () => {
+    const heard = pushes();
+    const s = await scene({ settings: { autoUpdate: false }, trackers: { inventory: { state: stocked() } } });
+    await s.turn();
+    await s.settle();
+    heard.off();
+    expect(heard.list).toEqual([]);
+  });
+
+  test("an error in the provider's text is not kept in the story", async () => {
+    const s = await scene({ trackers: { inventory: { state: stocked() } }, tracker: [new Error("secret prompt excerpt sk-abc123 HTTP 500")] });
     await s.turn(); await s.settle();
-    const all = (await s.stored())!.state.activity.filter((a) => a.type === "tracker" && a.description.includes("too large"));
-    expect(all).toHaveLength(1);
-    expect(await names(s)).toHaveLength(90);
+    const all = JSON.stringify((await s.stored())!.state.activity);
+    expect(all).not.toContain("sk-abc123");
+    expect(all).not.toContain("secret prompt");
   });
 });

@@ -13,8 +13,7 @@ import { deepEq, isRecord } from "../guards";
 import { PROMPT_ORDER, isStoryboard, refreshSpecOf } from "../trackers";
 import { conversationOf, type Read, type Subs } from "../trackers/generate";
 import { NAME_FIELDS, REFRESH_SYSTEM, diffModule, nameOf, norm, shownOf, type Env, type ModuleDiff, type RefreshSpec, type Row, type Skipped } from "../trackers/refresh";
-import { DIRECTOR_RECEIPT_SIDE_MAX, type NarratorDirective, type TrackerReceipt } from "../../stage/contracts/director-types";
-import type { JsonValue } from "../../stage/contracts/chat-store";
+import type { NarratorDirective } from "../../stage/contracts/director-types";
 import { TRACKER_PROP_PREFIX, type ChatTrackers, type TrackerModule } from "../../stage/contracts/chat-tracker-types";
 
 export interface DueAsk { entries: ChatTrackers; on: readonly string[]; autoUpdate: boolean; every: number; turn: number }
@@ -156,20 +155,6 @@ export function describeDiff(module: TrackerModule, diff: ModuleDiff): string {
 
 /** Whether an update changed anything. */
 export const changes = (diff: ModuleDiff): boolean => diff.added.length + diff.changed.length + diff.removed.length > 0;
-
-const same = (a: unknown, b: unknown): boolean => deepEq(a ?? null, b ?? null);
-
-/** The receipt of an update, or null when either side is too large to keep (then the update is not made: there would be no way back). */
-export function receiptOf(module: TrackerModule, before: unknown, after: unknown, turn: number, at: number): TrackerReceipt | null {
-  const sides = [before ?? null, after ?? null] as JsonValue[];
-  if (sides.some((s) => JSON.stringify(s).length > DIRECTOR_RECEIPT_SIDE_MAX)) return null;
-  return { module, before: sides[0]!, after: sides[1]!, turn, at };
-}
-
-/** What undoing a receipt writes, or null (left alone) when the module no longer holds exactly what the update left: the person's change since is never overwritten. */
-export function undoTarget(current: unknown, receipt: Pick<TrackerReceipt, "before" | "after">): { data: JsonValue | null } | null {
-  return same(current, receipt.after) ? { data: receipt.before } : null;
-}
 
 /** The Director's directive for this turn in a few lines, for the tracker request to read (RoleCall passes its directive summary to the same round). */
 export function summaryOf(d: NarratorDirective): string {

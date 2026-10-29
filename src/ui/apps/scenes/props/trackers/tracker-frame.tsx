@@ -28,7 +28,7 @@ export interface FrameProps {
   tone: string;
   /** Tokens the module adds to the prompt (RoleCall counts characters over four). */
   tokens: number;
-  view: Pick<TrackerView<unknown>, "module" | "context" | "setContext" | "error" | "undo" | "apply" | "stored" | "host">;
+  view: Pick<TrackerView<unknown>, "module" | "context" | "setContext" | "error" | "undo" | "apply" | "stored" | "host" | "raw" | "update" | "reload" | "unreadable">;
   /** Clear All Data: the module back to what switching it on gives. */
   onClear(): void;
   popOut?: () => void;
@@ -44,7 +44,7 @@ export function TrackerFrame({ label, title, description, icon, tone, tokens, vi
   const [confirm, setConfirm] = useState(false);
   const refresh = useRefresh(view, label);
   const dm = useTrackerUpdate(view, label);
-  const summary = trackerSummary(view.module, view.stored);
+  const summary = trackerSummary(view.module, view.raw, view.stored?.context);
   return (
     <div className="trk" data-part={`props.tracker.${view.module}`} style={{ "--w": tone } as React.CSSProperties}>
       <header className="hero">
@@ -82,6 +82,7 @@ export function TrackerFrame({ label, title, description, icon, tone, tokens, vi
         </div>
       )}
       <RefreshNotice r={refresh} label={label} />
+      {view.unreadable && <p className="trk-error" role="status" data-part="props.tracker.unreadable">This tracker's saved state could not be read, so it shows an empty start. Your next change replaces the saved state.</p>}
       {view.error && <p className="trk-error" role="alert">{view.error}</p>}
       {view.undo && <div className="trk-undo" role="status"><span>{view.undo.label}</span><Button size="sm" onClick={view.undo.run}>Undo</Button></div>}
       <DirectorUpdateLine dm={dm} />

@@ -11,6 +11,6 @@ Before adding a helper, find its existing home here and extend that module when 
 - sandbox: 31 exports in [the helper index](docs/generated/helpers/sandbox.md)
 - scale: 1 exports in [the helper index](docs/generated/helpers/scale.md)
 - shared: 6 exports in [the helper index](docs/generated/helpers/shared.md)
-- stage: 75 exports in [the helper index](docs/generated/helpers/stage.md)
+- stage: 76 exports in [the helper index](docs/generated/helpers/stage.md)
 - studio: 16 exports in [the helper index](docs/generated/helpers/studio.md)
 - ui: 365 exports in [the helper index](docs/generated/helpers/ui.md)

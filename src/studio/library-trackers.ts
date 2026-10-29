@@ -15,7 +15,7 @@ import type { TrackerBody } from "../entities/tracker/schema";
 import { SCENE_ACTION_TIERS } from "../kit/tools/safety/scene-tiers";
 import { INVALID_TOOL, type NarratorTool } from "../stage/provider/tool-loop";
 import type { ToolsContext } from "./scene-turn-tools";
-import type { TurnWrites } from "./scene-turn-writes";
+import type { ToolWrites } from "./scene-turn-writes";
 
 /** Reads one tracker piece by id, decoded; null when it is gone or unreadable. */
 export type ReadTracker = (id: string) => Promise<TrackerBody | null>;
@@ -32,7 +32,7 @@ export async function linkedTrackers(read: ReadTracker | undefined, ids: readonl
 }
 
 /** The narrator tool for the turn's linked trackers, or null when none is linked. `taken` are the names the other tools already use. */
-export function trackerTool(ctx: ToolsContext, taken: readonly string[], writes: TurnWrites): NarratorTool<never> | null {
+export function trackerTool(ctx: ToolsContext, taken: readonly string[], writes: ToolWrites): NarratorTool<never> | null {
   const linked = ctx.loaded.linkedTrackers ?? [];
   if (linked.length === 0) return null;
   /** Each tracker's value as the reply stands, stored and shown: where the prompt left it, then every call this reply has made. */

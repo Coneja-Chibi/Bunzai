@@ -12,6 +12,7 @@ import { personaMoves, placePersona } from "./persona-place";
 import { runLore, type LoreHit, type LoreScanMessage, type LoreVerdict } from "../lore/engine";
 import { mulberry32 } from "../lore/rng";
 import type { MacroContext, MacroVariable } from "../macros";
+import type { GlobalWrite } from "../macros/types";
 import type { CharacterCardContext } from "../macros/handlers/character";
 import { appendAtDepth, buildConversation, defaultPrompts, DEFAULT_MAX_TOKENS, injectAtDepth, type Block } from "./conversation";
 import { stripReasoningTags } from "../reasoning-tags";
@@ -87,6 +88,8 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   // Section 3: the macro context, card fields included, and RoleCall's own second-pass names.
   const localVariables = new Map(input.localVariables);
   const globalVariables = new Map(input.globalVariables);
+  /** Every write to a global variable, as the operation it was, in the order made: what the turn keeps (core/scene-state/globals.ts). */
+  const globalWrites: GlobalWrite[] = [];
   const context: Partial<CharacterCardContext> = {
     ...card.macroFields,
     characterName: card.name,
@@ -101,6 +104,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
     firstMessage: greetingSource?.content ?? "",
     localVariables,
     globalVariables,
+    globalWrites,
     now: input.now,
     ...(input.preset ? { presetPrompts: plan.info } : {}),
     ...(choiceGroups.length > 0 ? { choiceGroups, choiceSelections } : {}),
@@ -184,7 +188,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
       },
     );
     // Side Effects run over the macros' own variable maps before any macro resolves, so {{getvar}} sees them.
-    loreUndo = applyLoreEffects(run.sideEffects, localVariables, globalVariables, input.now);
+    loreUndo = applyLoreEffects(run.sideEffects, localVariables, globalVariables, input.now, globalWrites);
     macros.legacy["lore"] = run.injected
       .filter((h) => h.position.kind === "world")
       .map((h) => h.content)
@@ -417,6 +421,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
     budget: { budgeter: input.budgeter && input.window ? input.budgeter.name : "none", trimmed, finalPassDropped, ...(overflow ? { overflow: true as const } : {}), ...(linkedText || (input.reserved?.length ?? 0) > 0 ? { fixed: true as const } : {}) },
     local,
     global,
+    globalWrites,
     ...(sink.report() ? { macros: sink.report()! } : {}),
     ...(changes.length > 0 ? { changes } : {}),
     maxTokens: input.preset?.samplers?.maxTokens ?? DEFAULT_MAX_TOKENS,

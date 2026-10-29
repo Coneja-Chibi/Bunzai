@@ -10,6 +10,7 @@
  * Director does (set_formation, set_tactics).
  */
 import { arr, bool, num, obj, oneOf, opt, refine, str, type Of } from "./shape";
+import { repairOf, stateSpec } from "./state";
 import { hasUniqueIds } from "./list";
 import type { GenSpec } from "./generate";
 import { byName, entry, listOf, single, sync, type RefreshSpec } from "./refresh";
@@ -59,7 +60,8 @@ export const DEFAULT_PARTY: Party = {
 };
 
 const ids = arr(text(80, { min: 1 }), MAX_MEMBERS * 2);
-const stateShape = obj({
+/** The module's whole state, field by field: what a state passes, and what a slot holds one field or row of (state.ts). */
+export const stateShape = obj({
   name: text(100, { min: 1 }),
   leaderId: opt(text(80, { min: 1 })),
   members: arr(memberShape, MAX_MEMBERS * 2),
@@ -75,7 +77,14 @@ export function parseParty(data: unknown): Party | null {
   if (s.leaderId !== undefined && !s.members.some((m) => m.profileId === s.leaderId)) return null;
   return s as unknown as Party;
 }
-export const readParty = (data: unknown): Party => (data === undefined ? DEFAULT_PARTY : parseParty(data) ?? DEFAULT_PARTY);
+/** What party keeps in its slot (state.ts). */
+export const PARTY_STATE = stateSpec(stateShape, { members: "profileId" });
+/** The module's one repair step (state.ts `repairOf`): every reader goes through `readParty`, which uses it, so no read ever shows the defaults in place of a state it can mostly keep. Null: nothing is salvageable. */
+export const repairParty = repairOf(PARTY_STATE, DEFAULT_PARTY, parseParty, (d) => {
+  const { leaderId, ...rest } = d;
+  return leaderId === undefined || (d["members"] as Member[]).some((m) => m.profileId === leaderId) ? d : rest;
+});
+export const readParty = (data: unknown): Party => (data === undefined ? DEFAULT_PARTY : repairParty(data) ?? DEFAULT_PARTY);
 export const liveMembers = (p: Party): Member[] => p.members.filter((m) => m.removedAt === undefined);
 
 export type PartyAction =

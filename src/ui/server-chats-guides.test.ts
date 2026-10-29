@@ -37,16 +37,32 @@ test("a scene keeps its switched-on guides and note, a patch leaves the other al
   expect((await post("/api/chats/prompting", { chatId: "nope", prompting: {} })).status).toBe(404);
 });
 
-test("a scene keeps a tracker's state and AI Context over HTTP, and a bad change or module is a 400", async () => {
-  const { store, post } = await rig();
+test("a scene keeps a tracker's SETTINGS over HTTP and its state through the state route, and a bad change or module is a 400", async () => {
+  const { store, post, handler } = await rig();
   await store.save(vera);
   const chat = (await (await post("/api/chats/start", { characterId: "vera" })).json()) as { id: string };
   const hurt = { hp: 40, maxHp: 100, mp: 50, maxMp: 50, ap: 3, maxAp: 3, shield: 0, xp: 0, level: 1, currency: 100, needs: {}, log: [] };
-  const first = (await (await post("/api/chats/trackers", { chatId: chat.id, module: "resources", patch: { data: hurt } })).json()) as { trackers: unknown };
-  expect(first.trackers).toEqual({ resources: { data: hurt } });
-  const second = (await (await post("/api/chats/trackers", { chatId: chat.id, module: "resources", patch: { context: "every2" } })).json()) as { trackers: unknown };
-  expect(second.trackers).toEqual({ resources: { data: hurt, context: "every2" } });
-  expect((await post("/api/chats/trackers", { chatId: chat.id, module: "resources", patch: { data: { ...hurt, hp: 101 } } })).status).toBe(400);
+  const first = (await (await post("/api/chats/trackers", { chatId: chat.id, module: "resources", patch: { context: "every2" } })).json()) as { trackers: unknown };
+  expect(first.trackers).toEqual({ resources: { context: "every2" } });
+  const second = (await (await post("/api/chats/trackers", { chatId: chat.id, module: "spellbook", patch: { subs: { wildMagic: true } } })).json()) as { trackers: unknown };
+  expect(second.trackers).toEqual({ resources: { context: "every2" }, spellbook: { subs: { wildMagic: true } } });
+  // A module's state is not a setting.
+  expect((await post("/api/chats/trackers", { chatId: chat.id, module: "resources", patch: { data: hurt } })).status).toBe(400);
+  expect((await post("/api/chats/trackers", { chatId: chat.id, module: "spellbook", patch: { subs: { secrets: true } } })).status).toBe(400);
   expect((await post("/api/chats/trackers", { chatId: chat.id, module: "wizardry", patch: { context: "never" } })).status).toBe(400);
   expect((await post("/api/chats/trackers", { chatId: "nope", module: "resources", patch: {} })).status).toBe(404);
+  // The state is written on the newest reply and read back at the tip.
+  const read = async () => (await (await handler(apiReq(`/api/chats/tracker-state?chatId=${chat.id}`))).json()) as { branchId: string; branchVersion: number; tipId: string | null; data: Record<string, unknown> };
+  // A scene with no message has nothing to keep a change with; one message gives it a place.
+  expect((await read()).tipId).toBeNull();
+  expect((await post("/api/chats/send", { chatId: chat.id, content: "hi", greetingIndex: 0, expectedVersion: (await read()).branchVersion })).status).toBe(200);
+  const open = await read();
+  expect(open).toMatchObject({ data: {} });
+  expect(open.tipId).not.toBeNull();
+  const body = { chatId: chat.id, branchId: open.branchId, messageId: open.tipId, expectedVersion: open.branchVersion };
+  const wrote = (await (await post("/api/chats/tracker-state", { ...body, writes: [{ module: "resources", data: hurt, base: null }] })).json()) as { data: Record<string, unknown> };
+  expect(wrote.data["resources"]).toEqual(hurt);
+  expect((await post("/api/chats/tracker-state", { ...body, writes: [{ module: "resources", data: { ...hurt, hp: 101 } }] })).status).toBe(400);
+  expect((await post("/api/chats/tracker-state", { ...body, writes: [{ module: "quests", data: {} }] })).status).toBe(400);
+  expect((await post("/api/chats/tracker-state", { ...body, branchId: "nope", writes: [{ module: "resources", data: hurt }] })).status).toBe(404);
 });

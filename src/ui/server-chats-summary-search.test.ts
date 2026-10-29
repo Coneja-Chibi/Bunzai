@@ -13,6 +13,7 @@ test("finds the scene by what its summary says, and a card's list entry carries 
   const { id } = (await (await r.post("/api/chats/start", { characterId: "vera" })).json()) as { id: string };
   const chats = libraryChatsFor(r.store.studioPath())!;
   const opened = (await (await r.handler(apiReq(`/api/chats/open?id=${id}`))).json()) as OpenScene;
+  await chats.appendMessage(opened.chat.activeBranchId, { role: "assistant", content: "Hello." }); // a summary sits on a message of the take
   await chats.setSummary(opened.chat.activeBranchId, { text: "They met at the pier.", through: 1 });
   const found = await r.handler(apiReq("/api/chats/summary-search?q=PIER"));
   expect(found.status).toBe(200);

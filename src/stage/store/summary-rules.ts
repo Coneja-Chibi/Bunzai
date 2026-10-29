@@ -63,12 +63,11 @@ export function mergeSummarySettings(old: SummarySettings | undefined, patch: Su
 export function checkTakeSummary(value: unknown): TakeSummaryInput | null {
   if (value === null) return null;
   if (!isPlainObject(value)) fail("a take's summary must be { text, through } or null");
-  for (const key of Object.keys(value)) if (key !== "text" && key !== "through" && key !== "last") fail(`a take's summary has an unknown field: ${key}`);
-  const { text, through, last } = value;
+  for (const key of Object.keys(value)) if (key !== "text" && key !== "through") fail(`a take's summary has an unknown field: ${key}`);
+  const { text, through } = value;
   if (typeof text !== "string" || text.trim() === "" || text.length > SUMMARY_TEXT_MAX) fail(`text must be some text of at most ${SUMMARY_TEXT_MAX} characters`);
   const reach = whole("through", through, 0, THROUGH_MAX);
-  if (last !== undefined && (typeof last !== "string" || last.length === 0 || last.length > 200)) fail("last must be a message id");
-  return { text, through: reach, ...(typeof last === "string" ? { last } : {}) };
+  return { text, through: reach };
 }
 
 /** The last run's failure in words, or null to clear it. */

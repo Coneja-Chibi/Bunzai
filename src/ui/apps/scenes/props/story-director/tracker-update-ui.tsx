@@ -33,7 +33,7 @@ export function DirectorUpdateLine({ dm }: { dm: TrackerUpdateLine }): JSX.Eleme
     <>
       {dm.update && (
         <div className="trk-undo" role="status" data-part="props.tracker.director-update">
-          <span>Updated by the Story Director, reply {dm.update.turn}</span>
+          <span>Updated after reply {dm.update.number}</span>
           <Button size="sm" onClick={() => void dm.undo()}>Undo</Button>
         </div>
       )}

@@ -105,11 +105,7 @@ export async function runDirector(
   const at = deps.now();
   const entry = (type: DirectorActivityType, result: DirectorActivity["result"], description: string, details?: string, model?: string): Omit<DirectorActivity, "id"> =>
     ({ at, turn, type, result, description, ...(details ? { details: details.slice(0, DIRECTOR_DETAILS_MAX) } : {}), ...(model ? { model } : {}) });
-  // Tracker receipts belong to the reply that made them: the state this one is built on may be the last reply's, whose receipts are not carried.
-  const carry = (b: DirectorState | null, replaced: DirectorState | null | undefined, missed: DirectorEditRecord[]): DirectorState => {
-    const { trackerUpdates: _last, ...kept } = replay(replay(b ?? emptyDirectorState(), replaced0?.state, missed), replaced, missed);
-    return kept;
-  };
+  const carry = (b: DirectorState | null, replaced: DirectorState | null | undefined, missed: DirectorEditRecord[]): DirectorState => replay(replay(b ?? emptyDirectorState(), replaced0?.state, missed), replaced, missed);
 
   const denied = tierRefusal("director.plan", deps.tiers);
   const target: Connected | null = denied ? null : settings.model ? await deps.connect(settings.model) : scene.connected;

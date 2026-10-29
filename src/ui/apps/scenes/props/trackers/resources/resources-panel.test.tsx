@@ -10,7 +10,8 @@ import type { Root } from "react-dom/client";
 import { DEFAULT_RESOURCES, resourcesLines, type Resources } from "../../../../../../core/trackers/resources";
 import type { Chat, ChatTrackerPatch, TrackerModule } from "../../../../../../stage/contracts/chat-store";
 import type { AppContext } from "../../../../../app-contract";
-import { installDom, type InstalledDom } from "../../../../../_shared/test-dom";
+import { heldTrackerApi, type HeldStates } from "../items/held-tracker-api";
+import { flushTasks, installDom, type InstalledDom } from "../../../../../_shared/test-dom";
 import { StatsPanel } from "./resources-panel";
 
 let dom: JSDOM;
@@ -24,18 +25,25 @@ afterAll(() => installed.teardown());
 let writes: { module: TrackerModule; patch: ChatTrackerPatch }[] = [];
 let chat: Chat;
 let failNext: string | null = null;
-const base = { id: "c1" } as Chat;
-beforeEach(() => { installed.reinstall(); writes = []; failNext = null; chat = { ...base }; });
+const base = { id: "c1", activeBranchId: "b1" } as Chat;
+let held: HeldStates = {};
+beforeEach(() => { installed.reinstall(); writes = []; failNext = null; held = {}; chat = { ...base }; });
 
 function makeCtx(): AppContext {
+  const tracked = heldTrackerApi(() => held, (module, data) => {
+    if (failNext) { const why = failNext; failNext = null; throw new Error(why); }
+    writes.push({ module, patch: { data } });
+  });
   return {
     prefs: { get: () => undefined, set: () => undefined },
+    pieces: tracked.pieces,
     api: {
+      ...tracked.api,
       setSceneTracker: async (_id: string, module: TrackerModule, patch: ChatTrackerPatch): Promise<Chat> => {
         writes.push({ module, patch });
         if (failNext) { const why = failNext; failNext = null; throw new Error(why); }
         const old = chat.trackers?.[module] ?? {};
-        const entry = { ...old, ...(patch.data === undefined ? {} : patch.data === null ? {} : { data: patch.data }), ...(patch.context === undefined ? {} : patch.context === null ? {} : { context: patch.context }) };
+        const entry = { ...old, ...(patch.context === undefined ? {} : patch.context === null ? {} : { context: patch.context }) };
         if (patch.context === null) delete (entry as { context?: unknown }).context;
         chat = { ...chat, trackers: { ...chat.trackers, [module]: entry } };
         return chat;
@@ -62,10 +70,10 @@ async function mount(node: JSX.Element): Promise<FlushSync> {
   await settle(flushSync);
   return flushSync;
 }
-async function settle(flushSync: FlushSync, ms = 15): Promise<void> { await new Promise((r) => setTimeout(r, ms)); flushSync(() => undefined); }
+async function settle(flushSync: FlushSync): Promise<void> { await flushTasks(8); flushSync(() => undefined); }
 async function press(flushSync: FlushSync, el: Element): Promise<void> { flushSync(() => (el as HTMLElement).click()); await settle(flushSync); }
 const panel = (initial: Partial<Resources> | null = null, popOut?: () => void): JSX.Element => {
-  if (initial) chat = { ...chat, trackers: { resources: { data: { ...DEFAULT_RESOURCES, ...initial } as never } } };
+  if (initial) held["resources"] = { ...DEFAULT_RESOURCES, ...initial } as never;
   return <StatsPanel ctx={makeCtx()} chat={chat} id="props.tracker.resources" {...(popOut ? { popOut } : {})} />;
 };
 

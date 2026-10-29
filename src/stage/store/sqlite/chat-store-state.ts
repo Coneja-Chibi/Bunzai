@@ -2,7 +2,9 @@
  * The SQLite ChatStore's scene state (rule 17, migration 43). `swipe_deltas` holds what each version of a reply changed, keyed by
  * swipe id: a fork copies messages but keeps swipe ids, so a take shares its prefix's deltas and no such row is ever copied or
  * changed. `message_deltas` holds what a message carries whichever version shows (a person's edit on a reply): keyed by message id, so
- * it belongs to one take, and a fork copies it with the new message id. A message's own deltas fold after its shown version's, so they win on that message.
+ * it belongs to one take, and a fork copies it with the new message id. A message's own deltas fold after its shown version's, so they win on that message. A write made after a commit that names a version
+ * (`recordDeltas`) is also a row of message_deltas, with that version's swipe id (migration 44): it belongs to this take, applies only while that version is shown on that message, and folds after the version's own rows
+ * and before the person's. `swipe_deltas` is never appended to after a commit, since every take that shows the version shares it.
  * `branch_state` is each take's tip cache and `state_keyframes` keeps the full state after every 50th shown message; both are
  * caches `refresh` rewrites inside the transaction of whatever changed what the branch shows, and a cache cell that will not open
  * is skipped and rewritten, never fatal (the deltas are the data: a damaged delta cell still refuses). Everything is sealed like
@@ -12,7 +14,7 @@ import type { Delta, SceneState } from "../../../core/scene-state/types";
 import type { ChatStore } from "../../contracts/chat-store";
 import type { CellCipher } from "../../crypto/cell-cipher";
 import { DamagedDataError } from "../../damaged-data-error";
-import { baseState, changed, checkImportedDeltas, rebuildState, requireHeld, sliceShown } from "../scene-state-rules";
+import { GLOBAL_SLOT, baseState, changed, checkImportedDeltas, rebuildState, requireHeld, sliceShown } from "../scene-state-rules";
 import { checkGuard } from "../chat-rules";
 import type { BranchSql, MessageSql } from "./chat-store-rows";
 import type { StageDatabase } from "./database";
@@ -32,7 +34,7 @@ export interface StateSqlDeps {
 }
 
 export interface StateSql {
-  api: Pick<ChatStore, "sceneState" | "sceneStateBefore" | "sceneDeltas" | "recordMessageDeltas" | "setBranchBase">;
+  api: Pick<ChatStore, "sceneState" | "sceneStateBefore" | "sceneDeltas" | "recordMessageDeltas" | "recordDeltas" | "setBranchBase" | "globalOps">;
   /** Rebuilds the branch's tip cache and rewrites its keyframes; the ones at or after message seq `fromSeq` are dropped first. Inside the caller's transaction. */
   refresh(branchId: string, fromSeq?: number): void;
   /** Gives a new take its own copy of another's base and builds its state. Inside the caller's transaction. */
@@ -43,7 +45,7 @@ export interface StateSql {
   stampSwipe(swipeId: string, deltas: readonly Delta[]): void;
 }
 
-interface DeltaSql { owner: string; slot: string; path_json: string; value_json: string | null; removed: number; at: number }
+interface DeltaSql { owner: string; swipe: string | null; slot: string; path_json: string; value_json: string | null; removed: number; at: number }
 interface PathSql { message_id: string; seq: number; swipe_id: string }
 
 const isDamage = (error: unknown): boolean => error instanceof DamagedDataError || error instanceof SyntaxError;
@@ -79,26 +81,36 @@ export function stateMethods(k: StateSqlDeps): StateSql {
     return new Map();
   };
 
-  /** The deltas of one table's owners, in the order written (`table` and `owner` are this file's own names, never input). */
-  const load = (table: "swipe_deltas" | "message_deltas", owner: "swipe_id" | "message_id", ids: string[], prefixes?: readonly string[]): Map<string, Delta[]> => {
-    const out = new Map<string, Delta[]>();
+  /** The deltas of one table's owners, in the order written, each with the version it belongs to (only a message's generated writes have one). `table` and `owner` are this file's own names, never input. */
+  const load = (table: "swipe_deltas" | "message_deltas", owner: "swipe_id" | "message_id", ids: string[], prefixes?: readonly string[]): Map<string, { delta: Delta; swipe: string | null }[]> => {
+    const out = new Map<string, { delta: Delta; swipe: string | null }[]>();
     if (ids.length === 0) return out;
     const only = prefixes === undefined ? "" : " AND EXISTS (SELECT 1 FROM json_each(?) p WHERE substr(slot, 1, length(p.value)) = p.value)";
-    const rows = statement(`SELECT ${owner} AS owner, slot, path_json, value_json, removed, at FROM ${table} WHERE ${owner} IN (SELECT value FROM json_each(?))${only} ORDER BY ${owner}, seq`).all(JSON.stringify(ids), ...(prefixes === undefined ? [] : [JSON.stringify(prefixes)])) as DeltaSql[];
+    const version = table === "message_deltas" ? "swipe_id" : "NULL";
+    const rows = statement(`SELECT ${owner} AS owner, ${version} AS swipe, slot, path_json, value_json, removed, at FROM ${table} WHERE ${owner} IN (SELECT value FROM json_each(?))${only} ORDER BY ${owner}, seq`).all(JSON.stringify(ids), ...(prefixes === undefined ? [] : [JSON.stringify(prefixes)])) as DeltaSql[];
     for (const r of rows) {
       const path = JSON.parse(cipher.open(`${table}.path_json`, r.path_json)) as string[];
       const delta: Delta = r.removed === 1 ? { slot: r.slot, path, removed: true, at: r.at } : { slot: r.slot, path, value: JSON.parse(cipher.open(`${table}.value_json`, r.value_json!)), at: r.at };
-      (out.get(r.owner) ?? out.set(r.owner, []).get(r.owner)!).push(delta);
+      (out.get(r.owner) ?? out.set(r.owner, []).get(r.owner)!).push({ delta, swipe: r.swipe });
     }
     return out;
   };
 
-  /** Each message's deltas for a path: its shown version's, then its own (they win). */
-  const deltasOf = (path: readonly Shown[], prefixes?: readonly string[]): Map<string, Delta[]> => {
+  /** Each message's deltas for a path in three layers, in fold order: its shown version's own, then this take's generated writes for that version, then the person's (they win). */
+  const layersOf = (path: readonly Shown[], prefixes?: readonly string[]): Map<string, [Delta[], Delta[], Delta[]]> => {
     const own = load("message_deltas", "message_id", path.map((p) => p.messageId), prefixes);
     const versions = load("swipe_deltas", "swipe_id", path.flatMap((p) => (p.swipeId === null ? [] : [p.swipeId])), prefixes);
-    return new Map(path.map((p) => [p.messageId, [...(p.swipeId === null ? [] : (versions.get(p.swipeId) ?? [])), ...(own.get(p.messageId) ?? [])]]));
+    const deltas = (list: { delta: Delta }[]) => list.map((x) => x.delta);
+    return new Map(path.map((p) => {
+      const mine = own.get(p.messageId) ?? [];
+      return [p.messageId, [
+        p.swipeId === null ? [] : deltas(versions.get(p.swipeId) ?? []),
+        p.swipeId === null ? [] : deltas(mine.filter((x) => x.swipe === p.swipeId)),
+        deltas(mine.filter((x) => x.swipe === null)),
+      ]];
+    }));
   };
+  const deltasOf = (path: readonly Shown[], prefixes?: readonly string[]): Map<string, Delta[]> => new Map([...layersOf(path, prefixes)].map(([id, layers]) => [id, layers.flat()]));
 
   const shown = (rows: PathSql[]): Shown[] => rows.map((p) => ({ messageId: p.message_id, swipeId: p.swipe_id }));
   /** What the take starts with: real data, so a cell that will not open refuses. */
@@ -139,14 +151,15 @@ export function stateMethods(k: StateSqlDeps): StateSql {
     );
   };
 
-  /** Adds deltas after the ones the owner has. */
-  const stamp = (table: "swipe_deltas" | "message_deltas", owner: "swipe_id" | "message_id", id: string, deltas: readonly Delta[]): void => {
+  /** Adds deltas after the ones the owner has; a message's write that names a version carries its swipe id. */
+  const stamp = (table: "swipe_deltas" | "message_deltas", owner: "swipe_id" | "message_id", id: string, deltas: readonly Delta[], swipe?: string): void => {
     let { n } = k.one<{ n: number }>(`SELECT coalesce(max(seq), 0) AS n FROM ${table} WHERE ${owner} = ?`, id)!;
+    const message = table === "message_deltas";
     for (const d of deltas) {
       k.run(
-        `INSERT INTO ${table} (${owner}, seq, slot, path_json, value_json, removed, at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO ${table} (${owner}, seq, slot, path_json, value_json, removed, at${message ? ", swipe_id" : ""}) VALUES (?, ?, ?, ?, ?, ?, ?${message ? ", ?" : ""})`,
         id, ++n, d.slot, cipher.seal(`${table}.path_json`, JSON.stringify(d.path)),
-        d.removed ? null : cipher.seal(`${table}.value_json`, JSON.stringify(d.value)), d.removed ? 1 : 0, d.at,
+        d.removed ? null : cipher.seal(`${table}.value_json`, JSON.stringify(d.value)), d.removed ? 1 : 0, d.at, ...(message ? [swipe ?? null] : []),
       );
     }
   };
@@ -163,6 +176,22 @@ export function stateMethods(k: StateSqlDeps): StateSql {
       k.run("DELETE FROM state_keyframes WHERE branch_id = ?", branchId);
     },
     api: {
+      async globalOps(exceptSwipeIds = []) {
+        // A version counts while any live take shows it: its message is not cut, the version itself is not cut, and neither its take nor its scene is deleted. One row per operation, so a version a fork shares counts once.
+        const rows = statement(
+          `SELECT d.swipe_id AS owner, NULL AS swipe, d.slot, d.path_json, d.value_json, d.removed, d.at FROM swipe_deltas d
+            WHERE d.slot = ? AND d.swipe_id NOT IN (SELECT value FROM json_each(?)) AND EXISTS (
+              SELECT 1 FROM swipes s JOIN messages m ON m.id = s.message_id AND s.position = m.current_swipe
+                JOIN branches b ON b.id = m.branch_id JOIN chats c ON c.id = b.chat_id
+              WHERE s.swipe_id = d.swipe_id AND s.cut_at IS NULL AND m.cut_id IS NULL AND b.deleted_at IS NULL AND c.deleted_at IS NULL)
+            ORDER BY d.at, d.swipe_id, d.seq`,
+        ).all(GLOBAL_SLOT, JSON.stringify(exceptSwipeIds)) as DeltaSql[];
+        return rows.map((r): Delta => {
+          const path = JSON.parse(cipher.open("swipe_deltas.path_json", r.path_json)) as string[];
+          return r.removed === 1 ? { slot: r.slot, path, removed: true, at: r.at } : { slot: r.slot, path, value: JSON.parse(cipher.open("swipe_deltas.value_json", r.value_json!)), at: r.at };
+        });
+      },
+
       async sceneState(branchId) {
         if (!k.writableBranch(branchId)) return null;
         const row = k.one<{ state_json: string }>("SELECT state_json FROM branch_state WHERE branch_id = ?", branchId);
@@ -187,12 +216,18 @@ export function stateMethods(k: StateSqlDeps): StateSql {
         const rows = shownPath(branchId);
         const split = sliceShown(shown(rows), fromMessageId, toMessageId);
         if (!split) return null;
-        const deltas = deltasOf(split.range, slotPrefixes);
-        return { before: build(branchId, [], split.before, rows[split.before.length]!.seq).state, messages: split.range.map((p) => ({ messageId: p.messageId, deltas: deltas.get(p.messageId) ?? [] })) };
+        const layers = layersOf(split.range, slotPrefixes);
+        return {
+          before: build(branchId, [], split.before, rows[split.before.length]!.seq).state,
+          messages: split.range.map((p) => {
+            const [own, generated, person] = layers.get(p.messageId) ?? [[], [], []];
+            return { messageId: p.messageId, deltas: [...own, ...generated, ...person], generatedFrom: own.length, personFrom: own.length + generated.length };
+          }),
+        };
       },
 
       async setBranchBase(branchId, raw) {
-        const deltas = checkImportedDeltas(raw);
+        const deltas = checkImportedDeltas(raw, "import");
         return k.write(() => {
           if (!k.writableBranch(branchId)) return false;
           if (deltas.length === 0) k.run("DELETE FROM branch_base WHERE branch_id = ?", branchId);
@@ -202,8 +237,31 @@ export function stateMethods(k: StateSqlDeps): StateSql {
         });
       },
 
+      async recordDeltas(branchId, swipeId, raw, guard) {
+        checkImportedDeltas(raw, "background");
+        const expected = checkGuard(guard);
+        return k.write(() => {
+          const row = k.one<{ id: string }>(
+            "SELECT m.id FROM messages m JOIN swipes s ON s.message_id = m.id WHERE s.swipe_id = ? AND s.cut_at IS NULL AND m.branch_id = ? AND m.cut_id IS NULL", swipeId, branchId,
+          );
+          const m = row && k.writableMessage(row.id);
+          if (!m) return false;
+          k.requireVersion(k.writableBranch(branchId)!, expected);
+          // Judged as if this version were the one shown, so a write of what it already holds adds nothing.
+          const through = build(branchId, [], [...shown(shownPath(branchId, m.seq)), { messageId: m.id, swipeId }], m.seq).state;
+          requireHeld(through, guard?.expect);
+          const added = changed(through, checkImportedDeltas(raw, "background"));
+          // This take's message carries it, tied to the version: a fork that shows the same version never sees it unless it copied the message.
+          if (added.length > 0) {
+            stamp("message_deltas", "message_id", m.id, added, swipeId);
+            refresh(branchId, m.seq);
+          }
+          return true;
+        });
+      },
+
       async recordMessageDeltas(branchId, messageId, raw, guard) {
-        checkImportedDeltas(raw);
+        checkImportedDeltas(raw, "person");
         const expected = checkGuard(guard);
         return k.write(() => {
           const m = k.writableMessage(messageId);
@@ -212,7 +270,7 @@ export function stateMethods(k: StateSqlDeps): StateSql {
           // A write of what the message already shows adds nothing.
           const shown = stateThrough(branchId, m);
           requireHeld(shown, guard?.expect);
-          const added = changed(shown, checkImportedDeltas(raw));
+          const added = changed(shown, checkImportedDeltas(raw, "person"));
           if (added.length > 0) {
             stamp("message_deltas", "message_id", messageId, added);
             refresh(branchId, m.seq);

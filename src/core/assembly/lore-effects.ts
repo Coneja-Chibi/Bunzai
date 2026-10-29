@@ -7,13 +7,14 @@
  * Delete removes.
  *
  * RoleCall re-runs this over the variables a first attempt already changed, so a regenerate counts an
- * Increment twice. Here each application returns what it replaced (`LoreUndo`), the turn's trace keeps
- * it, and the next attempt at the same reply starts from `revertEffects`, then writes only the
- * difference from what the library holds (`rebaseDiff`). Pure.
+ * Increment twice. Here a new version starts from the state without the version it replaces (local
+ * variables are scene state, global ones are operations kept with the version, core/scene-state/globals.ts),
+ * so nothing counts twice. Each application still returns what it replaced (`LoreUndo`), which the
+ * turn's trace shows, and a global one is recorded in `writes` as the operation it was. Pure.
  */
-import { deepEq } from "../guards";
 import type { LoreSideEffectOp } from "../lore/engine";
-import type { MacroVariable } from "../macros";
+import { deepEq } from "../guards";
+import type { GlobalWrite, MacroVariable } from "../macros/types";
 import type { VariableDiff } from "./types";
 
 /** What one variable was before the entries' effects first touched it this turn. */
@@ -28,33 +29,33 @@ type Vars = Map<string, MacroVariable>;
 
 const numberOf = (v: MacroVariable["value"] | undefined): number => (typeof v === "number" ? v : Number.parseFloat(String(v)) || 0);
 
-export function applyLoreEffects(ops: readonly LoreSideEffectOp[], local: Vars, global: Vars, now: number): LoreUndo[] {
+export function applyLoreEffects(ops: readonly LoreSideEffectOp[], local: Vars, global: Vars, now: number, writes?: GlobalWrite[]): LoreUndo[] {
   const undo: LoreUndo[] = [];
   for (const op of ops) {
     const vars = op.scope === "local" ? local : global;
     const was = vars.get(op.name);
     if (!undo.some((u) => u.scope === op.scope && u.name === op.name)) undo.push({ scope: op.scope, name: op.name, had: was !== undefined, ...(was ? { value: was.value } : {}) });
-    if (op.op === "del") { vars.delete(op.name); continue; }
     const amount = typeof op.value === "number" ? op.value : 1;
+    if (op.op === "del") {
+      vars.delete(op.name);
+      if (op.scope === "global") writes?.push({ name: op.name, op: "delete" });
+      continue;
+    }
     const value = op.op === "set" ? String(op.value ?? "")
       : op.op === "add" ? String(was?.value ?? "") + String(op.value ?? "")
       : op.op === "inc" ? numberOf(was?.value) + amount
       : numberOf(was?.value) - amount;
     vars.set(op.name, { value, createdAt: was?.createdAt ?? now, updatedAt: now });
+    // A global write is kept as the operation it was (core/scene-state/globals.ts), except an add onto a value of another kind, kept as a set of what it made, so the fold gives what this prompt saw.
+    if (op.scope !== "global" || !writes) continue;
+    const onto = was?.value;
+    if ((op.op === "inc" || op.op === "dec") && (onto === undefined || typeof onto === "number")) writes.push({ name: op.name, op: "inc", v: op.op === "inc" ? amount : -amount });
+    else if (op.op === "add" && (onto === undefined || typeof onto === "string")) writes.push({ name: op.name, op: "append", v: String(op.value ?? "") });
+    else writes.push({ name: op.name, op: "set", v: value });
   }
   return undo;
 }
 
-/** The variables as they were before a reply's effects ran: each recorded one put back (or removed, when it did not exist). */
-export function revertEffects(vars: Vars, undo: readonly LoreUndo[], scope: LoreUndo["scope"], now: number): Vars {
-  const out = new Map(vars);
-  for (const u of undo) {
-    if (u.scope !== scope) continue;
-    if (!u.had) out.delete(u.name);
-    else out.set(u.name, { value: u.value as MacroVariable["value"], createdAt: out.get(u.name)?.createdAt ?? now, updatedAt: now });
-  }
-  return out;
-}
 
 /** Only what changed from `before` to `after` (RoleCall writes changed keys only, so no writer reverts another's). */
 export function variableDiff(before: ReadonlyMap<string, MacroVariable>, after: ReadonlyMap<string, MacroVariable>): VariableDiff {
@@ -66,12 +67,4 @@ export function variableDiff(before: ReadonlyMap<string, MacroVariable>, after: 
     }).map(([name, v]) => [name, v.value]),
   );
   return { set, delete: [...before.keys()].filter((name) => !after.has(name)) };
-}
-
-/** What to write so the library ends where a turn assembled over `reverted` ended: the turn's own diff, measured against what is stored. */
-export function rebaseDiff(stored: ReadonlyMap<string, MacroVariable>, reverted: ReadonlyMap<string, MacroVariable>, turn: VariableDiff): VariableDiff {
-  const final = new Map(reverted);
-  for (const [name, value] of Object.entries(turn.set)) final.set(name, { value, createdAt: final.get(name)?.createdAt ?? 0, updatedAt: 0 });
-  for (const name of turn.delete) final.delete(name);
-  return variableDiff(stored, final);
 }

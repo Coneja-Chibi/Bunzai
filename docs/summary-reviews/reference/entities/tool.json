@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tool",
   "sourcePath": "docs/reference/entities/tool.md",
-  "sourceHash": "sha256:631fe687907dfa503c1eb3e4446e9f40e964dc67e4ea745180e5f0fc66569dcc",
-  "semanticSummaryHash": "sha256:18856f1e1fe6d4f7c26a4c1bc50901cf64a7c570479736e9a360fb36ba21f344",
+  "sourceHash": "sha256:a266728791059e33454088bd2f9031353745515b8d61f9971d4ae824ee6d259d",
+  "semanticSummaryHash": "sha256:257caacc1584e50f8d940f55ae9f330d13d74f47f644684986498b74c456f58b",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Booth sentence matches booth-tools.tsx and booth-tools-core.ts (icon per action, plain words, tool-cost token count shared with the editor rail, switch through setScenePrompting, Per reply sum, Link a tool, New tool in the Workbench). Page summary and in-a-scene summary updated accordingly; bands ok.",
-  "reviewedAt": "2026-10-28T15:31:26.550Z"
+  "notes": "Page's five recognized phrases match TOOLS_REFUSED exactly (Ollama does not support tools; generic 'tools is not supported' and 'tool use is not supported'; llama.cpp 'tools param requires --jinja'; vLLM '--enable-auto-tool-choice'), generics no longer credited to Ollama. in-a-scene summary (167 words) now covers tools for every connection except refusing models, the one plain sentence, no retry, and the Director and Final Cut reports.",
+  "reviewedAt": "2026-10-28T18:45:07.300Z"
 }

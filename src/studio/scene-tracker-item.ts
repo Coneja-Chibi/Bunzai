@@ -43,11 +43,9 @@ export const NAME_MAX = 120;
 export const GUIDE_MAX = 1_000;
 const EXISTING_MAX = 50_000;
 
-/** The module's Sub-features the person switched on, from the scene's stored tracker (`data.subs`). */
+/** The module's Sub-features the person switched on, from the scene's tracker settings. */
 function subsOf(chat: Chat, module: TrackerModule): Record<string, boolean> {
-  const data = chat.trackers?.[module]?.data;
-  const subs = isRecord(data) ? data["subs"] : undefined;
-  return isRecord(subs) ? Object.fromEntries(Object.entries(subs).filter(([, v]) => v === true)) as Record<string, boolean> : {};
+  return Object.fromEntries(Object.entries(chat.trackers?.[module]?.subs ?? {}).filter(([, v]) => v)) as Record<string, boolean>;
 }
 
 export async function proposeTrackerItem(deps: TrackerItemDeps, input: TrackerItemInput, signal?: AbortSignal): Promise<{ item: unknown }> {

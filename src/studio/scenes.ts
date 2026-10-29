@@ -8,8 +8,6 @@
  * now stands, so the page redraws from one answer.
  */
 import { checkUserMessage } from "./final-cut-user-check";
-import { cutKeepingTrackers, cutVersionKeepingTrackers, forkKeepingTrackers, selectKeepingTrackers } from "./scene-director-trackers-sync";
-import { syncTrackersToTake } from "./scene-tracker-undo";
 import type { Branch, Cast, CastSnapshot, Chat, ChatStore, JsonObject, Message, MessageAtPage, MessageRole, MessageSwipePage } from "../stage/contracts/chat-store";
 import type { ParsedCanonicalEntity } from "../entities/runtime-schema";
 import { breather } from "../stage/store/breather";
@@ -288,7 +286,7 @@ export async function cutInScene(
   studio: StudioStoreLike,
   input: { chatId: string; messageId: string; scope: "one" | "from"; expectedVersion: number },
 ): Promise<OpenScene | null> {
-  const cut = await cutKeepingTrackers(chats, input.chatId, await activeOf(chats, input.chatId), input.messageId, input.scope, { expectedVersion: input.expectedVersion });
+  const cut = await chats.cutMessages(await activeOf(chats, input.chatId), input.messageId, input.scope, { expectedVersion: input.expectedVersion });
   return reopen(chats, studio, input.chatId, cut);
 }
 
@@ -299,13 +297,11 @@ export async function restoreInScene(
   input: { chatId: string; cutId: string; expectedVersion: number },
 ): Promise<OpenScene | null> {
   const back = await chats.restoreCut(await activeOf(chats, input.chatId), input.cutId, { expectedVersion: input.expectedVersion });
-  await syncTrackersToTake(chats, input.chatId);
   return reopen(chats, studio, input.chatId, back);
 }
 
 export async function switchTake(chats: ChatStore, studio: StudioStoreLike, input: { chatId: string; branchId: string }): Promise<OpenScene | null> {
   const moved = await chats.setActiveBranch(input.chatId, input.branchId);
-  await syncTrackersToTake(chats, input.chatId);
   return reopen(chats, studio, input.chatId, moved);
 }
 
@@ -319,7 +315,7 @@ export async function forkScene(
   let n = taken.size + 1;
   while (taken.has(`Take ${n}`)) n++;
   const name = input.name?.trim() || `Take ${n}`;
-  const take = await forkKeepingTrackers(chats, input.chatId, async () => chats.fork(await activeOf(chats, input.chatId), input.messageId, { name, expectedVersion: input.expectedVersion }));
+  const take = await chats.fork(await activeOf(chats, input.chatId), input.messageId, { name, expectedVersion: input.expectedVersion });
   return reopen(chats, studio, input.chatId, take);
 }
 
@@ -332,7 +328,6 @@ export async function renameTake(chats: ChatStore, studio: StudioStoreLike, inpu
 export async function deleteTake(chats: ChatStore, studio: StudioStoreLike, input: { chatId: string; branchId: string }): Promise<OpenScene | null> {
   if (!(await takeOf(chats, input.chatId, input.branchId))) return null;
   const gone = await chats.deleteBranch(input.branchId);
-  await syncTrackersToTake(chats, input.chatId);
   return reopen(chats, studio, input.chatId, gone);
 }
 
@@ -372,7 +367,7 @@ export async function selectVersion(
   input: { chatId: string; messageId: string; index: number; expectedVersion: number },
 ): Promise<OpenScene | null> {
   const branchId = await activeOf(chats, input.chatId);
-  const target = await selectKeepingTrackers(chats, input.chatId, branchId, input.messageId, input.index, { expectedVersion: input.expectedVersion });
+  const target = await chats.selectTranscriptSwipe(input.chatId, branchId, input.messageId, input.index, { expectedVersion: input.expectedVersion });
   if ((await activeOf(chats, input.chatId)) !== branchId) throw new StudioConflictError("the active take changed while a swipe was selected");
   if (!target || target.branchId !== branchId) return null;
   return reopen(chats, studio, input.chatId, target);
@@ -406,7 +401,7 @@ export async function cutVersionInScene(
 ): Promise<OpenScene | null> {
   const branchId = await activeOf(chats, input.chatId);
   if (!branchId || (await chats.readMessageSwipe(branchId, input.messageId, 0)).branchId !== branchId) return null;
-  return reopen(chats, studio, input.chatId, await cutVersionKeepingTrackers(chats, input.chatId, input.messageId, input.swipeId, { expectedVersion: input.expectedVersion }));
+  return reopen(chats, studio, input.chatId, await chats.cutSwipe(input.messageId, input.swipeId, { expectedVersion: input.expectedVersion }));
 }
 
 /**

@@ -23,7 +23,7 @@ const deepseek: ProviderSpoke = {
     return openAICompatModels(baseURL ?? "https://api.deepseek.com/v1", apiKey, fetch);
   },
   // api-docs.deepseek.com create-chat-completion: frequency and presence penalty are deprecated with no effect; stop takes 16.
-  scene: { params: { logprobs: true, top_logprobs: true, response_format: true, stop: stopList("stop", 16) }, base: (c) => c.baseURL ?? "https://api.deepseek.com/v1", support: { streamUsage: true }, tools: true },
+  scene: { params: { logprobs: true, top_logprobs: true, response_format: true, stop: stopList("stop", 16) }, base: (c) => c.baseURL ?? "https://api.deepseek.com/v1", support: { streamUsage: true } },
 };
 
 export default deepseek;

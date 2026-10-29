@@ -10,7 +10,8 @@ import { join } from "node:path";
 import { bytesToBase64 } from "../../core/base64";
 import { CANONICAL_SCHEMA_VERSION } from "../../core/canonical";
 import { hashHex } from "../../core/sha256";
-import { DEFAULT_RESOURCES } from "../../core/trackers/resources";
+import { trackerDataIn, trackerDeltas } from "../../core/trackers";
+import { DEFAULT_RESOURCES, readResources } from "../../core/trackers/resources";
 import { blankDirector } from "../contracts/chat-store.contract-director";
 import { cellCipher } from "../crypto/cell-cipher";
 import { fakeComputer } from "../crypto/fake-device-vault";
@@ -144,7 +145,9 @@ test("nothing written through the stores can be found in the database files", as
   await chats.updateParticipants(chat.id, { op: "add", run: "r1", people: [{ name: SECRET.participantName }] });
   await chats.setRegex(chat.id, { sets: [SECRET.regexSet] });
   await chats.setFinalCut(chat.id, { on: true, passes: [{ id: "post-editor", type: "editor", order: 0, failureMode: "fallback", guideContent: SECRET.finalCutNote }] });
-  await chats.setTracker(chat.id, "resources", { data: { ...DEFAULT_RESOURCES, needs: { [SECRET.trackerNeed]: { value: 3, maxValue: 9 } } } });
+  // A module's settings are in the sealed scene cell and its state is sealed scene-state deltas: the secret need is in the second.
+  await chats.setTracker(chat.id, "resources", { context: "every2" });
+  await chats.recordMessageDeltas(take!.id, committed!.id, trackerDeltas("resources", undefined, { ...DEFAULT_RESOURCES, needs: { [SECRET.trackerNeed]: { value: 3, maxValue: 9 } } }, 1));
   await chats.setSummarySettings(chat.id, { prompt: SECRET.summaryPrompt });
   await chats.setSummaryError(chat.id, SECRET.summaryError);
   await chats.setSummary(chat.activeBranchId, { text: SECRET.chatSummaryText, through: 1 });
@@ -209,7 +212,8 @@ test("nothing written through the stores can be found in the database files", as
     expect((await st.getChat(chat.id))?.participants?.people[0]?.name).toBe(SECRET.participantName);
     expect((await st.getChat(chat.id))?.regex?.sets).toEqual([SECRET.regexSet]);
     expect((await st.getChat(chat.id))?.finalCut?.passes?.[0]?.guideContent).toBe(SECRET.finalCutNote);
-    expect(Object.keys(((await st.getChat(chat.id))?.trackers?.resources?.data as { needs: object }).needs)).toEqual([SECRET.trackerNeed]);
+    expect((await st.getChat(chat.id))?.trackers).toEqual({ resources: { context: "every2" } });
+    expect(Object.keys(readResources(trackerDataIn("resources", (await st.sceneState(take!.id))!)).needs)).toEqual([SECRET.trackerNeed]);
     expect((await st.getChat(chat.id))?.summary).toEqual({ settings: { prompt: SECRET.summaryPrompt }, error: SECRET.summaryError });
     expect((await st.summaryOf(chat.activeBranchId))?.text).toBe(SECRET.chatSummaryText);
     expect((await st.getChat(chat.id))?.director).toEqual({ instructions: SECRET.directorInstructions });

@@ -348,7 +348,7 @@ chats, provider, pipeline hooks); `store/` implements them, with `memory/` for t
 Anthropic connection (Anthropic's own Messages API, `/v1/messages`) a direct Anthropic connection
 sends through instead: explicit `cache_control` breakpoints and no system-message hoisting, which the
 OpenAI-compatible endpoint Anthropic itself offers does not support. `src/kit/providers/scene.ts`
-picks between them per spoke (`ProviderSpoke.scene.native`); both report usage into the token meter's
+picks between them per spoke (`ProviderSpoke.scene.native`) and sends tools on every connection that has a scene endpoint, local and custom included, bar models that refuse tools whatever their host (`sceneTools`); both report usage into the token meter's
 record the same way (`src/core/tokens`, [token-meter.md](token-meter.md)); `pipeline/` checks hook effects. The D18
 boundary lint keeps storage from importing engine, entity, or format code. The rebuildable-result
 cache contract is in `src/core/derive/derive.ts`.

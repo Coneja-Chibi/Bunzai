@@ -4,6 +4,7 @@
  * Split from chat-store.ts for the file-size cap; chat-store.ts re-exports.
  */
 import type { Chat } from "./chat-store";
+import type { MessageDeltaGuard } from "./chat-store-pages";
 import type { ChatConnection } from "./chat-settings-types";
 
 export interface SummarySettings {
@@ -44,7 +45,7 @@ export interface ChatSummary {
   error?: string;
 }
 
-/** One take's summary. `through` counts the take's live messages (the greeting too) the text covers; `at` is the store's clock at the write (epoch ms); `last` is the last reply a pair summary added a line for. */
+/** One take's summary, read from the `summary` slot (core/summary/rows.ts). `through` counts the take's live messages (the greeting too) the text covers; `at` is the latest write (epoch ms); `last` is the message the newest piece ends at. */
 export interface TakeSummary {
   text: string;
   through: number;
@@ -52,11 +53,10 @@ export interface TakeSummary {
   last?: string;
 }
 
-/** What a write gives: the text, how far it reaches, and (pair summaries) the reply it last covered. */
+/** What a write gives: the text and how far it reaches. */
 export interface TakeSummaryInput {
   text: string;
   through: number;
-  last?: string;
 }
 
 /** The ChatStore's summary methods (rule 45), declared here with their types and merged into ChatStore. */
@@ -65,11 +65,11 @@ export interface ChatStoreSummaries {
   setSummarySettings(chatId: string, patch: SummarySettingsPatch): Promise<Chat | null>;
   /** Keeps the last automatic summary run's failure in words, or clears it with null (rule 45). Bumps no version and moves no updatedAt; null for an absent or deleted scene. */
   setSummaryError(chatId: string, error: string | null): Promise<Chat | null>;
-  /** A take's summary (rule 45); null when it has none, or the take is absent. */
+  /** A take's summary (rule 45), the text of the `summary` slot's rows the take shows; null when it has none, or the take is absent. */
   summaryOf(branchId: string): Promise<TakeSummary | null>;
   /**
-   * Writes a take's summary, or clears it with null (rule 45); the store stamps `at` (the clock, and always later than the take's previous write). With a guard, the write is refused (StudioConflictError) unless the take's summary was last written at `guard.at` (null for none), so a
-   * summary generated from an old reading never overwrites one the person edited meanwhile. Bumps no version and moves no updatedAt; null for an absent or deleted take.
+   * The person's own summary (rule 45): replaces the take's whole text, or clears it with null, as message-level deltas on the take's newest live message (the removal of every row it replaces and one row), so the edit survives choosing
+   * another version of that message and leaves with the message. The guard is `recordMessageDeltas`'s (the branch version, or the rows the caller read), refused with a StudioConflictError when the take has moved on. Null for an absent or deleted take, or one with no live message.
    */
-  setSummary(branchId: string, input: TakeSummaryInput | null, guard?: { at: number | null }): Promise<{ summary: TakeSummary | null } | null>;
+  setSummary(branchId: string, input: TakeSummaryInput | null, guard?: MessageDeltaGuard): Promise<{ summary: TakeSummary | null } | null>;
 }

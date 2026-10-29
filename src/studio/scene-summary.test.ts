@@ -2,11 +2,16 @@
  * The chat summary's writer (rc-parity 08, Memory) against a scripted summary model: Rolling recap and Growing timeline once enough messages have come in, Every exchange once per
  * reply, Backfill history with its splitting, and the failures that leave the saved text alone. Fixtures follow scene-turn-chat-summary.test.ts.
  */
-import { describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { ProviderError, type Provider, type ProviderCompletion, type ProviderRequest } from "../stage/contracts/provider";
 import type { ChatConnection, Message } from "../stage/contracts/chat-store";
 import { memoryChatStore } from "../stage/store/chat-store";
+import type { ChatStore } from "../stage/contracts/chat-store";
+import type { StageDatabase } from "../stage/store/sqlite/database";
+import { sqliteChatStore } from "../stage/store/sqlite-chat-store";
+import { freshDatabase, testCipher } from "../stage/store/sqlite/test-support";
 import { SummaryFailure, backfill, isSummarizing, saveSummaryText, summarizeAfter, summaryState, type SummaryDeps } from "./scene-summary";
+import { enqueue } from "./compendium-queue";
 import type { Connected } from "./scene-turn";
 
 const vera = { kind: "character", id: "vera", body: { identity: { name: "Vera", description: "Keeps the light." }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {} } };
@@ -29,8 +34,14 @@ function model(...answers: Answer[]) {
   return { provider, calls };
 }
 
-async function scene(provider: Provider, opts: { messages?: number } = {}) {
-  const chats = memoryChatStore();
+const open: StageDatabase[] = [];
+afterEach(() => { for (const d of open.splice(0)) d.close(); });
+/** The writer runs against both chat stores. */
+const STORES: [string, (clock?: () => number) => ChatStore][] = [["memory", (clock) => memoryChatStore(clock)], ["sqlite", (clock) => sqliteChatStore(freshDatabase(open), testCipher(), clock)]];
+let makeStore: (clock?: () => number) => ChatStore = STORES[0]![1];
+
+async function scene(provider: Provider, opts: { messages?: number; clock?: () => number } = {}) {
+  const chats = makeStore(opts.clock);
   const chat = await chats.createChat({ title: "Night", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: vera } });
   await chats.setConnection(chat.id, { id: "conn", model: "vera-1" });
   const connects: ChatConnection[] = [];
@@ -48,10 +59,15 @@ async function scene(provider: Provider, opts: { messages?: number } = {}) {
   return { chats, chat, deps, connects, say, branch: chat.activeBranchId };
 }
 
-/** Lets the scene's lane finish what summarizeAfter queued. */
-const idle = async (chatId: string): Promise<void> => { for (let i = 0; i < 100 && isSummarizing(chatId); i++) await Bun.sleep(5); await Bun.sleep(25); };
+/** Waits for the scene's lane to finish what summarizeAfter queued: the writer runs in that lane, so a task queued after it runs after it. */
+const idle = (chatId: string): Promise<void> => enqueue(chatId, async () => undefined);
 const after = async (s: Awaited<ReturnType<typeof scene>>, landed: Message, kind: "reply" | "swipe" | "continue" = "reply"): Promise<void> => { summarizeAfter(s.deps, s.chat.id, kind, landed); await idle(s.chat.id); };
+/** The person's text, saved before a run reads: the run's piece records that it saw it. */
+const saved = async (s: Awaited<ReturnType<typeof scene>>, input: { text: string; through: number }): Promise<void> => { await s.chats.setSummary(s.branch, input); };
 const lastIn = (m: ReturnType<typeof model>): string => m.calls.at(-1)!.messages[0]!.content;
+
+for (const [storeName, factory] of STORES) describe(`the chat summary's writer on the ${storeName} store`, () => {
+  beforeEach(() => { makeStore = factory; });
 
 describe("automatic rolling summaries", () => {
   test("do nothing while automation is off, even with plenty of messages", async () => {
@@ -89,7 +105,7 @@ describe("automatic rolling summaries", () => {
     for (const [mode, marker] of [["replace", "COMPLETE REPLACEMENT SUMMARY:"], ["additive", "NEW MESSAGES:"]] as const) {
       const m = model("Updated.");
       const s = await scene(m.provider, { messages: 6 });
-      await s.chats.setSummary(s.branch, { text: "Old text.", through: 2 });
+      await saved(s, { text: "Old text.", through: 2 });
       await s.chats.setSummarySettings(s.chat.id, { auto: true, interval: 4, mode });
       const [landed] = await s.say(1);
       await after(s, landed!);
@@ -102,7 +118,7 @@ describe("automatic rolling summaries", () => {
   test("a person's own prompt is used, and gets the existing summary put in front when it has no place for it", async () => {
     const m = model("Done.");
     const s = await scene(m.provider, { messages: 6 });
-    await s.chats.setSummary(s.branch, { text: "Old text.", through: 1 });
+    await saved(s, { text: "Old text.", through: 1 });
     await s.chats.setSummarySettings(s.chat.id, { auto: true, interval: 4, prompt: "Recap for {{characterName}}: {{conversationHistory}}" });
     const [landed] = await s.say(1);
     await after(s, landed!);
@@ -124,7 +140,7 @@ describe("automatic rolling summaries", () => {
   test("an answer cut by the output budget, or a failed call, keeps the old text and leaves a sentence on the scene; the next good run clears it", async () => {
     const m = model({ text: "Half a sum", finish: "length" }, new Error("provider said no"), "Whole.");
     const s = await scene(m.provider, { messages: 6 });
-    await s.chats.setSummary(s.branch, { text: "Old text.", through: 1 });
+    await saved(s, { text: "Old text.", through: 1 });
     await s.chats.setSummarySettings(s.chat.id, { auto: true, interval: 3 });
     let [landed] = await s.say(1);
     await after(s, landed!);
@@ -140,7 +156,7 @@ describe("automatic rolling summaries", () => {
   });
   test("a summary the person edited while the model was working is not overwritten, and that is not a failure", async () => {
     const s = await scene(model("x").provider, { messages: 6 });
-    await s.chats.setSummary(s.branch, { text: "Old text.", through: 1 });
+    await saved(s, { text: "Old text.", through: 1 });
     await s.chats.setSummarySettings(s.chat.id, { auto: true, interval: 3 });
     const slow: Provider = { id: "slow", async send() { await s.chats.setSummary(s.branch, { text: "Mine, edited.", through: 7 }); return { content: "Generated.", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
     const deps: SummaryDeps = { ...s.deps, connect: async () => ({ provider: slow, kind: "openrouter" }) };
@@ -171,11 +187,11 @@ describe("automatic Every exchange summaries", () => {
     const s = await pairScene(m);
     let landed = (await s.say(2))[1]!;
     await after(s, landed);
-    expect(await s.chats.summaryOf(s.branch)).toMatchObject({ text: "Turn 1: They agreed to sail.", through: 2, last: landed.id });
+    expect(await s.chats.summaryOf(s.branch)).toMatchObject({ text: "Turn 1: They agreed to sail.", through: 2, last: landed.swipes[0]!.id });
     expect(lastIn(m)).toContain("User message:\nuser 1");
     landed = (await s.say(2))[1]!;
     await after(s, landed);
-    expect(await s.chats.summaryOf(s.branch)).toMatchObject({ text: "Turn 1: They agreed to sail.\nTurn 2: They reached the cape.", through: 4, last: landed.id });
+    expect(await s.chats.summaryOf(s.branch)).toMatchObject({ text: "Turn 1: They agreed to sail.\nTurn 2: They reached the cape.", through: 4, last: landed.swipes[0]!.id });
   });
   test("a new version of a reply already summarized adds nothing, and a continue has no exchange to add", async () => {
     const m = model("A line.");
@@ -199,7 +215,7 @@ describe("Backfill history", () => {
   test("Rolling recap summarizes the whole take in one call and saves it covering the take", async () => {
     const m = model("The whole story.");
     const s = await scene(m.provider, { messages: 8 });
-    await s.chats.setSummary(s.branch, { text: "Old.", through: 2 });
+    await saved(s, { text: "Old.", through: 2 });
     const wrote = await backfill(s.deps, s.chat.id);
     expect(m.calls).toHaveLength(1);
     expect(lastIn(m)).toContain("Summarize the entire roleplay chat between the user and Vera.");
@@ -219,7 +235,7 @@ describe("Backfill history", () => {
   test("an answer cut by the output budget is split the same way; one message that still does not fit is said plainly, and nothing is saved", async () => {
     const m = model({ text: "cut", finish: "length" });
     const s = await scene(m.provider, { messages: 2 });
-    await s.chats.setSummary(s.branch, { text: "Old.", through: 1 });
+    await saved(s, { text: "Old.", through: 1 });
     const failed = await backfill(s.deps, s.chat.id).then(() => null, (e: unknown) => e);
     expect(failed).toBeInstanceOf(SummaryFailure);
     expect((failed as Error).message).toBe("One message exceeded the configured Max output tokens. Increase that setting and try again.");
@@ -244,13 +260,12 @@ describe("Backfill history", () => {
     await s.chats.setSummarySettings(s.chat.id, { method: "pair" });
     expect(((await backfill(s.deps, s.chat.id).then(() => null, (e: unknown) => e)) as Error).message).toBe("No complete user-to-assistant exchanges are available to backfill.");
   });
-  test("a summary edited while it was being written is not overwritten, and the person is told", async () => {
+  // The old test expected the run to fail with "The summary changed while it was being written": the person's text is now its own layer, and a Backfill read before it is hidden by it, so the run succeeds and the text stays.
+  test("a text the person saves while a Backfill is being written stays shown, and the run is not a failure", async () => {
     const s = await scene(model("x").provider, { messages: 4 });
     const slow: Provider = { id: "slow", async send() { await s.chats.setSummary(s.branch, { text: "Mine.", through: 4 }); return { content: "Generated.", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
-    const failed = await backfill({ ...s.deps, connect: async () => ({ provider: slow, kind: "openrouter" }) }, s.chat.id).then(() => null, (e: unknown) => e);
-    expect((failed as Error).message).toBe("The summary changed while it was being written, so the new one was not saved. Try again.");
+    await backfill({ ...s.deps, connect: async () => ({ provider: slow, kind: "openrouter" }) }, s.chat.id);
     expect((await s.chats.summaryOf(s.branch))!.text).toBe("Mine.");
-    expect(failed).toBeInstanceOf(SummaryFailure);
   });
 });
 
@@ -263,5 +278,130 @@ describe("the person's own text and the state the tab reads", () => {
     await s.chats.setSummarySettings(s.chat.id, { auto: true });
     expect(await summaryState(s.chats, s.chat.id)).toMatchObject({ settings: { auto: true }, text: "Vera keeps the light.", through: 5, at: wrote.at, total: 5 });
     expect(await summaryState(s.chats, "nope")).toBeNull();
+  });
+});
+
+describe("summary lines follow the shown history (scene state, the `summary` slot)", () => {
+  const pairScene = async (m: ReturnType<typeof model>) => {
+    const s = await scene(m.provider, { messages: 1 });
+    await s.chats.setSummarySettings(s.chat.id, { auto: true, method: "pair" });
+    return s;
+  };
+  const reload = async (s: Awaited<ReturnType<typeof scene>>, id: string): Promise<Message> => (await s.chats.readMessages(s.branch, { limit: 100 })).messages.find((x) => x.id === id)!;
+
+  test("a new version of a reply replaces that version's line, and choosing a version shows its own line", async () => {
+    const m = model("They agreed to sail.", "They argued instead.");
+    const s = await pairScene(m);
+    const landed = (await s.say(2))[1]!;
+    await after(s, landed);
+    await s.chats.addSwipe(landed.id, { content: "assistant 2, again" });
+    await after(s, await reload(s, landed.id), "swipe");
+    expect((await s.chats.summaryOf(s.branch))!.text).toBe("Turn 1: They argued instead.");
+    await s.chats.selectSwipe(landed.id, 0);
+    expect((await s.chats.summaryOf(s.branch))!.text).toBe("Turn 1: They agreed to sail.");
+    await s.chats.selectSwipe(landed.id, 1);
+    expect((await s.chats.summaryOf(s.branch))!.text).toBe("Turn 1: They argued instead.");
+  });
+
+  test("cutting a reply takes its line with it, and restoring the cut brings it back", async () => {
+    const m = model("They agreed to sail.");
+    const s = await pairScene(m);
+    const landed = (await s.say(2))[1]!;
+    await after(s, landed);
+    const cut = await s.chats.cutMessages(s.branch, landed.id, "one");
+    expect(await s.chats.summaryOf(s.branch)).toBeNull();
+    await s.chats.restoreCut(s.branch, cut!.cutId);
+    expect((await s.chats.summaryOf(s.branch))!.text).toBe("Turn 1: They agreed to sail.");
+  });
+
+  test("a rolling block that replaces the earlier text is written on the reply it ends at: a new version of that reply brings the earlier text back", async () => {
+    const m = model("The block.");
+    const s = await scene(m.provider, { messages: 4 });
+    await saved(s, { text: "Earlier text.", through: 4 });
+    await s.chats.setSummarySettings(s.chat.id, { auto: true, interval: 2 });
+    const landed = (await s.say(2))[1]!;
+    await after(s, landed);
+    expect((await s.chats.summaryOf(s.branch))!.text).toBe("The block.");
+    await s.chats.addSwipe(landed.id, { content: "assistant 5, again" });
+    expect((await s.chats.summaryOf(s.branch))!.text).toBe("Earlier text.");
+    await s.chats.selectSwipe(landed.id, 0);
+    expect((await s.chats.summaryOf(s.branch))!.text).toBe("The block.");
+  });
+
+  test("the person's own text survives choosing another version of the reply it sits on", async () => {
+    const s = await scene(model("x").provider, { messages: 3 });
+    const tip = (await s.chats.readMessages(s.branch, { limit: 100 })).messages.at(-1)!;
+    await s.chats.addSwipe(tip.id, { content: "another" });
+    await saveSummaryText(s.chats, s.chat.id, "Mine.");
+    await s.chats.selectSwipe(tip.id, 0);
+    expect((await s.chats.summaryOf(s.branch))!.text).toBe("Mine.");
+    await s.chats.selectSwipe(tip.id, 1);
+    expect((await s.chats.summaryOf(s.branch))!.text).toBe("Mine.");
+  });
+});
+
+  describe("what the version keys and the layers settle", () => {
+    test("a continue adds nothing to a rolling summary: no new call, and the block stays as it was", async () => {
+      const m = model("The block.");
+      const s = await scene(m.provider, { messages: 6 });
+      await s.chats.setSummarySettings(s.chat.id, { auto: true, interval: 3 });
+      const [landed] = await s.say(1);
+      await after(s, landed!);
+      expect((await s.chats.summaryOf(s.branch))!.text).toBe("The block.");
+      await after(s, landed!, "continue");
+      expect(m.calls).toHaveLength(1);
+      expect((await s.chats.summaryOf(s.branch))!.text).toBe("The block.");
+    });
+
+    test("a fork's copy of a summarized reply is already summarized: the fork gets no second line for it", async () => {
+      const m = model("They agreed to sail.", "A second line that must not be written.");
+      const s = await scene(m.provider, { messages: 1 });
+      await s.chats.setSummarySettings(s.chat.id, { auto: true, method: "pair" });
+      const landed = (await s.say(2))[1]!;
+      await after(s, landed);
+      const fork = await s.chats.fork(s.branch, landed.id, { name: "Take 2" });
+      await s.chats.setActiveBranch(s.chat.id, fork!.id);
+      const copy = (await s.chats.readMessages(fork!.id, { limit: 100 })).messages.at(-1)!;
+      expect(copy.id).not.toBe(landed.id);
+      await after(s, copy);
+      expect(m.calls).toHaveLength(1);
+      expect((await s.chats.summaryOf(fork!.id))!.text).toBe("Turn 1: They agreed to sail.");
+    });
+
+    test("Every exchange Backfill that ends at a reply before a user message carrying the person's text lands", async () => {
+      const m = model("Turn 1: a");
+      const s = await scene(m.provider, { messages: 4 });
+      await s.chats.setSummarySettings(s.chat.id, { method: "pair" });
+      await saved(s, { text: "Mine.", through: 4 });
+      const wrote = await backfill(s.deps, s.chat.id);
+      expect(wrote.text).toBe("Turn 1: a");
+      expect((await s.chats.summaryOf(s.branch))!.text).toBe("Turn 1: a");
+    });
+
+    // No clock decides these: the store's clock is made to disagree with the studio's in both directions, and the order is the one the ids give.
+    for (const [label, clock] of [["far behind", () => 1], ["far ahead", () => 9_000_000_000_000]] as const) {
+      test(`a text the person saves while a Backfill is being written stays shown, with the store's clock ${label} the studio's`, async () => {
+        const s = await scene(model("x").provider, { messages: 4, clock });
+        const slow: Provider = { id: "slow", async send() { await s.chats.setSummary(s.branch, { text: "Mine.", through: 4 }); return { content: "Generated.", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
+        await backfill({ ...s.deps, connect: async () => ({ provider: slow, kind: "openrouter" }) }, s.chat.id);
+        expect((await s.chats.summaryOf(s.branch))!.text).toBe("Mine.");
+      });
+      test(`a Backfill that saw the person's text replaces it, and a text saved after it wins again, with the store's clock ${label} the studio's`, async () => {
+        const s = await scene(model("The whole story.").provider, { messages: 4, clock });
+        await saved(s, { text: "Old.", through: 4 });
+        await backfill(s.deps, s.chat.id);
+        expect((await s.chats.summaryOf(s.branch))!.text).toBe("The whole story.");
+        await saved(s, { text: "Newer.", through: 4 });
+        expect((await s.chats.summaryOf(s.branch))!.text).toBe("Newer.");
+      });
+    }
+
+    test("Write summary on a scene with no message is refused with a sentence, and nothing is kept", async () => {
+      const s = await scene(model("x").provider);
+      const failed = await saveSummaryText(s.chats, s.chat.id, "Nowhere to sit.").then(() => null, (e: unknown) => e);
+      expect(failed).toBeInstanceOf(SummaryFailure);
+      expect((failed as Error).message).toBe("The summary is kept on a message, and this scene has none yet.");
+      expect(await s.chats.summaryOf(s.branch)).toBeNull();
+    });
   });
 });

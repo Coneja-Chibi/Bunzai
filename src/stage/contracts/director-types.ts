@@ -6,8 +6,6 @@
  */
 import type { Chat } from "./chat-store";
 import type { ChatConnection, ChatReasoningEffort } from "./chat-settings-types";
-import type { JsonValue } from "./chat-store";
-import type { TrackerModule } from "./chat-tracker-types";
 
 /** RoleCall's ten personalities, in the order its picker shows them. The default is Sage, `the-balanced`. */
 export const DIRECTOR_PERSONALITIES = ["the-weaver", "the-architect", "the-oracle", "the-romantic", "the-thrill-seeker", "the-shadow", "the-jester", "the-enigma", "the-chronicler", "the-balanced"] as const;
@@ -27,8 +25,6 @@ export const DIRECTOR_EVERY_DEFAULT = 1;
 export const DIRECTOR_CALLS_MIN = 1;
 export const DIRECTOR_CALLS_MAX = 5;
 export const DIRECTOR_CALLS_DEFAULT = 1;
-/** The most characters of one side (before or after) of a tracker update's receipt; a module state larger than this is not updated automatically, because it could not be undone. */
-export const DIRECTOR_RECEIPT_SIDE_MAX = 40_000;
 
 /** The scene's Director settings (rule 47), sparse: a key left out means the default, which the reader owns. */
 export interface DirectorSettings {
@@ -234,12 +230,7 @@ export interface DirectorState {
   turn?: number;
   /** The person's panel edits, newest last, so a new version of the reply they were made on can carry them. At most DIRECTOR_CAPS.edits. */
   edits?: DirectorEditRecord[];
-  /** What the Director changed in the trackers after this reply (plan 16): one receipt per module it updated, so regenerating or swiping the reply can undo exactly that. Only this reply's, never carried to the next. */
-  trackerUpdates?: TrackerReceipt[];
 }
-
-/** One automatic tracker update, as it was and as it became (`null` is "the module had no saved state"). Undone only while the module's state still equals `after`. */
-export interface TrackerReceipt { module: TrackerModule; before: JsonValue | null; after: JsonValue | null; turn: number; at: number }
 
 /** One thing the person did in the panel. */
 export type DirectorEdit =

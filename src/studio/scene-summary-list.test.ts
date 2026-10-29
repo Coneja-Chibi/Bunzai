@@ -10,10 +10,16 @@ import { PREVIEW_CHARS, searchSummaries, summaryPreview } from "./scene-summary-
 const vera = { kind: "character", id: "vera", body: { identity: { name: "Vera" }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {} } };
 const CAST = { character: { id: "vera", version: 1, name: "Vera" } };
 
+/** A summary sits on a message of the take (the `summary` slot), so a take that has none gets a greeting first. */
+async function hold(chats: ReturnType<typeof memoryChatStore>, branchId: string, text: string): Promise<void> {
+  if ((await chats.countMessages(branchId)) === 0) await chats.appendMessage(branchId, { role: "assistant", content: "Hello." });
+  await chats.setSummary(branchId, { text, through: 1 });
+}
+
 async function scene(title: string, text?: string) {
   const chats = memoryChatStore();
   const chat = await chats.createChat({ title, cast: CAST, snapshot: { character: vera } });
-  if (text) await chats.setSummary(chat.activeBranchId, { text, through: 1 });
+  if (text) await hold(chats, chat.activeBranchId, text);
   return { chats, chat };
 }
 
@@ -36,14 +42,18 @@ describe("listScenes: summaryPreview", () => {
     const b = await scene("B");
     expect("summaryPreview" in (await listScenes(b.chats))[0]!).toBe(false);
   });
-  test("another take's summary is not this take's preview", async () => {
+  // The summary is scene state rebuilt from the messages a take shows: a fork keeps the text of the messages it kept, and its own text stays in the fork.
+  test("a fork starts with the summary of the messages it kept, and its own text never reaches the source", async () => {
     const { chats, chat } = await scene("A", "Main take text.");
-    const [m] = (await chats.appendMessages(chat.activeBranchId, [{ role: "user", content: "hi" }]))!;
-    const take = await chats.fork(chat.activeBranchId, m!.id, { name: "Take 2" });
+    const main = chat.activeBranchId;
+    const [m] = (await chats.appendMessages(main, [{ role: "user", content: "hi" }]))!;
+    const take = await chats.fork(main, m!.id, { name: "Take 2" });
     await chats.setActiveBranch(chat.id, take!.id);
-    expect("summaryPreview" in (await listScenes(chats))[0]!).toBe(false);
+    expect((await listScenes(chats))[0]!.summaryPreview).toBe("Main take text.");
     await chats.setSummary(take!.id, { text: "Fork text.", through: 1 });
     expect((await listScenes(chats))[0]!.summaryPreview).toBe("Fork text.");
+    await chats.setActiveBranch(chat.id, main);
+    expect((await listScenes(chats))[0]!.summaryPreview).toBe("Main take text.");
   });
 });
 
@@ -51,7 +61,7 @@ describe("searchSummaries", () => {
   test("finds the scenes whose active take's summary has every word, in any case, and no other", async () => {
     const { chats, chat } = await scene("A", "They met at the Pier. The tide was out.");
     const other = await chats.createChat({ title: "B", cast: CAST, snapshot: { character: vera } });
-    await chats.setSummary(other.activeBranchId, { text: "A quiet harbour.", through: 1 });
+    await hold(chats, other.activeBranchId, "A quiet harbour.");
     expect(await searchSummaries(chats, "pier TIDE")).toEqual([chat.id]);
     expect(await searchSummaries(chats, "harbour")).toEqual([other.id]);
     expect(await searchSummaries(chats, "pier harbour")).toEqual([]);

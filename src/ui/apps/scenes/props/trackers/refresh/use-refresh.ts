@@ -2,7 +2,7 @@
  * Refresh from chat history for one tracker (RoleCall's strip button, ImmersionPanelWrapper handleRefresh, immersion/index.tsx:392-403): ask the scene's model about the whole
  * module, hold the answer as a PROPOSAL, and keep it only when the person accepts. RoleCall applies the answer at once, discards the result (a failed refresh looks finished)
  * and has no cancel; here a failure says why and changes nothing, Cancel works, and an answer read for another scene, or for a tracker that has changed since, is dropped at
- * Accept. Accepting goes through the tracker's own `apply`, so the frame's Undo brings the replaced state back.
+ * Accept. Accepting goes through the tracker's own `apply` as the person's own write on the newest reply, so it stays through a swipe or a regenerate of that reply and the frame's Undo brings the replaced state back.
  */
 import { useEffect, useRef, useState } from "react";
 import { refreshSpecOf } from "../../../../../../core/trackers";
@@ -19,10 +19,10 @@ export type RefreshPhase =
   | { at: "cancelled" };
 
 export const UNDO_LABEL = "Refreshed from chat history";
-const stateOf = (v: Pick<TrackerView<unknown>, "stored">): string => JSON.stringify(v.stored?.data ?? null);
+const stateOf = (v: Pick<TrackerView<unknown>, "raw">): string => JSON.stringify(v.raw ?? null);
 export const isEmpty = (p: TrackerRefresh): boolean => p.skipped.length === 0 && p.diff.added.length + p.diff.changed.length + p.diff.removed.length === 0;
 
-export function useRefresh(view: Pick<TrackerView<unknown>, "module" | "apply" | "stored" | "host">, label: string) {
+export function useRefresh(view: Pick<TrackerView<unknown>, "module" | "apply" | "raw" | "host">, label: string) {
   const [phase, setPhase] = useState<RefreshPhase>({ at: "idle" });
   const abort = useRef<AbortController | null>(null);
   const latest = useRef(view);

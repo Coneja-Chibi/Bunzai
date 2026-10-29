@@ -1,16 +1,16 @@
 /**
- * The input check and the merge for a scene's trackers, applied by every ChatStore implementation so they
- * cannot refuse or keep different things. A module's data is checked by the module itself (core/trackers), once, here.
+ * The input check and the merge for a scene's tracker SETTINGS, applied by every ChatStore implementation so they cannot refuse or keep different things. A module's
+ * state is not here: it is the scene-state slot `tracker.<module>`, written as deltas (scene-state-rules.ts). What this keeps per module is its AI Context choice, its
+ * automatic-update choice, its sub-feature switches and, for a Storyboard, its AI Context profile (the only data a Storyboard has).
  */
-import { deepEq, isPlainObject } from "../../core/guards";
-import { isTrackerModule, parseTrackerData } from "../../core/trackers";
-import { StudioConflictError } from "../../studio/atomic-file";
-import { DIRECTOR_RECEIPT_SIDE_MAX } from "../contracts/director-types";
-import { TRACKER_CONTEXTS, TRACKER_EVERY_MAX, TRACKER_UNDONE_MAX, type ChatTrackerPatch, type ChatTrackers, type TrackerModule } from "../contracts/chat-tracker-types";
-import { fail, isJson } from "./chat-rules";
+import { isPlainObject } from "../../core/guards";
+import { isStoryboard, isTrackerModule, parseTrackerData } from "../../core/trackers";
+import { subIds } from "../../core/trackers/subfeatures";
+import { TRACKER_CONTEXTS, TRACKER_EVERY_MAX, type ChatTrackerEntry, type ChatTrackerPatch, type ChatTrackers, type TrackerModule } from "../contracts/chat-tracker-types";
+import { fail } from "./chat-rules";
 import { isWhole } from "./scalar-rules";
 
-/** The most one scene's trackers may seal into one cell. */
+/** The most one scene's tracker settings may seal into one cell. */
 export const TRACKERS_BYTES_MAX = 1_000_000;
 
 export function checkTrackerModule(module: unknown): TrackerModule {
@@ -24,67 +24,66 @@ function checkAuto(a: unknown): void {
   if (a.every !== undefined && !(isWhole(a.every, 1) && a.every <= TRACKER_EVERY_MAX)) fail(`auto.every must be a whole number from 1 to ${TRACKER_EVERY_MAX}`);
 }
 
-/** An automatic update's record: the reply version, the turn and time, and both sides as bounded plain JSON. */
-function checkUpdate(u: unknown): void {
-  const keys = ["messageId", "swipeId", "turn", "at", "before", "after"];
-  if (!isPlainObject(u) || Object.keys(u).some((k) => !keys.includes(k)) || !keys.every((k) => k in u)) fail("update needs a messageId, swipeId, turn, at, before and after");
-  if (typeof u.messageId !== "string" || u.messageId.length === 0 || u.messageId.length > 80 || typeof u.swipeId !== "string" || u.swipeId.length === 0 || u.swipeId.length > 80) fail("update needs a message and a version");
-  if (!isWhole(u.turn, 0) || !isWhole(u.at, 0)) fail("update turn and at must be whole numbers");
-  for (const side of [u.before, u.after]) if (side === undefined || !isJson(side) || JSON.stringify(side).length > DIRECTOR_RECEIPT_SIDE_MAX) fail("update before and after must be JSON of a bounded size");
+/** The sub-feature switches: only the module's own sub-features, each true or false. */
+function checkSubs(module: TrackerModule, subs: unknown): void {
+  if (!isPlainObject(subs)) fail("subs must be a plain object");
+  const known = subIds(module);
+  for (const [id, on] of Object.entries(subs)) if (!known.includes(id) || typeof on !== "boolean") fail(`${module} has no sub-feature ${id}, or it is not true or false`);
 }
 
-/** The updates the person undid: a bounded list of reply versions. */
-function checkUndone(list: unknown): void {
-  if (!Array.isArray(list) || list.length > TRACKER_UNDONE_MAX) fail(`undone must be a list of at most ${TRACKER_UNDONE_MAX}`);
-  for (const u of list) {
-    if (!isPlainObject(u) || Object.keys(u).some((k) => k !== "messageId" && k !== "swipeId" && k !== "at") || typeof u.messageId !== "string" || u.messageId.length === 0 || u.messageId.length > 80 || typeof u.swipeId !== "string" || u.swipeId.length === 0 || u.swipeId.length > 80 || !isWhole(u.at, 0)) fail("every undone update needs a messageId, swipeId and at");
-  }
-}
-
-/** A patch whose keys are `context` (a valid choice or null), `data` (the module's state or null), `auto` (`{ on?, every? }` or null) and `expectedData` (a guard, not stored). An empty patch is allowed and changes nothing. */
+/** A patch whose keys are `context` (a valid choice or null), `auto` (`{ on?, every? }` or null), `subs` (the module's switches or null) and, for a Storyboard only, `data` (its profile or null). An empty patch is allowed and changes nothing. */
 export function checkTracker(module: TrackerModule, value: unknown): ChatTrackerPatch {
   if (!isPlainObject(value)) fail("a tracker change must be a plain object");
-  for (const key of Object.keys(value)) if (key !== "context" && key !== "data" && key !== "auto" && key !== "update" && key !== "undone" && key !== "parked" && key !== "expectedData") fail(`a tracker change has an unknown field: ${key}`);
+  for (const key of Object.keys(value)) if (key !== "context" && key !== "data" && key !== "auto" && key !== "subs") fail(`a tracker change has an unknown field: ${key}`);
   const context = value["context"];
   if (context !== undefined && context !== null && !TRACKER_CONTEXTS.includes(context as never)) fail(`context must be one of ${TRACKER_CONTEXTS.join(", ")} or null`);
   const auto = value["auto"];
   if (auto !== undefined && auto !== null) checkAuto(auto);
-  const update = value["update"];
-  if (update !== undefined && update !== null) checkUpdate(update);
-  const undone = value["undone"];
-  if (undone !== undefined && undone !== null) checkUndone(undone);
-  const parked = value["parked"];
-  if (parked !== undefined && parked !== null) checkUndone(parked);
-  const expected = value["expectedData"];
-  if (expected !== undefined && !isJson(expected)) fail("expectedData must be JSON or null");
+  const subs = value["subs"];
+  if (subs !== undefined && subs !== null) checkSubs(module, subs);
   let data = value["data"];
+  if (data !== undefined && !isStoryboard(module)) fail(`${module} keeps its state in the scene's history; write it as state changes`);
   if (data !== undefined && data !== null) {
     const parsed = parseTrackerData(module, data);
-    if (parsed === null) fail(`data is not a state of the ${module} tracker`);
+    if (parsed === null) fail(`data is not a profile of the ${module} Storyboard`);
     data = parsed as never;
   }
   return {
     ...(context === undefined ? {} : { context: context as ChatTrackerPatch["context"] }), ...(data === undefined ? {} : { data: data as ChatTrackerPatch["data"] }),
-    ...(auto === undefined ? {} : { auto: auto as ChatTrackerPatch["auto"] }), ...(update === undefined ? {} : { update: update as ChatTrackerPatch["update"] }), ...(undone === undefined ? {} : { undone: undone as ChatTrackerPatch["undone"] }), ...(parked === undefined ? {} : { parked: parked as ChatTrackerPatch["parked"] }), ...(expected === undefined ? {} : { expectedData: expected as ChatTrackerPatch["expectedData"] }),
+    ...(auto === undefined ? {} : { auto: auto as ChatTrackerPatch["auto"] }), ...(subs === undefined ? {} : { subs: subs as ChatTrackerPatch["subs"] }),
   };
 }
 
-/** The scene's trackers after a checked patch to one module; null when nothing is left to keep. A patch that names `expectedData` is refused with a conflict, before anything changes, when the module's state is not that. */
+/** A stored entry's settings alone: a row written before state moved into slots may still carry a module's state and the Director's undo records, and none of that is read. */
+export function keepSettings(module: TrackerModule, entry: ChatTrackerEntry & Record<string, unknown>): ChatTrackerEntry {
+  const { context, auto, data } = entry;
+  // A cell written before the state moved to its slot may carry switches the module no longer has; only its own are kept.
+  const subs = isPlainObject(entry.subs) ? Object.fromEntries(Object.entries(entry.subs).filter(([k, v]) => subIds(module).includes(k) && typeof v === "boolean")) : undefined;
+  return { ...(context ? { context } : {}), ...(auto ? { auto } : {}), ...(subs && Object.keys(subs).length > 0 ? { subs } : {}), ...(isStoryboard(module) && data !== undefined ? { data } : {}) };
+}
+
+/** The scene's tracker settings, each entry read as settings alone. */
+export function settingsOf(trackers: ChatTrackers | undefined): ChatTrackers | undefined {
+  if (!trackers) return undefined;
+  const out: ChatTrackers = {};
+  for (const [module, entry] of Object.entries(trackers) as [TrackerModule, ChatTrackerEntry][]) {
+    const kept = keepSettings(module, entry as never);
+    if (Object.keys(kept).length > 0) out[module] = kept;
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/** The scene's tracker settings after a checked patch to one module; null when nothing is left to keep. */
 export function mergeTrackers(old: ChatTrackers | undefined, module: TrackerModule, patch: ChatTrackerPatch): ChatTrackers | null {
-  const before = old?.[module];
-  if (patch.expectedData !== undefined && !deepEq(before?.data ?? null, patch.expectedData)) throw new StudioConflictError(`the ${module} tracker changed since it was read`);
-  const update = patch.update === undefined ? before?.update : patch.update ?? undefined;
-  const undone = patch.undone === undefined ? before?.undone : patch.undone ?? undefined;
-  // A write of the state that is not the Story Director's (it names no update and no parked list) is the person's: nothing parked is ever applied over it.
-  const handEdit = patch.data !== undefined && patch.update === undefined && patch.parked === undefined;
-  const parkedNow = patch.parked === undefined ? (handEdit ? undefined : before?.parked) : patch.parked ?? undefined;
-  const parked = parkedNow?.length ? parkedNow : undefined;
+  const before = settingsOf(old)?.[module];
   const autoNow = patch.auto === undefined ? before?.auto : patch.auto ?? undefined;
   const auto = autoNow && Object.keys(autoNow).length > 0 ? autoNow : undefined;
+  const subsNow = patch.subs === undefined ? before?.subs : patch.subs ?? undefined;
+  const subs = subsNow && Object.keys(subsNow).length > 0 ? subsNow : undefined;
   const context = patch.context === undefined ? before?.context : patch.context ?? undefined;
   const data = patch.data === undefined ? before?.data : patch.data ?? undefined;
-  const entry = { ...(context ? { context } : {}), ...(auto === undefined ? {} : { auto }), ...(update === undefined ? {} : { update }), ...(undone === undefined ? {} : { undone }), ...(parked === undefined ? {} : { parked }), ...(data === undefined ? {} : { data }) };
-  const next: ChatTrackers = { ...old };
+  const entry = { ...(context ? { context } : {}), ...(auto === undefined ? {} : { auto }), ...(subs === undefined ? {} : { subs }), ...(data === undefined ? {} : { data }) };
+  const next: ChatTrackers = { ...settingsOf(old) };
   if (Object.keys(entry).length > 0) next[module] = entry; else delete next[module];
   if (Object.keys(next).length === 0) return null;
   if (JSON.stringify(next).length > TRACKERS_BYTES_MAX) fail(`the scene's trackers must stay under ${TRACKERS_BYTES_MAX} characters`);

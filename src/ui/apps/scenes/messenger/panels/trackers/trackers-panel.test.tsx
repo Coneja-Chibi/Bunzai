@@ -20,10 +20,11 @@ beforeEach(() => installed.reinstall());
 afterEach(() => { m?.unmount(); m = null; });
 
 const IDS = ["tracker-inventory", "tracker-party", "tracker-quests"];
-const chat = { id: "chat1", activeBranchId: "b1", updatedAt: 1, props: { on: IDS }, trackers: { inventory: { data: { items: [], equipment: {}, currency: 340 } } } } as unknown as Chat;
+const chat = { id: "chat1", activeBranchId: "b1", updatedAt: 1, props: { on: IDS }, trackers: { quests: { context: "always" } } } as unknown as Chat;
 
 async function open(ids: readonly string[] = IDS): Promise<ReturnType<typeof fakeDirector>> {
   const rig = fakeDirector(panelOf({ state: story() }));
+  rig.states = { ...rig.states, data: { inventory: { items: [], equipment: {}, currency: 340 } } };
   m = await mounted(dom, <MessengerTrackersPanel ctx={rig.ctx} chat={chat} id="messenger.trackers" ids={ids} />);
   return rig;
 }

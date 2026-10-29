@@ -2,7 +2,7 @@
 id: reference/entities/tool
 title: Tool entity
 audience: dev
-summary: The canonical piece for a tool a model may call while it writes, kept as data with no code. A scene links the tools it offers, and each call runs one first-party action, a roll, a linked dice piece, a linked formula or a record, through the scene's existing tool loop.
+summary: The canonical piece for a tool a model may call while it writes, kept as data with no code. A scene links the tools it offers, and each call runs one first-party action, a roll, a linked dice piece, a linked formula or a record, through the scene's existing tool loop. Every connection takes tools except models that refuse them, and a server's refusal is reported plainly, never retried without them.
 tags: [entity, tool, tool-call, dice, canonical]
 related: [reference/entities/dice, reference/entities/formula, reference/extending/new-kind, reference/entities/README]
 ---
@@ -43,7 +43,14 @@ All four are read-only: none changes the scene or the library.
 
 A scene links tools by id in its prompting (`ChatPrompting.tools`, in order, no duplicates). They are offered only when
 Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, the same gates as the lorebook
-lookup. `src/studio/library-tools.ts` reads each linked tool, and the dice piece or formula its action links, through their kinds'
+lookup. Every connection takes tools, local and custom servers included, except a model that refuses them whatever its host (an
+embedding, speech or image model, o1-mini or o1-preview). A server that still refuses them fails the turn, and the app recognizes these refusals (an HTTP 400 whose
+text has one of these phrases): Ollama's "does not support tools", llama.cpp's "tools param requires --jinja" (started without
+`--jinja`), vLLM's "--enable-auto-tool-choice" (started without its tool flags), and the generic wordings "tools is not supported"
+and "tool use is not supported". Those get one sentence that names the model and says to turn off the scene's Narrator
+Tool Access or pick a model that supports tools; any other refusal shows the server's own error. Either way nothing is saved as a
+reply and the turn is never retried without the tools. The Story Director in tool-call mode reports a recognized refusal as its
+model having no tool calling, and a Final Cut pass advises tagged mode. `src/studio/library-tools.ts` reads each linked tool, and the dice piece or formula its action links, through their kinds'
 strict decoders, and leaves out a tool that is gone or unreadable or whose dice piece or formula is. A tool's call name comes from its name (`callName`): lowercase, starting with a letter (`tool_` goes in front
 otherwise), at most 60 characters. A name already taken, by the lookup, an earlier tool or the loop's `invalid_tool`
 (what a call with a malformed name is answered as), gets a number. Rolls draw from randomness seeded for the turn, so the same seed rolls the same dice.

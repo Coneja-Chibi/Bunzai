@@ -49,7 +49,7 @@ export const FP_SPECS: readonly FpSpec[] = [
   s("director_states", ["message_id", "position"], ["cell"], ["version"]),
   s("turn_checkpoints", ["id"], ["content", "trace_json", "provider_request_id", "deltas_json"], ["branch_id", "kind", "message_id", "base_version", "started_at", "saved_at"], 2), // v2: deltas_json (migration 43)
   s("swipe_deltas", ["swipe_id", "seq"], ["path_json", "value_json"], ["slot", "removed", "at"]),
-  s("message_deltas", ["message_id", "seq"], ["path_json", "value_json"], ["slot", "removed", "at"]),
+  s("message_deltas", ["message_id", "seq"], ["path_json", "value_json"], ["slot", "removed", "at", "swipe_id"], 2), // v2: swipe_id (migration 44)
   s("state_keyframes", ["branch_id", "message_id"], ["state_json"], []),
   s("branch_base", ["branch_id"], ["state_json"], []),
   s("branch_state", ["branch_id"], ["state_json"], ["tip_message_id", "tip_swipe_id"]),

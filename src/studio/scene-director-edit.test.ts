@@ -35,17 +35,13 @@ describe("reading the panel", () => {
     await expect(readDirectorPanel(r.deps, "nope")).rejects.toBeInstanceOf(StudioNotFoundError);
   });
 
-  test("the panel says which trackers the shown reply updated, without the receipts' bulk; an earlier reply reads its own", async () => {
+  test("the panel carries no tracker receipts: what a reply updated in a tracker is scene state, read from the trackers' state (tracker-state.ts), and a snapshot that names receipts is refused", async () => {
     const r = await rig();
-    const receipt = { module: "resources" as const, before: null, after: { ...DEFAULT_RESOURCES, hp: 40 } as never, turn: 3, at: 77 };
-    await r.chats.putDirector(r.chat.id, r.tip, stateOf({ trackerUpdates: [receipt] }), { expectedVersion: null });
-    await r.chats.setTracker(r.chat.id, "resources", { data: { ...DEFAULT_RESOURCES, hp: 40 } as never, update: { messageId: r.tip, swipeId: "s1", turn: 3, at: 77, before: null, after: { ...DEFAULT_RESOURCES, hp: 40 } as never } });
+    await r.chats.putDirector(r.chat.id, r.tip, stateOf({}), { expectedVersion: null });
     const panel = await readDirectorPanel(r.deps, r.chat.id);
-    expect(panel.trackerUpdates).toEqual({ resources: { messageId: r.tip, turn: 3, at: 77 } });
-    expect(panel.state.trackerUpdates).toBeUndefined();
-    expect((await readDirectorPanel({ ...r.deps }, r.chat.id, { at: r.tip })).trackerUpdates).toEqual(panel.trackerUpdates);
-    const none = await rig();
-    expect((await readDirectorPanel(none.deps, none.chat.id)).trackerUpdates).toEqual({});
+    expect(panel).not.toHaveProperty("trackerUpdates");
+    expect(panel.state).not.toHaveProperty("trackerUpdates");
+    await expect(r.chats.putDirector(r.chat.id, r.tip, stateOf({ trackerUpdates: [] } as never), { expectedVersion: 1 })).rejects.toThrow("unknown field");
   });
 
   test("the panel leaves out what was removed and what was cleared, but the snapshot keeps both", async () => {

@@ -56,16 +56,12 @@ export function chatStoreDirectorContract(make: (clock: () => number) => ChatSto
       expect((await store.getChat(chat.id))!.director).toEqual({ callsPerReply: 5 });
     });
 
-    test("a snapshot carries the receipts of the tracker updates its reply made, and refuses a malformed receipt whole", async () => {
+    test("a snapshot holds no tracker receipts: what the Director changed in a tracker is scene state (rule 17), so a snapshot that names them is refused", async () => {
       const { store, chat, main } = await seeded(1);
       const ids = await more(store, main);
       const receipt = { module: "resources" as const, before: null, after: { hp: 40 }, turn: 1, at: 5 };
-      const wrote = await store.putDirector(chat.id, ids[1]!, { ...blankDirector(), trackerUpdates: [receipt] } as never, { expectedVersion: null });
-      expect(wrote!.state.trackerUpdates).toEqual([receipt]);
-      for (const bad of [{ ...receipt, module: "wizardry" }, { ...receipt, turn: -1 }, { ...receipt, after: undefined }, { ...receipt, extra: 1 }, { ...receipt, after: { x: "y".repeat(50_000) } }]) {
-        await expect(store.putDirector(chat.id, ids[1]!, { ...blankDirector(), trackerUpdates: [bad] } as never, { expectedVersion: wrote!.version })).rejects.toBeInstanceOf(StudioValidationError);
-      }
-      await expect(store.putDirector(chat.id, ids[1]!, { ...blankDirector(), trackerUpdates: [receipt, receipt] } as never, { expectedVersion: wrote!.version })).rejects.toBeInstanceOf(StudioValidationError);
+      await expect(store.putDirector(chat.id, ids[1]!, { ...blankDirector(), trackerUpdates: [receipt] } as never, { expectedVersion: null })).rejects.toBeInstanceOf(StudioValidationError);
+      expect(await store.getDirector(chat.id, ids[1]!)).toBeNull();
     });
 
     test("a key left out stays, null goes back to the default, and a patch that leaves nothing leaves no cell", async () => {

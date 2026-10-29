@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:b3a123e18c52adc76abadbf3392f7907985b4140c1d74cfea35baa4b98900143",
+  "sourceHash": "sha256:d81469acd0929356cc32127158557cf32a3e0dfc958bc8c1cdd2ad4135f1564a",
   "summary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for the canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, inert entity scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization and real favorites, and adds participants by form. Prior storage delivery keeps its focused-fixture evidence and live-proof limits. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries. Rooms share a Premiere header and panel; Settings is a four-act rail with a Stage lights choice.",
   "topics": [
     "Kit conversational terminal",
@@ -254,17 +254,17 @@
       "slug": "scenes-the-librarys-chats",
       "title": "Scenes (the library's chats)",
       "level": 2,
-      "sourceHash": "sha256:c247097d5397d5b275f19f6108f63ceb87af631f0fc79da1e0d9326c6a11bdfa",
-      "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A first-open chooser sets Full Chat or Messenger once; Messenger draws the same chat in a Discord-style shell whose programs open the wings' tabs; its Trackers program lists a scene's library trackers as editable cards. The take pill follows Scene Takes and links to the Branching Tree. Prompting has Preset, Guides, Scene Note and Writing Tools, and its Preset picker lists presets and Script Sheets; Final Cut has passes, Anti-Slop banks, Activity with Undo, and Regex; Stage has Appearance (with a backdrop blur slider), Music, Spotify and a Wardrobe. The Control Booth applies loadouts with a receipt and Undo and shows linked tools as tiles. Under each Messenger reply tracker changes draw as each tracker chose, a line names a macro that ran out of time, and Settings has two time-budget boxes. The AI wing has Model and Generation, World has Lorebook, Compendium and Storyboards, and Props holds twelve tracker Props. Participants has Reconcile and an Add participant form.",
+      "sourceHash": "sha256:825afeb340a78f071374fdd4c09405020acb205fdc6a9badf501f36621c764af",
+      "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A first-open chooser sets Full Chat or Messenger once; Messenger draws the same chat in a Discord-style shell whose programs open the wings' tabs, and its Trackers program lists a scene's library trackers as editable cards. The take pill follows Scene Takes and links to the Branching Tree. Prompting has Preset, Guides, Scene Note and Writing Tools; Final Cut has passes, Anti-Slop banks and Regex; Stage has Appearance, Music and a Wardrobe. The Control Booth applies loadouts with a receipt and Undo. Under each Messenger reply, tracker changes draw as each tracker chose. World has Lorebook, Compendium and Storyboards, and Props holds twelve tracker Props whose state is scene state on the reply versions, written as the person's edit on the newest reply (Cast spends Stats and notes the Spellbook in one step), with an Undo line for the last update a reply made. The Memory tab keeps the chat summary as scene state too.",
       "topics": [
         "Start Scene from a card",
         "World wing, Compendium and Storyboards",
-        "Stage wing tabs, backdrop blur, Music and Spotify Props",
+        "Stage wing tabs and Music",
         "Prompting presets, guides, note and writing tools",
         "Booth loadouts and tool tiles",
         "Final Cut passes, Activity and Regex",
         "Props wing and tracker Props",
-        "Take pill, Branching Tree, Messenger, reply changes and Add participant"
+        "Take pill, Messenger, reply changes and summary as scene state"
       ],
       "children": [
         {

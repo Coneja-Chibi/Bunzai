@@ -17,7 +17,7 @@ const groq: ProviderSpoke = {
     return openAICompatModels(baseURL ?? "https://api.groq.com/openai/v1", apiKey, fetch);
   },
   // console.groq.com chat create: penalties, logit_bias and logprobs are unsupported; n must be 1.
-  scene: { params: { seed: true, response_format: true, stop: stopList("stop", 4) }, base: (c) => c.baseURL ?? "https://api.groq.com/openai/v1", support: { streamUsage: true }, tools: true },
+  scene: { params: { seed: true, response_format: true, stop: stopList("stop", 4) }, base: (c) => c.baseURL ?? "https://api.groq.com/openai/v1", support: { streamUsage: true } },
 };
 
 export default groq;

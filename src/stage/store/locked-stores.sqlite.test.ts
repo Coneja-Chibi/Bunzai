@@ -134,6 +134,7 @@ test("every store method refuses while locked, and nothing in the database chang
     ["sceneDeltas", () => chats.sceneDeltas(chat.activeBranchId, m!.id)],
     ["setBranchBase", () => chats.setBranchBase(chat.activeBranchId, [{ slot: "vars", path: ["a"], value: 1, at: 1 }])],
     ["recordMessageDeltas", () => chats.recordMessageDeltas(chat.activeBranchId, m!.id, [{ slot: "vars", path: ["a"], value: 1, at: 1 }])],
+    ["recordDeltas", () => chats.recordDeltas(chat.activeBranchId, m!.swipes[0]!.id, [{ slot: "vars", path: ["a"], value: 1, at: 1 }])],
     ["setConnection", () => chats.setConnection(chat.id, { id: "c", model: "m" })],
     ["setPreset", () => chats.setPreset(chat.id, { kind: "preset", id: "p", toggles: {}, samplers: {} })],
     ["setLore", () => chats.setLore(chat.id, { added: [], off: [] })],
@@ -173,6 +174,7 @@ test("every store method refuses while locked, and nothing in the database chang
     ["renameFolder", () => chats.renameFolder("any-folder", "Heists")],
     ["deleteFolder", () => chats.deleteFolder("any-folder")],
     ["setFolder", () => chats.setFolder(chat.id, null)],
+    ["globalOps", () => chats.globalOps()],
   ];
   // Every chat store method is on the list, so a new one cannot skip the lock unnoticed.
   const listed = new Set(calls.map(([name]) => name));

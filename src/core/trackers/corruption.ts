@@ -9,6 +9,7 @@
  * the player, so what the NPC entries hold never reaches the narrator; that is kept as it is and flagged, not widened.
  */
 import { arr, num, obj, oneOf, opt, str, type Of } from "./shape";
+import { repairOf, stateSpec } from "./state";
 import { appendItem, find, hasUniqueIds, liveOf, markRemoved, patchItem, sameName, unmarkRemoved } from "./list";
 import type { GenSpec } from "./generate";
 import { single, type RefreshSpec } from "./refresh";
@@ -33,12 +34,17 @@ export type LogEntry = Of<typeof logShape>;
 export interface Corruption { values: Record<Metric, number>; log: LogEntry[]; npcs: Npc[] }
 export const DEFAULT_CORRUPTION: Corruption = { values: { corruption: 0, submission: 0, dependence: 0, obsession: 0, identityLoss: 0 }, log: [], npcs: [] };
 
-const stateShape = obj({ values: obj(metrics), log: arr(logShape, LOG_MAX), npcs: arr(npcShape, NPC_MAX * 2) });
+/** The module's whole state, field by field: what a state passes, and what a slot holds one field or row of (state.ts). */
+export const stateShape = obj({ values: obj(metrics), log: arr(logShape, LOG_MAX), npcs: arr(npcShape, NPC_MAX * 2) });
 export function parseCorruption(data: unknown): Corruption | null {
   const s = stateShape.check(data);
   return s && hasUniqueIds(s.npcs) && hasUniqueIds(s.log) ? s : null;
 }
-export const readCorruption = (data: unknown): Corruption => (data === undefined ? DEFAULT_CORRUPTION : parseCorruption(data) ?? DEFAULT_CORRUPTION);
+/** What corruption keeps in its slot (state.ts). */
+export const CORRUPTION_STATE = stateSpec(stateShape, { npcs: "id" });
+/** The module's one repair step (state.ts `repairOf`): every reader goes through `readCorruption`, which uses it, so no read ever shows the defaults in place of a state it can mostly keep. Null: nothing is salvageable. */
+export const repairCorruption = repairOf(CORRUPTION_STATE, DEFAULT_CORRUPTION, parseCorruption);
+export const readCorruption = (data: unknown): Corruption => (data === undefined ? DEFAULT_CORRUPTION : repairCorruption(data) ?? DEFAULT_CORRUPTION);
 export const liveNpcs = (c: Corruption): Npc[] => liveOf(c.npcs);
 
 /** The overall state from the average of the five values (corruption.ts:20-26). */

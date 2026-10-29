@@ -18,6 +18,7 @@ import { runDraft } from "./scene-draft";
 import { varsOf } from "../core/scene-state/vars-bridge";
 import { runTurn, stopTurn, type Connected, type TurnEvent } from "./scene-turn";
 import { answerReview } from "./scene-turn-review";
+import { readGlobals } from "./scene-turn-load";
 
 const vera = { kind: "character", id: "vera", body: { identity: { name: "Vera", description: "Keeps the light." }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {}, knowledgeRefs: ["b1"] } };
 const fx = (effects: EntrySideEffect[], more: Partial<NonNullable<LorebookEntry["sideEffects"]>> = {}): LorebookEntry["sideEffects"] => ({ effects, onlyOnFirstTrigger: false, clearOnDeactivate: false, ...more });
@@ -68,7 +69,7 @@ async function scene(entries: LorebookEntry[]) {
     const last = (await chats.readMessages(chat.activeBranchId, { limit: 50 })).messages.at(-1)!;
     return chats.swipeTrace(last.id, last.swipes[last.current]!.id);
   };
-  const globals = async (): Promise<Record<string, { value: unknown }>> => JSON.parse((await state.read("variables")) ?? "{}");
+  const globals = async (): Promise<Record<string, { value: unknown }>> => Object.fromEntries(await readGlobals(chats));
   return { chats, chat, state, deps, sent, events, turn, local, globals, behave, preset, lastTrace };
 }
 

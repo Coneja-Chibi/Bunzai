@@ -17,7 +17,7 @@ describe("the write exception", () => {
     const tools = sources.find((s) => s.file === "src/studio/scene-turn-tools.ts")!.text;
     expect(tools).not.toMatch(/interface ToolsContext[^}]*writes/);
     // the forecast makes the tools the way a send does, with a door that is never opened, to count their definitions
-    const users = sources.filter(({ file, text }) => /\bTurnWrites\b|\bturnWrites\b/.test(text) && !["src/studio/scene-turn-writes.ts"].includes(file)).map((s) => s.file).sort();
+    const users = sources.filter(({ file, text }) => /\b(?:Turn|Tool)Writes\b|\bturnWrites\b/.test(text) && !["src/studio/scene-turn-writes.ts"].includes(file)).map((s) => s.file).sort();
     expect(users).toEqual(["src/studio/library-trackers.ts", "src/studio/scene-forecast.ts", "src/studio/scene-turn-tools.ts", "src/studio/scene-turn.ts"]);
   });
 });

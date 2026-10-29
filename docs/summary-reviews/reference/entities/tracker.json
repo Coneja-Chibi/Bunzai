@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tracker",
   "sourcePath": "docs/reference/entities/tracker.md",
-  "sourceHash": "sha256:e344a80a4a674d47a3fed296037f0a82eb6a5a63cf06a984a120f221ac963540",
-  "semanticSummaryHash": "sha256:07a06349433adfef97fd1b9766b2731ce712c168af2d7efb6a9d1c33f9c4923b",
+  "sourceHash": "sha256:a8456d2f23cfcfe85c760bb42be1dc45c5112564fffe446537360cd918c6b510",
+  "semanticSummaryHash": "sha256:a86f0b3b82229110978354e7ee2636b781341bfd2b1b7f10edc5b9c0134381ed",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "The stale 'nothing reads' sentence is fixed: the page now says the Messenger reads the style, icons and changes read, matching use-reply-notes.tsx, reply-changes-core.ts and the panel. Remaining claims unchanged and verified. Minor omission only: the changes-read answer shape in the page lists { trackerId, name, style, icon?, fieldIcons?, changes } but the code also returns bars (tracker-changes.ts, described in ui.md); add it when next edited. Bands ok.",
-  "reviewedAt": "2026-10-28T16:06:02.858Z"
+  "notes": "Answer shape now includes bars?; the page says bars holds { min, top } per changed number with a top (own max or the value of its maxField as the message left it; min 0 when none), matching tracker-changes.ts. what-a-reply-changed summary (180 words) carries it.",
+  "reviewedAt": "2026-10-28T18:45:07.470Z"
 }

@@ -5,6 +5,7 @@
  * recorded fixtures prove the port.
  */
 import type { MacroContext, MacroDeadline, MacroVariable } from "../macros";
+import type { GlobalWrite } from "../macros/types";
 import type { ReasoningFormat } from "../reasoning-tags";
 import type { CharacterBody } from "../../entities/character/schema";
 import type { PersonaBody } from "../../entities/persona/schema";
@@ -265,6 +266,8 @@ export interface AssemblyResult {
   budget: BudgetDecision;
   local: VariableDiff;
   global: VariableDiff;
+  /** Every write to a global variable this assembly made, as the operation it was, in order (core/scene-state/globals.ts keeps them with the reply). */
+  globalWrites: GlobalWrite[];
   /** The macro pass's own account of itself; absent when no macro ran. */
   macros?: MacroReport;
   /** Every variable the assembly left different, with what it was before; absent when none changed. */

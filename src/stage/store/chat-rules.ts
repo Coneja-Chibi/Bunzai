@@ -286,7 +286,7 @@ export function checkTurnTarget(value: unknown): TurnTarget {
 export function checkProgress(value: unknown): { content: string; trace: JsonObject | undefined; providerRequestId: string | undefined; deltas: Delta[] | undefined } {
   const p = onlyKeys(value, ["content", "trace", "providerRequestId", "deltas"], "progress");
   const providerRequestId = p.providerRequestId === undefined ? undefined : checkText(p.providerRequestId, "providerRequestId");
-  return { content: checkText(p.content, "content"), trace: checkTrace(p.trace), providerRequestId, deltas: p.deltas === undefined ? undefined : checkDeltas(p.deltas) };
+  return { content: checkText(p.content, "content"), trace: checkTrace(p.trace), providerRequestId, deltas: p.deltas === undefined ? undefined : checkDeltas(p.deltas, "turn") };
 }
 
 /** The take's latest request text (rule 22): absent, or exactly a list of texts, one per stored

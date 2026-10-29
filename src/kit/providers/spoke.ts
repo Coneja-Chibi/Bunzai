@@ -32,11 +32,6 @@ export interface SceneEndpoint {
    * the OpenAI-compatible spoke, as before.
    */
   native?: "anthropic";
-  /**
-   * Does a scene's transport carry tool calls to this provider (the narrator's tool loop)?
-   * DECLARED, not assumed, like `images`: absent means NO, so a server nobody vouched for gets no tools and never a broken request.
-   */
-  tools?: boolean;
 }
 
 /** A provider-specific choice the setup form renders as a chip row (RC's schema-driven fields),
@@ -94,6 +89,13 @@ export interface ProviderSpoke {
   /** Query the provider's live model list (through the guarded fetch). Omit when the provider has
    * no usable models endpoint; the setup form then falls back to manual model entry. */
   listModels?(config: ProviderConfig, fetch: FetchFunction): Promise<ModelInfo[]>;
-  /** Where scenes send. Absent: scenes cannot use this provider yet, and the AI wing says so. */
+  /**
+   * Where scenes send. Absent: scenes cannot use this provider yet, and the AI wing says so.
+   *
+   * Having a scene endpoint is also what gives a scene's turn its tools (the narrator's tool loop, the tracker update, Final Cut
+   * tool passes, the Director's tool-call mode): every connection carries them, local and custom servers included, except a model
+   * that refuses tools whatever its host (`sceneTools` in scene.ts). A server that still refuses them answers an error, and the
+   * turn reports it in one sentence instead of quietly sending without tools.
+   */
   scene?: SceneEndpoint;
 }

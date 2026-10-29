@@ -6,6 +6,7 @@
  * Differences from RoleCall: Delete marks the memory and leaves an Undo; a full journal (300) refuses another where RoleCall drops the oldest.
  */
 import { arr, num, obj, oneOf, opt, str, type Of } from "./shape";
+import { repairOf, stateSpec } from "./state";
 import { appendItem, find, hasUniqueIds, liveOf, markRemoved, patchItem, unmarkRemoved } from "./list";
 import type { GenSpec } from "./generate";
 import { entry, listOf, norm, sync, type RefreshSpec } from "./refresh";
@@ -29,12 +30,17 @@ export type Mem = Omit<Stored, "id" | "timestamp" | "removedAt">;
 export interface Memories { memories: Stored[] }
 export const DEFAULT_MEMORIES: Memories = { memories: [] };
 
-const stateShape = obj({ memories: arr(memShape, MAX_MEMORIES * 2) });
+/** The module's whole state, field by field: what a state passes, and what a slot holds one field or row of (state.ts). */
+export const stateShape = obj({ memories: arr(memShape, MAX_MEMORIES * 2) });
 export function parseMemories(data: unknown): Memories | null {
   const s = stateShape.check(data);
   return s && hasUniqueIds(s.memories) ? s : null;
 }
-export const readMemories = (data: unknown): Memories => (data === undefined ? DEFAULT_MEMORIES : parseMemories(data) ?? DEFAULT_MEMORIES);
+/** What memories keeps in its slot (state.ts). */
+export const MEMORIES_STATE = stateSpec(stateShape, { memories: "id" });
+/** The module's one repair step (state.ts `repairOf`): every reader goes through `readMemories`, which uses it, so no read ever shows the defaults in place of a state it can mostly keep. Null: nothing is salvageable. */
+export const repairMemories = repairOf(MEMORIES_STATE, DEFAULT_MEMORIES, parseMemories);
+export const readMemories = (data: unknown): Memories => (data === undefined ? DEFAULT_MEMORIES : repairMemories(data) ?? DEFAULT_MEMORIES);
 export const liveMemories = (m: Memories): Stored[] => liveOf(m.memories);
 export const npcNames = (m: Memories): string[] => [...new Set(liveMemories(m).map((x) => x.npcName))].sort();
 

@@ -2,18 +2,28 @@
  * What both ChatStores share about scene state (docs/reference/scene-state.md): the check every delta passes before it
  * is kept, and the rebuild bound to the declared slots. Shared so the memory and SQLite stores cannot drift.
  */
+/** The shared slot the library's global variables live in: the stores read it across every live take (ChatStore.globalOps). */
+export { GLOBAL_SLOT } from "../../core/scene-state/globals";
 import { dropUnchanged, fold } from "../../core/scene-state/fold";
+import { isRecord } from "../../core/guards";
 import { StudioConflictError } from "../../studio/atomic-file";
 import { rebuild, type RebuildInput } from "../../core/scene-state/rebuild";
 import { deltaBytes } from "../../core/scene-state/size";
-import type { Delta, SceneState } from "../../core/scene-state/types";
+import type { Delta, SceneState, SlotWriter } from "../../core/scene-state/types";
 import { SANITY_TEXT } from "../../entities/_shared/sanity";
 import { slotOf } from "../../generated/slots";
 import type { JsonValue } from "../contracts/chat-store";
 import { checkNumber, fail, isJson, onlyKeys } from "./scalar-rules";
 
 /** A list of deltas, each for a declared slot with a path its strategy reads and a JSON value. There is no size cap: a turn's writes are bounded by their sources (the model's output, the macro engine's output cap). Returns a private copy. */
-export function checkDeltas(value: unknown): Delta[] {
+/** The words a refusal uses for each writer. */
+const WRITER_WORDS: Readonly<Record<SlotWriter, string>> = { turn: "a reply", background: "a background writer", person: "a person's edit", import: "an import" };
+
+/**
+ * Checks deltas as a write by `writer` (the door it came through: SlotWriter), or as a description of held values (`"held"`, a guard's
+ * `expect`, which writes nothing). A slot that does not name the writer refuses the whole write.
+ */
+export function checkDeltas(value: unknown, writer: SlotWriter | "held"): Delta[] {
   if (!Array.isArray(value)) fail("deltas must be a list");
   const out = value.map((raw): Delta => {
     const d = onlyKeys(raw, ["slot", "path", "value", "removed", "at"], "delta");
@@ -21,6 +31,7 @@ export function checkDeltas(value: unknown): Delta[] {
     const slot = d.slot;
     const def = slotOf(slot);
     if (!def) fail(`unknown slot: ${slot}`);
+    if (writer !== "held" && !def.writers?.includes(writer)) fail(`the ${slot} slot does not take writes from ${WRITER_WORDS[writer]}`);
     if (!Array.isArray(d.path) || d.path.length !== (def.diff === "value" ? 0 : 1)) fail(`a delta for ${slot} needs a path of ${def.diff === "value" ? "no names" : "one name"}`);
     const path = d.path.map((p: unknown) => (typeof p === "string" && p !== "" ? p : fail("a delta path name must be non-empty text")));
     const at = checkNumber(d.at, "delta at must be a finite number", 0, Number.MAX_SAFE_INTEGER);
@@ -29,7 +40,13 @@ export function checkDeltas(value: unknown): Delta[] {
       return { slot, path, removed: true, at };
     }
     if (d.value === undefined || !isJson(d.value)) fail("a delta value must be JSON");
-    return { slot, path, value: structuredClone(d.value) as JsonValue, at };
+    const shape = def.shapeAt ? def.shapeAt(path) : def.shape;
+    if (def.shapeAt && !shape) fail(`${slot} has no field ${path[0]}`);
+    const value = shape ? shape.check(d.value) : structuredClone(d.value);
+    if (value === null) fail(`a delta value for ${slot} does not fit that slot`);
+    // A keyed-list row is found by the key it sits under, so the row must carry the key its path names.
+    if (def.diff === "keyed-list" && isRecord(value) && String(value[def.key!]) !== path[0]) fail(`a row of ${slot} must carry the ${def.key} its path names`);
+    return { slot, path, value: value as JsonValue, at };
   });
   return out;
 }
@@ -39,8 +56,8 @@ export function checkDeltas(value: unknown): Delta[] {
  * ceiling (its serialized bytes) refused as unusually large. The ceiling is for one hostile input, so it counts only the incoming write, not what the
  * message already carries. A guard against a hostile file, not a design limit.
  */
-export function checkImportedDeltas(value: unknown): Delta[] {
-  const out = checkDeltas(value);
+export function checkImportedDeltas(value: unknown, writer: SlotWriter): Delta[] {
+  const out = checkDeltas(value, writer);
   if (deltaBytes(out) > SANITY_TEXT) fail("these state changes are unusually large");
   return out;
 }
@@ -51,7 +68,7 @@ export const changed = (base: SceneState, added: readonly Delta[]): Delta[] => d
 /** A guarded write's expectation (what the caller read at each slot and path) against the state the message shows: refused, with nothing written, when any of it no longer holds. Not stored. */
 export function requireHeld(shown: SceneState, expect: unknown): void {
   if (expect === undefined) return;
-  if (changed(shown, checkDeltas(expect)).length > 0) throw new StudioConflictError("the message changed since it was read");
+  if (changed(shown, checkDeltas(expect, "held")).length > 0) throw new StudioConflictError("the message changed since it was read");
 }
 
 /** A take's shown path split for a range read: what comes before `from`, and `from` through `to` (the tip when omitted; empty when `to` is earlier). Null when either is not on the path. */

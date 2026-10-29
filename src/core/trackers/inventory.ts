@@ -8,6 +8,7 @@
  * the Story Director or its /btw agent; the currency can be set where RoleCall's box was display only.
  */
 import { arr, bool, num, obj, oneOf, opt, rec, str, type Of } from "./shape";
+import { repairOf, stateSpec } from "./state";
 import { LIST_MAX, appendItem, find, hasUniqueIds, liveOf, markRemoved, patchItem, sameName, unmarkRemoved } from "./list";
 import type { GenSpec } from "./generate";
 import { byName, entry, listOf, single, sync, type RefreshSpec } from "./refresh";
@@ -55,7 +56,8 @@ export const DEFAULT_INVENTORY: Inventory = { items: [], equipment: {}, currency
 /** RoleCall's slot count (inventory.ts initialState.maxSlots), shown as "used/50"; it is a label, not a limit. */
 export const MAX_SLOTS = 50;
 
-const stateShape = obj({ items: arr(itemShape, LIST_MAX * 2), equipment: rec(str({ max: 80, min: 1 }), SLOTS.length), currency: num({ lo: 0, hi: 1_000_000_000_000, int: true }) });
+/** The module's whole state, field by field: what a state passes, and what a slot holds one field or row of (state.ts). */
+export const stateShape = obj({ items: arr(itemShape, LIST_MAX * 2), equipment: rec(str({ max: 80, min: 1 }), SLOTS.length), currency: num({ lo: 0, hi: 1_000_000_000_000, int: true }) });
 
 /** The state the store keeps, checked once. Null: refused. */
 export function parseInventory(data: unknown): Inventory | null {
@@ -65,7 +67,14 @@ export function parseInventory(data: unknown): Inventory | null {
   return s as Inventory;
 }
 
-export const readInventory = (data: unknown): Inventory => (data === undefined ? DEFAULT_INVENTORY : parseInventory(data) ?? DEFAULT_INVENTORY);
+/** What inventory keeps in its slot (state.ts). */
+export const INVENTORY_STATE = stateSpec(stateShape, { items: "id" });
+/** The module's one repair step (state.ts `repairOf`): every reader goes through `readInventory`, which uses it, so no read ever shows the defaults in place of a state it can mostly keep. Null: nothing is salvageable. */
+export const repairInventory = repairOf(INVENTORY_STATE, DEFAULT_INVENTORY, parseInventory, (d) => {
+  const ids = new Set((d["items"] as InvItem[]).map((i) => i.id));
+  return { ...d, equipment: Object.fromEntries(Object.entries(d["equipment"] as Record<string, string>).filter(([slot, id]) => (SLOTS as readonly string[]).includes(slot) && ids.has(id))) };
+});
+export const readInventory = (data: unknown): Inventory => (data === undefined ? DEFAULT_INVENTORY : repairInventory(data) ?? DEFAULT_INVENTORY);
 
 export const liveItems = (inv: Inventory): InvItem[] => liveOf(inv.items);
 export const usedSlots = (inv: Inventory): number => liveItems(inv).length;

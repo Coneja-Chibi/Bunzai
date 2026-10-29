@@ -5,10 +5,8 @@
 import { isPlainObject } from "../../core/guards";
 import {
   DIRECTOR_ACTIVITY_MAX, DIRECTOR_ANALYSIS_MAX, DIRECTOR_CAPS, DIRECTOR_COMMAND_MODES, DIRECTOR_CREATIVITY, DIRECTOR_INSTRUCTIONS_MAX, DIRECTOR_PERSONALITIES, DIRECTOR_STATE_BYTES_MAX, DIRECTOR_TEMPERATURE_MAX,
-  DIRECTOR_ARCHIVE_MAX, DIRECTOR_CALLS_MAX, DIRECTOR_CALLS_MIN, DIRECTOR_EVERY_MAX, DIRECTOR_RECEIPT_SIDE_MAX, type DirectorArchive, type DirectorSettings, type DirectorSettingsPatch, type DirectorState,
+  DIRECTOR_ARCHIVE_MAX, DIRECTOR_CALLS_MAX, DIRECTOR_CALLS_MIN, DIRECTOR_EVERY_MAX, type DirectorArchive, type DirectorSettings, type DirectorSettingsPatch, type DirectorState,
 } from "../contracts/director-types";
-import { isTrackerModule } from "../../core/trackers";
-import { TRACKER_MODULES } from "../contracts/chat-tracker-types";
 import { checkConnection, fail, isJson } from "./chat-rules";
 import { EFFORTS } from "./prompting-rules";
 import { isWhole } from "./scalar-rules";
@@ -73,21 +71,7 @@ export function mergeDirectorSettings(old: DirectorSettings | undefined, patch: 
   return Object.keys(next).length > 0 ? (next as DirectorSettings) : undefined;
 }
 
-/** The receipts of a reply's automatic tracker updates: one per module, each side plain JSON of a bounded size. */
-function checkReceipts(list: unknown): void {
-  if (!Array.isArray(list) || list.length > TRACKER_MODULES.length) fail("trackerUpdates must be a list with at most one receipt per tracker");
-  const seen = new Set<string>();
-  const keys = ["module", "before", "after", "turn", "at"];
-  for (const r of list) {
-    if (!isPlainObject(r) || Object.keys(r).some((k) => !keys.includes(k)) || !keys.every((k) => k in r)) fail("a tracker receipt needs a module, before, after, turn and at");
-    if (typeof r.module !== "string" || !isTrackerModule(r.module) || seen.has(r.module)) fail("a tracker receipt needs one tracker module, once");
-    seen.add(r.module);
-    if (!isWhole(r.turn, 0) || !isWhole(r.at, 0)) fail("a tracker receipt's turn and at must be whole numbers");
-    for (const side of [r.before, r.after]) if (side === undefined || !isJson(side) || JSON.stringify(side).length > DIRECTOR_RECEIPT_SIDE_MAX) fail("a tracker receipt's before and after must be JSON of a bounded size");
-  }
-}
-
-const STATE_KEYS = ["chapters", "currentChapterId", "arcs", "seeds", "invisibleArcs", "notes", "pacing", "recentAnalysis", "nextIntentions", "suggestedActions", "lastDirective", "lastDirectiveTurn", "activity", "activityClearedAt", "nextId", "turn", "edits", "trackerUpdates"];
+const STATE_KEYS = ["chapters", "currentChapterId", "arcs", "seeds", "invisibleArcs", "notes", "pacing", "recentAnalysis", "nextIntentions", "suggestedActions", "lastDirective", "lastDirectiveTurn", "activity", "activityClearedAt", "nextId", "turn", "edits"];
 const COLLECTIONS = ["chapters", "arcs", "seeds", "invisibleArcs", "notes"] as const;
 
 /** A snapshot the store may keep: plain JSON of the right shape, within its caps, with unique ids, at most DIRECTOR_STATE_BYTES_MAX serialized. Anything else is refused whole. */
@@ -109,7 +93,6 @@ export function checkDirectorState(value: unknown): DirectorState {
   if (!Array.isArray(activity) || activity.length > DIRECTOR_ACTIVITY_MAX) fail(`activity must be a list of at most ${DIRECTOR_ACTIVITY_MAX}`);
   if (!Array.isArray(nextIntentions) || nextIntentions.length > 50 || !Array.isArray(suggestedActions) || suggestedActions.length > 50) fail("nextIntentions and suggestedActions must be lists of at most 50");
   if (value.edits !== undefined && (!Array.isArray(value.edits) || value.edits.length > DIRECTOR_CAPS.edits || value.edits.some((e: unknown) => !isPlainObject(e) || typeof e.id !== "string" || !isPlainObject(e.edit)))) fail(`edits must be a list of at most ${DIRECTOR_CAPS.edits}`);
-  if (value.trackerUpdates !== undefined) checkReceipts(value.trackerUpdates);
   if (value.turn !== undefined && !isWhole(value.turn, 0)) fail("turn must be a whole number");
   if (!isPlainObject(value.pacing)) fail("pacing must be a plain object");
   if (!isWhole(value.nextId, 0)) fail("nextId must be a whole number");

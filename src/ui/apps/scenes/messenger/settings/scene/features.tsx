@@ -4,9 +4,9 @@
  * while any tracker is on; and a drill row to the program of any other Prop with a panel of its own, shown while it is on. Tracker sub-features are switches written with the module's `withSubs`.
  */
 import type { JSX } from "react";
-import { isTrackerModule, subsOf, withSubs } from "../../../../../../core/trackers";
+import { isTrackerModule } from "../../../../../../core/trackers";
 import { DIRECTOR_PROP_ID } from "../../../../../../core/director/settings";
-import { TRACKER_PROP_PREFIX, type JsonValue } from "../../../../../../stage/contracts/chat-store";
+import { TRACKER_PROP_PREFIX } from "../../../../../../stage/contracts/chat-store";
 import { toErrorMessage } from "../../../../../_shared/error-message";
 import type { SceneProp } from "../../../props/prop-contract";
 import { trackHareProp } from "../../../props/trackhare";
@@ -48,11 +48,11 @@ function TrackerRows({ a, open }: { a: WingArgs; open: OpenProgram }): JSX.Eleme
       {withSubFeatures.flatMap((p) => {
         const module = p.id.slice(TRACKER_PROP_PREFIX.length);
         if (!isTrackerModule(module)) return [];
-        const on = subsOf(module, chat.trackers?.[module]?.data);
+        const on = chat.trackers?.[module]?.subs ?? {};
         return (p.subs ?? []).map((s) => (
           <SavedToggle key={`${p.id}.${s.id}`} label={`${p.name}: ${s.label}`} description={s.description} saved={on[s.id] === true}
             write={async (next) => {
-              try { onChat(await ctx.api.setSceneTracker(chat.id, module, { data: withSubs(module, chat.trackers?.[module]?.data, { ...on, [s.id]: next }) as JsonValue })); } catch (e) { ctx.setStatus(`could not change ${p.name}: ${toErrorMessage(e)}`); }
+              try { onChat(await ctx.api.setSceneTracker(chat.id, module, { subs: { ...on, [s.id]: next } })); } catch (e) { ctx.setStatus(`could not change ${p.name}: ${toErrorMessage(e)}`); }
             }} />
         ));
       })}

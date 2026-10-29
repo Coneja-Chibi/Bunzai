@@ -3,11 +3,11 @@
  * shares its prefix's deltas without copying them), the deltas a message carries whichever version shows (kept by message id, so
  * they belong to one take and a fork copies them), the tip cache of each branch, and the keyframes. A message's own deltas fold
  * after its shown version's, so they win on that message. Every method that changes what a branch shows calls `refresh` from the first message it changed, so
- * the tip cache is rebuilt in the same synchronous step and no caller can forget it.
+ * the tip cache is rebuilt in the same synchronous step and no caller can forget it. A write made after a commit that names a version (recordDeltas) is kept with the message too, tied to that version: it applies only while the version is shown on that message, folds after the version own deltas and before the person, and a fork copies it with the message.
  */
 import type { Delta, SceneState } from "../../../core/scene-state/types";
 import type { ChatStore } from "../../contracts/chat-store";
-import { baseState, changed, checkImportedDeltas, rebuildState, requireHeld, sliceShown } from "../scene-state-rules";
+import { GLOBAL_SLOT, baseState, changed, checkImportedDeltas, rebuildState, requireHeld, sliceShown } from "../scene-state-rules";
 import { checkGuard } from "../chat-rules";
 import type { ChatRecord, MessageRecord } from "./chat-records";
 
@@ -19,7 +19,7 @@ export interface StateDeps {
 }
 
 export interface MemoryState {
-  api: Pick<ChatStore, "sceneState" | "sceneStateBefore" | "sceneDeltas" | "recordMessageDeltas" | "setBranchBase">;
+  api: Pick<ChatStore, "sceneState" | "sceneStateBefore" | "sceneDeltas" | "recordMessageDeltas" | "recordDeltas" | "setBranchBase" | "globalOps">;
   /** Rebuilds the branch's tip cache; keyframes at or after `fromSeq` are dropped first. */
   refresh(branchId: string, fromSeq?: number): void;
   /** Forgets a branch's cache and keyframes. */
@@ -34,7 +34,8 @@ export interface MemoryState {
 
 export function stateMethods(d: StateDeps): MemoryState {
   const swipeDeltas = new Map<string, Delta[]>();
-  const messageDeltas = new Map<string, Delta[]>();
+  /** What each message carries: a person's edit (no version) or a generated write tied to the version it is about. */
+  const messageDeltas = new Map<string, { delta: Delta; swipe: string | null }[]>();
   const bases = new Map<string, SceneState>();
   const tips = new Map<string, SceneState>();
   const keyframes = new Map<string, Map<string, { seq: number; state: SceneState }>>();
@@ -43,9 +44,17 @@ export function stateMethods(d: StateDeps): MemoryState {
   /** The versions a branch shows, oldest first: live messages only, each with the version it points at. */
   const shownPath = (branchId: string, beforeSeq = Number.POSITIVE_INFINITY): Shown[] =>
     (d.branchOrder.get(branchId) ?? []).map((id) => d.messages.get(id)!).filter((m) => !m.cut && m.seq < beforeSeq).map((m) => ({ messageId: m.id, swipeId: m.swipes[m.current]!.id }));
-  /** Each message's deltas for a path: its shown version's, then its own (they win). */
-  const deltasOf = (shown: readonly Shown[]): Map<string, Delta[]> =>
-    new Map(shown.map((p) => [p.messageId, [...(p.swipeId === null ? [] : (swipeDeltas.get(p.swipeId) ?? [])), ...(messageDeltas.get(p.messageId) ?? [])]]));
+  /** Each message's deltas for a path in three layers, in fold order: its shown version's own, then this take's generated writes for that version, then the person's (they win). */
+  const layersOf = (shown: readonly Shown[]): Map<string, [Delta[], Delta[], Delta[]]> =>
+    new Map(shown.map((p) => {
+      const mine = messageDeltas.get(p.messageId) ?? [];
+      return [p.messageId, [
+        p.swipeId === null ? [] : (swipeDeltas.get(p.swipeId) ?? []),
+        p.swipeId === null ? [] : mine.filter((x) => x.swipe === p.swipeId).map((x) => x.delta),
+        mine.filter((x) => x.swipe === null).map((x) => x.delta),
+      ]];
+    }));
+  const deltasOf = (shown: readonly Shown[]): Map<string, Delta[]> => new Map([...layersOf(shown)].map(([id, layers]) => [id, layers.flat()]));
   const build = (branchId: string, path: Shown[]) =>
     rebuildState({
       path,
@@ -87,6 +96,26 @@ export function stateMethods(d: StateDeps): MemoryState {
       if (own) messageDeltas.set(toId, structuredClone(own));
     },
     api: {
+      async globalOps(exceptSwipeIds = []) {
+        // A version counts while any live take shows it; a version a fork shares is counted once. Write order: time, then version, then the order written (as the SQLite store sorts).
+        const except = new Set(exceptSwipeIds);
+        const seen = new Set<string>();
+        const out: { delta: Delta; swipe: string; i: number }[] = [];
+        for (const [branchId, ids] of d.branchOrder) {
+          if (!d.liveChatOfBranch(branchId)) continue;
+          for (const id of ids) {
+            const m = d.messages.get(id);
+            const shown = m && !m.cut ? m.swipes[m.current] : undefined;
+            const swipe = shown && shown.cutAt === undefined ? shown.id : undefined;
+            if (!swipe || seen.has(swipe) || except.has(swipe)) continue;
+            seen.add(swipe);
+            (swipeDeltas.get(swipe) ?? []).forEach((delta, i) => { if (delta.slot === GLOBAL_SLOT) out.push({ delta, swipe, i }); });
+          }
+        }
+        out.sort((a, b) => a.delta.at - b.delta.at || (a.swipe < b.swipe ? -1 : a.swipe > b.swipe ? 1 : 0) || a.i - b.i);
+        return structuredClone(out.map((x) => x.delta));
+      },
+
       async sceneState(branchId) {
         if (!d.liveChatOfBranch(branchId)) return null;
         return structuredClone(tips.get(branchId) ?? build(branchId, shownPath(branchId)).state);
@@ -102,12 +131,19 @@ export function stateMethods(d: StateDeps): MemoryState {
         if (!d.liveChatOfBranch(branchId)) return null;
         const split = sliceShown(shownPath(branchId), fromMessageId, toMessageId);
         if (!split) return null;
-        const deltas = deltasOf(split.range);
-        return structuredClone({ before: build(branchId, split.before).state, messages: split.range.map((p) => ({ messageId: p.messageId, deltas: (deltas.get(p.messageId) ?? []).filter((x) => slotPrefixes === undefined || slotPrefixes.some((s) => x.slot.startsWith(s))) })) });
+        const layers = layersOf(split.range);
+        const wanted = (x: Delta): boolean => slotPrefixes === undefined || slotPrefixes.some((s) => x.slot.startsWith(s));
+        return structuredClone({
+          before: build(branchId, split.before).state,
+          messages: split.range.map((p) => {
+            const [own, generated, person] = (layers.get(p.messageId) ?? [[], [], []]).map((l) => l.filter(wanted));
+            return { messageId: p.messageId, deltas: [...own!, ...generated!, ...person!], generatedFrom: own!.length, personFrom: own!.length + generated!.length };
+          }),
+        });
       },
 
       async setBranchBase(branchId, raw) {
-        const deltas = checkImportedDeltas(raw);
+        const deltas = checkImportedDeltas(raw, "import");
         if (!d.liveChatOfBranch(branchId)) return false;
         if (deltas.length === 0) bases.delete(branchId);
         else bases.set(branchId, baseState(deltas));
@@ -115,8 +151,26 @@ export function stateMethods(d: StateDeps): MemoryState {
         return true;
       },
 
+      async recordDeltas(branchId, swipeId, raw, guard) {
+        checkImportedDeltas(raw, "background");
+        const expected = checkGuard(guard);
+        if (!d.liveChatOfBranch(branchId)) return false;
+        const m = (d.branchOrder.get(branchId) ?? []).map((id) => d.messages.get(id)!).find((x) => !x.cut && x.swipes.some((s) => s.id === swipeId && s.cutAt === undefined));
+        if (!m) return false;
+        d.requireVersion(branchId, expected);
+        // Judged as if this version were the one shown, so a write of what it already holds adds nothing.
+        const through = build(branchId, [...shownPath(branchId, m.seq), { messageId: m.id, swipeId }]).state;
+        requireHeld(through, guard?.expect);
+        const added = changed(through, checkImportedDeltas(raw, "background"));
+        if (added.length > 0) {
+          messageDeltas.set(m.id, [...(messageDeltas.get(m.id) ?? []), ...structuredClone(added).map((delta) => ({ delta, swipe: swipeId }))]);
+          refresh(branchId, m.seq);
+        }
+        return true;
+      },
+
       async recordMessageDeltas(branchId, messageId, raw, guard) {
-        checkImportedDeltas(raw);
+        checkImportedDeltas(raw, "person");
         const expected = checkGuard(guard);
         const m = d.messages.get(messageId);
         if (!m || m.branchId !== branchId || m.cut || !d.liveChatOfBranch(branchId)) return false;
@@ -124,9 +178,9 @@ export function stateMethods(d: StateDeps): MemoryState {
         const own = messageDeltas.get(messageId) ?? [];
         const shown = stateThrough(branchId, m);
         requireHeld(shown, guard?.expect);
-        const added = changed(shown, checkImportedDeltas(raw));
+        const added = changed(shown, checkImportedDeltas(raw, "person"));
         if (added.length > 0) {
-          messageDeltas.set(messageId, [...own, ...added]);
+          messageDeltas.set(messageId, [...own, ...added.map((delta) => ({ delta, swipe: null }))]);
           refresh(branchId, m.seq);
         }
         return true;

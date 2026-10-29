@@ -24,7 +24,7 @@ const anthropic: ProviderSpoke = {
   // The native Messages API (src/stage/provider/anthropic.ts): explicit cache breakpoints, and a
   // mid-chat system message stays an inline user turn instead of being hoisted to the top.
   // Messages API: stop_sequences and top_k are the only samplers beyond temperature and top_p (docs.anthropic.com, Messages create).
-  scene: { params: { stop: "stop_sequences", top_k: true }, base: (c) => c.baseURL ?? "https://api.anthropic.com/v1", native: "anthropic", tools: true },
+  scene: { params: { stop: "stop_sequences", top_k: true }, base: (c) => c.baseURL ?? "https://api.anthropic.com/v1", native: "anthropic" },
 };
 
 export default anthropic;

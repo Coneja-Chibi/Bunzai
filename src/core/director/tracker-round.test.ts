@@ -6,9 +6,11 @@ import { describe, expect, test } from "bun:test";
 import { applyInventory, DEFAULT_INVENTORY, liveItems, readInventory } from "../trackers/inventory";
 import { applyBonds, readBonds } from "../trackers/bonds";
 import { DEFAULT_RESOURCES, readResources } from "../trackers/resources";
-import { parseTrackerData, refreshSpecOf } from "../trackers";
-import { DIRECTOR_RECEIPT_SIDE_MAX } from "../../stage/contracts/director-types";
-import { batchesOf, dueTrackers, mergeUpdate, readRound, receiptOf, roundMessages, undoTarget } from "./tracker-round";
+import { parseTrackerData, refreshSpecOf, trackerDataIn, trackerDeltas } from "../trackers";
+import { fold } from "../scene-state/fold";
+import type { SceneState } from "../scene-state/types";
+import { slotOf } from "../../generated/slots";
+import { batchesOf, dueTrackers, mergeUpdate, readRound, roundMessages } from "./tracker-round";
 
 const on = (...m: string[]) => m.map((x) => `tracker-${x}`);
 const item = (name: string, over: Record<string, unknown> = {}) => ({ name, description: "", category: "misc" as const, rarity: "common" as const, quantity: 1, ...over });
@@ -199,22 +201,22 @@ describe("an answer that cannot be used is a reason, never defaults", () => {
   });
 });
 
-describe("receipts and undoing them", () => {
-  test("a receipt holds the state before and after, the turn and the time", () => {
-    expect(receiptOf("resources", { hp: 1 }, { hp: 2 }, 4, 99)).toEqual({ module: "resources", before: { hp: 1 }, after: { hp: 2 }, turn: 4, at: 99 });
-    expect(receiptOf("resources", undefined, { hp: 2 }, 4, 99)!.before).toBeNull();
+describe("the way back of an update (it replaces the receipts: the update is deltas of the module's slot)", () => {
+  const at = (state: SceneState, hp: number) => readResources(trackerDataIn("resources", state)).hp === hp;
+  test("an update is the deltas from the state before to the state after, and its way back is the deltas from after to before: the module is as it was", () => {
+    const before = { ...DEFAULT_RESOURCES, hp: 80 };
+    const after = { ...DEFAULT_RESOURCES, hp: 60 };
+    const start = fold({}, trackerDeltas("resources", undefined, before, 1), slotOf);
+    const updated = fold(start, trackerDeltas("resources", before, after, 2), slotOf);
+    expect(at(updated, 60)).toBe(true);
+    expect(at(fold(updated, trackerDeltas("resources", after, before, 3), slotOf), 80)).toBe(true);
   });
-  test("a state too large to keep on both sides gets no receipt, so it is never updated without a way back", () => {
-    const big = { text: "x".repeat(DIRECTOR_RECEIPT_SIDE_MAX) };
-    expect(receiptOf("resources", big, { hp: 2 }, 1, 1)).toBeNull();
-    expect(receiptOf("resources", { hp: 2 }, big, 1, 1)).toBeNull();
+  test("an update that changes nothing is no deltas, so a tracker that nothing moved gets no write", () => {
+    expect(trackerDeltas("resources", { ...DEFAULT_RESOURCES, hp: 80 }, { ...DEFAULT_RESOURCES, hp: 80 }, 1)).toEqual([]);
   });
-  test("undo goes back to before only while the module still holds exactly what the update left; otherwise it is left alone", () => {
-    const r = receiptOf("resources", { hp: 80 }, { hp: 60 }, 2, 5)!;
-    expect(undoTarget({ hp: 60 }, r)).toEqual({ data: { hp: 80 } });
-    expect(undoTarget({ hp: 59 }, r)).toBeNull();
-    expect(undoTarget(null, r)).toBeNull();
-    const fromNothing = receiptOf("resources", undefined, { hp: 60 }, 2, 5)!;
-    expect(undoTarget({ hp: 60 }, fromNothing)).toEqual({ data: null });
+  test("an update from a module that had no state goes back to no state: the deltas remove what it added", () => {
+    const after = { ...DEFAULT_RESOURCES, hp: 60 };
+    const updated = fold({}, trackerDeltas("resources", undefined, after, 1), slotOf);
+    expect(at(fold(updated, trackerDeltas("resources", after, undefined, 2), slotOf), 100)).toBe(true);
   });
 });

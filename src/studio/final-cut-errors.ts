@@ -5,10 +5,11 @@
  */
 import { toErrorMessage } from "../error-message";
 import { ProviderError } from "../stage/contracts/provider";
+import { refusesTools } from "../stage/provider/transport-core";
 
 export type FailureClass =
   | "cancelled" | "timed_out" | "truncation" | "reasoning_exhausted" | "no_tool_call" | "malformed_args" | "empty_body" | "empty_completion"
-  | "rate_limit" | "auth" | "transient" | "json_parse" | "internal_bug" | "unknown";
+  | "rate_limit" | "tools_refused" | "auth" | "transient" | "json_parse" | "internal_bug" | "unknown";
 
 /** A failure the pass itself raised, with the class and, when the model said something, what it said. */
 export class PassFailure extends Error {
@@ -28,6 +29,7 @@ const ADVICE: Partial<Record<FailureClass, string>> = {
   empty_body: "Tool call was missing the body field. Strict mode should have prevented this - try a different model if it persists.",
   empty_completion: "Model returned no text and no tool call. Try a different model or check your connection.",
   rate_limit: "Rate limited by the provider. The retry waited briefly - if it still fails, slow down or switch connections.",
+  tools_refused: "This model's server does not take tools. Set this pass's output mode to tagged, or pick a model that supports tools.",
   auth: "The provider refused the key (401/403). Check the connection's key in Kit.",
   transient: "Transient provider error (5xx / network / timeout). The retry already attempted - try again in a moment, or pick a faster model if the pass is consistently long.",
   json_parse: "Provider returned malformed JSON. Often a streaming hiccup - retry. If persistent, the model/provider is producing invalid responses.",
@@ -36,6 +38,7 @@ const ADVICE: Partial<Record<FailureClass, string>> = {
 
 export function classify(error: unknown): FailureClass {
   if (error instanceof PassFailure) return error.klass;
+  if (refusesTools(error)) return "tools_refused";
   if (error instanceof ProviderError) {
     if (error.status === 429 || error.category === "rate_limit_error") return "rate_limit";
     if (error.status === 401 || error.status === 403) return "auth";

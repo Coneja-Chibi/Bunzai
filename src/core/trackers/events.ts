@@ -7,6 +7,7 @@
  * RoleCall's updateEvent quietly CREATES an event when it is given an id it does not know, and here a refresh of a missing event changes nothing.
  */
 import { arr, bool, dflt, num, obj, oneOf, opt, str, type Of } from "./shape";
+import { repairOf, stateSpec } from "./state";
 import { appendItem, find, hasUniqueIds, liveOf, markRemoved, patchItem, unmarkRemoved } from "./list";
 import type { GenSpec } from "./generate";
 import { entry, listOf, norm, sync, type RefreshSpec } from "./refresh";
@@ -46,12 +47,17 @@ type Stored = Of<typeof eventShape>;
 export interface Events { events: Stored[] }
 export const DEFAULT_EVENTS: Events = { events: [] };
 
-const stateShape = obj({ events: arr(eventShape, MAX_EVENTS * 2) });
+/** The module's whole state, field by field: what a state passes, and what a slot holds one field or row of (state.ts). */
+export const stateShape = obj({ events: arr(eventShape, MAX_EVENTS * 2) });
 export function parseEvents(data: unknown): Events | null {
   const s = stateShape.check(data);
   return s && hasUniqueIds(s.events) ? s : null;
 }
-export const readEvents = (data: unknown): Events => (data === undefined ? DEFAULT_EVENTS : parseEvents(data) ?? DEFAULT_EVENTS);
+/** What events keeps in its slot (state.ts). */
+export const EVENTS_STATE = stateSpec(stateShape, { events: "id" });
+/** The module's one repair step (state.ts `repairOf`): every reader goes through `readEvents`, which uses it, so no read ever shows the defaults in place of a state it can mostly keep. Null: nothing is salvageable. */
+export const repairEvents = repairOf(EVENTS_STATE, DEFAULT_EVENTS, parseEvents);
+export const readEvents = (data: unknown): Events => (data === undefined ? DEFAULT_EVENTS : repairEvents(data) ?? DEFAULT_EVENTS);
 const live = (e: Events): Stored[] => liveOf(e.events);
 export const ongoing = (e: Events): Stored[] => live(e).filter((x) => x.isOngoing);
 export const resolved = (e: Events): Stored[] => live(e).filter((x) => !x.isOngoing);

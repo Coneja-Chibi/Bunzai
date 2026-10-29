@@ -45,3 +45,12 @@ describe("one budget for the whole turn", () => {
     expect(r.calls).toHaveLength(2);
   });
 });
+
+describe("a server that refuses tools", () => {
+  test("the Director says its model has no tool calling, asked once and never re-sent or retried", async () => {
+    const refused = new ProviderError("Desk (400): qwen3 does not support tools", { category: "api_error", code: "backend_error", status: 400 });
+    const r = rig([refused, good], 1_000);
+    expect(await planTurn(r.request, r.clock)).toMatchObject({ ok: false, reason: "no_tool_support" });
+    expect(r.calls).toHaveLength(1);
+  });
+});

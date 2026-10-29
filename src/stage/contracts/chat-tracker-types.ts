@@ -1,8 +1,9 @@
 /**
  * What a scene keeps of its trackers: RoleCall's legacy tracker modules (Stats, Inventory, ...), one entry
  * per module. A module is switched on or off by its Prop (rule 21, id `tracker-<module>`); this holds what the Prop remembers, so switching it
- * off keeps everything and switching it back on restores it. `data` is the module's own state, checked by core/trackers when it is written.
+ * off keeps everything and switching it back on restores it.
  * Split from chat-store.ts for the file-size cap; chat-store.ts re-exports.
+ * Only a module's SETTINGS live here now; its state is the scene-state slot `tracker.<module>` (core/trackers/state.ts).
  */
 import type { JsonValue } from "./chat-store";
 
@@ -25,41 +26,26 @@ export const TRACKER_EVERY_MAX = 99;
 export interface ChatTrackerEntry {
   /** Absent: always. */
   context?: TrackerContext;
-  /** The module's state; absent until something changed, when the module reads as its defaults. */
+  /** The Storyboards' AI Context profile (`{ mode?, radius? }`), a setting. Every other module's state is scene state, the slot `tracker.<module>` (docs/reference/scene-state.md), and never in this entry; the read that hands a module's data to a prompt or a panel (core/trackers trackerOverlay) fills it in here. */
   data?: JsonValue;
   /** This tracker's own choice about the Story Director's automatic updates (plan 17); absent or empty follows the scene: on, every as often as the scene's `every`. */
   auto?: TrackerAuto;
-  /** The Story Director's automatic update this tracker's state carries now (plan 16): which version of which reply made it, and the state before and after. Cleared when it is undone. A new turn undoes it when that version is no longer the one shown, and never overwrites what the person changed since. */
-  update?: TrackerUpdate;
-  /** The updates the person undid, newest last, at most TRACKER_UNDONE_MAX: a version in this list is never applied again, whatever the person selects or cuts afterwards. */
-  undone?: TrackerUndone[];
-  /** The versions whose update the SYSTEM took back (a new version, a cut, a fork, another take), newest last, at most TRACKER_UNDONE_MAX: only these are ever applied again when the version is shown, and only while the state still equals what that update started from. A hand edit of the state clears the list. */
-  parked?: TrackerUndone[];
+  /** The sub-feature switches (Knowledge's Secrets, the Codex's Combat Profiles, ...), by id: a setting that chooses what Generate and Refresh ask for. Absent: none on. */
+  subs?: Record<string, boolean>;
 }
-
-export const TRACKER_UNDONE_MAX = 50;
-/** One update the person undid: the reply version that made it. */
-export interface TrackerUndone { messageId: string; swipeId: string; at: number }
-
-/** What the Story Director's update of a tracker was: the reply version that made it and the module's saved state before and after (`null` for none). */
-export interface TrackerUpdate { messageId: string; swipeId: string; turn: number; at: number; before: JsonValue | null; after: JsonValue | null }
 
 /** `on` false stops automatic updates of this tracker (absent means on); `every` (1 to TRACKER_EVERY_MAX replies) overrides the scene's. */
 export interface TrackerAuto { on?: boolean; every?: number }
 
 export type ChatTrackers = Partial<Record<TrackerModule, ChatTrackerEntry>>;
 
-/** A change to one module: a key given replaces it, null clears it, a key left out stays. */
+/** A change to one module's settings: a key given replaces it, null clears it, a key left out stays. A module's state is not written here; it is written as scene-state deltas through the chat store's two write doors (scene-state.md). */
 export interface ChatTrackerPatch {
   context?: TrackerContext | null;
+  /** The Storyboards' profile only; any other module refuses it. */
   data?: JsonValue | null;
   /** Replaces the choice whole; null or an empty object clears it. */
   auto?: TrackerAuto | null;
-  update?: TrackerUpdate | null;
-  /** Replaces the list whole (the caller adds to the one it read); null clears it. */
-  undone?: TrackerUndone[] | null;
-  /** Replaces the list whole; null clears it. A write of `data` that names neither `update` nor `parked` is a hand edit and clears it. */
-  parked?: TrackerUndone[] | null;
-  /** Not stored: the write is refused (StudioConflictError) unless the module's saved state is now exactly this (`null` for none), so an automatic update never overwrites a change made since it was planned. */
-  expectedData?: JsonValue | null;
+  /** Replaces the switches whole; null or an empty object clears them. Only the sub-features the module has. */
+  subs?: Record<string, boolean> | null;
 }

@@ -1,13 +1,17 @@
 /**
- * The test rig the item tracker panels share (tests only): a JSDOM page, a scene whose chat is a fake that answers setSceneTracker the way the store does and
- * proposeTrackerItem from a queue, and the helpers to mount a panel, press and type into it, and read what it wrote. Call `panelRig(module)` at the top of a
+ * The test rig the item tracker panels share (tests only): a JSDOM page, a scene whose trackers are a fake that answers the state read and write the way the store does (a module's data
+ * kept per module, every write recorded as the module and its whole next data), setSceneTracker for the settings, and proposeTrackerItem from a queue, and the helpers to mount a panel,
+ * press and type into it, and read what it wrote. Call `panelRig(module)` at the top of a
  * test file; it registers the DOM set-up and reset for that file.
  */
-import { afterAll, beforeAll, beforeEach } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach } from "bun:test";
 import type { JSDOM } from "jsdom";
 import type { JSX } from "react";
 import type { Root } from "react-dom/client";
-import type { Chat, ChatTrackerPatch, TrackerModule } from "../../../../../../stage/contracts/chat-store";
+import type { Chat, ChatTrackerPatch, JsonValue, TrackerModule } from "../../../../../../stage/contracts/chat-store";
+import type { TrackerWriteInput } from "../../../../../../studio/tracker-state";
+import { forgetTrackerStates } from "../tracker-states";
+import { heldTrackerApi } from "./held-tracker-api";
 import type { TrackerItemInput } from "../../../../../../studio/scene-tracker-item";
 import type { AppContext } from "../../../../../app-contract";
 import { flushTasks, installDom, type InstalledDom } from "../../../../../_shared/test-dom";
@@ -20,9 +24,15 @@ export function panelRig(module: TrackerModule) {
   const roots: Root[] = [];
   const state = {
     writes: [] as { module: TrackerModule; patch: ChatTrackerPatch }[],
+    /** Each module's saved data, as the state read answers it. */
+    data: {} as Partial<Record<TrackerModule, JsonValue>>,
+    /** The modules each state write carried, in order: one entry is one step of the store. */
+    calls: [] as TrackerModule[][],
+    /** How many times the trackers' state was read from the server. */
+    reads: 0,
     asked: [] as TrackerItemInput[],
     answers: [] as unknown[],
-    chat: { id: "c1" } as Chat,
+    chat: { id: "c1", activeBranchId: "b1" } as Chat,
     host: undefined as unknown as HTMLElement,
   };
   beforeAll(() => {
@@ -36,16 +46,25 @@ export function panelRig(module: TrackerModule) {
     for (const root of roots.splice(0)) flushSync(() => root.unmount());
     await installed.teardown();
   });
-  beforeEach(() => { installed.reinstall(); state.writes = []; state.asked = []; state.answers = []; state.chat = { id: "c1" } as Chat; });
+  // A panel left mounted after its test still hears the scene's writes (the panels share one scene id here), and would hand the next test its stale state.
+  afterEach(async () => {
+    const { flushSync } = await import("react-dom");
+    for (const root of roots.splice(0)) flushSync(() => root.unmount());
+  });
+  beforeEach(() => { installed.reinstall(); state.writes = []; state.asked = []; state.answers = []; state.data = {}; state.calls = []; state.reads = 0; state.chat = { id: "c1", activeBranchId: "b1" } as Chat; });
 
+  const tracked = heldTrackerApi(() => state.data, (m, data) => { state.writes.push({ module: m, patch: { data } }); });
   const ctx = (): AppContext => ({
     prefs: { get: () => undefined, set: () => undefined },
+    pieces: tracked.pieces,
     api: {
+      ...tracked.api,
+      getTrackerStates: async () => { state.reads++; return tracked.api.getTrackerStates(); },
+      writeTrackerStates: async (input: TrackerWriteInput) => { state.calls.push(input.writes.map((w) => w.module)); return tracked.api.writeTrackerStates(input); },
       setSceneTracker: async (_id: string, m: TrackerModule, patch: ChatTrackerPatch): Promise<Chat> => {
         state.writes.push({ module: m, patch });
-        const old = state.chat.trackers?.[m] ?? {};
-        const entry = { ...old, ...(patch.data === undefined || patch.data === null ? {} : { data: patch.data }) };
-        state.chat = { ...state.chat, trackers: { ...state.chat.trackers, [m]: entry } };
+        const { data: _profile, ...settings } = patch;
+        state.chat = { ...state.chat, trackers: { ...state.chat.trackers, [m]: { ...(state.chat.trackers?.[m] ?? {}), ...Object.fromEntries(Object.entries(settings).filter(([, v]) => v !== null)) } } };
         return state.chat;
       },
       proposeTrackerItem: async (input: TrackerItemInput): Promise<{ item: unknown }> => {
@@ -57,7 +76,7 @@ export function panelRig(module: TrackerModule) {
     },
   } as unknown as AppContext);
 
-  const settle = async (flushSync: FlushSync): Promise<void> => { await flushTasks(); flushSync(() => undefined); };
+  const settle = async (flushSync: FlushSync): Promise<void> => { await flushTasks(8); flushSync(() => undefined); };
   const rig = {
     state,
     ctx,
@@ -68,8 +87,8 @@ export function panelRig(module: TrackerModule) {
     q: <T extends Element = HTMLElement>(sel: string): T => state.host.querySelector<T>(sel)!,
     qa: (sel: string): Element[] => [...state.host.querySelectorAll(sel)],
     lastData: <T,>(): T => state.writes.at(-1)!.patch.data as unknown as T,
-    /** Keeps `data` as the module's stored state, then returns the panel element for it. */
-    seed(data: unknown): void { state.chat = { ...state.chat, trackers: { [module]: { data: data as never } } }; },
+    /** Keeps `data` as the module's saved state. */
+    seed(data: unknown, of: TrackerModule = module): void { forgetTrackerStates(); state.data[of] = data as JsonValue; },
     async mount(node: JSX.Element): Promise<FlushSync> {
       const { flushSync } = await import("react-dom");
       const { createRoot } = await import("react-dom/client");

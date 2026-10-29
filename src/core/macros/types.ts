@@ -134,6 +134,8 @@ export interface MacroContext {
   // Variables
   localVariables: Map<string, MacroVariable>;
   globalVariables: Map<string, MacroVariable>;
+  /** When given, every write to a global variable is also recorded here, in the order made, as the operation it was. */
+  globalWrites?: GlobalWrite[];
 
   /** The scene's linked library trackers by lowercased name, for {{tracker::...}} (handlers/tracker.ts): the piece's body, its current value (a record, or a list's rows) and its text. */
   trackers?: ReadonlyMap<string, TrackerView>;
@@ -202,7 +204,12 @@ export interface MacroSideEffect {
   value?: MacroVariableValue;
   /** The macro that produced it; the evaluator fills it in. */
   cause?: string;
+  /** What the write added to the value it found, for an add, an increment or a decrement (a number, or text appended); absent for a plain set. The library's global variables keep it as the operation (core/scene-state/globals.ts). */
+  add?: number | string;
 }
+
+/** One write to the library's global variables, as it was made (set, add a number, append text, delete): what a turn keeps as an operation (core/scene-state/globals.ts). */
+export interface GlobalWrite { name: string; op: "set" | "inc" | "append" | "delete"; v?: MacroVariableValue }
 
 export interface MacroResult {
   value: string;

@@ -8,6 +8,7 @@
  * it does nothing on an unbreakable one; Strengthen and Weaken (strengthen_bond, weaken_bond) are the Story Director's.
  */
 import { arr, bool, dflt, num, obj, oneOf, opt, str, type Of } from "./shape";
+import { repairOf, stateSpec } from "./state";
 import { appendItem, hasUniqueIds } from "./list";
 import type { GenSpec } from "./generate";
 import { entry, listOf, norm, sync, type RefreshSpec } from "./refresh";
@@ -44,12 +45,17 @@ export const DEFAULT_BONDS: Bonds = { bonds: [] };
 
 export const intensityOf = (value: number): Intensity => (value >= 95 ? "absolute" : value >= 75 ? "overwhelming" : value >= 50 ? "strong" : value >= 30 ? "moderate" : value >= 15 ? "weak" : "faint");
 
-const stateShape = obj({ bonds: arr(bondShape, MAX_BONDS * 2) });
+/** The module's whole state, field by field: what a state passes, and what a slot holds one field or row of (state.ts). */
+export const stateShape = obj({ bonds: arr(bondShape, MAX_BONDS * 2) });
 export function parseBonds(data: unknown): Bonds | null {
   const s = stateShape.check(data);
   return s && hasUniqueIds(s.bonds) ? s : null;
 }
-export const readBonds = (data: unknown): Bonds => (data === undefined ? DEFAULT_BONDS : parseBonds(data) ?? DEFAULT_BONDS);
+/** What bonds keeps in its slot (state.ts). */
+export const BONDS_STATE = stateSpec(stateShape, { bonds: "id" });
+/** The module's one repair step (state.ts `repairOf`): every reader goes through `readBonds`, which uses it, so no read ever shows the defaults in place of a state it can mostly keep. Null: nothing is salvageable. */
+export const repairBonds = repairOf(BONDS_STATE, DEFAULT_BONDS, parseBonds);
+export const readBonds = (data: unknown): Bonds => (data === undefined ? DEFAULT_BONDS : repairBonds(data) ?? DEFAULT_BONDS);
 export const activeBonds = (b: Bonds): Stored[] => b.bonds.filter((x) => x.isActive);
 export const brokenBonds = (b: Bonds): Stored[] => b.bonds.filter((x) => !x.isActive);
 export const totalStrength = (b: Bonds): number => activeBonds(b).reduce((sum, x) => sum + x.intensityValue, 0);

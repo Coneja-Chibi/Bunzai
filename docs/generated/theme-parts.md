@@ -236,6 +236,7 @@
 | `props.tracker.review.module.<id>` | `div` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |
 | `props.tracker.review.retry` | `Button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-ui.tsx` |
 | `props.tracker.review.skipped` | `p` | `src/ui/apps/scenes/props/trackers/refresh/refresh-diff.tsx` |
+| `props.tracker.unreadable` | `p` | `src/ui/apps/scenes/props/trackers/tracker-frame.tsx` |
 | `props.trackers.refresh-all` | `div` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |
 | `props.trackers.refresh-all.cancel` | `Button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |
 | `props.trackers.refresh-all.progress` | `div` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |

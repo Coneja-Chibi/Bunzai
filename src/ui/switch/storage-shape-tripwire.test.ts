@@ -65,6 +65,14 @@ async function shapeFiles(): Promise<string[]> {
     "src/stage/store/sqlite/migration-41-scene-summary.ts",
     "src/stage/store/sqlite/migration-42-director.ts",
     "src/stage/store/sqlite/migration-43-scene-state.ts",
+    "src/stage/store/sqlite/migration-44-version-writes.ts",
+    // The rule every written delta value passes (a slot's own shape), and the summary slot's row.
+    "src/stage/store/scene-state-rules.ts",
+    // How a Props tracker module's state is stored in its slot (rows and fields), and the settings a scene keeps per module (chats.trackers_json).
+    "src/core/trackers/state.ts",
+    "src/stage/contracts/chat-tracker-types.ts",
+    "src/stage/store/tracker-rules.ts",
+    "src/core/summary/row-shape.ts",
     // The shape of a stored delta and of the state rebuilt from them.
     "src/core/scene-state/types.ts",
     "src/stage/store/sqlite/document-backend.ts",
@@ -427,7 +435,23 @@ async function shapeFiles(): Promise<string[]> {
 // what a swipe's generation may hold. ADDITIVE: no key is removed or reshaped, absent means none ran out, and a reply without it reads as before (an older build refuses a reply that has it, so ONE-WAY in that
 // sense only). src/studio/settings-shape.ts (pinned) only had two comments reworded (the budget keys now have a screen); no key changed. The pin was recomputed.
 // 2026-10-28 (review fixes): generation-rules.ts (pinned) now refuses an outOfTime list past SANITY_LIST entries or a name past SANITY_TEXT characters as unusually large (a hostile-input ceiling, same family as the entity decoders); no stored key or shape changed, and a value that was accepted and is not past a ceiling is still accepted. settings-shape.ts (pinned) gains the shared reader budgetMsOf and MS_PER_SECOND (no key changed). The pin was recomputed.
-const PINNED_SHAPE_HASH = "8bf4b74da36c856490f161f590e9de71d4cc4f0980d327f77e9911fb0e8b6a9b";
+// 2026-10-28, the chat summary on scene state (phase 2): migration 44 (migration-44-version-writes.ts, new, pinned here) adds the nullable message_deltas.swipe_id (null is a person's edit of a message; a swipe id is a write made after a commit that names the version it is about, kept with THIS take's message so it is copied by a fork with the message-id remap and never appended to the version's shared swipe_deltas); row-fingerprints.ts (pinned) bumps message_deltas to spec v2 for the column. core/scene-state/types.ts (pinned) gains an optional slot `shape`, and scene-state-rules.ts (pinned from now on, it decides what a stored delta may hold) checks a delta's value against it; the `summary` slot's row shape (core/summary/row-shape.ts, pinned) is the first. The old per-take text in chats.summary_json is no longer read (no data carries over). ADDITIVE for the column; an older build ignores it. The pin was recomputed.
+// 2026-10-28, the Props trackers on scene state (phase 3): a module's STATE leaves chats.trackers_json for the scene-state slot tracker.<module> (one slot per module that keeps state, made from the module table; a
+// module with a list keeps one wrapper row {key, value} per list row and per other field, a module without keeps one field per delta; src/core/trackers/state.ts, new, pinned here). The cell now holds SETTINGS only:
+// context, auto, the new subs (the sub-feature switches, moved out of the module's data), and a Storyboard's profile as data (src/stage/contracts/chat-tracker-types.ts and src/stage/store/tracker-rules.ts, pinned here from now on, because
+// they decide what the cell may hold). The Director's update, undone and parked records leave the cell, and the Director snapshot loses trackerUpdates (director-rules.ts refuses it). A scene-state slot may declare shapeAt (a fields slot whose
+// fields differ in kind), and a keyed-list row must carry the key its path names (src/core/scene-state/types.ts and src/stage/store/scene-state-rules.ts, pinned). NO schema change and no migration: no table or column changes. A cell written before
+// this change is read as settings alone (its state, update, undone and parked keys are not read and the next change drops them); existing scenes' tracker state is NOT moved (Bunraku has no stored scenes to carry). ONE-WAY in the sense that an older
+// build reads a new cell's settings but finds no state in it. The pin was recomputed.
+// 2026-10-28 (phase 3 review fixes): src/core/trackers/state.ts (pinned) gains the read-side repair of a module's stored state (repairOf: keep every field and row that fits, bring a broken cross-field rule inside, the stored values unchanged). No stored key or
+// shape changes: it decides only how a stored state is READ, so a state a cut left inconsistent no longer reads as the defaults. COMPATIBLE. The pin was recomputed.
+// 2026-10-28, global variables on scene state (phase 4): the library's globals leave the StateStore `variables` document (no longer read or written; nothing is moved out of
+// it, no data carries over) for operations in the new shared slot `global` (core/scene-state/slots/global.ts), stored as rows of swipe_deltas with the version that made them,
+// so the existing sealing, snapshot, fingerprint, fork and cut handling covers them. core/scene-state/types.ts (pinned) widens SlotDef.scope to "scene" | "shared"; a take's
+// fold skips a shared slot. Migration 45 (migration-45-global-ops.ts) adds only a partial index on that slot. ADDITIVE: an older build ignores the slot's rows. The pin was recomputed.
+// 2026-10-28 (phase 4 review fixes): scene-state-rules.ts (pinned) re-exports GLOBAL_SLOT for the backends; a stored global row records the operation as the macro or lore Side Effect made it. No stored key changes. The pin was recomputed.
+// 2026-10-28, permissions for scene state (phase 5): core/scene-state/types.ts (pinned) gains SlotWriter (turn, background, person, import; no extension writer until an extension runtime exists) and SlotDef.writers, and scene-state-rules.ts (pinned) refuses a delta whose slot does not name the writer of the door it came through (a turn's checkpoint, recordDeltas, recordMessageDeltas, setBranchBase). No stored key or shape changes. The pin was recomputed.
+const PINNED_SHAPE_HASH = "9abac65333dc12f4a339d1c01cc61b4735ee38567ee8ff6718a9a6618f25ad0e";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");

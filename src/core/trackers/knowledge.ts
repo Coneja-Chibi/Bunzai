@@ -9,6 +9,7 @@
  * "essentially the same" (its longer-content branch is only reachable when neither text contains the other). Setting reliability and revealing the truth are the Story Director's (set_reliability, reveal_truth).
  */
 import { arr, bool, dflt, num, obj, oneOf, opt, rec, str, type Of } from "./shape";
+import { repairOf, stateSpec } from "./state";
 import { appendItem, find, hasUniqueIds, liveOf, markRemoved, patchItem, unmarkRemoved } from "./list";
 import type { GenSpec } from "./generate";
 import { entry, listOf, sync, type RefreshSpec } from "./refresh";
@@ -52,13 +53,18 @@ type Made = Omit<KnowEntry, "id" | "learnedAt">;
 export interface Knowledge { entries: KnowEntry[]; subs: Record<string, boolean> }
 export const DEFAULT_KNOWLEDGE: Knowledge = { entries: [], subs: {} };
 
-const stateShape = obj({ entries: arr(entryShape, MAX_ENTRIES * 2), subs: dflt(rec(bool(), 4), {}) });
+/** The module's whole state, field by field: what a state passes, and what a slot holds one field or row of (state.ts). */
+export const stateShape = obj({ entries: arr(entryShape, MAX_ENTRIES * 2), subs: dflt(rec(bool(), 4), {}) });
 
 export function parseKnowledge(data: unknown): Knowledge | null {
   const s = stateShape.check(data);
   return s && hasUniqueIds(s.entries) && subsKnown("knowledge", s.subs) ? s : null;
 }
-export const readKnowledge = (data: unknown): Knowledge => (data === undefined ? DEFAULT_KNOWLEDGE : parseKnowledge(data) ?? DEFAULT_KNOWLEDGE);
+/** What knowledge keeps in its slot (state.ts). */
+export const KNOWLEDGE_STATE = stateSpec(stateShape, { entries: "id" });
+/** The module's one repair step (state.ts `repairOf`): every reader goes through `readKnowledge`, which uses it, so no read ever shows the defaults in place of a state it can mostly keep. Null: nothing is salvageable. */
+export const repairKnowledge = repairOf(KNOWLEDGE_STATE, DEFAULT_KNOWLEDGE, parseKnowledge);
+export const readKnowledge = (data: unknown): Knowledge => (data === undefined ? DEFAULT_KNOWLEDGE : repairKnowledge(data) ?? DEFAULT_KNOWLEDGE);
 export const liveEntries = (k: Knowledge): KnowEntry[] => liveOf(k.entries);
 export const counts = (k: Knowledge) => {
   const live = liveEntries(k);

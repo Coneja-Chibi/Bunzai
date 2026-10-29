@@ -1,22 +1,16 @@
 /**
- * The memory ChatStore's summaries: the scene's settings and last failure ride on the chat record, a take's text and reach are kept apart, one per
- * take. Every setter bumps no version and moves no updatedAt; a guarded write is refused whole when another wrote the take's summary since it was read.
+ * The memory ChatStore's summary settings: the scene's settings and last failure ride on the chat record. The take's text is the `summary` slot (summary-slot.ts).
+ * Every setter bumps no version and moves no updatedAt.
  */
-import { StudioConflictError } from "../../../studio/atomic-file";
-import type { Branch, ChatStore, TakeSummary } from "../../contracts/chat-store";
-import { checkSummaryError, checkSummarySettings, checkTakeSummary, mergeSummarySettings, publicSummary } from "../summary-rules";
+import type { ChatStore } from "../../contracts/chat-store";
+import { checkSummaryError, checkSummarySettings, mergeSummarySettings, publicSummary } from "../summary-rules";
 import type { ChatRecord } from "./chat-records";
 
 export interface SummaryDeps {
   chats: Map<string, ChatRecord>;
-  branches: Map<string, Branch>;
-  /** The soft-deleted branches (rule 12): their text stays, but a write may not touch them. */
-  deletedBranches: Map<string, number>;
-  clock: () => number;
 }
 
-export function summaryMethods(d: SummaryDeps): Pick<ChatStore, "setSummarySettings" | "setSummaryError" | "summaryOf" | "setSummary"> {
-  const takes = new Map<string, TakeSummary>();
+export function summaryMethods(d: SummaryDeps): Pick<ChatStore, "setSummarySettings" | "setSummaryError"> {
   const live = (chatId: string): ChatRecord | null => {
     const record = d.chats.get(chatId);
     return record && record.deletedAt === null ? record : null;
@@ -39,23 +33,6 @@ export function summaryMethods(d: SummaryDeps): Pick<ChatStore, "setSummarySetti
       const record = live(chatId);
       if (!record) return null;
       return rewrite(record, record.chat.summary?.settings, error ?? undefined);
-    },
-    async summaryOf(branchId) {
-      return d.branches.has(branchId) ? structuredClone(takes.get(branchId) ?? null) : null;
-    },
-    async setSummary(branchId, inputRaw, guard) {
-      const input = checkTakeSummary(inputRaw);
-      const branch = d.branches.get(branchId);
-      if (!branch || d.deletedBranches.has(branchId) || !live(branch.chatId)) return null;
-      if (guard && (takes.get(branchId)?.at ?? null) !== guard.at) throw new StudioConflictError("the summary changed since it was read");
-      if (input === null) {
-        takes.delete(branchId);
-        return { summary: null };
-      }
-      // Each write takes a time later than the one before it, so a guard on the time read can tell two writes apart even within one millisecond.
-      const next: TakeSummary = { text: input.text, through: input.through, at: Math.max(d.clock(), (takes.get(branchId)?.at ?? 0) + 1), ...(input.last ? { last: input.last } : {}) };
-      takes.set(branchId, next);
-      return { summary: structuredClone(next) };
     },
   };
 }

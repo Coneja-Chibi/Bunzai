@@ -12,6 +12,8 @@ import { DEFAULT_INVENTORY, applyInventory, type Inventory } from "../../../../.
 import { diffModule } from "../../../../../../core/trackers/refresh";
 import type { Chat, ChatTrackerPatch, TrackerModule } from "../../../../../../stage/contracts/chat-store";
 import type { TrackerRefresh, TrackerRefreshInput } from "../../../../../../studio/scene-tracker-refresh";
+import { forgetTrackerStates } from "../tracker-states";
+import { heldTrackerApi, type HeldStates } from "../items/held-tracker-api";
 import type { AppContext } from "../../../../../app-contract";
 import { installDom, type InstalledDom } from "../../../../../_shared/test-dom";
 import { InventoryPanel } from "../inventory/inventory-panel";
@@ -41,18 +43,16 @@ afterEach(async () => {
   for (const r of roots.splice(0)) flushSync(() => r.unmount());
   dom.window.document.body.replaceChildren();
 });
-beforeEach(() => { installed.reinstall(); writes = []; asked = []; answers = []; chat = { id: "c1" } as Chat; });
+let held: HeldStates = {};
+beforeEach(() => { installed.reinstall(); bases.length = 0; writes = []; asked = []; answers = []; held = {}; chat = { id: "c1", activeBranchId: "b1" } as Chat; });
 
+const bases: (unknown | undefined)[] = [];
+const tracked = heldTrackerApi(() => held, (module, data, base) => { writes.push({ module, patch: { data } }); bases.push(base); });
 const ctx = (): AppContext => ({
   prefs: { get: () => undefined, set: () => undefined },
+  pieces: tracked.pieces,
   api: {
-    setSceneTracker: async (_id: string, module: TrackerModule, patch: ChatTrackerPatch): Promise<Chat> => {
-      writes.push({ module, patch });
-      const old = chat.trackers?.[module] ?? {};
-      const entry = { ...old, ...(patch.data === undefined ? {} : patch.data === null ? { data: undefined } : { data: patch.data }) };
-      chat = { ...chat, trackers: { ...chat.trackers, [module]: entry } };
-      return chat;
-    },
+    ...tracked.api,
     proposeTrackerRefresh: (input: TrackerRefreshInput, signal?: AbortSignal): Promise<TrackerRefresh> => {
       asked.push(input);
       const next = answers.shift();
@@ -101,7 +101,7 @@ function proposal(module: TrackerModule, before: unknown, answer: Record<string,
   const proposed = spec.next(before, answer, { id: () => `n${++n}`, now: 9, skipped: [] });
   return { chatId, module, proposed, diff: diffModule(spec, before, proposed), skipped };
 }
-const seed = (module: TrackerModule, data: unknown): void => { chat = { ...chat, trackers: { ...chat.trackers, [module]: { data: data as never } } }; };
+const seed = (module: TrackerModule, data: unknown): void => { forgetTrackerStates(); held[module] = data as never; };
 const panel = (c: Chat = chat): JSX.Element => <InventoryPanel ctx={ctx()} chat={c} onChat={(next) => { chat = next; }} id="props.tracker.inventory" />;
 const answer = { items: [item("Matches", { quantity: 2 }), item("Torn page")], currency: 3 };
 
@@ -308,6 +308,8 @@ describe("Refresh Enabled Boards", () => {
     expect(part("props.tracker.review.module.inventory")?.textContent).toContain("Accepted");
     await press(by("Undo"));
     expect(writes.at(-1)).toEqual({ module: "inventory", patch: { data: stocked as never } });
+    // The restore is the change from what Accept wrote, so a row another writer added after the accept is not overwritten silently.
+    expect(bases.at(-1)).toEqual(writes.at(-2)!.patch.data);
   });
 
   test("a board's own Accept applies that board alone, and a proposal for a tracker that moved is dropped", async () => {

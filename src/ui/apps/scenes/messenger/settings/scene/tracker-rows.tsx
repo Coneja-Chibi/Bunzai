@@ -28,7 +28,7 @@ const legacyOn = (a: WingArgs): { module: TrackerModule; name: string }[] =>
   a.registeredProps.filter((p) => isTrackerProp(p) && a.propsOn?.includes(p.id) && !isStoryboard(moduleOf(p))).map((p) => named(a, moduleOf(p)));
 
 function ContextRow({ a, module, name }: { a: WingArgs; module: TrackerModule; name: string }): JSX.Element {
-  const view = useTracker({ ctx: a.ctx, chat: a.scene.chat, onChat: onChatOf(a) }, module, identity);
+  const view = useTracker({ ctx: a.ctx, chat: a.scene.chat, onChat: onChatOf(a) }, module, identity, true);
   return (
     <>
       <SelectRow<TrackerContext> label={`${name}: AI context`} description="How often this tracker is sent to the model with a reply." value={view.context} options={CONTEXTS} onChange={(c) => view.setContext(c)} />

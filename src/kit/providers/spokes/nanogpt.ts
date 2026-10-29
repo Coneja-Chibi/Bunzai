@@ -45,7 +45,7 @@ const nanogpt: ProviderSpoke = {
     return openAICompatModels(baseURL ?? PAYGO_BASE, apiKey, fetch);
   },
   // No NanoGPT parameter documentation is in the repo, so only what every OpenAI-compatible relay accepts is claimed (05-ai.md).
-  scene: { params: { frequency_penalty: true, presence_penalty: true, seed: true, stop: true }, base: chatBase, tools: true },
+  scene: { params: { frequency_penalty: true, presence_penalty: true, seed: true, stop: true }, base: chatBase },
 };
 
 export default nanogpt;

@@ -6,8 +6,12 @@
  */
 import type { MacroVariable } from "../core/macros";
 import { varsOf } from "../core/scene-state/vars-bridge";
+import { foldGlobals } from "../core/scene-state/globals";
+import { takeOf } from "../core/summary/rows";
 import type { LinkedTracker } from "../core/tracker";
 import { linkedTrackers, type ReadTracker } from "./library-trackers";
+import { trackerOverlay } from "../core/trackers";
+import { leaveCastsOnTarget } from "./scene-turn-ticks";
 import type { HistoryMessage } from "../core/assembly/types";
 import { windowPrior } from "../core/assembly/message-window";
 import type { LoreFire } from "../core/lore/engine";
@@ -16,14 +20,12 @@ import { playedBody } from "../entities/character/variant";
 import type { LorebookBody } from "../entities/lorebook/schema";
 import type { PersonaBody } from "../entities/persona/schema";
 import type { PresetBody } from "../entities/preset/schema";
-import type { CastSnapshot, Chat, ChatLore, ChatStore, JsonObject, Message } from "../stage/contracts/chat-store";
-import type { StateStore } from "../stage/contracts/state-store";
+import type { CastSnapshot, Chat, ChatLore, ChatStore, JsonObject, Message, TakeSummary } from "../stage/contracts/chat-store";
 import { bodyOf, isRecord, str } from "../core/guards";
 import { StudioConflictError } from "./atomic-file";
 import { bodyReader, type BodyStore } from "./body-reader";
 import { asPresetBody, isWritingKind, sendProblem } from "../core/writing";
 import { StudioValidationError } from "./errors";
-import { serializer } from "./serial";
 import { withDefaults } from "../core/preset/choices";
 import { resolveBooks, type ReadLorebook } from "./scene-lore";
 import { storyboardsOf } from "./scene-storyboards";
@@ -35,7 +37,7 @@ import { sceneGeneration, type SceneGeneration } from "../stage/params/scene";
 export type TurnKind = "reply" | "swipe" | "continue";
 
 /** What a turn or a draft reads of a scene: nothing it could write with. */
-export type TurnReader = Pick<ChatStore, "getChat" | "lightCastSnapshot" | "readMessages" | "sceneState" | "sceneStateBefore" | "swipeTrace" | "summaryOf">;
+export type TurnReader = Pick<ChatStore, "getChat" | "lightCastSnapshot" | "readMessages" | "sceneState" | "sceneStateBefore" | "sceneDeltas" | "swipeTrace" | "globalOps">;
 
 /** Refused before a turn opens: the scene names a preset the library no longer has. */
 export class PresetGoneError extends StudioConflictError {
@@ -80,6 +82,8 @@ export interface LoadedTurn {
   /** The assistant message a swipe adds a version to, or a continue adds text to. */
   target?: Message;
   localVariables: Map<string, MacroVariable>;
+  /** The take's saved summary as the state this turn builds from holds it, so a new version of a reply never sends that reply's own earlier piece; absent when there is none. */
+  savedSummary?: TakeSummary;
   /** The library trackers the scene links that could be read, each with its value in the scene state (library-trackers.ts); absent when none. */
   linkedTrackers?: LinkedTracker[];
   branchVersion: number;
@@ -176,8 +180,13 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
   const lore = await loadLore(chats, character, persona, chat.lore, readLorebook, prior);
   /** The scene's own answers over the person's saved defaults for this preset (core/preset/choices.ts). */
   const storyboards = storyboardsOf(chat, lore?.books);
-  // The trackers show the state as it stands: a continue extends a reply whose own tool writes are part of it (a swipe builds from before the reply it replaces, as the variables do).
-  const linked = await linkedTrackers(readTracker, chat.prompting?.trackers, kind === "continue" ? (await chats.sceneState(branchId)) ?? sceneState : sceneState);
+  // The trackers show the state as it stands: a continue extends a reply whose own writes are part of it (a swipe builds from before the reply it replaces, as the variables do).
+  const trackerState = kind === "continue" ? (await chats.sceneState(branchId)) ?? sceneState : sceneState;
+  const linked = await linkedTrackers(readTracker, chat.prompting?.trackers, trackerState);
+  // A cast the person recorded on the reply being replaced or continued is for the reply after it (scene-turn-ticks.ts).
+  const onTarget = target && chat.props ? (await chats.sceneDeltas(branchId, target.id, target.id, ["tracker.spellbook"]))?.messages[0] : undefined;
+  const overlay = chat.props ? trackerOverlay(chat.trackers, trackerState) : undefined;
+  const entries = overlay && onTarget ? leaveCastsOnTarget(overlay, onTarget.deltas.slice(onTarget.personFrom)) : overlay;
   const choices = chat.preset ? withDefaults(await choiceDefaults?.(chat.preset.id), chat.regex?.choices?.[chat.preset.id]) : undefined;
 
   return {
@@ -189,10 +198,11 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
     current: answered ? toHistory(answered) : { id: target?.id ?? "", role: "user", content: "", at: (target ?? last)?.createdAt ?? 0 },
     ...(target ? { target } : {}),
     localVariables: varsOf(sceneState),
+    ...(takeOf(sceneState) ? { savedSummary: takeOf(sceneState)! } : {}),
     ...(linked.length > 0 ? { linkedTrackers: linked } : {}),
     branchVersion: page.branchVersion,
     ...(lore ? { lore } : {}),
-    ...(chat.trackers && chat.props ? { trackers: { entries: chat.trackers, on: chat.props.on } } : {}),
+    ...(entries && chat.props && Object.keys(entries).length > 0 ? { trackers: { entries, on: chat.props.on } } : {}),
     ...(storyboards ? { storyboards } : {}),
   };
 }
@@ -239,43 +249,16 @@ async function loadLore(
 }
 
 /**
- * The library's global variables (the StateStore `variables` document): name to value and times,
- * the same shape as a take's. Malformed text is refused, never read as empty, so a turn cannot
- * write over variables it failed to read.
+ * The library's global variables: folded from the operations of every version shown in a live take (core/scene-state/globals.ts), so
+ * nothing is written before a reply lands and a reply that never lands, or is regenerated, swiped or cut away, takes its writes with it.
+ * `exceptSwipeIds` leaves out versions being redone: a new version of a reply builds from the globals without the one it replaces.
  */
-export async function readGlobals(state: Pick<StateStore, "read">): Promise<Map<string, MacroVariable>> {
-  const text = await state.read("variables");
-  if (text === null) return new Map();
-  let parsed: unknown;
+export async function readGlobals(chats: Pick<ChatStore, "globalOps">, exceptSwipeIds: readonly string[] = []): Promise<Map<string, MacroVariable>> {
+  const ops = await chats.globalOps(exceptSwipeIds);
   try {
-    parsed = JSON.parse(text);
+    return foldGlobals(ops);
   } catch {
-    throw new StudioValidationError("the library's global variables could not be read");
+    // Every later value depends on each operation, so a damaged one refuses the read rather than giving wrong values.
+    throw new StudioValidationError("The library's global variables could not be read: a saved change to one of them is damaged.");
   }
-  if (!isRecord(parsed)) throw new StudioValidationError("the library's global variables could not be read");
-  const out = new Map<string, MacroVariable>();
-  for (const [name, v] of Object.entries(parsed as Record<string, unknown>)) {
-    const r = v as Partial<MacroVariable> | null;
-    if (!isRecord(r) || !("value" in r) || typeof r.createdAt !== "number" || typeof r.updatedAt !== "number") {
-      throw new StudioValidationError("the library's global variables could not be read");
-    }
-    out.set(name, { value: r.value as MacroVariable["value"], createdAt: r.createdAt, updatedAt: r.updatedAt });
-  }
-  return out;
-}
-
-const enqueueGlobalWrite = serializer();
-
-/**
- * Applies an assembly's global diff as RoleCall does: only the names it changed. Writes in this
- * process run one at a time, so two scenes never lose each other's changes to a read-then-write race.
- */
-export function writeGlobals(state: StateStore, diff: { set: JsonObject; delete: string[] }, now: number): Promise<void> {
-  return enqueueGlobalWrite(async () => {
-    if (Object.keys(diff.set).length === 0 && diff.delete.length === 0) return;
-    const vars = await readGlobals(state);
-    for (const [name, value] of Object.entries(diff.set)) vars.set(name, { value, createdAt: vars.get(name)?.createdAt ?? now, updatedAt: now });
-    for (const name of diff.delete) vars.delete(name);
-    await state.write("variables", JSON.stringify(Object.fromEntries(vars)));
-  });
 }

@@ -52,7 +52,7 @@ export const MODES: readonly { id: DirectorCommandMode; label: string; descripti
   { id: "tagged", label: "Tagged", description: "Validated text commands for providers or models without native function calling.", icon: "lucide:braces" },
 ];
 const CAPABILITY: Readonly<Record<DirectorPanel["tools"], { icon: IconName; label: string; description: string; tone: "ok" | "warn" | "info" }>> = {
-  native: { icon: "lucide:circle-check", label: "Native tools available", description: "This model reports native tool support. Tool call mode is available.", tone: "ok" },
+  native: { icon: "lucide:circle-check", label: "Native tools available", description: "Tools are sent to this model. Tool call mode is available; if the server refuses them, pick Tagged.", tone: "ok" },
   none: { icon: "lucide:circle-alert", label: "Tagged recommended", description: "This model reports no native tool support. Select Tagged for reliable commands.", tone: "warn" },
   unknown: { icon: "lucide:circle-question-mark", label: "Tool support unknown", description: "Choose Tool call only when this provider/model supports native function calls.", tone: "info" },
 };

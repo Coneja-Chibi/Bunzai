@@ -5,7 +5,7 @@
  * the state; the panel shows what would change and the person accepts or discards it. A provider failure or an answer that stays unreadable is an error with a
  * reason, where RoleCall resets the tracker to its defaults and calls it done.
  */
-import { isTrackerModule, parseTrackerData, refreshSpecOf, subsOf } from "../core/trackers";
+import { isTrackerModule, parseTrackerData, refreshSpecOf, trackerDataIn } from "../core/trackers";
 import { diffModule, parseRefresh, refreshMessages, REFRESH_TEMPERATURE, type ModuleDiff, type Skipped } from "../core/trackers/refresh";
 import { MODULE_REFRESH_WINDOW, repairItem, type Line } from "../core/trackers/generate";
 import type { TrackerModule } from "../stage/contracts/chat-tracker-types";
@@ -18,7 +18,7 @@ import { NoConnectionError } from "./scene-turn";
 import { draftOnly } from "./scene-tracker-item";
 
 export interface TrackerRefreshDeps extends Pick<DraftDeps, "connect" | "readCastMember" | "now"> {
-  chats: DraftDeps["chats"] & Pick<ChatStore, "readMessagesBefore" | "readMessages">;
+  chats: DraftDeps["chats"] & Pick<ChatStore, "readMessagesBefore" | "readMessages" | "sceneState">;
   newId: () => string;
 }
 
@@ -50,8 +50,10 @@ export async function proposeTrackerRefresh(deps: TrackerRefreshDeps, input: Tra
   const transcript = await windowOf(deps.chats, chat.activeBranchId);
   if (transcript.length === 0) throw new StudioConflictError("this scene has no messages to refresh from yet");
   const who = await names(deps, input.chatId);
-  const data = chat.trackers?.[input.module]?.data;
-  const messages = refreshMessages(spec, { characterName: who.character, personaName: who.player, transcript, current: spec.rows(data), subs: subsOf(input.module, data) });
+  const subs = chat.trackers?.[input.module]?.subs ?? {};
+  // The tracker as the take's tip shows it, with the scene's sub-feature switches.
+  const data = trackerDataIn(input.module, (await deps.chats.sceneState(chat.activeBranchId)) ?? {}, subs);
+  const messages = refreshMessages(spec, { characterName: who.character, personaName: who.player, transcript, current: spec.rows(data), subs });
   const request: Ask = { model: chat.connection.model, options: { temperature: REFRESH_TEMPERATURE, max_tokens: spec.maxTokens }, ...(signal ? { signal } : {}) };
   const env = { id: deps.newId, now: deps.now() };
   const read = await askJson(connected, request, messages, parseRefresh(spec, data, env, (state) => parseTrackerData(input.module, state)), repairItem);

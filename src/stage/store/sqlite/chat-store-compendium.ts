@@ -29,7 +29,7 @@ interface ReceiptSql {
 const COLUMNS = "id, chat_id, branch_id, message_id, swipe_id, kind, status, at, settled_at, cell";
 const COLUMN = "compendium_receipts.cell";
 
-type CompendiumMethods = Pick<ChatStore, "setCompendium" | "appendReceipt" | "settleReceipt" | "receipt" | "listReceipts" | "sweepReceipts" | "appendTree" | "currentTree" | "undoTree" | "updateParticipants" | "setRegex" | "setFinalCut" | "setTracker" | "setSummarySettings" | "setSummaryError" | "summaryOf" | "setSummary" | "setDirectorSettings" | "archiveDirector" | "getDirector" | "putDirector">;
+type CompendiumMethods = Pick<ChatStore, "setCompendium" | "appendReceipt" | "settleReceipt" | "receipt" | "listReceipts" | "sweepReceipts" | "appendTree" | "currentTree" | "undoTree" | "updateParticipants" | "setRegex" | "setFinalCut" | "setTracker" | "setSummarySettings" | "setSummaryError" | "setDirectorSettings" | "archiveDirector" | "getDirector" | "putDirector">;
 
 export function compendiumMethods(k: ChatSqlKit): CompendiumMethods {
   const { cipher } = k;

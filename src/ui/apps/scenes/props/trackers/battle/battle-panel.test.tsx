@@ -9,7 +9,8 @@ import type { Root } from "react-dom/client";
 import { DEFAULT_BATTLE, type Battle } from "../../../../../../core/trackers/battle";
 import type { Chat, ChatTrackerPatch, TrackerModule } from "../../../../../../stage/contracts/chat-store";
 import type { AppContext } from "../../../../../app-contract";
-import { installDom, type InstalledDom } from "../../../../../_shared/test-dom";
+import { heldTrackerApi, type HeldStates } from "../items/held-tracker-api";
+import { flushTasks, installDom, type InstalledDom } from "../../../../../_shared/test-dom";
 import { CombatPanel } from "./battle-panel";
 
 let dom: JSDOM;
@@ -19,14 +20,17 @@ afterAll(() => installed.teardown());
 
 let writes: ChatTrackerPatch[] = [];
 let chat: Chat;
-beforeEach(() => { installed.reinstall(); writes = []; chat = { id: "c1" } as Chat; });
+let held: HeldStates = {};
+beforeEach(() => { installed.reinstall(); writes = []; held = {}; chat = { id: "c1", activeBranchId: "b1" } as Chat; });
 
 function makeCtx(): AppContext {
+  const tracked = heldTrackerApi(() => held, (_m, data) => writes.push({ data }));
   return {
     prefs: { get: () => undefined, set: () => undefined },
+    pieces: tracked.pieces,
     api: {
+      ...tracked.api,
       setSceneTracker: async (_id: string, module: TrackerModule, patch: ChatTrackerPatch): Promise<Chat> => {
-        writes.push(patch);
         chat = { ...chat, trackers: { ...chat.trackers, [module]: { ...(chat.trackers?.[module] ?? {}), ...(patch.data === undefined || patch.data === null ? {} : { data: patch.data }) } } };
         return chat;
       },
@@ -41,7 +45,7 @@ const text = (): string => host.textContent ?? "";
 const buttons = (): HTMLButtonElement[] => [...host.querySelectorAll("button")];
 const by = (label: string): HTMLButtonElement => buttons().find((b) => b.getAttribute("aria-label") === label || b.title === label || b.textContent?.trim() === label)!;
 const last = (): Battle => writes.at(-1)!.data as unknown as Battle;
-async function settle(flushSync: FlushSync, ms = 15): Promise<void> { await new Promise((r) => setTimeout(r, ms)); flushSync(() => undefined); }
+async function settle(flushSync: FlushSync): Promise<void> { await flushTasks(8); flushSync(() => undefined); }
 async function press(flushSync: FlushSync, el: Element): Promise<void> { flushSync(() => (el as HTMLElement).click()); await settle(flushSync); }
 async function type(flushSync: FlushSync, el: HTMLInputElement, value: string): Promise<void> {
   const setter = Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype, "value")!.set!;
@@ -50,7 +54,7 @@ async function type(flushSync: FlushSync, el: HTMLInputElement, value: string): 
   await settle(flushSync);
 }
 async function mount(initial: Battle | null = null): Promise<FlushSync> {
-  if (initial) chat = { ...chat, trackers: { battle: { data: initial as never } } };
+  if (initial) held["battle"] = initial as never;
   const { flushSync } = await import("react-dom");
   const { createRoot } = await import("react-dom/client");
   host = dom.window.document.createElement("div");

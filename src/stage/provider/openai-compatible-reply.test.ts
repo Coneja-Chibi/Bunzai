@@ -10,7 +10,7 @@ import {
   extractReasoning,
   parseCompletion,
 } from "./openai-compatible-reply";
-import { classifyHttpFailure, createLineSplitter } from "./transport-core";
+import { classifyHttpFailure, createLineSplitter, refusesTools } from "./transport-core";
 
 const body = (message: Record<string, unknown>, extra: Record<string, unknown> = {}) => ({
   model: "served",
@@ -231,5 +231,18 @@ describe("HTTP failures (RoleCall's BYOK rule)", () => {
     const long = classifyHttpFailure(502, `<html>${"x".repeat(900)}</html>`, "L").message;
     expect(long.endsWith("...")).toBe(true);
     expect(long.length).toBeLessThan(520);
+  });
+
+  test("refusesTools recognises each listed refusal wording on a 400 (the generic ones with example wordings), and not other errors", () => {
+    const refused = (status: number, body: string) => refusesTools(classifyHttpFailure(status, body, "Local"));
+    expect(refused(400, '{"error":"registry.ollama.ai/library/gemma does not support tools"}')).toBe(true);
+    // Example wordings: generic phrases, not recorded from a named server.
+    expect(refused(400, JSON.stringify({ error: { message: "Tools is not supported for this model" } }))).toBe(true);
+    expect(refused(400, JSON.stringify({ error: { message: "Tool use is not supported by this template" } }))).toBe(true);
+    expect(refused(400, JSON.stringify({ error: { message: "tools param requires --jinja flag" } }))).toBe(true);
+    expect(refused(400, JSON.stringify({ error: { message: '"auto" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set' } }))).toBe(true);
+    expect(refused(400, JSON.stringify({ error: { message: "model not found" } }))).toBe(false);
+    expect(refused(500, '{"error":"does not support tools"}')).toBe(false);
+    expect(refusesTools(new Error("does not support tools"))).toBe(false);
   });
 });

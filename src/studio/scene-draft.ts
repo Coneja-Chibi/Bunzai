@@ -75,7 +75,7 @@ async function impersonate(deps: DraftDeps, input: Extract<DraftInput, { kind: "
   const meter = await readMeter(deps.state);
   const key = readKey(meter, connected.kind, model);
   const budgetMs = await promptBudget(deps);
-  const globalVariables = await readGlobals(deps.state);
+  const globalVariables = await readGlobals(deps.chats);
   const guides = await selectedGuides(deps.state, chat.prompting?.guides);
   const result = assemble({
     ...loaded,

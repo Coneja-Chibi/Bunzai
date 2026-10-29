@@ -79,13 +79,12 @@ test("every scene endpoint sits on its spoke's own egress host", () => {
   }
 });
 
-test("tool calls in scenes are declared per spoke (absent means no) and refused for models that cannot take them", () => {
+test("every spoke with a scene endpoint carries tools, and a model that refuses them whatever its host does not", () => {
   const takes = (kind: string, model: string) => sceneTools(registry.get(kind), model);
-  for (const kind of ["anthropic", "openai", "openrouter", "google", "groq", "mistral", "deepseek", "nanogpt"]) expect(takes(kind, "a-model")).toBe(true);
-  // A local or custom server may be any model behind any template: no tools unless a spoke vouches for them.
-  expect(takes("local", "llama3.1")).toBe(false);
-  expect(takes("custom", "x")).toBe(false);
+  for (const kind of ["anthropic", "openai", "openrouter", "google", "groq", "mistral", "deepseek", "nanogpt", "local", "custom"]) expect(takes(kind, "a-model")).toBe(true);
+  for (const spoke of registry.values()) expect(takes(spoke.id, "a-model")).toBe(Boolean(spoke.scene));
   expect(takes("nope", "x")).toBe(false);
+  expect(takes("local", "text-embedding-3-small")).toBe(false);
   expect(takes("openai", "o1-mini")).toBe(false);
   expect(takes("openrouter", "openai/o1-preview")).toBe(false);
 });

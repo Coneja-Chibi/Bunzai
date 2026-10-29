@@ -5,11 +5,12 @@
 import type { JSDOM } from "jsdom";
 import type { JSX } from "react";
 import type { Root } from "react-dom/client";
-import type { Chat } from "../../../../../stage/contracts/chat-store";
+import type { Chat, TrackerModule } from "../../../../../stage/contracts/chat-store";
 import type { DirectorActivity, DirectorChapter, DirectorEdit, DirectorSettingsPatch, DirectorState } from "../../../../../stage/contracts/director-types";
 import { arcOf, hiddenOf, seedOf, stateOf } from "../../../../../core/director/fixtures";
 import { resolveDirector } from "../../../../../core/director/settings";
 import type { DirectorPanel } from "../../../../../studio/scene-director-edit";
+import type { TrackerStates } from "../../../../../studio/tracker-state";
 import type { AppContext } from "../../../../app-contract";
 
 export const CHAT = { id: "chat1", activeBranchId: "b1", updatedAt: 1 } as Chat;
@@ -19,7 +20,7 @@ let fresh = 0;
 export const freshChat = (): Chat => ({ ...CHAT, id: `chat-fresh-${++fresh}` }) as Chat;
 
 export function panelOf(over: Partial<DirectorPanel> = {}): DirectorPanel {
-  return { on: true, settings: resolveDirector({}), state: stateOf(), version: 3, tip: "m9", size: { bytes: 12_400, max: 600_000 }, tools: "native", archived: { notes: [], hidden: [] }, history: [], at: null, trackerUpdates: {}, ...over };
+  return { on: true, settings: resolveDirector({}), state: stateOf(), version: 3, tip: "m9", size: { bytes: 12_400, max: 600_000 }, tools: "native", archived: { notes: [], hidden: [] }, history: [], at: null, ...over };
 }
 
 export interface FakeDirector {
@@ -33,6 +34,8 @@ export interface FakeDirector {
   tracked: { module: string; patch: Record<string, unknown> }[];
   /** The scene as the server holds it now (what a re-read of the scene returns). */
   sceneChat: Chat;
+  /** The trackers as the server holds them now (what a read of their state returns): the data at the tip and the last update each got. */
+  states: TrackerStates;
   /** The undos the page asked for: module and reply. */
   undos: { module: string; messageId: string }[];
   /** The story saved on each earlier reply, by message id, for `at` reads; and the `at` of every read the page made. */
@@ -43,7 +46,7 @@ export interface FakeDirector {
 }
 
 export function fakeDirector(start: DirectorPanel, onEdit?: (panel: DirectorPanel, edit: DirectorEdit) => DirectorPanel): FakeDirector {
-  const rig: FakeDirector = { panel: start, prefs: {}, edits: [], patches: [], props: [], tracked: [], undos: [], sceneChat: { ...CHAT, trackers: {} } as Chat, stories: {}, reads: [], failNext: false, ctx: undefined as unknown as AppContext };
+  const rig: FakeDirector = { panel: start, prefs: {}, edits: [], patches: [], props: [], tracked: [], undos: [], states: { branchId: "b1", branchVersion: 1, tipId: "m9", data: {}, unreadable: [], updates: {} }, sceneChat: { ...CHAT, trackers: {} } as Chat, stories: {}, reads: [], failNext: false, ctx: undefined as unknown as AppContext };
   const answer = async (): Promise<DirectorPanel> => structuredClone(rig.panel);
   rig.ctx = {
     api: {
@@ -69,10 +72,11 @@ export function fakeDirector(start: DirectorPanel, onEdit?: (panel: DirectorPane
       undoSceneTrackerUpdate: async (_id: string, module: string, messageId: string) => {
         rig.undos.push({ module, messageId });
         if (rig.failNext) { rig.failNext = false; throw new Error("changed"); }
-        const { [module]: _gone, ...rest } = rig.panel.trackerUpdates as Record<string, unknown>;
-        rig.panel = { ...rig.panel, trackerUpdates: rest as DirectorPanel["trackerUpdates"] };
+        const { [module as TrackerModule]: _gone, ...rest } = rig.states.updates;
+        rig.states = { ...rig.states, updates: rest };
         return answer();
       },
+      getTrackerStates: async () => structuredClone(rig.states),
       setSceneTracker: async (_id: string, module: string, patch: Record<string, unknown>) => {
         rig.tracked.push({ module, patch });
         if (rig.failNext) { rig.failNext = false; throw new Error("stale"); }
@@ -89,6 +93,7 @@ export function fakeDirector(start: DirectorPanel, onEdit?: (panel: DirectorPane
       sceneConnections: async () => [{ id: "c1", kind: "openrouter", label: "OpenRouter", model: "claude" }],
       connectionModels: async () => ({ models: [{ id: "claude" }, { id: "haiku" }], saved: "claude" }),
     },
+    pieces: { subscribeList: () => () => undefined, streamState: () => ({ sceneTrackers: null }) },
     prefs: { get: (k: string) => rig.prefs[k], set: (k: string, v: unknown) => { rig.prefs[k] = v; } },
     setStatus: () => undefined,
   } as unknown as AppContext;

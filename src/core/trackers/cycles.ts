@@ -9,6 +9,7 @@
  * refused as RoleCall's generation check refuses it, and the same rule guards the store.
  */
 import { arr, num, obj, oneOf, opt, rec, bool, dflt, refine, str, type Of, type Shape } from "./shape";
+import { repairOf, stateSpec } from "./state";
 import { appendItem, find, hasUniqueIds, liveOf, markRemoved, patchItem, unmarkRemoved } from "./list";
 import type { GenSpec } from "./generate";
 import { entry, listOf, norm, sync, type RefreshSpec } from "./refresh";
@@ -65,12 +66,17 @@ export type Cyc = Omit<Stored, "id" | "removedAt">;
 export interface Cycles { cycles: Stored[]; subs: Record<string, boolean> }
 export const DEFAULT_CYCLES: Cycles = { cycles: [], subs: {} };
 
-const stateShape = obj({ cycles: arr(cycleShape, MAX_CYCLES * 2), subs: dflt(rec(bool(), 4), {}) });
+/** The module's whole state, field by field: what a state passes, and what a slot holds one field or row of (state.ts). */
+export const stateShape = obj({ cycles: arr(cycleShape, MAX_CYCLES * 2), subs: dflt(rec(bool(), 4), {}) });
 export function parseCycles(data: unknown): Cycles | null {
   const s = stateShape.check(data);
   return s && hasUniqueIds(s.cycles) && subsKnown("cycles", s.subs) ? s : null;
 }
-export const readCycles = (data: unknown): Cycles => (data === undefined ? DEFAULT_CYCLES : parseCycles(data) ?? DEFAULT_CYCLES);
+/** What cycles keeps in its slot (state.ts). */
+export const CYCLES_STATE = stateSpec(stateShape, { cycles: "id" });
+/** The module's one repair step (state.ts `repairOf`): every reader goes through `readCycles`, which uses it, so no read ever shows the defaults in place of a state it can mostly keep. Null: nothing is salvageable. */
+export const repairCycles = repairOf(CYCLES_STATE, DEFAULT_CYCLES, parseCycles);
+export const readCycles = (data: unknown): Cycles => (data === undefined ? DEFAULT_CYCLES : repairCycles(data) ?? DEFAULT_CYCLES);
 export const liveCycles = (c: Cycles): Stored[] => liveOf(c.cycles);
 export function typeCounts(c: Cycles): Record<CycleType, number> {
   const counts = Object.fromEntries(CYCLE_TYPES.map((t) => [t, 0])) as Record<CycleType, number>;

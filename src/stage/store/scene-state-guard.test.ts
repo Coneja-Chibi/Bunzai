@@ -1,6 +1,6 @@
 /**
  * Scene state has one door. The tables that hold it (branch_state, branch_base, swipe_deltas, message_deltas, state_keyframes) are read and written only by
- * the chat store (src/stage/store/sqlite/); everything else goes through ChatStore's sceneState, sceneStateBefore, recordMessageDeltas
+ * the chat store (src/stage/store/sqlite/); everything else goes through ChatStore's sceneState, sceneStateBefore, recordMessageDeltas, recordDeltas
  * and the checkpoint's deltas, which is what keeps the tip cache and the keyframes in step with the deltas. The macro variables
  * moved there from branch_variables, so no code calls the removed `variables` / `changeVariables` methods, and the chat store
  * itself no longer touches branch_variables (the table stays, unread, for a library that has one).
@@ -74,9 +74,53 @@ describe("scene state has one door", () => {
     expect(sources().filter(({ file, text }) => TABLES.test(text) && file.startsWith(STORE)).map((s) => s.file)).toContain("src/stage/store/sqlite/chat-store-state.ts");
   });
 
-  test("no code, tests included, calls the removed variables, changeVariables or recordDeltas methods", () => {
-    const calls = all().filter(({ file, text }) => file !== "src/stage/store/scene-state-guard.test.ts" && /\.(variables|changeVariables|recordDeltas)\(/.test(text)).map((x) => x.file);
+  test("no code, tests included, calls the removed variables or changeVariables methods", () => {
+    const calls = all().filter(({ file, text }) => file !== "src/stage/store/scene-state-guard.test.ts" && /\.(variables|changeVariables)\(/.test(text)).map((x) => x.file);
     expect(calls).toEqual([]);
+  });
+
+  test("recordDeltas, the write that names a version after its commit, is named only by the chat stores, their contract, the chat summary's writer, and the Story Director's tracker round (a call, a destructured one, a bound one)", () => {
+    const named = sources().filter(({ file, text }) => /\brecordDeltas\b/.test(text)).map((x) => x.file);
+    expect(named.filter((file) => !file.startsWith("src/stage/store/")).sort()).toEqual([
+      "src/stage/contracts/chat-store.contract-summary.ts", "src/stage/contracts/chat-store.contract-tracker-state.ts", "src/stage/contracts/chat-store.contract-writers.ts", "src/stage/contracts/chat-store.ts",
+      "src/studio/scene-director-trackers.ts", "src/studio/scene-summary.ts",
+    ]);
+    // The matcher sees a destructured or bound use, not only a call.
+    for (const use of ["store.recordDeltas(a, b, c)", "const { recordDeltas } = store;", "const w = store.recordDeltas.bind(store);"]) expect(/\brecordDeltas\b/.test(use)).toBe(true);
+  });
+
+  test("recordMessageDeltas, the person's door, is named only by the chat stores, their contracts, and the person's own writes (a library tracker edit, a Props tracker write); a job that is not the person must use another door", () => {
+    const named = sources().filter(({ file, text }) => /\brecordMessageDeltas\b/.test(text)).map((x) => x.file);
+    expect(named.filter((file) => !file.startsWith("src/stage/store/") && !file.startsWith("src/stage/contracts/")).sort()).toEqual([
+      "src/studio/fake-director-rig.ts", "src/studio/tracker-edit.ts", "src/studio/tracker-state.ts",
+    ]);
+  });
+
+  test("setSummary, the person's summary text through the person's door, is named outside the stores only by the summary's own save (scene-summary.ts)", () => {
+    const named = sources().filter(({ file, text }) => /\bsetSummary\b/.test(text)).map((x) => x.file);
+    expect(named.filter((file) => !file.startsWith("src/stage/store/") && !file.startsWith("src/stage/contracts/"))).toEqual(["src/studio/scene-summary.ts"]);
+  });
+
+  test("only the SQLite store's state file adds delta rows, and a fork's copy of a message's rows is the one other insert: every write passes a door's writer check", () => {
+    const INSERTS = /INSERT\b[^;`]*?INTO (swipe_deltas|message_deltas)\b|INTO \$\{table\}/;
+    expect(sources().filter(({ text }) => INSERTS.test(text)).map((s) => s.file).sort()).toEqual(["src/stage/store/sqlite/chat-store-state.ts", "src/stage/store/sqlite/chat-store.ts"]);
+  });
+
+  /** The files that read a Storyboard's profile from the scene's settings by the shape `trackers[module].data`; every other module's data comes from the scene state (trackerOverlay, trackerDataIn). */
+  const PROFILE_READERS: Record<string, string> = {
+    "src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx": "a card's summary line for a Storyboard, whose only data is its AI Context profile",
+    "src/ui/apps/scenes/props/trackers/use-tracker.ts": "a Storyboard's panel keeps its profile as a setting; the hook reads it back from the scene's answer",
+  };
+  const SETTINGS_DATA = /\.trackers[?!]?(?:\.|\?\.)?\[[^\]]+\][?!]?\.?\??\.?data\b/;
+
+  test("no code reads a Props tracker's state from the scene's settings (chat.trackers[module].data): it is the slot tracker.<module>, read through the scene state", () => {
+    const reading = sources().filter(({ file, text }) => SETTINGS_DATA.test(text) && !(file in PROFILE_READERS)).map((s) => s.file);
+    expect(reading).toEqual([]);
+    for (const use of ["chat.trackers?.[m]?.data", "chat.trackers![m]!.data", "next.trackers?.[module]?.data"]) expect(SETTINGS_DATA.test(use), use).toBe(true);
+  });
+
+  test("the profile readers named really read the settings' data", () => {
+    for (const file of Object.keys(PROFILE_READERS)) expect(SETTINGS_DATA.test(readFileSync(join(ROOT, file), "utf8")), file).toBe(true);
   });
 
   test("the chat store no longer reads or writes branch_variables", () => {

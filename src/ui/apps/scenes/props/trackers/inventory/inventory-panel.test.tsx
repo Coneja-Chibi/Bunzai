@@ -3,7 +3,7 @@
  * accepts, Delete with its Undo, Equip, and a failed answer. The scene's chat is a fake that answers setSceneTracker the way the store does and
  * proposeTrackerItem from a queue, so every assertion is on what the panel asked and wrote.
  */
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import type { JSDOM } from "jsdom";
 import type { JSX } from "react";
 import type { Root } from "react-dom/client";
@@ -11,7 +11,8 @@ import { DEFAULT_INVENTORY, applyInventory, inventoryLines, type Inventory, type
 import type { Chat, ChatTrackerPatch, TrackerModule } from "../../../../../../stage/contracts/chat-store";
 import type { TrackerItemInput } from "../../../../../../studio/scene-tracker-item";
 import type { AppContext } from "../../../../../app-contract";
-import { installDom, type InstalledDom } from "../../../../../_shared/test-dom";
+import { heldTrackerApi, type HeldStates } from "../items/held-tracker-api";
+import { flushTasks, installDom, type InstalledDom } from "../../../../../_shared/test-dom";
 import { InventoryPanel } from "./inventory-panel";
 
 let dom: JSDOM;
@@ -26,19 +27,16 @@ let writes: { module: TrackerModule; patch: ChatTrackerPatch }[] = [];
 let asked: TrackerItemInput[] = [];
 let answers: (unknown | Error)[] = [];
 let chat: Chat;
-beforeEach(() => { installed.reinstall(); writes = []; asked = []; answers = []; chat = { id: "c1" } as Chat; });
+let held: HeldStates = {};
+beforeEach(() => { installed.reinstall(); writes = []; asked = []; answers = []; held = {}; chat = { id: "c1", activeBranchId: "b1" } as Chat; });
 
 function makeCtx(): AppContext {
+  const tracked = heldTrackerApi(() => held, (module, data) => writes.push({ module, patch: { data } }));
   return {
     prefs: { get: () => undefined, set: () => undefined },
+    pieces: tracked.pieces,
     api: {
-      setSceneTracker: async (_id: string, module: TrackerModule, patch: ChatTrackerPatch): Promise<Chat> => {
-        writes.push({ module, patch });
-        const old = chat.trackers?.[module] ?? {};
-        const entry = { ...old, ...(patch.data === undefined || patch.data === null ? {} : { data: patch.data }) };
-        chat = { ...chat, trackers: { ...chat.trackers, [module]: entry } };
-        return chat;
-      },
+      ...tracked.api,
       proposeTrackerItem: async (input: TrackerItemInput): Promise<{ item: unknown }> => {
         asked.push(input);
         const next = answers.shift();
@@ -49,7 +47,9 @@ function makeCtx(): AppContext {
   } as unknown as AppContext;
 }
 
-let root: Root;
+let root: Root | undefined;
+// A panel left mounted after its test still hears the scene's writes (every test uses one scene id) and would hand the next test its stale state.
+afterEach(async () => { const { flushSync } = await import("react-dom"); if (root) flushSync(() => root!.unmount()); root = undefined; });
 let host: HTMLElement;
 type FlushSync = typeof import("react-dom")["flushSync"];
 const text = (): string => host.textContent ?? "";
@@ -63,11 +63,11 @@ async function mount(node: JSX.Element): Promise<FlushSync> {
   host = dom.window.document.createElement("div");
   dom.window.document.body.appendChild(host);
   root = createRoot(host);
-  flushSync(() => root.render(node));
+  flushSync(() => root!.render(node));
   await settle(flushSync);
   return flushSync;
 }
-async function settle(flushSync: FlushSync, ms = 15): Promise<void> { await new Promise((r) => setTimeout(r, ms)); flushSync(() => undefined); }
+async function settle(flushSync: FlushSync): Promise<void> { await flushTasks(8); flushSync(() => undefined); }
 async function press(flushSync: FlushSync, el: Element): Promise<void> { flushSync(() => (el as HTMLElement).click()); await settle(flushSync); }
 async function type(flushSync: FlushSync, el: Element, value: string): Promise<void> {
   const setter = Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype, "value")!.set!;
@@ -77,7 +77,7 @@ async function type(flushSync: FlushSync, el: Element, value: string): Promise<v
 const item = (id: string, over: Partial<InvItem> = {}): InvItem => ({ id, name: "Rusty Key", description: "Opens the cellar.", category: "key", rarity: "common", quantity: 1, obtainedAt: 1, ...over });
 const stocked = (...items: InvItem[]): Inventory => ({ ...DEFAULT_INVENTORY, items });
 const panel = (initial?: Inventory, popOut?: () => void): JSX.Element => {
-  if (initial) chat = { ...chat, trackers: { inventory: { data: initial as never } } };
+  if (initial) held["inventory"] = initial as never;
   return <InventoryPanel ctx={makeCtx()} chat={chat} id="props.tracker.inventory" {...(popOut ? { popOut } : {})} />;
 };
 const sword = { name: "Fire Sword", description: "Hot.", category: "weapon", rarity: "rare", quantity: 1, stats: [{ name: "Attack", value: 5 }], value: 90 };

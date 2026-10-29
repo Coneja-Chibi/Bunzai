@@ -27,7 +27,7 @@ const google: ProviderSpoke = {
   },
   // Gemini's OpenAI-compatible endpoint: same host, so the same egress rule.
   // Gemini's OpenAI endpoint: its page lists no sampler fields; response_format is its documented structured output, the rest is what every OpenAI-compatible relay accepts.
-  scene: { params: { frequency_penalty: true, presence_penalty: true, seed: true, response_format: true, stop: true }, base: (c) => c.baseURL ?? "https://generativelanguage.googleapis.com/v1beta/openai", support: { reasoningEffort: "gemini" }, tools: true },
+  scene: { params: { frequency_penalty: true, presence_penalty: true, seed: true, response_format: true, stop: true }, base: (c) => c.baseURL ?? "https://generativelanguage.googleapis.com/v1beta/openai", support: { reasoningEffort: "gemini" } },
 };
 
 export default google;

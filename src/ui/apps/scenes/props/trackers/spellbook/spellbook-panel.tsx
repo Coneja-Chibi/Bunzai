@@ -6,6 +6,7 @@
  * on Accept; Delete leaves an Undo.
  */
 import { useEffect, useRef, useState, type CSSProperties, type JSX } from "react";
+import type { JsonValue } from "../../../../../../stage/contracts/chat-store";
 import { readResources } from "../../../../../../core/trackers/resources";
 import { tokensOf } from "../../../../../../core/trackers/list";
 import { TEMPLATES, applySpellbook, castSpell, liveSpells, masteryLabel, masteryOf, readSpellbook, spellbookLines, type EditPatch, type Spell, type SpellMade, type Template } from "../../../../../../core/trackers/spellbook";
@@ -78,8 +79,8 @@ export function SpellbookPanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
   const cast = (spell: Spell): void => {
     const out = castSpell(book, stats.data, spell.id, { intent: intent.trim(), tactical, at: Date.now(), rand: Math.random, stamp: { now: Date.now(), id: () => `log-${crypto.randomUUID()}` } });
     if (!out.ok) { tellFor3s({ id: spell.id, ok: false, text: out.reason }); return; }
-    if (out.resources !== stats.data) stats.apply(() => out.resources);
-    view.apply(() => out.spellbook);
+    // Stats and the Spellbook are one decision: both are written in one step, or neither is.
+    view.apply(() => out.spellbook, undefined, out.resources !== stats.data ? { also: { resources: { base: stats.raw ?? null, data: out.resources as unknown as JsonValue } } } : {});
     tellFor3s({ id: spell.id, ok: true, text: out.message });
     setCasting(null);
     setIntent("");
@@ -95,7 +96,7 @@ export function SpellbookPanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
     act({ kind: "edit", id: s.id, patch: wild ? { ...patch, wildMagicSusceptibility: w } : patch });
     setEditing(null);
   };
-  const hasStats = chat.trackers?.resources?.data !== undefined;
+  const hasStats = stats.raw !== undefined;
   const r = stats.data;
   const needs = new Set(spells.flatMap((s) => (s.castingCost && !["mp", "hp", "ap"].includes(s.castingCost.resource) ? [s.castingCost.resource] : [])));
   const field = (key: string, label: string, type = "text", placeholder = ""): JSX.Element => (

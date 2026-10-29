@@ -11,8 +11,10 @@ import { directorOn, resolveDirector, type ResolvedDirector } from "../core/dire
 import { TOO_LARGE, applyEdit, labelOf, record, refusal } from "../core/director/edits";
 import { SCENE_ACTION_TIERS } from "../kit/tools/safety/scene-tiers";
 import { DIRECTOR_ACTIVITY_MAX, DIRECTOR_HORIZONS, DIRECTOR_STATE_BYTES_MAX, type DirectorActivity, type DirectorEdit, type DirectorHorizon, type DirectorInvisibleArc, type DirectorNote, type DirectorState } from "../stage/contracts/director-types";
-import { dataOf, undoTrackerUpdate } from "./scene-tracker-undo";
 import { tierRefusal, type DirectorTiers } from "./scene-director-tier";
+import { publishSceneTrackers } from "./scene-events";
+import { withLines } from "./scene-director-trackers";
+import { undoTrackerUpdate, type TrackerChats } from "./tracker-state";
 import type { TrackerModule } from "../stage/contracts/chat-tracker-types";
 import type { ChatConnection, ChatStore } from "../stage/contracts/chat-store";
 import type { Connected } from "./scene-turn";
@@ -43,8 +45,8 @@ export interface DirectorPanel {
   /** How full the story is: its size as the store counts it, and the most a snapshot may hold, so the page can say when the person's own notes and hidden arcs are getting too many. */
   size: { bytes: number; max: number };
   /**
-   * Whether the connection the Director would plan through (its own model, else the narrator's) takes native tools, decided as the turn decides it (scene-director-call.ts: native only when the
-   * connection declares tools): `native` (RoleCall's "Native tools available"), `none` ("Tagged recommended"), or `unknown` ("Tool support unknown": no connection, or Kit no longer has it).
+   * Whether the connection the Director would plan through (its own model, else the narrator's) takes native tools, decided as the turn decides it (scene-director-call.ts: tool-call mode needs a connection that is sent tools, which is every
+   * connection but a model that refuses them): `native` (RoleCall's "Native tools available"), `none` ("Tagged recommended"), or `unknown` ("Tool support unknown": no connection, or Kit no longer has it).
    */
   tools: "native" | "none" | "unknown";
   /** What the person removed, kept for them and never deleted (rule 47): their notes and hidden arcs, newest last. Not part of the snapshot, so it never counts against its size. */
@@ -53,19 +55,14 @@ export interface DirectorPanel {
   history: { messageId: string; turn: number }[];
   /** The reply whose story `state` is, when the panel was asked for an earlier one (read only: `version` and `tip` still name the latest, which is where an edit goes); null for the latest. */
   at: string | null;
-  /** The trackers the shown reply's Director round updated (plan 16), for each one's "Updated by the Story Director" line and Undo: the reply, its turn and when. The receipts themselves stay in the store. */
-  trackerUpdates: Partial<Record<TrackerModule, TrackerUpdateSummary>>;
 }
 
-export interface TrackerUpdateSummary { messageId: string; turn: number; at: number }
-
-export type DirectorEditDeps = { chats: Pick<ChatStore, "getChat" | "readMessagesBefore" | "getDirector" | "putDirector" | "archiveDirector" | "setTracker">; connect?(connection: ChatConnection): Promise<Connected | null> };
+export type DirectorEditDeps = { chats: Pick<ChatStore, "getChat" | "readMessagesBefore" | "getDirector" | "putDirector" | "archiveDirector"> & TrackerChats; connect?(connection: ChatConnection): Promise<Connected | null> };
 
 /** The story state as the panel shows it. */
 export function publicState(s: DirectorState): DirectorState {
   const cleared = s.activityClearedAt ?? -Infinity;
-  const { trackerUpdates: _receipts, ...rest } = s;
-  return { ...rest, arcs: liveArcs(s), seeds: liveSeeds(s), invisibleArcs: liveInvisible(s), notes: liveNotes(s), activity: s.activity.filter((a) => a.at > cleared) };
+  return { ...s, arcs: liveArcs(s), seeds: liveSeeds(s), invisibleArcs: liveInvisible(s), notes: liveNotes(s), activity: s.activity.filter((a) => a.at > cleared) };
 }
 
 async function tipOf(chats: DirectorEditDeps["chats"], branchId: string): Promise<string | null> {
@@ -116,10 +113,7 @@ export async function readDirectorPanel(deps: DirectorEditDeps, chatId: string, 
   const tools = connected ? (connected.tools === true ? "native" : "none") : "unknown";
   const size = { bytes: JSON.stringify(shown?.state ?? emptyDirectorState()).length, max: DIRECTOR_STATE_BYTES_MAX };
   const archived = { notes: chat.director?.archive?.notes ?? [], hidden: chat.director?.archive?.hidden ?? [] };
-  return { on: directorOn(chat), settings, tools, size, archived, state: publicState(shown?.state ?? emptyDirectorState()), version: latest?.version ?? null, tip, history, at: opts.at ?? null, trackerUpdates: Object.fromEntries((shown?.state.trackerUpdates ?? []).flatMap((r) => {
-    const held = chat.trackers?.[r.module]?.update;
-    return held && held.messageId === shown!.messageId && held.turn === r.turn && deepEq(dataOf(chat, r.module), held.after) ? [[r.module, { messageId: held.messageId, turn: r.turn, at: r.at }]] : [];
-  })) };
+  return { on: directorOn(chat), settings, tools, size, archived, state: publicState(shown?.state ?? emptyDirectorState()), version: latest?.version ?? null, tip, history, at: opts.at ?? null };
 }
 
 const text = (v: unknown, what: string, max: number): string => {
@@ -188,14 +182,19 @@ export async function editDirector(deps: DirectorEditDeps & { now(): number; tie
 }
 
 /**
- * The person's Undo on a tracker's "Updated by the Story Director" line (plan 16): that tracker goes back to before the update, only while it still holds exactly what the update left, and
- * the panel is answered again. A change of theirs since is a conflict that says the tracker was left as it is. Held to the `director.trackers` tier like the update itself.
+ * The person's Undo on a tracker's "Updated" line (plan 16): that tracker goes back to before the update, written as their own edit on that reply (tracker-state.ts), only while it still holds exactly what
+ * the update left, and the panel is answered again. A change of theirs since is a conflict that says the tracker was left as it is. Held to the `director.trackers` tier like the update itself.
  */
 export async function undoDirectorTracker(deps: DirectorEditDeps & { now(): number; tiers?: DirectorTiers }, chatId: string, module: TrackerModule, messageId: string): Promise<DirectorPanel> {
   const denied = tierRefusal("director.trackers", deps.tiers);
   if (denied) throw new StudioConflictError(denied);
-  const panel = await readDirectorPanel(deps, chatId);
-  if (!panel.tip) throw new StudioConflictError("this take has no messages for the Director to remember yet");
-  await undoTrackerUpdate(deps, chatId, module, messageId);
+  await undoTrackerUpdate(deps.chats, chatId, module, messageId, deps.now);
+  publishSceneTrackers({ chatId, modules: [{ module, outcome: "undone" }] });
+  // The reply's own snapshot says so, when it can be written (it is never written onto another reply).
+  const snap = await deps.chats.getDirector(chatId, messageId);
+  if (snap && snap.messageId === messageId) {
+    const line = { at: deps.now(), turn: snap.state.turn ?? 0, type: "tracker" as const, result: "info" as const, description: `Undid the Story Director's update of ${module}` };
+    await deps.chats.putDirector(chatId, messageId, withLines(snap.state, [line]), { expectedVersion: snap.version }).catch(() => undefined);
+  }
   return readDirectorPanel(deps, chatId);
 }

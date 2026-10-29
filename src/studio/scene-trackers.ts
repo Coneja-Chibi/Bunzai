@@ -19,7 +19,7 @@ export interface SceneTracker { id: string; body: TrackerBody; value: TrackerVal
 export interface SceneTrackers { branchId: string; branchVersion: number; tipId: string | null; trackers: SceneTracker[] }
 
 /** The take's first live message: a cut one at the start is stepped over. Null when the take has none. */
-async function firstLive(chats: Pick<ChatStore, "readMessages">, branchId: string): Promise<string | null> {
+export async function firstLive(chats: Pick<ChatStore, "readMessages">, branchId: string): Promise<string | null> {
   for (let fromSeq: number | null = 1; fromSeq !== null;) {
     const page = await chats.readMessages(branchId, { fromSeq, limit: 1 });
     const message = page.messages[0];

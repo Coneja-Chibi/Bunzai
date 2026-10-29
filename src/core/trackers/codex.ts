@@ -10,6 +10,7 @@
  * The Logging toggle (Encountered Only or All) steers only the Story Director's logging and is not drawn.
  */
 import { arr, bool, dflt, num, obj, oneOf, opt, rec, str, type Of } from "./shape";
+import { repairOf, stateSpec } from "./state";
 import { appendItem, find, hasUniqueIds, liveOf, patchItem, sameName } from "./list";
 import type { GenSpec } from "./generate";
 import { byName, entry, listOf, norm, sync, type RefreshSpec } from "./refresh";
@@ -66,13 +67,18 @@ export type CreatureMade = Omit<Creature, "id" | "speciesId" | "removedAt" | "fi
 export interface Codex { species: Species[]; creatures: Creature[]; subs: Record<string, boolean> }
 export const DEFAULT_CODEX: Codex = { species: [], creatures: [], subs: {} };
 
-const stateShape = obj({ species: arr(speciesShape, MAX_SPECIES * 2), creatures: arr(creatureShape, MAX_CREATURES * 2), subs: dflt(rec(bool(), 8), {}) });
+/** The module's whole state, field by field: what a state passes, and what a slot holds one field or row of (state.ts). */
+export const stateShape = obj({ species: arr(speciesShape, MAX_SPECIES * 2), creatures: arr(creatureShape, MAX_CREATURES * 2), subs: dflt(rec(bool(), 8), {}) });
 export function parseCodex(data: unknown): Codex | null {
   const s = stateShape.check(data);
   if (!s || !hasUniqueIds(s.species) || !hasUniqueIds(s.creatures) || !subsKnown("codex", s.subs)) return null;
   return s.creatures.every((c) => s.species.some((sp) => sp.id === c.speciesId)) ? s : null;
 }
-export const readCodex = (data: unknown): Codex => (data === undefined ? DEFAULT_CODEX : parseCodex(data) ?? DEFAULT_CODEX);
+/** What codex keeps in its slot (state.ts). */
+export const CODEX_STATE = stateSpec(stateShape, { species: "id", creatures: "id" });
+/** The module's one repair step (state.ts `repairOf`): every reader goes through `readCodex`, which uses it, so no read ever shows the defaults in place of a state it can mostly keep. Null: nothing is salvageable. */
+export const repairCodex = repairOf(CODEX_STATE, DEFAULT_CODEX, parseCodex);
+export const readCodex = (data: unknown): Codex => (data === undefined ? DEFAULT_CODEX : repairCodex(data) ?? DEFAULT_CODEX);
 export const liveSpecies = (c: Codex): Species[] => liveOf(c.species);
 export const liveCreatures = (c: Codex): Creature[] => liveOf(c.creatures);
 export const creaturesOf = (c: Codex, speciesId: string): Creature[] => liveCreatures(c).filter((x) => x.speciesId === speciesId);

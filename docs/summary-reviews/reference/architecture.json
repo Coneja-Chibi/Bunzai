@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/architecture",
   "sourcePath": "docs/reference/architecture.md",
-  "sourceHash": "sha256:356872d64df5a5a91c635282b7c0459a7d7d92f5b12936258cb1364d0e8f564f",
-  "semanticSummaryHash": "sha256:ec1d6fe12dac49f44b07e4a282f4d5cbc1b6da4542a473a1837453397b44c51d",
+  "sourceHash": "sha256:97f2dca56ef01f0911256d22432c55e3d1fe5b63cf62dd9052d6859fc91cac26",
+  "semanticSummaryHash": "sha256:c5c2afb5407bf7a1630ab6658bc597c59765c67ee3e62a5ea7778fbd5a4a299d",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Changed clause (each take's scene state; macro variables are the vars slot kept as per-version deltas rebuilt from shown history) matches the code and scene-state.md. The stage section summary does not mention macro variables, so nothing in it is stale.",
-  "reviewedAt": "2026-10-27T18:08:49.781Z"
+  "notes": "Changed sentence matches code: kit/providers/scene.ts sceneTools = Boolean(spoke?.scene) && !NO_TOOLS.test(model), the spoke scene.tools flag is gone, local and custom included. The stage section summary (shortSource, 76 words) says nothing the change contradicts.",
+  "reviewedAt": "2026-10-28T18:41:46.644Z"
 }

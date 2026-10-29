@@ -8,6 +8,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { findSlots, renderSlots } from "../../../scripts/slot-manifest";
 import { SLOTS, slotOf } from "../../generated/slots";
+import { TRACKER_STATE_MODULES, trackerSlotDef } from "../trackers";
 import { FAMILY_ID, SLOT_ID, defineSlot, slotFile } from "./define-slot";
 import { makeSlotOf } from "./slot-lookup";
 import type { SlotDef } from "./types";
@@ -16,8 +17,8 @@ const FOLDER = join(import.meta.dir, "slots");
 const files = readdirSync(FOLDER).filter((f) => f.endsWith(".ts") && !f.endsWith(".test.ts")).map((f) => f.slice(0, -3));
 
 describe("the slot list", () => {
-  test("holds exactly the slot files, each under its own id", () => {
-    expect(SLOTS.map((s): string => slotFile(s.id)).sort()).toEqual([...files].sort());
+  test("holds exactly the slot files, each under its own id (a file that makes a list of slots from a table names them all: tracker.inventory is in tracker.ts)", () => {
+    expect([...new Set(SLOTS.map((s): string => (s.id.includes(".") ? s.id.slice(0, s.id.indexOf(".")) : slotFile(s.id))))].sort()).toEqual([...files].sort());
     for (const slot of SLOTS) expect(slotOf(slot.id.endsWith(":*") ? slot.id.slice(0, -1) + "x" : slot.id)).toBe(slot);
     expect(slotOf("nope")).toBeUndefined();
   });
@@ -29,6 +30,13 @@ describe("the slot list", () => {
     expect(ids).toContain("vars");
     expect(ids).toContain("tracker-record:*");
     expect(ids).toContain("tracker-list:*");
+  });
+
+  test("keeps every Props tracker module that has state in its own slot, made from the module table", () => {
+    expect(SLOTS.filter((s) => s.id.startsWith("tracker.")).map((s) => s.id.slice("tracker.".length)).sort()).toEqual([...TRACKER_STATE_MODULES].sort());
+    expect(TRACKER_STATE_MODULES).toHaveLength(12);
+    for (const module of TRACKER_STATE_MODULES) expect(slotOf(`tracker.${module}`)?.diff).toBe(trackerSlotDef(module).diff);
+    for (const storyboard of ["quests", "cast", "map", "renown"]) expect(slotOf(`tracker.${storyboard}`)).toBeUndefined();
   });
 
   test("is what the folder would generate, so a slot added without running bun run slots fails", async () => {
@@ -87,5 +95,16 @@ describe("slot families", () => {
   test("the generated lookup resolves a linked tracker slot to the family, and the checks a store runs accept its deltas", () => {
     expect(slotOf("tracker-record:abc")?.id).toBe("tracker-record:*");
     expect(slotOf("tracker-list:abc")?.diff).toBe("keyed-list");
+  });
+});
+
+describe("who may write each slot", () => {
+  test("every registered slot names its writers, so no slot is writable by default and a new one must say who writes it", () => {
+    expect(SLOTS.filter((def) => ((def as SlotDef).writers?.length ?? 0) === 0).map((def) => def.id)).toEqual([]);
+  });
+
+  test("the library's globals are written only by a reply, and the summary never by one", () => {
+    expect(slotOf("global")?.writers).toEqual(["turn"]);
+    expect(slotOf("summary")?.writers).not.toContain("turn");
   });
 });

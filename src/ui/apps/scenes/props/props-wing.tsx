@@ -12,7 +12,7 @@ import type { AppContext } from "../../../app-contract";
 import { Button, Chip, IconButton } from "../../../components/button";
 import { Ic } from "../../../_shared/ic";
 import { TRACKER_PROP_PREFIX } from "../../../../stage/contracts/chat-store";
-import { isTrackerModule, refreshSpecOf, subsOf } from "../../../../core/trackers";
+import { isTrackerModule, refreshSpecOf } from "../../../../core/trackers";
 import { RefreshAllBox } from "./trackers/refresh/refresh-all";
 import { SubFeatureList } from "./trackers/sub-features";
 import { DIRECTOR_SETTINGS_OPEN_EVENT } from "./story-director/director-live";
@@ -126,7 +126,7 @@ export function PropsWing({ list, load, onToggle, onRetry, prefs, host }: {
               {members.map((p) => {
                 const module = p.id.startsWith(TRACKER_PROP_PREFIX) ? p.id.slice(TRACKER_PROP_PREFIX.length) : "";
                 const tracker = isTrackerModule(module) ? module : null;
-                const tile = <PropTile key={p.id} prop={p} on={on.has(p.id)} tips={tips} onToggle={() => onToggle(p.id, !on.has(p.id))} {...(gearOf(p) ? { onGear: gearOf(p)! } : {})} {...(host && tracker ? { subOn: subsOf(tracker, host.chat.trackers?.[tracker]?.data) } : {})} />;
+                const tile = <PropTile key={p.id} prop={p} on={on.has(p.id)} tips={tips} onToggle={() => onToggle(p.id, !on.has(p.id))} {...(gearOf(p) ? { onGear: gearOf(p)! } : {})} {...(host && tracker ? { subOn: host.chat.trackers?.[tracker]?.subs ?? {} } : {})} />;
                 return on.has(p.id) && p.subs && host && tracker
                   ? <div key={p.id} className={`pw-span2${box.group === "storyboard" ? " story" : ""}`}>{tile}<SubFeatureList ctx={host.ctx} chat={host.chat} {...(host.onChat ? { onChat: host.onChat } : {})} module={tracker} subs={p.subs} tone={p.tone} /></div>
                   : tile;
