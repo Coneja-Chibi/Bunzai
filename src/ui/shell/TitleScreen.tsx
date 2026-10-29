@@ -70,9 +70,7 @@ function ProsceniumTitle({ state, pieces }: { state: TitleState; pieces?: PieceS
         </div>
       </div>
       <footer className={styles.footer}>
-        <span className={styles.note}>Scenes make<br />bolder people.</span>
-        <span className={styles.premiere}>The velvet premiere</span>
-        <span className={styles.note}>For braver stories.</span>
+        <span className={styles.premiere}>All the Worlds: Your Stage</span>
       </footer>
       <ThemeSlot id="shell.title.below" />
     </section>

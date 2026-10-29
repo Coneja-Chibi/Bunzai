@@ -96,15 +96,13 @@
 .footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 2rem;
   padding: .5rem 2rem;
   background: var(--premiere-hard);
   border-inline: 3px solid var(--premiere-hard);
   flex: none;
 }
-.note { font: 500 .625rem/1.65 var(--font-mono); letter-spacing: .15em; text-transform: uppercase; }
-.note:last-child { text-align: right; }
 .premiere { display: flex; align-items: center; gap: 1.5rem; color: var(--premiere-gold); font: 500 .75rem var(--font-mono); letter-spacing: .35em; text-transform: uppercase; }
 .premiere::before, .premiere::after { content: ""; width: clamp(1rem, 8cqw, 8rem); height: 1px; background: var(--premiere-gold); }
 @container (max-width: 42rem) {
@@ -112,8 +110,7 @@
   .word { font-size: clamp(2.75rem, 11cqw, 4.5rem); }
   .tag { margin-bottom: 2rem; }
   .actions { flex-direction: column; align-items: center; }
-  .footer { justify-content: center; padding: .75rem 1rem; }
-  .note { display: none; }
+  .footer { padding: .75rem 1rem; }
   .premiere { gap: .75rem; font-size: .625rem; letter-spacing: .22em; }
   .premiere::before, .premiere::after { width: 1.5rem; }
 }
