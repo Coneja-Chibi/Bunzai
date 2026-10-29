@@ -20,6 +20,8 @@ export interface PipelineNodeProps {
   /** the picked scene's title, which feeds chat history */
   sceneName: string | null;
   dirty: boolean;
+  /** the row a feature wire being drawn would drop on, lit like a node that accepts a link */
+  dropRow: number | null;
   readOnly: boolean;
   onDown(e: PointerEvent): void;
   onOpen(): void;
@@ -61,7 +63,7 @@ export function PipelineNode(p: PipelineNodeProps): JSX.Element {
         return (
           <div
             key={`${row.id}:${i}`}
-            className={[css.blk, row.marker && css.mark, !row.on && css.off].filter(Boolean).join(" ")}
+            className={[css.blk, row.marker && css.mark, !row.on && css.off, p.dropRow === i && css.nodeDrop].filter(Boolean).join(" ")}
             style={{ height: BLOCK_H, ...(color ? { "--pc": color } : {}) } as CSSProperties}
             data-block={row.id}
             data-on={row.on}

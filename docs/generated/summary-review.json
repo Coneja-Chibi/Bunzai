@@ -1007,8 +1007,8 @@
       "status": "APPROVED",
       "verdict": "APPROVE",
       "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:4501f694cc54745141b18b304e2ecda87f892d10d9e55390cf550a68e24624a5",
-      "semanticSummaryHash": "sha256:d5281de00fb16bbada2397e5fde53db86cfd9f37063f175b57b50f1f84f34418"
+      "sourceHash": "sha256:5aa9bc17373f11f8bfc44ee9af7f483e437ddae6d665803c3291dd9dbfe03583",
+      "semanticSummaryHash": "sha256:1012fdb992de123b3aaf38ac1ae3bfddd3cd9933ff48109e0f25526716b2d974"
     },
     {
       "docId": "reference/updates",

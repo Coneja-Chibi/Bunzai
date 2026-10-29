@@ -3,7 +3,7 @@ import { expect, test } from "bun:test";
 import type { PresetPrompt } from "../../../../entities/preset";
 import { emptyPresetBody } from "../../../../entities/preset/schema";
 import type { StudioEntitySummary } from "../../../app-contract";
-import { blockAt, contextOf, dryRequest, featureRows, featureWire, featureWireId, loreIdsOf, markerWires, pipelineModel, pipelineRows, requestView, slotTexts } from "./pipeline";
+import { blockAt, blockUnder, contextOf, dryRequest, featureRows, featureWire, featureWireId, loreIdsOf, markerWires, pipelineModel, pipelineRows, requestView, slotTexts } from "./pipeline";
 
 export const block = (id: string, over: Partial<PresetPrompt> = {}): PresetPrompt => ({
   id, name: id, content: `text of ${id}`, role: "system", enabled: true, systemPrompt: false, marker: false,
@@ -118,4 +118,17 @@ test("feature wire ids name the feature and the preset, and nothing else parses 
   expect(featureWire(featureWireId("storyboards", "request"))).toEqual({ slot: "storyboards", presetKey: null });
   expect(featureWire("character:c1>pipe:preset:s1>cd")).toBeNull();
   expect(featureWire("feature:nope>preset:s1")).toBeNull();
+});
+
+test("a point over two presets finds the topmost one (the last drawn)", () => {
+  const under = [{ key: "a", at: [100, 100] as const, blocks: 3 }, { key: "b", at: [120, 110] as const, blocks: 3 }];
+  expect(blockUnder(under, [150, 100 + 55 + 30])).toEqual({ key: "b", row: 0 });
+  expect(blockUnder(under, [105, 100 + 55 + 5])).toEqual({ key: "a", row: 0 });
+  expect(blockUnder(under, [5000, 5000])).toBeNull();
+});
+
+test("a point on the top preset's header hits nothing, even over a hidden preset's block", () => {
+  const under = [{ key: "a", at: [100, 100] as const, blocks: 3 }, { key: "b", at: [100, 150] as const, blocks: 3 }];
+  // a's row 1 (y 183..211) lies under b's header (y 150..205)
+  expect(blockUnder(under, [150, 190])).toBeNull();
 });

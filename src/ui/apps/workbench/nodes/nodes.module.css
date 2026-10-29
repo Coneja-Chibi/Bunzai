@@ -210,6 +210,8 @@
   border-bottom: 1px solid color-mix(in srgb, var(--stage-line) 55%, transparent);
 }
 .blk[draggable="true"] { cursor: grab; }
+/* a block a feature wire would drop on: the node outline, kept inside the row */
+.blk.nodeDrop { outline-offset: -2px; }
 .blk small { font: 400 10px var(--font-mono); color: var(--stage-mute); }
 .grip { color: var(--stage-mute); font: 400 11px var(--font-mono); }
 .blk [data-control="row"] { min-width: 0; padding: 0 6px; gap: 0; border-left: 0; }

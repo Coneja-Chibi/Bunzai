@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:4501f694cc54745141b18b304e2ecda87f892d10d9e55390cf550a68e24624a5",
-  "semanticSummaryHash": "sha256:d5281de00fb16bbada2397e5fde53db86cfd9f37063f175b57b50f1f84f34418",
+  "sourceHash": "sha256:5aa9bc17373f11f8bfc44ee9af7f483e437ddae6d665803c3291dd9dbfe03583",
+  "semanticSummaryHash": "sha256:1012fdb992de123b3aaf38ac1ae3bfddd3cd9933ff48109e0f25526716b2d974",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Feature node paragraph and nodes-view summary (119 words) match code: FeatureNode has a 'Marker' port (Dot kind port) whose onPortDown calls tools.wire, the canvas's own wire drag (PipelineLayer onPortDown); releasing calls dropFeature, which finds the block under the pointer in any expanded preset (blockAt) and calls onPlace (place semantics verified earlier: block's list place, placement, depth and order, switched on, marker added when absent); feature-to-marker wires are selectable (featureWireId) and Delete on one runs NodesView ownSpot which writes unplace (marker switched off, kept); the handle and Own spot button are gone from FeatureNode; refusals are those of preset-write.ts (stale build order, unsaved Desk edits, locked preset).",
-  "reviewedAt": "2026-10-29T09:15:13.198Z"
+  "notes": "New sentence matches code: while a non-link wire is drawn (NodeCanvas wireAt = wire.to, only for wires that are not links), PipelineLayer computes lit = blockUnder(targets, wireAt), and PipelineNode lights that row (dropRow, css nodeDrop dashed outline) only on the preset whose key matches; blockUnder walks the presets in reverse order, so the last drawn (topmost) preset under the pointer wins, and dropFeature uses the same blockUnder, so the lit block is the one the marker lands on. Sidecar fresh.",
+  "reviewedAt": "2026-10-29T09:29:24.029Z"
 }

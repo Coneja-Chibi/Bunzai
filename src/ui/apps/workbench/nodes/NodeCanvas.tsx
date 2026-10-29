@@ -55,6 +55,8 @@ export interface LayerTools {
   wire(e: PointerEvent, from: Pt, drop: (pt: Pt) => void): void;
   selectWire(id: string): void;
   selectedWire: string | null;
+  /** where a layer's wire being drawn points now (null when none is), so the layer can light what it would drop on */
+  wireAt: Pt | null;
 }
 
 const MINI = { w: 170, h: 104 };
@@ -245,6 +247,7 @@ export function NodeCanvas(p: NodeCanvasProps): JSX.Element {
     wire: (e, from, drop) => drawWire(e, from, drop),
     selectWire: (id) => { p.select({ t: "wire", id }); root.current?.focus(); },
     selectedWire: sel?.t === "wire" ? sel.id : null,
+    wireAt: wire && !wire.link ? wire.to : null,
   };
 
   return (

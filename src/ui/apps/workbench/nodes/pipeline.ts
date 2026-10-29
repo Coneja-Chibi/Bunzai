@@ -335,6 +335,16 @@ export function featureWire(id: string): { slot: FeatureMarkerSlot; presetKey: s
   if (!m || !isFeatureMarkerSlot(m[1])) return null;
   return { slot: m[1], presetKey: m[2] === "request" ? null : m[2]! };
 }
+/** The block a world point is over on the topmost preset there (the last drawn), or null: a point on that preset's header or foot hits nothing below it. */
+export function blockUnder(presets: readonly { key: string; at: Pt; blocks: number }[], pt: Pt): { key: string; row: number } | null {
+  for (const p of [...presets].reverse()) {
+    const inside = pt[0] >= p.at[0] && pt[0] <= p.at[0] + PIPE_W && pt[1] >= p.at[1] && pt[1] <= p.at[1] + pipeHeight(p.blocks);
+    if (!inside) continue;
+    const row = blockAt(p.at, p.blocks, pt);
+    return row === null ? null : { key: p.key, row };
+  }
+  return null;
+}
 /** The block row of an expanded preset under a world point, or null when the point is not on one. */
 export function blockAt(at: Pt, blocks: number, pt: Pt): number | null {
   if (pt[0] < at[0] || pt[0] > at[0] + PIPE_W) return null;

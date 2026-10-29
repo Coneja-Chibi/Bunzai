@@ -15,7 +15,7 @@ import { PipelineNode } from "./PipelineNode";
 import { headAnchor, outAnchor, wirePath, type Pt } from "./geometry";
 import type { GraphNode } from "./links";
 import {
-  LORE_H, LORE_KEY, REQUEST_H, REQUEST_KEY, blockAt, blockInAnchor, engineIn, engineOut, featureColor, featureKey, featureOut, featureRows, featureWireId,
+  LORE_H, LORE_KEY, REQUEST_H, REQUEST_KEY, blockInAnchor, blockUnder, engineIn, engineOut, featureColor, featureKey, featureOut, featureRows, featureWireId,
   markerWires, pipeKey, pipeOutAnchor,
   type PipelineModel,
 } from "./pipeline";
@@ -69,16 +69,15 @@ export function PipelineLayer(p: PipelineLayerProps): JSX.Element | null {
   }
   const active = model.active;
   const activePlaced = active ? featureRows(active.summary.rows) : null;
-  /** A feature wire released on a block row of any preset places that feature's marker there. */
+  const targets = model.presets.map((m) => ({ key: m.key, at: p.at(pipeKey(m.key)), blocks: m.summary.rows.length }));
+  /** A feature wire released on a block row places that feature's marker there (the topmost preset under it). */
   const dropFeature = (slot: FeatureMarkerSlot, pt: Pt): void => {
-    for (const preset of model.presets) {
-      const row = blockAt(p.at(pipeKey(preset.key)), preset.summary.rows.length, pt);
-      if (row === null) continue;
-      // a preset with unsaved Desk edits is refused by the write itself, which says so (link-write.ts)
-      p.onPlace(preset.piece, slot, preset.summary.rows[row]!.id, preset.summary.rows.map((r) => r.id));
-      return;
-    }
+    const hit = blockUnder(targets, pt);
+    const preset = hit && model.presets.find((m) => m.key === hit.key);
+    // a preset with unsaved Desk edits is refused by the write itself, which says so (link-write.ts)
+    if (hit && preset) p.onPlace(preset.piece, slot, preset.summary.rows[hit.row]!.id, preset.summary.rows.map((r) => r.id));
   };
+  const lit = tools.wireAt ? blockUnder(targets, tools.wireAt) : null;
   if (model.active) {
     wires.push({ id: "out", d: wirePath(pipeOutAnchor(p.at(pipeKey(model.active.key)), model.active.summary.blocks), engineIn(requestAt, REQUEST_H)), color: "var(--deck-preset)", dashed: false });
   }
@@ -125,6 +124,7 @@ export function PipelineLayer(p: PipelineLayerProps): JSX.Element | null {
             context={data.context}
             sceneName={data.scene?.title ?? null}
             dirty={p.dirty[keyOf(preset.piece.id, preset.piece.kind)] === true}
+            dropRow={lit?.key === preset.key ? lit.row : null}
             readOnly={p.readOnly}
             onDown={(e) => tools.drag(e, key)}
             onOpen={() => p.onOpen(preset.piece)}

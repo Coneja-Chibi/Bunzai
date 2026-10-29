@@ -1366,7 +1366,8 @@ canvas.
   same drag as a link: released on a block of any preset, it puts the marker at that block's place in the list, as
   dragging a block there does, taking its placement, depth and order and switched on (added when the preset has none).
   Its wire to a marker selects like a link's, and Delete gives the feature its own spot by switching the marker off,
-  kept for the next place. Each is one preset save through `nodes/preset-write.ts`, refused when the blocks changed
+  kept for the next place. While its wire is drawn, the block it would land on is lit (the topmost preset under the
+  pointer wins). Each is one preset save through `nodes/preset-write.ts`, refused when the blocks changed
   since they were drawn or the preset has unsaved Desk edits.
 - **Board.** Notes and frames anywhere on the canvas; a frame moves what is inside it and a note can be
   pinned to a node. Board items belong to the workbench (settings), not to pieces, so exports never carry

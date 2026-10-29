@@ -261,3 +261,19 @@ test("a placed feature's wire selects and Delete gives it its own spot, switchin
   expect((h.patches[0]![3] as { items: Record<string, PresetPrompt> }).items["i/tk"]).toMatchObject({ enabled: false });
   root.unmount();
 });
+
+test("while a feature's wire is drawn, the block it would drop on is lit, and only that one", async () => {
+  const h = harness([cut]);
+  await mountView(h);
+  const pipe = q<HTMLElement>("[data-pipe]")!;
+  const x = parseFloat(pipe.style.left) + 40;
+  const y = parseFloat(pipe.style.top) + 55 + 2 * 28 + 14;
+  fire(q<HTMLButtonElement>('[data-feature="trackers"] button')!, "pointerdown", { button: 0, clientX: 0, clientY: 0 });
+  fire(dom.window as unknown as EventTarget, "pointermove", { clientX: x, clientY: y });
+  await flush();
+  expect(all("[data-block]").filter((b) => b.className.includes("nodeDrop")).map((b) => b.getAttribute("data-block"))).toEqual(["hist"]);
+  fire(dom.window as unknown as EventTarget, "pointerup", { clientX: x, clientY: y });
+  await flush();
+  expect(all("[data-block]").some((b) => b.className.includes("nodeDrop"))).toBe(false);
+  root.unmount();
+});
