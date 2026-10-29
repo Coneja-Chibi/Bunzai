@@ -6,6 +6,7 @@
  */
 import type { ToolBody, ToolField } from "../entities/tool/schema";
 import { isRecord } from "./guards";
+import { asciiSlug } from "./text";
 import type { DiceBody } from "../entities/dice/schema";
 import { boundedDice, DICE_RULE, rollDice, rollSummary } from "./dice";
 import { rollDicePiece } from "./dice-piece";
@@ -22,7 +23,7 @@ export type ToolArgs = Record<string, string | number | boolean>;
 
 /** A name a provider takes for a function: a lowercase letter, then lowercase letters, digits and _, at most 60 (room for a number). */
 export function callName(name: string): string {
-  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+  const slug = asciiSlug(name, { sep: "_" });
   return (/^[a-z]/.test(slug) ? slug : `tool_${slug}`).replace(/_+$/, "").slice(0, 60);
 }
 

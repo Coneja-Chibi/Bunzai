@@ -8,7 +8,7 @@
  * row and nothing a later reply wrote. Rows keep the order they first appeared in. Pure: the module table in index.ts holds the specs and binds these to a module.
  */
 import { diffSlot } from "../scene-state/diff";
-import { deepEq, isRecord } from "../guards";
+import { deepEq, isRecord, recOr } from "../guards";
 import type { Delta, Field, SlotDef } from "../scene-state/types";
 import type { JsonValue } from "../../stage/contracts/chat-store";
 import { parsed, type Shape } from "./shape";
@@ -67,7 +67,7 @@ export function slotOfSpec(id: string, spec: StateSpec): SlotDef {
 
 /** What a module's data holds in its slot, before the strategy cuts it up: the fields less the settings, or the wrapper rows (lists first). */
 function plainOf(spec: StateSpec, data: unknown): JsonValue {
-  const body = isRecord(data) ? data : {};
+  const body = recOr(data);
   if (diffOf(spec) === "fields") return Object.fromEntries(Object.entries(body).filter(([k, v]) => !SETTING_KEYS.includes(k) && v !== undefined)) as JsonValue;
   const rows = Object.entries(spec.lists).flatMap(([name, list]) => (Array.isArray(body[name]) ? (body[name] as Record<string, unknown>[]) : []).map((row): Wrapped => ({ key: `${name}:${String(row[list.key])}`, value: row as JsonValue })));
   const rest = Object.keys(spec.fields).filter((k) => body[k] !== undefined).map((key): Wrapped => ({ key, value: body[key] as JsonValue }));

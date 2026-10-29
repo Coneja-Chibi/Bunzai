@@ -18,6 +18,7 @@ import { GLOBAL_SLOT, baseState, changed, checkImportedDeltas, rebuildState, req
 import { checkGuard } from "../chat-rules";
 import type { BranchSql, MessageSql } from "./chat-store-rows";
 import type { StageDatabase } from "./database";
+import { liveOf } from "./swipe-sql";
 
 type Param = string | number | null;
 type Shown = { messageId: string; swipeId: string | null };
@@ -183,7 +184,7 @@ export function stateMethods(k: StateSqlDeps): StateSql {
             WHERE d.slot = ? AND d.swipe_id NOT IN (SELECT value FROM json_each(?)) AND EXISTS (
               SELECT 1 FROM swipes s JOIN messages m ON m.id = s.message_id AND s.position = m.current_swipe
                 JOIN branches b ON b.id = m.branch_id JOIN chats c ON c.id = b.chat_id
-              WHERE s.swipe_id = d.swipe_id AND s.cut_at IS NULL AND m.cut_id IS NULL AND b.deleted_at IS NULL AND c.deleted_at IS NULL)
+              WHERE s.swipe_id = d.swipe_id AND ${liveOf("s")} AND m.cut_id IS NULL AND b.deleted_at IS NULL AND c.deleted_at IS NULL)
             ORDER BY d.at, d.swipe_id, d.seq`,
         ).all(GLOBAL_SLOT, JSON.stringify(exceptSwipeIds)) as DeltaSql[];
         return rows.map((r): Delta => {
@@ -242,7 +243,7 @@ export function stateMethods(k: StateSqlDeps): StateSql {
         const expected = checkGuard(guard);
         return k.write(() => {
           const row = k.one<{ id: string }>(
-            "SELECT m.id FROM messages m JOIN swipes s ON s.message_id = m.id WHERE s.swipe_id = ? AND s.cut_at IS NULL AND m.branch_id = ? AND m.cut_id IS NULL", swipeId, branchId,
+            `SELECT m.id FROM messages m JOIN swipes s ON s.message_id = m.id WHERE s.swipe_id = ? AND ${liveOf("s")} AND m.branch_id = ? AND m.cut_id IS NULL`, swipeId, branchId,
           );
           const m = row && k.writableMessage(row.id);
           if (!m) return false;

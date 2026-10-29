@@ -73,10 +73,17 @@ describe("the library trackers' cards", () => {
   });
 
   test("an icon the build does not draw draws no icon and no error, and one it knows draws", async () => {
-    await open();
-    const gold = part("scene.messenger.trackers.library.health")!.querySelector('[data-part="scene.messenger.trackers.field"][data-field="gold"] .msn-lib-k')!;
-    expect(gold.querySelector("svg")).toBeNull();
-    expect(part("scene.messenger.trackers.library.health")!.querySelector('[data-part="scene.messenger.trackers.field"][data-field="hp"] .msn-lib-k svg')).not.toBeNull();
+    // an id the glyph table does not hold; set here so the icon scan, which reads shipped source, never meets it
+    const goldField = health.fields.find((f) => f.name === "gold")!;
+    goldField.icon = "lucide:no-such-glyph-here";
+    try {
+      await open();
+      const gold = part("scene.messenger.trackers.library.health")!.querySelector('[data-part="scene.messenger.trackers.field"][data-field="gold"] .msn-lib-k')!;
+      expect(gold.querySelector("svg")).toBeNull();
+      expect(part("scene.messenger.trackers.library.health")!.querySelector('[data-part="scene.messenger.trackers.field"][data-field="hp"] .msn-lib-k svg')).not.toBeNull();
+    } finally {
+      delete goldField.icon;
+    }
   });
 
   test("a list is item tiles with a count", async () => {

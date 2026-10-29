@@ -60,7 +60,7 @@
           "name": "icon",
           "optional": true,
           "type": "string",
-          "meaning": "A well-formed icon id (`lucide:name` or `mdi:name`); absent means no icon. Not checked against the glyph table: the UI draws only ids it knows.",
+          "meaning": "A well-formed icon id (`lucide:` or `mdi:` and a glyph name); absent means no icon. Not checked against the glyph table: the UI draws only ids it knows.",
           "producers": []
         },
         {

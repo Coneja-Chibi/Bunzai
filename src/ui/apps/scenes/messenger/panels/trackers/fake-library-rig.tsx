@@ -14,7 +14,7 @@ export const health: TrackerBody = {
   fields: [
     { name: "hp", description: "", type: "number", min: 0, maxField: "hp_max", default: 20, icon: "lucide:activity" },
     { name: "hp_max", description: "", type: "number", min: 1, default: 20 },
-    { name: "gold", description: "", type: "number", default: 0, icon: "lucide:no-such-glyph-here" },
+    { name: "gold", description: "", type: "number", default: 0 },
     { name: "mood", description: "", type: "choice", choices: ["calm", "tense", "hurt"], default: "calm", icon: "lucide:heart" },
     { name: "lit", description: "", type: "boolean", default: false },
     { name: "vow", description: "", type: "text", default: "" },

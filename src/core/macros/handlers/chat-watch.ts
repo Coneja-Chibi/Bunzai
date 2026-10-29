@@ -12,6 +12,7 @@
  * error in the macro report instead of running on.
  */
 import { SANITY_TEXT } from "../../../entities/_shared/sanity";
+import { escapeRegex } from "../../regex/escape";
 import { DEADLINE_MESSAGE, DeadlineExceeded, deadlineTicker } from "../deadline";
 import type { ChatMessage, HandlerRun, MacroContext, MacroDefinition, MacroResult } from "../types";
 
@@ -104,7 +105,7 @@ function matchesOf(messages: readonly ChatMessage[], query: string, context: Mac
   const found: number[] = [];
   if (words.length === 0) {
     // Nothing but punctuation: the literal text, not inside a word.
-    const pattern = new RegExp(`(?<![${WORD_CHARS}])${q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![${WORD_CHARS}])`, "gu");
+    const pattern = new RegExp(`(?<![${WORD_CHARS}])${escapeRegex(q)}(?![${WORD_CHARS}])`, "gu");
     index.texts.forEach((text, i) => {
       tick();
       for (let n = text.match(pattern)?.length ?? 0; n > 0; n--) found.push(i);

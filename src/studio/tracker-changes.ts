@@ -5,7 +5,7 @@
  * and the state is folded forward through them. Read only. Only tracker slots count; a tracker whose piece cannot be read is reported by its id with the
  * values as stored, and a piece whose layout changed since is read the same way, since its slot is not the one its fields describe.
  */
-import { deepEq, isRecord } from "../core/guards";
+import { deepEq, isRecord, recOr } from "../core/guards";
 import { fold } from "../core/scene-state/fold";
 import type { SceneState } from "../core/scene-state/types";
 import { TRACKER_SLOT_PREFIXES, trackerOfSlot, trackerSlot, trackerValue, type TrackerRecord } from "../core/tracker";
@@ -41,7 +41,7 @@ function cellsOf(state: SceneState, slot: string, id: string, body: TrackerBody 
   }
   const stored = state[slot];
   if (Array.isArray(stored)) return new Map(stored.flatMap((r): [string, JsonValue][] => (isRecord(r) && typeof r["name"] === "string" ? [[r["name"], withoutName(r as TrackerRecord)]] : [])));
-  return new Map(Object.entries(isRecord(stored) ? stored : {}).flatMap(([k, c]): [string, JsonValue][] => (isRecord(c) && c["value"] !== undefined ? [[k, c["value"] as JsonValue]] : [])));
+  return new Map(Object.entries(recOr(stored)).flatMap(([k, c]): [string, JsonValue][] => (isRecord(c) && c["value"] !== undefined ? [[k, c["value"] as JsonValue]] : [])));
 }
 
 const withoutName = (row: TrackerRecord): JsonValue => {

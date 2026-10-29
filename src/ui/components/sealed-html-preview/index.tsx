@@ -5,7 +5,7 @@
  * the iframe + CSP are the load-bearing egress barrier.
  */
 import { useEffect, useMemo, useRef, type JSX } from "react";
-import createDOMPurify from "dompurify";
+import { windowPurifier } from "../../_shared/window-purifier";
 import { SEALED_FORBID_TAGS } from "../../../core/render/seal-policy";
 import { sanitizeBackdropCss } from "./backdrop-css";
 import styles from "./styles.module.css";
@@ -63,37 +63,8 @@ export const SEALED_PREVIEW_CSP =
  * An unterminated block (a document cut off by the cap mid-style) is taken to the end rather than
  * dropped, so a truncated drawing still shows the design of the part that arrived.
  *
- * (The regex itself is below the sanitizer, which the next comment explains.)
+ * The sanitizer is the shared one bound to the current window (_shared/window-purifier.ts).
  */
-/**
- * The sanitizer, bound to the window that is here NOW rather than the one that was here at import.
- *
- * `import DOMPurify from "dompurify"` binds to whatever `window` existed when the module first
- * loaded. In a browser that is the only window there will ever be; in this repo's suite it is
- * whichever test file imported this module first, and once that file closes its JSDOM every later
- * caller sanitizes against a dead document and throws. Two tests here already failed that way
- * depending on which files ran beside them - the same import-time-side-effect shape as the hook in
- * render-markup.ts, which is registered lazily for this exact reason.
- *
- * NO WINDOW IS A REFUSAL, not a pass-through. DOMPurify's unsupported build returns its input
- * unchanged, so a caller without a DOM would get untouched untrusted markup while every line here
- * still claimed it was sanitized.
- */
-let purifier: ReturnType<typeof createDOMPurify> | null = null;
-let boundTo: unknown = null;
-
-function sanitizer(): ReturnType<typeof createDOMPurify> {
-  const view = (globalThis as { window?: unknown }).window;
-  if (view === undefined || view === null) {
-    throw new Error("sealed preview: cannot sanitize without a DOM");
-  }
-  if (!purifier || boundTo !== view) {
-    purifier = createDOMPurify(view as Parameters<typeof createDOMPurify>[0]);
-    boundTo = view;
-  }
-  return purifier;
-}
-
 const STYLE_BLOCK = /<style\b[^>]*>([\s\S]*?)(?:<\/style\s*>|$)/gi;
 
 export function extractStyleBlocks(html: string): { markup: string; css: string } {
@@ -109,7 +80,7 @@ export function buildBackdropSrcDoc(html: string, css = ""): string {
   const cappedHtml =
     html.length > BACKDROP_HTML_CAP ? html.slice(0, BACKDROP_HTML_CAP) : html || "";
   const { markup, css: documentCss } = extractStyleBlocks(cappedHtml);
-  const cleanHtml = sanitizer().sanitize(markup, {
+  const cleanHtml = windowPurifier("sealed preview").sanitize(markup, {
     FORBID_TAGS,
     ALLOW_DATA_ATTR: false,
     ADD_ATTR: ["target"],

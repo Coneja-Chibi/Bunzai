@@ -7,6 +7,7 @@ import { createRoot, type Root } from "react-dom/client";
 import type { AppContext, StudioEntitySummary } from "../../../app-contract";
 import type { PiecePatch } from "../../../../stage/contracts/content-store";
 import { installDom, type InstalledDom } from "../../../_shared/test-dom";
+import { tick } from "../../../../stage/provider/test-fetch-harness";
 import type { KindEditorProps } from "../editors";
 
 export const installPieceDom = (): InstalledDom => installDom("<!doctype html><html><body></body></html>", {
@@ -39,7 +40,7 @@ export interface Rig extends Mounted {
   opened: StudioEntitySummary[];
 }
 
-export const tick = (): Promise<void> => new Promise((r) => setTimeout(r, 0));
+export { tick };
 
 const buttonsOf = (host: HTMLElement, text: RegExp): HTMLButtonElement[] =>
   [...host.querySelectorAll("button")].filter((b) => text.test(b.textContent ?? "") || text.test(b.getAttribute("aria-label") ?? "") || text.test(b.title));

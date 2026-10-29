@@ -10,7 +10,7 @@
 import type { TrackerBody, TrackerField } from "../entities/tracker/schema";
 import { clampToField, fieldAccepts, fieldDefault, fieldIndex, settler, type FieldScalar } from "../entities/_shared/field-value";
 import { SANITY_LIST } from "../entities/_shared/sanity";
-import { deepEq, isRecord } from "./guards";
+import { deepEq, isRecord, recOr } from "./guards";
 import type { TrackerView } from "./macros";
 import type { Delta, SceneState } from "./scene-state/types";
 
@@ -84,7 +84,7 @@ export function trackerState(state: SceneState, id: string, body: TrackerBody): 
   const dependent = body.fields.some((f) => f.maxField !== undefined);
   const alone = (get: (f: TrackerField) => unknown, name?: string): TrackerRecord => ({ ...(name === undefined ? {} : { name }), ...Object.fromEntries(body.fields.map((f) => [f.name, read(f, get(f))])) });
   if (body.layout === "record") {
-    const cells = isRecord(raw) ? raw : {};
+    const cells = recOr(raw);
     const stored = alone((f) => { const cell = own(cells, f.name); return isRecord(cell) ? cell["value"] : undefined; });
     return { stored, shown: shownOf(body, index, stored, dependent) };
   }

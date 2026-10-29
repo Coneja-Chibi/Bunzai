@@ -2,7 +2,7 @@
  * Sealed preview srcDoc builder for CssWorkshop. CSP + sandbox boundary.
  * Never injects into Studio chrome.
  */
-import DOMPurify from "dompurify";
+import { windowPurifier } from "../../_shared/window-purifier";
 import { SEALED_FORBID_TAGS } from "../../../core/render/seal-policy";
 import { sanitizeWorkshopCss } from "./sanitize";
 
@@ -71,7 +71,7 @@ html, body {
 
 /** Build a sealed srcDoc for mockHtml + author CSS. */
 export function buildCssWorkshopSrcDoc(mockHtml: string, authorCss: string): string {
-  const cleanHtml = DOMPurify.sanitize(mockHtml || "", {
+  const cleanHtml = windowPurifier("CSS Workshop preview").sanitize(mockHtml || "", {
     FORBID_TAGS: [...SEALED_FORBID_TAGS],
     ALLOW_DATA_ATTR: false,
     ADD_ATTR: ["target", "type", "aria-hidden"],

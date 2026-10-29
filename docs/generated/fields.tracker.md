@@ -11,7 +11,7 @@
 | `min?` | `number` | - | Number only; at most `max`. |
 | `max?` | `number` | - |  |
 | `maxField?` | `string` | - | Number only, and not with `max`: the name of another number field of this tracker whose current value is this field's top (hp out of hp_max). A value above it is brought down to it, never refused. |
-| `icon?` | `string` | - | A well-formed icon id (`lucide:name` or `mdi:name`); absent means no icon. Not checked against the glyph table: the UI draws only ids it knows. |
+| `icon?` | `string` | - | A well-formed icon id (`lucide:` or `mdi:` and a glyph name); absent means no icon. Not checked against the glyph table: the UI draws only ids it knows. |
 | `default?` | `string \| number \| boolean` | - | Must fit the type, the choices and the range. |
 
 ### `TrackerBody`

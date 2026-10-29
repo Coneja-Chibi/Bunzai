@@ -11,6 +11,7 @@ import type { Chat, ChatTrackerEntry, JsonValue, TrackerContext, TrackerModule }
 import type { TrackerUpdateLine } from "../../../../../studio/tracker-state";
 import type { AppContext } from "../../../../app-contract";
 import { toErrorMessage } from "../../../../_shared/error-message";
+import { deepEq } from "../../../../../core/guards";
 import { useTrackerStates } from "./tracker-states";
 
 export interface TrackerHost { ctx: AppContext; chat: Chat; onChat?(chat: Chat): void }
@@ -66,7 +67,7 @@ export function useTracker<D>(host: TrackerHost, module: TrackerModule, read: (d
   syncRef.current = sync;
   useEffect(() => () => { mounted.current = false; }, []);
   useEffect(() => {
-    if (JSON.stringify(stored ?? null) === JSON.stringify(saved.current ?? null)) return;
+    if (deepEq(stored ?? null, saved.current ?? null)) return;
     saved.current = stored;
     latest.current = stored;
     setData(stored);
@@ -126,7 +127,7 @@ export function useTracker<D>(host: TrackerHost, module: TrackerModule, read: (d
 
   const undo = replaced ? { label: replaced.label, run: () => apply(() => replaced.data) } : null;
   const update = sync.states?.updates[module];
-  const held = update !== undefined && JSON.stringify(stored ?? null) === JSON.stringify(update.after);
+  const held = update !== undefined && deepEq(stored ?? null, update.after);
   const { context: _old, ...rest } = settings ?? {};
   const kept: ChatTrackerEntry = { ...rest, ...(context ? { context } : {}) };
   return { module, host, data: read(data), raw: data, context: context ?? "always", stored: Object.keys(kept).length > 0 ? kept : undefined, update: update && held ? update : null, error, unreadable: sync.states?.unreadable.includes(module) === true, reload: sync.reload, apply, setContext, undo };

@@ -9,6 +9,7 @@ import { VirtualRows } from "../../../_shared/virtual-list";
 import { Button, IconButton } from "../../../components/button";
 import { NumberInput } from "../../../components/number-input";
 import { Input, Textarea } from "../../../components/rc-controls";
+import { numOr } from "../../../../core/guards";
 import s from "./piece.module.css";
 
 const ROW_ESTIMATE = 44;
@@ -32,7 +33,7 @@ export function DiceTable({ rows, lit, result, canRoll, onChange, onRoll }: {
   const scroller = useRef<HTMLDivElement>(null);
   const [pasting, setPasting] = useState(false);
   const [list, setList] = useState("");
-  const total = rows.reduce((n, r) => n + (Number.isFinite(r.weight) ? r.weight : 0), 0);
+  const total = rows.reduce((n, r) => n + numOr(r.weight, 0), 0);
   const setRow = (at: number, row: DiceRow): void => onChange(rows.map((r, i) => (i === at ? row : r)));
   const paste = (): void => {
     const added = rowsFromList(list);
