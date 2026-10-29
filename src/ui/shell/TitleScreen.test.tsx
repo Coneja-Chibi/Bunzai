@@ -73,7 +73,7 @@ const press = (key: string): void => {
 
 test("renders live HTML title, actions and decorative art", () => {
   const html = dom.window.document.getElementById("root")!.innerHTML;
-  expect(html).toContain("raku");
+  expect(html).toContain("zai");
   expect(html).toContain("Every story deserves a stage.");
   expect(html).toContain("Enter the theater");
   expect(html).toContain("Continue your story");

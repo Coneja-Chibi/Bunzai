@@ -39,7 +39,7 @@ function ProsceniumTitle({ state, pieces }: { state: TitleState; pieces?: PieceS
         <LightRays />
         <div className={styles.marquee}>
           <div className={styles.kicker}>The velvet premiere</div>
-          <h1 className={styles.word}>Bun<em>raku</em></h1>
+          <h1 className={styles.word}>Bun<em>zai</em></h1>
           <p className={styles.tag}>Every story deserves a stage.</p>
           <div className={styles.actions}>
             <Button variant="primary" disabled={closing} onClick={enter}>Enter the theater</Button>

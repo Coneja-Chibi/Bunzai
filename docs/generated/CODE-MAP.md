@@ -1655,7 +1655,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `content-store-summary.ts`: Public listing shapes derived from one live entity and its lightweight shelf facts.
 - `content-store.contract-fixtures.ts`: Shared pieces of the ContentStore contract suites (content-store.contract.ts and content-store-concurrency.contract.ts): a character, a planted row, and the rig every test runs on.
 - `content-store.contract.ts`: The ContentStore contract suite.
-- `content-store.ts`: The ContentStore contract: how Bunraku reads and writes library content, and the dumb DocumentBackend it is built on.
+- `content-store.ts`: The ContentStore contract: how Bunzai reads and writes library content, and the dumb DocumentBackend it is built on.
 - `director-types.ts`: What the Story Director keeps (RoleCall's `user_chats.dm_context` and the `dm*` chat settings, trimmed to the fields something writes).
 - `document-order.ts`: Stable document order shared by content-store policy and opaque backend listings.
 - `piece-change-contract.ts`: Backend wire shapes for row identities and ordered committed piece-change receipts.

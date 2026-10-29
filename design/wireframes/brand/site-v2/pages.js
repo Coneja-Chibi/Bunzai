@@ -10,7 +10,7 @@
 
   var foot =
     '<footer class="foot"><div class="wrap">' +
-    '<div><a class="brand" href="#/"><svg><use href="#tk"/></svg><span>BUN<i>·</i>RAKU</span></a><p class="whisper">A little stage for your AI characters.</p></div>' +
+    '<div><a class="brand" href="#/"><svg><use href="#tk"/></svg><span>BUN<i>·</i>ZAI</span></a><p class="whisper">A little stage for your AI characters.</p></div>' +
     '<div><h4>The Show</h4><a href="#/tour">The Tour</a><a href="#/whats-new">What’s New</a><a href="#/try">Try It</a></div>' +
     '<div><h4>Help</h4><a href="#/guides">Guides</a><a href="#/guides/start">Your First Scene</a><a href="#/guides/trouble">Something Went Wrong</a></div>' +
     '<div><h4>The Company</h4><a href="https://github.com/' + esc(S.repo) + '">GitHub</a><a href="https://github.com/Coneja-Chibi">Coneja-Chibi</a><a href="#/download">Download</a></div>' +
