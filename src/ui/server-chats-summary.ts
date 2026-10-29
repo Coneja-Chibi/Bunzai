@@ -36,11 +36,11 @@ export async function handleSummaryRoute(req: Request, url: URL, chats: ChatStor
     return stateOr404(chats, chatId);
   }
   if (p === "/api/chats/summary-backfill") {
-    await backfill({ chats, connect, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined }, chatId, req.signal);
+    await backfill({ chats, connect, readLibrary: studio ? (kind, id) => studio.read(kind, id) : undefined }, chatId, req.signal);
     return stateOr404(chats, chatId);
   }
   if (p === "/api/chats/summary-now") {
-    await summarizeNow({ chats, connect, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined }, chatId);
+    await summarizeNow({ chats, connect, readLibrary: studio ? (kind, id) => studio.read(kind, id) : undefined }, chatId);
     return stateOr404(chats, chatId);
   }
   return null;

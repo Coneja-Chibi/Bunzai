@@ -14,7 +14,7 @@ import { SANITY_TEXT } from "../entities/_shared/sanity";
 import { narratorTools } from "../studio/library-tools";
 import type { ReadPreset } from "../studio/scene-turn-load";
 import type { ReadLorebook } from "../studio/scene-lore";
-import { choiceDefaultsOf, promptBudgetOf, toolBudgetOf, trackerReaderOf } from "./server-scene-readers";
+import { choiceDefaultsOf, promptBudgetOf, toolBudgetOf } from "./server-scene-readers";
 import { connect } from "./server-chats-turn";
 import { json } from "./server-security";
 
@@ -31,7 +31,7 @@ export async function handleForecastRoute(req: Request, p: string, chats: ChatSt
   if ((p !== "/api/chats/forecast" && p !== FORMULA_TRY) || req.method !== "POST" || !b) return null;
   const chatId = str(b["chatId"]);
   if (!chatId) throw new StudioValidationError("chatId is required");
-  const deps: ForecastDeps = { chats, state, connect, readPreset, readLorebook, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined, ...(choiceDefaultsOf(settings) ? { choiceDefaults: choiceDefaultsOf(settings)! } : {}), ...(trackerReaderOf(studio) ? { readTracker: trackerReaderOf(studio)! } : {}), ...(promptBudgetOf(settings) ? { promptBudgetMs: promptBudgetOf(settings)! } : {}), ...(toolBudgetOf(settings) ? { toolBudgetMs: toolBudgetOf(settings)! } : {}), narratorTools: narratorTools(studio ? (kind, id) => studio.read(kind, id) : undefined), now: Date.now, randomSeed: () => Math.floor(Math.random() * 2 ** 31) };
+  const deps: ForecastDeps = { chats, state, connect, readPreset, readLorebook, readLibrary: studio ? (kind, id) => studio.read(kind, id) : undefined, ...(choiceDefaultsOf(settings) ? { choiceDefaults: choiceDefaultsOf(settings)! } : {}), ...(promptBudgetOf(settings) ? { promptBudgetMs: promptBudgetOf(settings)! } : {}), ...(toolBudgetOf(settings) ? { toolBudgetMs: toolBudgetOf(settings)! } : {}), narratorTools: narratorTools(studio ? (kind, id) => studio.read(kind, id) : undefined), now: Date.now, randomSeed: () => Math.floor(Math.random() * 2 ** 31) };
   if (p === FORMULA_TRY) {
     const text = b["text"];
     if (typeof text !== "string" || text.length > SANITY_TEXT) throw new StudioValidationError("text must be the formula, as text");

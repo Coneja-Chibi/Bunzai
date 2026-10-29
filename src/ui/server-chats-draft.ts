@@ -11,7 +11,7 @@ import type { ChatStore } from "../stage/contracts/chat-store";
 import type { StateStore } from "../stage/contracts/state-store";
 import { StudioValidationError } from "../studio/errors";
 import type { SettingsStoreLike, StudioStoreLike } from "../studio/contracts";
-import { choiceDefaultsOf, promptBudgetOf, trackerReaderOf } from "./server-scene-readers";
+import { choiceDefaultsOf, promptBudgetOf } from "./server-scene-readers";
 import { runDraft, type DraftDeps, type DraftInput } from "../studio/scene-draft";
 import type { ReadPreset } from "../studio/scene-turn-load";
 import type { ReadLorebook } from "../studio/scene-lore";
@@ -68,6 +68,6 @@ export function parseDraft(b: Body): DraftInput {
 export async function handleDraftRoute(req: Request, p: string, chats: ChatStore, state: StateStore, readPreset: ReadPreset, readLorebook: ReadLorebook, b: Body | null, studio?: StudioStoreLike, settings?: SettingsStoreLike): Promise<Response | null> {
   if (p !== "/api/chats/draft" || req.method !== "POST" || !b) return null;
   const input = parseDraft(b);
-  const deps: DraftDeps = { chats, state, connect, readPreset, readLorebook, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined, ...(choiceDefaultsOf(settings) ? { choiceDefaults: choiceDefaultsOf(settings)! } : {}), ...(trackerReaderOf(studio) ? { readTracker: trackerReaderOf(studio)! } : {}), ...(promptBudgetOf(settings) ? { promptBudgetMs: promptBudgetOf(settings)! } : {}), now: Date.now, randomSeed: () => Math.floor(Math.random() * 2 ** 31) };
+  const deps: DraftDeps = { chats, state, connect, readPreset, readLorebook, readLibrary: studio ? (kind, id) => studio.read(kind, id) : undefined, ...(choiceDefaultsOf(settings) ? { choiceDefaults: choiceDefaultsOf(settings)! } : {}), ...(promptBudgetOf(settings) ? { promptBudgetMs: promptBudgetOf(settings)! } : {}), now: Date.now, randomSeed: () => Math.floor(Math.random() * 2 ** 31) };
   return providerJson(() => runDraft(deps, input, req.signal));
 }

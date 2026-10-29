@@ -18,7 +18,7 @@ import { sentTools, toolTurn } from "./scene-turn-tools";
 import { turnWrites } from "./scene-turn-writes";
 import { loadTurn, type TurnReader } from "./scene-turn-load";
 
-export interface ForecastDeps extends Pick<TurnDeps, "connect" | "readPreset" | "readLorebook" | "readCastMember" | "choiceDefaults" | "readTracker" | "promptBudgetMs" | "clock" | "narratorTools" | "toolBudgetMs" | "now" | "randomSeed"> {
+export interface ForecastDeps extends Pick<TurnDeps, "connect" | "readPreset" | "readLorebook" | "readLibrary" | "choiceDefaults" | "promptBudgetMs" | "clock" | "narratorTools" | "toolBudgetMs" | "now" | "randomSeed"> {
   chats: TurnReader;
   state: Pick<StateStore, "read">;
 }
@@ -38,7 +38,7 @@ export interface Forecast {
 async function readScene(deps: ForecastDeps, chatId: string) {
   const chat = await deps.chats.getChat(chatId);
   if (!chat) throw new StudioNotFoundError("that scene does not exist");
-  const read = await loadTurn(deps.chats, chat.id, "draft", deps.readPreset, deps.readLorebook, deps.readCastMember, deps.choiceDefaults, deps.readTracker);
+  const read = await loadTurn(deps.chats, chat.id, "draft", deps.readPreset, deps.readLorebook, deps.readLibrary, deps.choiceDefaults);
   if (!read) throw new StudioNotFoundError("that scene does not exist");
   return { chat, read, started: deps.now() };
 }

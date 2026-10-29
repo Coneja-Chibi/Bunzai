@@ -38,8 +38,7 @@ export const trackerReaderOf = (studio: StudioStoreLike | undefined): ReadTracke
 export const sceneReaders = (studio: StudioStoreLike | undefined, settings: SettingsStoreLike | undefined) => {
   const readRegex = regexReaderOf(studio);
   const choiceDefaults = choiceDefaultsOf(settings);
-  const readTracker = trackerReaderOf(studio);
   const toolBudgetMs = toolBudgetOf(settings);
   const promptBudgetMs = promptBudgetOf(settings);
-  return { ...(readRegex ? { readRegex } : {}), ...(choiceDefaults ? { choiceDefaults } : {}), ...(readTracker ? { readTracker } : {}), ...(toolBudgetMs ? { toolBudgetMs } : {}), ...(promptBudgetMs ? { promptBudgetMs } : {}) };
+  return { ...(readRegex ? { readRegex } : {}), ...(choiceDefaults ? { choiceDefaults } : {}), ...(toolBudgetMs ? { toolBudgetMs } : {}), ...(promptBudgetMs ? { promptBudgetMs } : {}) };
 };

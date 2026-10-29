@@ -44,7 +44,6 @@ import type { DirectorActivity } from "../stage/contracts/director-types";
 import { summaryOf } from "../core/director/tracker-round";
 import { cancelTrackerRound, startTrackerRound } from "./scene-director-trackers";
 import { commitDirector, runDirector, type DirectorDeps, type DirectorRun } from "./scene-director";
-import type { ReadTracker } from "./library-trackers";
 import { turnWrites } from "./scene-turn-writes";
 import { sendReply, sentTools, toolsRefusal, toolTurn, withToolCalls, type NarratorToolsFor } from "./scene-turn-tools";
 import { failedAttempt, requestParams, routeOf, splitEntryKey, traceOf, traceOptions, type RequestParams, type RouteAttempt } from "./scene-turn-trace";
@@ -96,16 +95,14 @@ export interface TurnDeps {
   readLorebook: ReadLorebook;
   /** The library's current body of a regex set the scene has on (ChatStore rule 42); absent: a scene's regex is not applied. */
   readRegex?(id: string): Promise<RegexSetBody | null>;
-  /** Used only for migration-22 development scenes whose frozen cells were intentionally dropped. */
-  readCastMember?(kind: "character" | "persona", id: string): Promise<unknown | null>;
+  /** Reads a library piece by kind and id, raw: the linked trackers and skills a turn reads, and the cast of a migration-22 development scene whose frozen cells were dropped. Absent: none are read. */
+  readLibrary?(kind: string, id: string): Promise<unknown | null>;
   /** The person's saved choice answers for a preset (the pref `scenes.presetChoiceDefaults`), under the scene's own; absent: none. */
   choiceDefaults?(presetId: string): Promise<Record<string, unknown> | undefined>;
   /** The person's own Anti-Slop banks (studio/final-cut-library.ts), merged into the Anti-Slop pass; absent: none. */
   finalCutBanks?(): Promise<Record<string, import("../core/final-cut/banks").Bank>>;
   /** The first-party tools a reply may call when the scene's Narrator Tool Access is on (scene-turn-tools.ts). */
   narratorTools?: NarratorToolsFor;
-  /** The library's tracker piece by id, decoded; absent: a scene's linked trackers are not read (library-trackers.ts). */
-  readTracker?: ReadTracker;
   /** The time all of a reply's tool calls may take (ms), from the setting `scenes.toolBudgetMs`; absent or unset: the default (tool-rounds.ts). */
   toolBudgetMs?(): Promise<number | undefined>;
   /** The time all the macros of one prompt build may take (ms), from the setting `scenes.promptBudgetMs`; absent or unset: the default (tool-rounds.ts). */
@@ -161,7 +158,7 @@ async function runTurnBody(
   if (!chat.connection) throw new NoConnectionError();
   let connected = await deps.connect(chat.connection);
   if (!connected) throw new NoConnectionError("this scene's connection is gone from Kit; pick another in the AI wing");
-  const loaded = await loadTurn(chats, chat.id, input.kind, deps.readPreset, deps.readLorebook, deps.readCastMember, deps.choiceDefaults, deps.readTracker);
+  const loaded = await loadTurn(chats, chat.id, input.kind, deps.readPreset, deps.readLorebook, deps.readLibrary, deps.choiceDefaults);
   if (!loaded) throw new StudioNotFoundError("that scene does not exist");
   const replacedId = loaded.target?.id;
   /** Who spoke, for the Director's tracker request after the reply. */

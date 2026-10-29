@@ -33,7 +33,7 @@ export interface SummaryDeps {
   chats: ChatStore;
   /** Resolves a saved connection (the summary model, or the scene's own); null when Kit no longer has it. */
   connect(connection: ChatConnection): Promise<Connected | null>;
-  readCastMember?(kind: "character" | "persona", id: string): Promise<unknown | null>;
+  readLibrary?(kind: string, id: string): Promise<unknown | null>;
 }
 
 /** A failure in words for the person; it is what the Memory tab shows after "Last summary run failed:". */
@@ -49,7 +49,7 @@ export const isSummarizing = (chatId: string): boolean => running.has(chatId);
 interface Setup { chat: Chat; branchId: string; name: string; s: ResolvedSummary; connected: Connected; model: string }
 
 async function setup(deps: SummaryDeps, chatId: string): Promise<Setup> {
-  const cast = await loadCast(deps.chats, chatId, deps.readCastMember);
+  const cast = await loadCast(deps.chats, chatId, deps.readLibrary);
   if (!cast) throw new StudioNotFoundError("that scene does not exist");
   const { chat, snapshot } = cast;
   const s = resolveSummary(chat.summary?.settings);

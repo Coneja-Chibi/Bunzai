@@ -28,6 +28,6 @@ export function parseTrackerRefresh(b: Body): TrackerRefreshInput {
 export async function handleTrackerRefreshRoute(req: Request, p: string, chats: ChatStore, b: Body | null, studio?: StudioStoreLike): Promise<Response | null> {
   if (p !== "/api/chats/tracker-refresh" || req.method !== "POST" || !b) return null;
   const input = parseTrackerRefresh(b);
-  const deps: TrackerRefreshDeps = { chats, connect, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined, now: Date.now, newId: () => crypto.randomUUID() };
+  const deps: TrackerRefreshDeps = { chats, connect, readLibrary: studio ? (kind, id) => studio.read(kind, id) : undefined, now: Date.now, newId: () => crypto.randomUUID() };
   return providerJson(() => proposeTrackerRefresh(deps, input, req.signal));
 }

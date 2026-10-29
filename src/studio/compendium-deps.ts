@@ -21,7 +21,7 @@ export interface CompendiumDeps {
   state: Pick<StateStore, "read">;
   store: BookStore;
   connect(connection: ChatConnection): Promise<Connected | null>;
-  readCastMember?(kind: "character" | "persona", id: string): Promise<unknown | null>;
+  readLibrary?(kind: string, id: string): Promise<unknown | null>;
   now(): number;
   newId(): string;
 }
@@ -38,7 +38,7 @@ export interface SceneBook {
 
 /** The scene's switched-on books that exist in the library, with the person's access to each; null when the scene or its cast is gone. */
 export async function sceneBooks(deps: CompendiumDeps, chatId: string): Promise<{ chat: Chat; books: SceneBook[] } | null> {
-  const cast = await loadCast(deps.chats, chatId, deps.readCastMember);
+  const cast = await loadCast(deps.chats, chatId, deps.readLibrary);
   if (!cast) return null;
   const character = playedBody(bodyOf(cast.snapshot.character) as unknown as CharacterBody, cast.chat.variantId);
   const persona = cast.snapshot.persona ? (bodyOf(cast.snapshot.persona) as unknown as PersonaBody) : undefined;

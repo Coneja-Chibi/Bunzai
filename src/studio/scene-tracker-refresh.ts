@@ -17,7 +17,7 @@ import { names, type DraftDeps } from "./scene-draft";
 import { NoConnectionError } from "./scene-turn";
 import { draftOnly } from "./scene-tracker-item";
 
-export interface TrackerRefreshDeps extends Pick<DraftDeps, "connect" | "readCastMember" | "now"> {
+export interface TrackerRefreshDeps extends Pick<DraftDeps, "connect" | "readLibrary" | "now"> {
   chats: DraftDeps["chats"] & Pick<ChatStore, "readMessagesBefore" | "readMessages" | "sceneState">;
   newId: () => string;
 }

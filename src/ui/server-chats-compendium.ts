@@ -26,7 +26,7 @@ type Body = Record<string, unknown>;
 /** The deps every Compendium pass runs with, or null when this library cannot patch books. */
 export function compendiumDepsFor(chats: ChatStore, state: StateStore, store: StudioStoreLike | undefined): CompendiumDeps | null {
   if (!store?.comparePatch) return null;
-  return { chats, state, store, connect, readCastMember: (kind, id) => store.read(kind, id), now: Date.now, newId: () => crypto.randomUUID() };
+  return { chats, state, store, connect, readLibrary: (kind, id) => store.read(kind, id), now: Date.now, newId: () => crypto.randomUUID() };
 }
 
 /** The same deps from the open library alone, for a route that has the store but not its state. */

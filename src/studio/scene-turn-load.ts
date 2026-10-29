@@ -9,7 +9,9 @@ import { varsOf } from "../core/scene-state/vars-bridge";
 import { foldGlobals } from "../core/scene-state/globals";
 import { takeOf } from "../core/summary/rows";
 import type { LinkedTracker } from "../core/tracker";
-import { linkedTrackers, type ReadTracker } from "./library-trackers";
+import { linkedTrackers } from "./library-trackers";
+import { readPiece } from "./library-tools";
+import type { TrackerBody } from "../entities/tracker/schema";
 import { trackerOverlay } from "../core/trackers";
 import { leaveCastsOnTarget } from "./scene-turn-ticks";
 import type { HistoryMessage } from "../core/assembly/types";
@@ -102,7 +104,7 @@ const toHistory = (m: Message): HistoryMessage => {
 };
 
 /** The chat and its frozen cast, read once and only when they agree (the snapshot is at the chat's version); null when the scene or its cast is gone. */
-export async function loadCast(chats: TurnReader, chatId: string, readCastMember?: (kind: "character" | "persona", id: string) => Promise<unknown | null>): Promise<{ chat: Chat; snapshot: CastSnapshot } | null> {
+export async function loadCast(chats: TurnReader, chatId: string, readLibrary?: (kind: string, id: string) => Promise<unknown | null>): Promise<{ chat: Chat; snapshot: CastSnapshot } | null> {
   let chat = await chats.getChat(chatId);
   let snapshot: CastSnapshot | null = null;
   for (let attempt = 0; chat && attempt < 2; attempt++) {
@@ -111,9 +113,9 @@ export async function loadCast(chats: TurnReader, chatId: string, readCastMember
       snapshot = stored.snapshot;
       break;
     }
-    if (!stored && chat.snapshotVersion === 0 && readCastMember) {
-      const character = await readCastMember("character", chat.cast.character.id);
-      const persona = chat.cast.persona ? await readCastMember("persona", chat.cast.persona.id) : null;
+    if (!stored && chat.snapshotVersion === 0 && readLibrary) {
+      const character = await readLibrary("character", chat.cast.character.id);
+      const persona = chat.cast.persona ? await readLibrary("persona", chat.cast.persona.id) : null;
       const current = await chats.getChat(chatId);
       if (!character || !current || current.snapshotVersion !== 0) {
         chat = current;
@@ -136,8 +138,8 @@ export async function loadCast(chats: TurnReader, chatId: string, readCastMember
  * a hidden or blank reply is refused: its text would go into the prompt as the prefill. A draft (scene-draft.ts)
  * answers nothing: the whole take is history and the current message is empty, as an opening's is.
  */
-export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind | "draft", readPreset: ReadPreset, readLorebook: ReadLorebook, readCastMember?: (kind: "character" | "persona", id: string) => Promise<unknown | null>, choiceDefaults?: (presetId: string) => Promise<Record<string, unknown> | undefined>, readTracker?: ReadTracker): Promise<LoadedTurn | null> {
-  const cast = await loadCast(chats, chatId, readCastMember);
+export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind | "draft", readPreset: ReadPreset, readLorebook: ReadLorebook, readLibrary?: (kind: string, id: string) => Promise<unknown | null>, choiceDefaults?: (presetId: string) => Promise<Record<string, unknown> | undefined>): Promise<LoadedTurn | null> {
+  const cast = await loadCast(chats, chatId, readLibrary);
   if (!cast) return null;
   const { chat, snapshot } = cast;
   let preset: PresetBody | undefined;
@@ -182,7 +184,7 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
   const storyboards = storyboardsOf(chat, lore?.books);
   // The trackers show the state as it stands: a continue extends a reply whose own writes are part of it (a swipe builds from before the reply it replaces, as the variables do).
   const trackerState = kind === "continue" ? (await chats.sceneState(branchId)) ?? sceneState : sceneState;
-  const linked = await linkedTrackers(readTracker, chat.prompting?.trackers, trackerState);
+  const linked = await linkedTrackers(readLibrary && ((id) => readPiece(readLibrary, "tracker", id) as Promise<TrackerBody | null>), chat.prompting?.trackers, trackerState);
   // A cast the person recorded on the reply being replaced or continued is for the reply after it (scene-turn-ticks.ts).
   const onTarget = target && chat.props ? (await chats.sceneDeltas(branchId, target.id, target.id, ["tracker.spellbook"]))?.messages[0] : undefined;
   const overlay = chat.props ? trackerOverlay(chat.trackers, trackerState) : undefined;

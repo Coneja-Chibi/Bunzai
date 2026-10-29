@@ -12,8 +12,6 @@ import { ProviderError, type Provider, type ProviderCompletion, type ProviderReq
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
 import type { StudioStoreLike } from "./contracts";
-import { trackerReaderOf } from "../ui/server-scene-readers";
-import type { ReadTracker } from "./library-trackers";
 import { narratorTools } from "./library-tools";
 import { runTurn, type Connected, type TurnEvent } from "./scene-turn";
 import { forecastRequest } from "./scene-forecast";
@@ -27,7 +25,7 @@ const say = (content: string): ProviderCompletion => ({ content, finish_reason: 
 const update = (id: string, ...updates: unknown[]): ProviderCompletion => ({ content: "", tool_calls: [{ id, type: "function", function: { name: "update_trackers", arguments: JSON.stringify({ updates }) } }], finish_reason: "tool_calls", raw: {} });
 const hp = (v: number) => update(`c${v}`, { tracker: "Health", set: { hp: v } });
 
-interface Opts { context?: number; reader?: ReadTracker; library?: Record<string, TrackerBody>; prompting?: ChatPromptingPatch; description?: string; pieces?: Record<string, unknown> }
+interface Opts { context?: number; read?: (kind: string, id: string) => Promise<unknown | null>; library?: Record<string, TrackerBody>; prompting?: ChatPromptingPatch; description?: string; pieces?: Record<string, unknown> }
 
 async function scene(script: (ProviderCompletion | Error)[], opts: Opts = {}) {
   let now = 1_000;
@@ -55,7 +53,7 @@ async function scene(script: (ProviderCompletion | Error)[], opts: Opts = {}) {
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: opts.context ?? 32_000, tools: true }),
     narratorTools: narratorTools(async (kind: string, id: string) => opts.pieces?.[`${kind}:${id}`] ?? null),
-    readTracker: opts.reader ?? (async (id: string) => library[id] ?? null),
+    readLibrary: opts.read ?? (async (kind: string, id: string) => (kind === "tracker" && library[id] ? { schemaVersion: "1", kind: "tracker", id, body: library[id] } : null)),
     readPreset: async () => null, readLorebook: async () => null, now: () => (now += 10), randomSeed: () => 7,
   };
   const turn = async (kind: "reply" | "swipe" | "continue" = "reply") => {
@@ -260,7 +258,7 @@ describe("the tool's name", () => {
   test("L6: a linked tracker that fails the strict decoder is left out: no block line, not in the tool, no state", async () => {
     const entity = (id: string, body: unknown) => ({ schemaVersion: "1", kind: "tracker", id, body });
     const store = { read: async (kind: string, id: string) => (kind === "tracker" ? ({ health: entity("health", health), bad: entity("bad", { ...party, layout: "grid" }), junk: entity("junk", { nope: 1 }) } as Record<string, unknown>)[id] ?? null : null) } as unknown as StudioStoreLike;
-    const s = await scene([update("c1", { tracker: "Health", set: { hp: 4 } }), say("ok")], { prompting: { trackers: ["bad", "health", "junk"] }, reader: trackerReaderOf(store) });
+    const s = await scene([update("c1", { tracker: "Health", set: { hp: 4 } }), say("ok")], { prompting: { trackers: ["bad", "health", "junk"] }, read: store.read });
     await s.turn();
     expect(s.block(s.sent[0]!)).toBe("### Trackers\n\nHealth: hp=100, mood=calm");
     const tool = s.sent[0]!.options.tools![0]!.function;

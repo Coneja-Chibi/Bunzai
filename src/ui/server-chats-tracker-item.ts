@@ -36,6 +36,6 @@ export function parseTrackerItem(b: Body): TrackerItemInput {
 export async function handleTrackerItemRoute(req: Request, p: string, chats: ChatStore, b: Body | null, studio?: StudioStoreLike): Promise<Response | null> {
   if (p !== "/api/chats/tracker-item" || req.method !== "POST" || !b) return null;
   const input = parseTrackerItem(b);
-  const deps: TrackerItemDeps = { chats, connect, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined };
+  const deps: TrackerItemDeps = { chats, connect, readLibrary: studio ? (kind, id) => studio.read(kind, id) : undefined };
   return providerJson(() => proposeTrackerItem(deps, input, req.signal));
 }

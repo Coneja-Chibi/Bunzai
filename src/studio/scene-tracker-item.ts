@@ -16,7 +16,7 @@ import { StudioNotFoundError, StudioValidationError } from "./errors";
 import { names, type DraftDeps } from "./scene-draft";
 import { NoConnectionError } from "./scene-turn";
 
-export interface TrackerItemDeps extends Pick<DraftDeps, "connect" | "readCastMember"> { chats: DraftDeps["chats"] & Pick<ChatStore, "readMessagesBefore"> }
+export interface TrackerItemDeps extends Pick<DraftDeps, "connect" | "readLibrary"> { chats: DraftDeps["chats"] & Pick<ChatStore, "readMessagesBefore"> }
 
 export interface TrackerItemInput {
   chatId: string;

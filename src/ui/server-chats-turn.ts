@@ -172,7 +172,7 @@ async function stream(chats: ChatStore, state: StateStore, readPreset: ReadPrese
     controllerSend(e);
   });
   const turn = runTurn(
-    { chats, state, connect, narratorTools: narratorTools(studio ? (kind, id) => studio.read(kind, id) : undefined), finalCutBanks: () => finalCutBanksOf(state), readPreset, readLorebook, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined, ...sceneReaders(studio, settings), now: Date.now, randomSeed: () => Math.floor(Math.random() * 2 ** 31) },
+    { chats, state, connect, narratorTools: narratorTools(studio ? (kind, id) => studio.read(kind, id) : undefined), finalCutBanks: () => finalCutBanksOf(state), readPreset, readLorebook, readLibrary: studio ? (kind, id) => studio.read(kind, id) : undefined, ...sceneReaders(studio, settings), now: Date.now, randomSeed: () => Math.floor(Math.random() * 2 ** 31) },
     { chatId: str(b["chatId"]), kind, expectedVersion, ...(fallback ? { fallback } : {}), ...(typeof b["guidance"] === "string" ? { guidance: b["guidance"] } : {}), ...(b["inspect"] === true ? { inspect: true } : {}) },
     (e) => {
       if (e.type === "start") { opened(); turnId = e.turnId; }
@@ -180,7 +180,7 @@ async function stream(chats: ChatStore, state: StateStore, readPreset: ReadPrese
       // Filing is scheduled after the event is out and never holds the stream (04b D5); it can only add a receipt.
       if (compendium) onTurnEvent(compendium, str(b["chatId"]), kind, e);
       // The chat summary runs the same way, once the reply is in: when automatic summaries are on and one is due (scene-summary.ts).
-      if (e.type === "done") summarizeAfter({ chats, connect, readCastMember: studio ? (k, id) => studio.read(k, id) : undefined }, str(b["chatId"]), kind, e.message);
+      if (e.type === "done") summarizeAfter({ chats, connect, readLibrary: studio ? (k, id) => studio.read(k, id) : undefined }, str(b["chatId"]), kind, e.message);
     },
   );
   // Refused before a checkpoint opened: answer it as an error, not an empty stream.

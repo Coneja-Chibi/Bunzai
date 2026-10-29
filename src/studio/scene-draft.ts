@@ -39,7 +39,7 @@ import { promptBudget, promptDeadline } from "./scene-turn-build";
 /** A draft's reply is at most this long (RoleCall's impersonate cap), whatever the preset allows a reply. */
 export const DRAFT_MAX_TOKENS = 2000;
 
-export interface DraftDeps extends Pick<TurnDeps, "connect" | "readPreset" | "readLorebook" | "readCastMember" | "choiceDefaults" | "readTracker" | "promptBudgetMs" | "clock" | "now" | "randomSeed"> {
+export interface DraftDeps extends Pick<TurnDeps, "connect" | "readPreset" | "readLorebook" | "readLibrary" | "choiceDefaults" | "promptBudgetMs" | "clock" | "now" | "randomSeed"> {
   chats: TurnReader;
   state: Pick<StateStore, "read">;
 }
@@ -65,7 +65,7 @@ const overflow = () => new StudioConflictError("The card and the history alone a
 
 /** Expand as character: the reply's own assembly, ending on the impersonation message. */
 async function impersonate(deps: DraftDeps, input: Extract<DraftInput, { kind: "impersonate" }>, connected: Connected, model: string): Promise<Request> {
-  const loaded = await loadTurn(deps.chats, input.chatId, "draft", deps.readPreset, deps.readLorebook, deps.readCastMember, deps.choiceDefaults, deps.readTracker);
+  const loaded = await loadTurn(deps.chats, input.chatId, "draft", deps.readPreset, deps.readLorebook, deps.readLibrary, deps.choiceDefaults);
   if (!loaded) throw new StudioNotFoundError("that scene does not exist");
   const chat = (await deps.chats.getChat(input.chatId))!;
   const started = deps.now();
@@ -100,8 +100,8 @@ async function impersonate(deps: DraftDeps, input: Extract<DraftInput, { kind: "
 }
 
 /** The names the editors address: the character's, and the persona's (the player's). */
-export async function names(deps: Pick<DraftDeps, "chats" | "readCastMember">, chatId: string): Promise<{ character: string; player: string }> {
-  const cast = await loadCast(deps.chats, chatId, deps.readCastMember);
+export async function names(deps: Pick<DraftDeps, "chats" | "readLibrary">, chatId: string): Promise<{ character: string; player: string }> {
+  const cast = await loadCast(deps.chats, chatId, deps.readLibrary);
   if (!cast) throw new StudioNotFoundError("that scene does not exist");
   const character = playedBody(bodyOf(cast.snapshot.character) as unknown as CharacterBody, cast.chat.variantId);
   const persona = cast.snapshot.persona ? (bodyOf(cast.snapshot.persona) as unknown as PersonaBody) : undefined;
