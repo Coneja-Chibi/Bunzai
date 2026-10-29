@@ -452,12 +452,13 @@ async function shapeFiles(): Promise<string[]> {
 // 2026-10-28 (phase 4 review fixes): scene-state-rules.ts (pinned) re-exports GLOBAL_SLOT for the backends; a stored global row records the operation as the macro or lore Side Effect made it. No stored key changes. The pin was recomputed.
 // 2026-10-28, permissions for scene state (phase 5): core/scene-state/types.ts (pinned) gains SlotWriter (turn, background, person, import; no extension writer until an extension runtime exists) and SlotDef.writers, and scene-state-rules.ts (pinned) refuses a delta whose slot does not name the writer of the door it came through (a turn's checkpoint, recordDeltas, recordMessageDeltas, setBranchBase). No stored key or shape changes. The pin was recomputed.
 // 2026-10-28, one ceiling on opening a piece: the cold-read budget is SANITY_PIECE_BYTES (entities/_shared/sanity.ts) on every read path, and the separate caps on parts (1,000 in process, 20,000 in the worker), references and JSON values are gone (each is charged against the budget). DocumentBackend.livePartsBounded takes only the charge. No stored key or shape changes. The pin was recomputed.
-const PINNED_SHAPE_HASH = "f24729022f9a74cf006de4b48f9a1c926dead669bc0df22cc7110cc7ae860267";
+// 2026-10-29, the Skill kind: a new kind folder, so a new decoder (src/entities/skill/runtime-schema.ts, the 16th runtime-schema) and a new member of the generated kind-schemas union; the lorebook decoder only exports its trigger and selective-logic schemas for the skill decoder to share (no lorebook shape changes); a new scene-state slot `skills` (a fields slot, writers turn and person) stored like every slot. ADDITIVE: an older build has no skill folder and ignores the slot. No migration. The pin was recomputed.
+const PINNED_SHAPE_HASH = "ddd690c10475290d310e65407927d7a6f5b480f2d90914e84a96995b22828e2f";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");
   const files = await shapeFiles();
-  expect(files.filter((path) => path.includes("/runtime-schema.ts"))).toHaveLength(15);
+  expect(files.filter((path) => path.includes("/runtime-schema.ts"))).toHaveLength(16);
   for (const f of files) h.update((await Bun.file(f).text()).replace(/\r\n/g, "\n"));
   expect(h.digest("hex")).toBe(PINNED_SHAPE_HASH);
 });

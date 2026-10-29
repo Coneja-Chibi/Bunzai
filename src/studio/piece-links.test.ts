@@ -50,6 +50,6 @@ describe("which kinds a scene links", () => {
   test("is the kind hub's say: a kind with no prompting list is not asked", async () => {
     const { chats } = await scenes();
     expect(await scenesLinking(chats, "preset", "x")).toBeNull();
-    expect(linkableKinds().sort()).toEqual(["tool", "tracker"]);
+    expect(linkableKinds().sort()).toEqual(["skill", "tool", "tracker"]);
   });
 });
