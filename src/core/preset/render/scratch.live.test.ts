@@ -40,9 +40,9 @@ for (const engine of ["sillytavern", "marinara"] as RenderEngineId[]) {
     }, 90_000);
 
     test("a macro the engine does not have survives, and is reported unresolved", async () => {
-      const out = ok(await run("before {{bunraku_no_such_macro}} after"));
-      expect(out.prompt).toContain("{{bunraku_no_such_macro}}");
-      expect(out.unresolved.map((u) => u.token)).toContain("{{bunraku_no_such_macro}}");
+      const out = ok(await run("before {{bunzai_no_such_macro}} after"));
+      expect(out.prompt).toContain("{{bunzai_no_such_macro}}");
+      expect(out.unresolved.map((u) => u.token)).toContain("{{bunzai_no_such_macro}}");
     }, 90_000);
 
     /**

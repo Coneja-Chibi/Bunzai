@@ -1,5 +1,5 @@
 /**
- * The Prompting wing's Guides tab: RoleCall's GuidesPanel on Bunraku. Guided responses grouped by
+ * The Prompting wing's Guides tab: RoleCall's GuidesPanel on Bunzai. Guided responses grouped by
  * category with counts, a New Guide button and a search; each row has a switch (use this guide in THIS
  * scene), its name and its mode pill; picking a row opens its editor below. The library is the person's,
  * the switches are the scene's own (ChatStore rule 37).

@@ -167,7 +167,7 @@ const indexJson =
 
 function pageIndexMd(): string {
   const lines: string[] = [
-    "# Bunraku page index",
+    "# Bunzai page index",
     "",
     "Generated catalogue of documentation collections, pages, and nested sections.",
     "Semantic summaries are navigation aids; read the source page before relying on a detail.",
@@ -230,13 +230,13 @@ function llmsTxt(): string {
 
   const blurb =
     records.find((r) => r.path === "docs/README.md")?.summary ||
-    "Bunraku is the forge for AI-roleplay content: convert, edit, and ship character cards, lorebooks, personas, and regex sets across formats.";
+    "Bunzai is the forge for AI-roleplay content: convert, edit, and ship character cards, lorebooks, personas, and regex sets across formats.";
 
-  const lines: string[] = ["# Bunraku documentation", "", `> ${blurb}`, ""];
+  const lines: string[] = ["# Bunzai documentation", "", `> ${blurb}`, ""];
   for (const k of keys) {
     lines.push(`## ${prettify(k)}`, "");
     for (const r of groups.get(k)!.sort((a, b) => a.path.localeCompare(b.path))) {
-      const pageBlurb = r.summary || r.semanticSummary;
+      const pageBlurb = (r.summary || r.semanticSummary)?.trim();
       lines.push(`- [${r.title}](${r.path})${pageBlurb ? ": " + pageBlurb : ""}`);
     }
     lines.push("");

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "guide/editing",
   "sourcePath": "docs/guide/editing.md",
-  "sourceHash": "sha256:94a05426f441c85c1afe606f5f913c49efe71d67b27b8748e7b7b692af776597",
-  "summary": "User guide for editing pieces on the Workbench. A piece opens as its own tab filled from import or a blank template and stays a private draft until save. Characters get the deepest editor with Grid or Steps fill modes, platform lens preview of what a target keeps, and a scripts workshop; pack lorebook regex persona and preset use simpler editors with the same save mechanics. Short version: open from Library via Send to Workbench; choose Grid direct fields or Steps quiz style with Bento all-at-once or Playbill paged acts; change fields knowing platform tabs only change view not saved data; Save or ctrl+s with dirty-dot warning; close discards without confirm so save first. Editor panels cover Bunraku full card vs platform tabs with Lens count, Hide and Dim currently both hide fields, completion chips, Sealed Cargo read-only original, Variables macros, Fields/Workshop for scripts, and simpler pack lorebook binder regex persona preset forms. Save requires a name except packs fallback Untitled pack; whole draft write; close does not confirm. Tips cover dirty dot, platform tabs view-only, Sealed Cargo for lossless round-trip, toggles moving to Settings after tour, and Workshop only when scripts exist.",
+  "sourceHash": "sha256:250950fc147875db32859e9c375e737de0a74e14d2de0c436e5e19b7e44562f5",
+  "summary": "User guide for editing pieces on the Workbench. A piece opens as its own tab filled from import or a blank template and stays a private draft until save. Characters get the deepest editor with Grid or Steps fill modes, platform lens preview of what a target keeps, and a scripts workshop; pack lorebook regex persona and preset use simpler editors with the same save mechanics. Short version: open from Library via Send to Workbench; choose Grid direct fields or Steps quiz style with Bento all-at-once or Playbill paged acts; change fields knowing platform tabs only change view not saved data; Save or ctrl+s with dirty-dot warning; close discards without confirm so save first. Editor panels cover Bunzai full card vs platform tabs with Lens count, Hide and Dim currently both hide fields, completion chips, Sealed Cargo read-only original, Variables macros, Fields/Workshop for scripts, and simpler pack lorebook binder regex persona preset forms. Save requires a name except packs fallback Untitled pack; whole draft write; close does not confirm. Tips cover dirty dot, platform tabs view-only, Sealed Cargo for lossless round-trip, toggles moving to Settings after tour, and Workshop only when scripts exist.",
   "topics": [
     "Workbench edit draft",
     "Grid Steps Bento Playbill",
@@ -35,8 +35,8 @@
       "slug": "the-editor-panels",
       "title": "The editor panels",
       "level": 2,
-      "sourceHash": "sha256:12174c404e70569adf69410de76f40c448092dee7469271b959573ccb54090db",
-      "summary": "Character editor has platform tabs above fields; Bunraku is full card; selecting platforms hides fields that platform cannot carry with a Lens count of surviving fields. Hide and Dim currently both drop fields; dim half is not built yet. Header has name scale Grid Steps Bento Playbill Save Export; toggles move to Settings under Workbench after tour once. Six completion chips track Portrait Name Core Prompts Greeting Tags Lens Check. Body cards include portrait with sprite links, Sealed Cargo holding original platform file whole read-only for lossless round-trip, Variables counting macros, and Fields/Workshop switch for scripting that does not retire to Settings. Other kinds: pack is name brief sprite grid; lorebook binder one entry at a time with TOC keys timing placement; regex personas presets closer to single form; all save the same way.",
+      "sourceHash": "sha256:8ab5060456372f6148ea94cb68ecc55f78199174087fcbdb504a2bf943c1d08f",
+      "summary": "Character editor has platform tabs above fields; Bunzai is full card; selecting platforms hides fields that platform cannot carry with a Lens count of surviving fields. Hide and Dim currently both drop fields; dim half is not built yet. Header has name scale Grid Steps Bento Playbill Save Export; toggles move to Settings under Workbench after tour once. Six completion chips track Portrait Name Core Prompts Greeting Tags Lens Check. Body cards include portrait with sprite links, Sealed Cargo holding original platform file whole read-only for lossless round-trip, Variables counting macros, and Fields/Workshop switch for scripting that does not retire to Settings. Other kinds: pack is name brief sprite grid; lorebook binder one entry at a time with TOC keys timing placement; regex personas presets closer to single form; all save the same way.",
       "topics": [
         "platform tabs Lens count",
         "Hide Dim not built dim",
@@ -67,11 +67,11 @@
       "slug": "tips",
       "title": "Tips",
       "level": 2,
-      "sourceHash": "sha256:2a0735490d39b82432fc9d878a1e3e75acdf32d8f6c759e2732fa4f1d2de86e8",
-      "summary": "Watch the dirty tab dot as the unsaved work signal. Platform tabs change what you see not what you save; click Bunraku to clear selection and see the whole card. Sealed Cargo is read-only on purpose for same-app lossless round-trip. After first-run tour, layout and mode toggles move to Settings under Workbench; right-click Replay tutorials to restore header toggles. A piece with no scripts never shows the Workshop toggle.",
+      "sourceHash": "sha256:f6a38e364bcb2238923c34c4fafc93da44fd191c6c0a80722040b6ae996069fe",
+      "summary": "Watch the dirty tab dot as the unsaved work signal. Platform tabs change what you see not what you save; click Bunzai to clear selection and see the whole card. Sealed Cargo is read-only on purpose for same-app lossless round-trip. After first-run tour, layout and mode toggles move to Settings under Workbench; right-click Replay tutorials to restore header toggles. A piece with no scripts never shows the Workshop toggle.",
       "topics": [
         "dirty dot watch",
-        "Bunraku tab full card",
+        "Bunzai tab full card",
         "Sealed Cargo purpose",
         "Replay tutorials",
         "Workshop only with scripts"

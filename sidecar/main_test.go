@@ -83,7 +83,7 @@ func TestProxyStampsIdentityFromWhoIsNotFromClient(t *testing.T) {
 	cfg := upstreamCapturing(t, func(r *http.Request) {
 		gotUser = r.Header.Get("X-Tailscale-User")
 		gotNode = r.Header.Get("X-Tailscale-Node")
-		gotSecret = r.Header.Get("X-Bunraku-Sidecar-Secret")
+		gotSecret = r.Header.Get("X-Bunzai-Sidecar-Secret")
 	})
 	cfg.sharedSecret = "s3cr3t"
 
@@ -111,7 +111,7 @@ func TestProxyStampsIdentityFromWhoIsNotFromClient(t *testing.T) {
 func TestProxyOmitsSecretWhenUnset(t *testing.T) {
 	present := false
 	cfg := upstreamCapturing(t, func(r *http.Request) {
-		_, present = r.Header["X-Bunraku-Sidecar-Secret"]
+		_, present = r.Header["X-Bunzai-Sidecar-Secret"]
 	})
 	who := &apitype.WhoIsResponse{
 		UserProfile: &tailcfg.UserProfile{ID: 1, LoginName: "o"},

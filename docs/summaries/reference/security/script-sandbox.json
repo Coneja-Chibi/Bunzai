@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/security/script-sandbox",
   "sourcePath": "docs/reference/security/script-sandbox.md",
-  "sourceHash": "sha256:5c5efecf5feda658202426455a41bf3e2049745ed42cf4ea94ad862c673b26d8",
-  "summary": "How installed Bunraku runs untrusted card scripts only when the operator deliberately stages them on the Workshop Test Bench, never on import. Static GitHub Pages keeps script text editable but refuses execution before worker creation and omits worker and wasm artifacts because it cannot provide ADR-009's separate loopback origin. Installed execution layers a terminable worker, distinct loopback origin, value-only versioned protocol, and downward-only resource budgets. Worker termination and in-VM functionTimeout form the kill switch; stale runId responses are dropped. The sandbox origin serves only workers and wasm, never api or the session token; missing metadata is a degraded same-origin fallback outside Pages. The value-only wire uses key allowlists and forbidden credential/prototype keys. Lua opens SAFE_LIBS only, strips host-reaching globals, and exposes no DOM, fetch, filesystem, or network. lowLevelAccess is a warning, never a trigger. Packaged WebView2 origin measurements remain incomplete, so full isolation is not claimed.",
+  "sourceHash": "sha256:5da7fd10c1eedf959290a0d1ec5e69e8d23a5e1f63e160472efeee4eb07b8ee0",
+  "summary": "How installed Bunzai runs untrusted card scripts only when the operator deliberately stages them on the Workshop Test Bench, never on import. Static GitHub Pages keeps script text editable but refuses execution before worker creation and omits worker and wasm artifacts because it cannot provide ADR-009's separate loopback origin. Installed execution layers a terminable worker, distinct loopback origin, value-only versioned protocol, and downward-only resource budgets. Worker termination and in-VM functionTimeout form the kill switch; stale runId responses are dropped. The sandbox origin serves only workers and wasm, never api or the session token; missing metadata is a degraded same-origin fallback outside Pages. The value-only wire uses key allowlists and forbidden credential/prototype keys. Lua opens SAFE_LIBS only, strips host-reaching globals, and exposes no DOM, fetch, filesystem, or network. lowLevelAccess is a warning, never a trigger. Packaged WebView2 origin measurements remain incomplete, so full isolation is not claimed.",
   "topics": [
     "Lua Test Bench only",
     "never run on import",
@@ -22,7 +22,7 @@
       "title": "Scripts are data until you stage them",
       "level": 2,
       "sourceHash": "sha256:c9927c72b01add9f1490d14c8a9b7d3d0648e4222704582a9fed6847fb55e2c0",
-      "summary": "Card behavior rows are classified, never executed. The classifier only splits a condition or effect into known or advanced data, and import receipts state that scripts are saved as text rather than auto-run. Installed Bunraku can run them only after deliberate staging on the Workshop Test Bench. Static GitHub Pages preserves editing but refuses execution because it has no separate sandbox origin.",
+      "summary": "Card behavior rows are classified, never executed. The classifier only splits a condition or effect into known or advanced data, and import receipts state that scripts are saved as text rather than auto-run. Installed Bunzai can run them only after deliberate staging on the Workshop Test Bench. Static GitHub Pages preserves editing but refuses execution because it has no separate sandbox origin.",
       "topics": [
         "rows are data",
         "never execute on import",
@@ -52,7 +52,7 @@
       "title": "The distinct sandbox origin (ADR-009)",
       "level": 2,
       "sourceHash": "sha256:f9e8719b4b732cf312706829844f9eae440d84ff3f47f5f869d79e0e4f184c90",
-      "summary": "Installed Bunraku serves worker bundles and wasm from a second ephemeral loopback listener, distinct from the UI and api origin. That server allowlists only the Lua worker, regex worker, and glue wasm; it excludes api routes, studio paths, token-bearing HTML, and source maps. The UI receives the origin through vaude-sandbox-origin while the API token stays in vaude-session and trusted apiFetch. readSandboxOrigin accepts only http loopback values. Missing metadata retains a degraded same-origin fallback outside Pages. Static Pages is explicitly different: its runtime marker refuses before worker resolution, and its build omits worker and wasm artifacts. The distinct origin reduces future blast radius but packaged WebView2 measurements remain incomplete.",
+      "summary": "Installed Bunzai serves worker bundles and wasm from a second ephemeral loopback listener, distinct from the UI and api origin. That server allowlists only the Lua worker, regex worker, and glue wasm; it excludes api routes, studio paths, token-bearing HTML, and source maps. The UI receives the origin through vaude-sandbox-origin while the API token stays in vaude-session and trusted apiFetch. readSandboxOrigin accepts only http loopback values. Missing metadata retains a degraded same-origin fallback outside Pages. Static Pages is explicitly different: its runtime marker refuses before worker resolution, and its build omits worker and wasm artifacts. The distinct origin reduces future blast radius but packaged WebView2 measurements remain incomplete.",
       "topics": [
         "ephemeral sandbox origin",
         "only worker wasm routes",
@@ -115,8 +115,8 @@
       "slug": "the-privileged-flag-a-warning-not-a-trigger",
       "title": "The privileged flag (a warning, not a trigger)",
       "level": 2,
-      "sourceHash": "sha256:62d15cadf774416b21d9e8fe5234c40e3d4d6f7227779e30af42e88e15d58c74",
-      "summary": "A Risu card can request low-level script API lowLevelAccess. Bunraku surfaces that as a boolean and does nothing else with it. The canonical field is a warning marker for the UI and a sandbox gating input, never an execution trigger. The reader states scripts must never auto-run; the import receipt says deep access is not granted. Surfaced never honored: the flag grants no capability and starts no execution.",
+      "sourceHash": "sha256:b82b117f62aa90f5325c2d0d49a63ab551e21da46163b660248fdf5bf2c1e00f",
+      "summary": "A Risu card can request low-level script API lowLevelAccess. Bunzai surfaces that as a boolean and does nothing else with it. The canonical field is a warning marker for the UI and a sandbox gating input, never an execution trigger. The reader states scripts must never auto-run; the import receipt says deep access is not granted. Surfaced never honored: the flag grants no capability and starts no execution.",
       "topics": [
         "lowLevelAccess warning only",
         "never execution trigger",

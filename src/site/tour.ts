@@ -1,5 +1,5 @@
 /**
- * The feature tour: the cast (one entry per part of Bunraku) and the page each one gets. Every line
+ * The feature tour: the cast (one entry per part of Bunzai) and the page each one gets. Every line
  * here describes shipped behavior as docs/reference/ui.md and docs/guide/ record it; when the app
  * changes, this copy changes with it. Screenshots are the real ones in docs/media.
  */
@@ -59,7 +59,7 @@ export const CAST: readonly Member[] = [
     intro: "The Library is the browse room: decks for each kind of piece, with live counts, in rows or a grid. It is also the door your files come in through.",
     points: [
       ["Drop a file in", "Drag a card, lorebook, persona, or regex set onto the Library, or click Import."],
-      ["A receipt before anything is saved", "Bunraku reads every file first and shows what it found. Uncheck what you do not want; only what is still checked gets saved."],
+      ["A receipt before anything is saved", "Bunzai reads every file first and shows what it found. Uncheck what you do not want; only what is still checked gets saved."],
       ["Plain reasons", "A file it cannot read says why, in plain words, instead of failing quietly."],
       ["Send anywhere", "Stage one piece or many and send them to the Workbench or the Press together."],
       ["Kept private", "Your library lives on your computer, encrypted, in your Documents folder."],
@@ -85,7 +85,7 @@ export const CAST: readonly Member[] = [
     id: "agent", browser: false, name: "The Agent", role: "help", color: "sky",
     card: "A helper that can see the screen you are on and do the fiddly parts with you.",
     title: "A helper that sees what you see.",
-    intro: "The Agent is a conversation with your own AI model that knows which screen you are on and can use Bunraku's real tools.",
+    intro: "The Agent is a conversation with your own AI model that knows which screen you are on and can use Bunzai's real tools.",
     points: [
       ["It sees the screen", "Each room tells the Agent what it is for and what is on it right now, so you can just say \"fix this one\"."],
       ["Real tools, not advice", "It can read and change your pieces with the same tools the app uses."],
@@ -104,7 +104,7 @@ export const CAST: readonly Member[] = [
     points: [
       ["Same studio", "Kit works on the same library as the app, with the same key vault and the same approvals."],
       ["Where it runs", "Windows x64, Linux x64, Linux arm64, and Apple Silicon Macs."],
-      ["Optional", "You never need Kit to use Bunraku. It is there if you like working in a terminal."],
+      ["Optional", "You never need Kit to use Bunzai. It is there if you like working in a terminal."],
     ],
     shots: [],
     guides: [],
@@ -153,6 +153,6 @@ export function tourBody(m: Member): string {
 <h1>${m.title}</h1><p class="lede">${m.intro}</p>
 <div class="split"><div><ul class="points">${m.points.map(point).join("")}</ul>${m.note ? `<p class="note">${m.note}</p>` : ""}</div><div>${visuals}</div></div>
 ${guides}
-<nav class="pager" aria-label="Tour">${prev ? `<a href="${prev.id}.html">&larr; ${prev.name}</a>` : "<span></span>"}${next ? `<a href="${next.id}.html">${next.name} &rarr;</a>` : `<a href="../download.html">Get Bunraku &rarr;</a>`}</nav>
+<nav class="pager" aria-label="Tour">${prev ? `<a href="${prev.id}.html">&larr; ${prev.name}</a>` : "<span></span>"}${next ? `<a href="${next.id}.html">${next.name} &rarr;</a>` : `<a href="../download.html">Get Bunzai &rarr;</a>`}</nav>
 </div>`;
 }

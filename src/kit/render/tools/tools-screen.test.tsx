@@ -23,7 +23,7 @@ for (const size of [{ width: 110, height: 30 }, { width: 60, height: 20 }]) {
       <ToolsScreen
         pieces={pieces}
         capabilities={capabilities}
-        studioName="Bunraku Studio"
+        studioName="Bunzai Studio"
         onClose={() => {}}
       />,
       size,

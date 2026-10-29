@@ -55,10 +55,10 @@ Generated: ${generatedDate}.
 ## How to use
 
 \`\`\`bash
-bun run bunraku formats
-bun run bunraku inspect path/to/card.png
-bun run bunraku convert in.png out.json --to sillytavern
-bun run bunraku validate path/to/card.json
+bun run bunzai formats
+bun run bunzai inspect path/to/card.png
+bun run bunzai convert in.png out.json --to sillytavern
+bun run bunzai validate path/to/card.json
 \`\`\`
 
 Default portable character shape for thin hosts (C.AI Tools dumps, Crushon import, etc.):
@@ -68,7 +68,7 @@ ${sections}
 
 ## Notes
 
-- Detection is content-sniff, not only extension. Prefer \`bunraku label\` when unsure.
+- Detection is content-sniff, not only extension. Prefer \`bunzai label\` when unsure.
 - Same-format round-trips aim for lossless where fixtures prove it (see adapter tests + samples/).
 - Cross-format convert keeps what the target can express; use export honesty in the studio UI for drop notes.
 - Dropped/skipped host-native bags (Character.AI, Crushon): use Default CCv3 via \`sillytavern\`.

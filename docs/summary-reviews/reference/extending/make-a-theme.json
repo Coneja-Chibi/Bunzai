@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/extending/make-a-theme",
   "sourcePath": "docs/reference/extending/make-a-theme.md",
-  "sourceHash": "sha256:8498b03b98dc495f45b2bbfa1b10751f61257568fbf8fc2dff10568f0ff542aa",
-  "semanticSummaryHash": "sha256:5cdc3d9bafe2c0001900d9c8c0003b2f1866bce48886d58de8a4e00afec78ff1",
+  "sourceHash": "sha256:66d28b51d1f5c7fa03d82cc0ef65daa5bb7e950de04239f9bf35aebb59511fc4",
+  "semanticSummaryHash": "sha256:e15c7c8829df2bc9867687688e20e682bfc4f6d661efb7f5e4ef7f1e88b9e242",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Surface count 30 matches SURFACES, shell.nav/shell.overlay variants match the variant CSS, shell.overlay.widget and data-overlay-app exist, extensions tests pass (141).",
-  "reviewedAt": "2026-10-25T02:20:05.224Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:45.965Z"
 }

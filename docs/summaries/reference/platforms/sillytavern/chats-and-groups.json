@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/sillytavern/chats-and-groups",
   "sourcePath": "docs/reference/platforms/sillytavern/chats-and-groups.md",
-  "sourceHash": "sha256:ba4c94ebfa60fd7d7e37e0be3956eb7448100b5da31630702eaf2199b8d5e7fb",
-  "summary": "Treats SillyTavern chats and group chats as re-importable creative artifacts documented at pin 70e5e4d3c239253fca4692fe82e3936cb9c4b1b1 via chatfilemanagement and groupchats sources. Solo versus group chats contrasts one-card solo chats with Create New Chat Group multi-member shared history. Chat import and export covers Import sources from Character.AI and other tools, Export as JSONL as re-importable metadata-bearing files excluding images, Export as TXT as human-readable non-reimportable dumps, and Checkpoints and rename including Create Branch, Create Checkpoint, parent links, and rename breakage. Group reply order strategies enumerates Manual, Natural Order with talkativeness and self-response rules, List Order, and Pooled Order. Group generation handling always shares history and selects Swap character cards or Join character cards with mute force auto, Allow Self Responses, Group Chat Scenario Override, Peek Character Definitions, and membership edits. Bunraku boundary states Bunraku does not host SillyTavern chat runtime, documents interchange for Kit understanding, keeps chat JSONL conversion out of scope without a future adapter, and leaves talkativeness on the character card.",
+  "sourceHash": "sha256:38b86aaa378d9e874f2b455220072c90cebfcc6369ef525b808b944fcd655ee0",
+  "summary": "Treats SillyTavern chats and group chats as re-importable creative artifacts documented at pin 70e5e4d3c239253fca4692fe82e3936cb9c4b1b1 via chatfilemanagement and groupchats sources. Solo versus group chats contrasts one-card solo chats with Create New Chat Group multi-member shared history. Chat import and export covers Import sources from Character.AI and other tools, Export as JSONL as re-importable metadata-bearing files excluding images, Export as TXT as human-readable non-reimportable dumps, and Checkpoints and rename including Create Branch, Create Checkpoint, parent links, and rename breakage. Group reply order strategies enumerates Manual, Natural Order with talkativeness and self-response rules, List Order, and Pooled Order. Group generation handling always shares history and selects Swap character cards or Join character cards with mute force auto, Allow Self Responses, Group Chat Scenario Override, Peek Character Definitions, and membership edits. Bunzai boundary states Bunzai does not host SillyTavern chat runtime, documents interchange for Kit understanding, keeps chat JSONL conversion out of scope without a future adapter, and leaves talkativeness on the character card.",
   "topics": [
     "solo vs group chats",
     "JSONL vs TXT export",
@@ -11,7 +11,7 @@
     "group reply strategies",
     "swap vs join cards",
     "mute force auto modes",
-    "Bunraku chat boundary"
+    "Bunzai chat boundary"
   ],
   "sections": [
     {
@@ -135,11 +135,11 @@
       "children": []
     },
     {
-      "slug": "bunraku-boundary",
-      "title": "Bunraku boundary",
+      "slug": "bunzai-boundary",
+      "title": "Bunzai boundary",
       "level": 2,
-      "sourceHash": "sha256:a5006ccbcdbb51aa58a0e0c47557ad4ffbccd54ee0c86346ec82f250c8064c18",
-      "summary": "Bunraku boundary states Bunraku does not host SillyTavern chat runtime. The page documents interchange and group configuration so Kit understands what stored artifacts mean. Conversion of chat JSONL is out of scope unless a future adapter exists. Character talkativeness remains a card field documented on Characters rather than a free-floating group-only value. Do not claim Bunraku can run group generation, auto-mode chains, or re-import ST chats without an explicit adapter contract.",
+      "sourceHash": "sha256:52d1a2f4fe52bbb62ceb22b89fc6e26b031280089d7af6d9eb81ee16a10b08aa",
+      "summary": "Bunzai boundary states Bunzai does not host SillyTavern chat runtime. The page documents interchange and group configuration so Kit understands what stored artifacts mean. Conversion of chat JSONL is out of scope unless a future adapter exists. Character talkativeness remains a card field documented on Characters rather than a free-floating group-only value. Do not claim Bunzai can run group generation, auto-mode chains, or re-import ST chats without an explicit adapter contract.",
       "topics": [
         "no ST chat runtime",
         "document for Kit understanding",

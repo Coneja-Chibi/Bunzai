@@ -118,6 +118,6 @@ local custom endpoints. Per-chat customs override same keys.
 
 Precedence: baseline → connection defaults → chat Advanced Parameters / custom keys (chat wins on conflict).
 
-## Bunraku
+## Bunzai
 
 Macros and generation controls are not executed at import.

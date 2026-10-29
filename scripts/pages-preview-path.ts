@@ -9,7 +9,7 @@ export function resolvePagesPreviewPath(root: string, pathname: string): string 
     return null;
   }
   if (decoded.includes("\\") || decoded.includes("\0")) return null;
-  let requested = decoded.replace(/^\/Bunraku\/?/, "");
+  let requested = decoded.replace(/^\/Bunzai\/?/, "");
   if (!requested || requested.endsWith("/")) requested += "index.html";
   const parts = requested.split("/");
   if (parts.some((part) => part === "" || part === "..")) return null;

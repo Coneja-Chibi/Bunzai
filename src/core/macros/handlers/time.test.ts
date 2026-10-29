@@ -1,5 +1,5 @@
 /**
- * Time macro tests (Bunraku addition: RoleCall has no automated coverage for handlers/time.ts, and
+ * Time macro tests (Bunzai addition: RoleCall has no automated coverage for handlers/time.ts, and
  * the rc-parity corpus has no time entries - the corpus context never sets `now`). These are the
  * proof this port's conversion rules actually hold: no host-zone accessor survived the port from
  * `new Date()`/`getMonth()`/`getDate()`/`getFullYear()` to `context.now` + `Intl`. Every test below

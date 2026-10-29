@@ -20,7 +20,7 @@ import { clearAllStagings, handleSaveStaged, stageArchiveEntities } from "./serv
 const dirs: string[] = [];
 const SESSION = "test-staging-session";
 async function freshStore(): Promise<StudioStore> {
-  const dir = await mkdtemp(join(tmpdir(), "bunraku-staging-test-"));
+  const dir = await mkdtemp(join(tmpdir(), "bunzai-staging-test-"));
   dirs.push(dir);
   return new StudioStore(dir);
 }
@@ -167,7 +167,7 @@ describe("staged files on disk", () => {
   test("hold no readable content: they are sealed with a key only this process has", async () => {
     const entity = { ...personaWithRefs("sealed-on-disk", []), body: { name: "P-sealed", content: "the lantern keeper's secret", knowledgeRefs: [] } };
     const [ref] = await stageArchiveEntities([entity as unknown as ParsedCanonicalEntity], SESSION);
-    const staged = readdirSync(tmpdir()).filter((n) => n.startsWith("bunraku-import-staged-")).map((n) => join(tmpdir(), n));
+    const staged = readdirSync(tmpdir()).filter((n) => n.startsWith("bunzai-import-staged-")).map((n) => join(tmpdir(), n));
     const files = staged.flatMap((d) => readdirSync(d).map((f) => join(d, f)));
     expect(files.length).toBeGreaterThan(0);
     for (const f of files) expect(readFileSync(f, "utf8")).not.toContain("lantern keeper");

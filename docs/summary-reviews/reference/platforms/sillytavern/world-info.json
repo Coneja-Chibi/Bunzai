@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/sillytavern/world-info",
   "sourcePath": "docs/reference/platforms/sillytavern/world-info.md",
-  "sourceHash": "sha256:a09be608d4494f4f2f7ff21d573c82af08c824ec308e7bd298c0511b429fa6aa",
-  "semanticSummaryHash": "sha256:821eed1d1fef6fdb1ec3068f7f0eb293361d8eff6d9ceb00a0780df7d41ad9c5",
+  "sourceHash": "sha256:f8c81b15dc09ee1c37c0dc2e2e363dc109f759e20e8cbd07c11d5e00688c1615",
+  "semanticSummaryHash": "sha256:6fd8ff5163dea258141d32b53a2d69bddb6b8c777e38d815465d221427e645cf",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:48:00.788Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:57.872Z"
 }

@@ -10,7 +10,7 @@
  * already had. The SDK resolves its own CLI, which removes the failure rather than describing it
  * better.
  *
- * THE SDK IS OPTIONAL, because its LICENSE.md reserves all rights to Anthropic PBC and Bunraku is
+ * THE SDK IS OPTIONAL, because its LICENSE.md reserves all rights to Anthropic PBC and Bunzai is
  * AGPL-3.0 shipping compiled binaries. It sits in package.json "optionalDependencies", is allowlisted in
  * `license:audit` as the one proprietary optional dependency, and is marked `--external` in every
  * compile so no release binary inlines it. Every load goes through `loadAgentSdk`, so its absence is one
@@ -63,7 +63,7 @@ const MAX_TOOL_TURNS = 24;
  * surface in front of it.
  */
 /** How the CLI namespaces a tool from our server. The allowlist is built from it. */
-export const MCP_TOOL_PREFIX = "mcp__bunraku__";
+export const MCP_TOOL_PREFIX = "mcp__bunzai__";
 
 const REFUSED_TOOLS = [
   "Bash", "Read", "Write", "Edit", "NotebookEdit", "Glob", "Grep",
@@ -122,11 +122,11 @@ export function foldHistory(messages: readonly ModelMessage[]): string {
  */
 export async function writeMcpConfig(serverCommand: string, serverArgs: readonly string[]): Promise<string | null> {
   try {
-    const dir = await mkdtemp(join(tmpdir(), "bunraku-mcp-"));
+    const dir = await mkdtemp(join(tmpdir(), "bunzai-mcp-"));
     const path = join(dir, "config.json");
     await writeFile(
       path,
-      JSON.stringify({ mcpServers: { bunraku: { command: serverCommand, args: serverArgs } } }),
+      JSON.stringify({ mcpServers: { bunzai: { command: serverCommand, args: serverArgs } } }),
       { mode: 0o600, flag: "wx" },
     );
     cleanUpAtExit(dir);
@@ -227,7 +227,7 @@ export function sdkOptions(model: string, system: string, bridge: McpServers | n
     // Opt out of the signed-in account's claude.ai connectors (Notion/Gmail/Calendar). They ride the
     // `claudeai` MCP scope, which `settingSources: []` does not gate, and they would otherwise appear
     // inside a Kit turn as if Kit had offered them.
-    env: { ...process.env, CLAUDE_CODE_ENTRYPOINT: "bunraku-kit", ENABLE_CLAUDEAI_MCP_SERVERS: "false" },
+    env: { ...process.env, CLAUDE_CODE_ENTRYPOINT: "bunzai-kit", ENABLE_CLAUDEAI_MCP_SERVERS: "false" },
   };
 }
 

@@ -1,7 +1,7 @@
 /**
  * The Claude Code CLI provider against the real CLI.
  *
- * Opt-in only, via BUNRAKU_LIVE_CLI=1: run `BUNRAKU_LIVE_CLI=1 bun test src/kit/providers/claude-cli.live.test.ts`.
+ * Opt-in only, via BUNZAI_LIVE_CLI=1: run `BUNZAI_LIVE_CLI=1 bun test src/kit/providers/claude-cli.live.test.ts`.
  * A live run spends somebody's subscription and writes a real, titled Claude Code session into this
  * project's own session history - it must never fire just because `bun test` found the binary on
  * PATH. The parsing is covered in claude-cli.test.ts; what only a live run establishes is that the
@@ -15,7 +15,7 @@ import { describe, expect, test } from "bun:test";
 import { explainSdkFailure, runClaudeCli } from "./claude-cli";
 
 const HAVE = Bun.which("claude") !== null;
-const RUN_LIVE = process.env.BUNRAKU_LIVE_CLI === "1";
+const RUN_LIVE = process.env.BUNZAI_LIVE_CLI === "1";
 
 describe.skipIf(!HAVE || !RUN_LIVE)("Claude Code CLI provider, live", () => {
   test("a turn comes back with text, token counts and a reported cost", async () => {

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "guide/importing",
   "sourcePath": "docs/guide/importing.md",
-  "sourceHash": "sha256:ee763f0a9835a18306376eff4938b19e2267e0aedb3b664b3578558576fa7f20",
+  "sourceHash": "sha256:a9a70c7652ff472c04774b1ddd4628b2e90b9fd28d00879d2567e64e3f7eeff9",
   "summary": "User guide for importing cards lorebooks personas or regex sets into the Library. Nothing is written until confirmed; each file shows as a receipt first. Short flow: drop files on shelves or use Import to be guided to drop; read per-file receipt of name kind platform or failure reason without blocking others; uncheck unwanted then Import with live count; find piece on matching deck. Brand-new empty studio drop zone is also a clickable file browser, the only place outside active import that opens a browser; once pieces exist Import does not open a file browser. What gets kept: original file whole with unmapped private layout ids escrowed; slightly broken lorebooks heal with receipt listing fixes; scripts saved as text never run; deep access refused on receipt; personas not filed as characters; import never overwrites so re-import makes second piece with -2 id while Workbench save overwrites on purpose. Batch import reports each file alone; Add more files accumulates before one write; shelves route by kind not open deck. Tips: Import button only navigates to shelves; failed reads can retry after fix; uncheck before Import; read extras for embedded lorebook scripts deep access; update via Workbench not re-import.",
   "topics": [
     "import Library receipt",
@@ -34,7 +34,7 @@
       "slug": "what-gets-kept",
       "title": "What gets kept",
       "level": 2,
-      "sourceHash": "sha256:1c24bbb034435f09e5507c822338378bda258920b2c84deda4af303aa7d05d9f",
+      "sourceHash": "sha256:ad1deacb2cf59254709cfb537835ce1308c6bd0bbe16dc5fb1d565064e6cd8c8",
       "summary": "Import reads into the shared studio model so the receipt knows the piece before write. Original file is kept whole; private layout ids and unmapped fields stay alongside for same-app export later. Slightly broken lorebooks with missing name or wrong entry shape are healed not rejected; receipt lists fixes and entry counts. Scripts on cards are saved as text never executed; deep access requests are refused with plain receipt; personas are shelved as personas not characters. Import never overwrites: same file twice yields two pieces with -2 on the second id; update via Workbench save which overwrites on purpose.",
       "topics": [
         "shared model intake",
@@ -65,7 +65,7 @@
       "slug": "tips",
       "title": "Tips",
       "level": 2,
-      "sourceHash": "sha256:ea11ad209d14a3a8f62a62b2a819b2077547b6803b8b7c70b2e2adce35f0a0b5",
+      "sourceHash": "sha256:c7ff09ecc5cad9f40849a0997ff8f5ab23dac1fb3fe957bd8f0ad9966e64118d",
       "summary": "Corner Import only takes you to shelves to drop; it does not browse files. Failed read is not final: fix in the source app and retry or check unsupported format. Uncheck receipt rows to skip without blocking the rest. Read character receipt extras for embedded lorebook scripts or deep access lines. To update an existing piece edit and save on the Workbench; re-import always makes a second copy never a refresh.",
       "topics": [
         "Import no browser",

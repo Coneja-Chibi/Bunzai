@@ -348,7 +348,7 @@ export function fieldControl(
           defaultPackId={field.cssPack ?? "universal"}
           note={
             field.help ||
-            "Sealed preview only. Bunraku never applies this CSS to the app. Export keeps your full source for the host site."
+            "Sealed preview only. Bunzai never applies this CSS to the app. Export keeps your full source for the host site."
           }
         />
       );

@@ -20,7 +20,7 @@ beforeAll(() => { installed = installDom('<html><head><meta name="vaude-session"
 }); });
 beforeEach(async () => {
   installed.reinstall();
-  useShellStore.setState({ settings: parseSettings({ theme: effective.themeId }), theme: "bunraku.theme.modtest" });
+  useShellStore.setState({ settings: parseSettings({ theme: effective.themeId }), theme: "bunzai.theme.modtest" });
   globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
     if (init?.method === "PATCH" || init?.method === "POST") {
       writes++;

@@ -12,7 +12,7 @@ import type { CanonicalEntity } from "../../core/canonical";
  *
  * THE CANONICAL MODEL IS THE USEFUL SUBSET, the wire is escrowed whole. ST's QuickReplySetLink
  * grammar carries a dozen per-button switches (auto-execute hooks, context menus, icons); those
- * ride `extras` per reply and `original` on the envelope untouched, because Bunraku edits the
+ * ride `extras` per reply and `original` on the envelope untouched, because Bunzai edits the
  * label and the message - the parts a person actually authors - and must never invent opinions
  * about fields it does not model. Same lossless-escrow doctrine as the regex kind.
  *

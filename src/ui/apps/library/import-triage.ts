@@ -57,7 +57,7 @@ export function triageFiles(
       continue;
     }
     if (!CANDIDATE_EXTENSIONS.has(ext)) {
-      skipped.push({ filename: f.name, result: { ok: false, error: `not a file type Bunraku reads${ext ? ` (.${ext})` : ""}` } });
+      skipped.push({ filename: f.name, result: { ok: false, error: `not a file type Bunzai reads${ext ? ` (.${ext})` : ""}` } });
       continue;
     }
     if (f.size > ADAPTER_INPUT_MAX_BYTES) {
@@ -188,7 +188,7 @@ const TABLE_WORD: Record<string, string> = {
 };
 
 /** "3 chats, 12 messages did not come along." - the honesty line: nobody should finish an import
- *  believing content Bunraku never reads actually rode along. `rows: null` (no manifest-stats
+ *  believing content Bunzai never reads actually rode along. `rows: null` (no manifest-stats
  *  count) reads as "some", never a guessed zero. A table outside TABLE_WORD (a future export adds
  *  one KNOWN_SKIPPED_TABLES has not caught up to yet) shows its humanized raw name WITHOUT a forced
  *  "s" - a SQL table name is conventionally already plural, and guessing wrong reads worse than not

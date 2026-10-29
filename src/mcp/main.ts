@@ -4,7 +4,7 @@
  *
  * Started two ways, and the difference matters only here. Kit's Claude provider spawns it per turn so
  * the CLI can call home; a person can also register it once with their own client
- * (`claude mcp add --transport stdio bunraku -- bunraku mcp`) and use the studio from there.
+ * (`claude mcp add --transport stdio bunzai -- bunzai mcp`) and use the studio from there.
  *
  * Diagnostics go to stderr without exception. stdout carries the protocol, and one stray line on it
  * is a malformed frame that ends the session.
@@ -12,7 +12,7 @@
 import { runMcpServer } from "./run";
 
 const log = (message: string): void => {
-  process.stderr.write(`bunraku-mcp: ${message}\n`);
+  process.stderr.write(`bunzai-mcp: ${message}\n`);
 };
 
 async function main(): Promise<void> {

@@ -1,7 +1,7 @@
 /**
  * Kit's session store in the encrypted library (migration 5):
  * the same SessionStore Kit already uses, with each transcript a sealed row instead of a plain
- * JSON file in ~/.bunraku/sessions. Rows are keyed by a keyed hash of the session id, and each
+ * JSON file in ~/.bunzai/sessions. Rows are keyed by a keyed hash of the session id, and each
  * sealed body carries its key, so a transcript copied onto another row fails to open there.
  * Exports still go to the folder the person chose: an export is a request for a readable file.
  */

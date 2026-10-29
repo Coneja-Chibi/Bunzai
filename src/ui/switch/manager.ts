@@ -63,7 +63,7 @@ export function createSwitchManager(deps: SwitchManagerDeps): SwitchManager {
         }
         // source: marker BEFORE relaunch, so the next boot can confirm the outcome even mid-restart
         await deps.writeMarker({ from: deps.installed, to: target, at: deps.now() });
-        status = { phase: "restarting", message: "Restarting Bunraku...", target };
+        status = { phase: "restarting", message: "Restarting Bunzai...", target };
         action.run();
         deps.exit(0);
         // a real exit ends here; nothing below runs in production

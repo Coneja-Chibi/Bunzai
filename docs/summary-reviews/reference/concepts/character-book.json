@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/concepts/character-book",
   "sourcePath": "docs/reference/concepts/character-book.md",
-  "sourceHash": "sha256:2c483cc6f7ab5bd9cea295d6dc604402e2124edfd1007a0aea565ccd463097a4",
-  "semanticSummaryHash": "sha256:43a99a4220c89b182e639068cebacf756c27777efa468ac318b91f7c7cd9b7f3",
+  "sourceHash": "sha256:dce82e98b12f5c338db067c8736441e30deabe06ed09eceed1e3758d283cfb0b",
+  "semanticSummaryHash": "sha256:7b0a1b0b190e75b08e291a6b59576b65927c2434abd3f8acba5354424a844dbe",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Verified the page edits and affected summaries against src/convert.ts: readPieces (card extractLorebook/extractCharacterBook, preset extractRegex, linking) and emitPieces/emitBundle/convertFile/withUnattached exist and behave as described. No stale inspectBundle/inspectPresetBundle/emitPresetBundle left in docs/reference or summaries; no function or file named that the page lacks.",
-  "reviewedAt": "2026-10-27T04:20:52.846Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:42.454Z"
 }

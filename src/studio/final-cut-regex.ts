@@ -1,6 +1,6 @@
 /**
  * Final Cut's "Apply your AI-output regex scripts to input" (RoleCall service.ts:322-334 runs the scene's `ai_output` scripts on each
- * pass's input). Bunraku's equal is the scene's display-phase rules that rewrite text (an overlay rule draws, it does not rewrite). They
+ * pass's input). Bunzai's equal is the scene's display-phase rules that rewrite text (an overlay rule draws, it does not rewrite). They
  * are imported data and may only run in the page's sandbox worker (ADR-009, AGENTS rule 3), so this asks the page with a regex event
  * (phase "display") and waits for its answer, as the prompt regex does (scene-turn-regex.ts). Nothing here compiles or runs a rule, and
  * it fails closed: a worker that cannot run, an answer that does not fit, or a Stop is an error, never the text unchanged.

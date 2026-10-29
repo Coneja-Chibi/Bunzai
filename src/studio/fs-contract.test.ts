@@ -5,6 +5,6 @@ import { memoryStudioFs, nodeStudioFs } from "./fs-backend";
 import { studioFsContract } from "./fs-contract";
 import { tempDirSync } from "./test-temp-dir";
 
-studioFsContract("folder", async () => ({ fs: nodeStudioFs, root: tempDirSync("bunraku-fs-contract-") }));
+studioFsContract("folder", async () => ({ fs: nodeStudioFs, root: tempDirSync("bunzai-fs-contract-") }));
 
-studioFsContract("memory", async () => ({ fs: memoryStudioFs(), root: join(tmpdir(), "bunraku-memory-studio") }));
+studioFsContract("memory", async () => ({ fs: memoryStudioFs(), root: join(tmpdir(), "bunzai-memory-studio") }));

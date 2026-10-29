@@ -118,7 +118,7 @@
       "frameWidth": 1,
       "density": "airy",
       "motion": "none",
-      "chrome": "bunraku"
+      "chrome": "bunzai"
     },
     "accent": {
       "follows": "user"

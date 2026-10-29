@@ -241,7 +241,7 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
 <div class="stage"><main class="room" id="room">
 
 <header class="playbill">
-  <div class="kicker left">Bunraku &middot; Preferences <span class="co">1</span></div>
+  <div class="kicker left">Bunzai &middot; Preferences <span class="co">1</span></div>
   <h1>Settings</h1>
   <p class="lede">Every knob for the whole studio. Changes apply the moment you make them: no apply button, no restart.</p>
   <div class="actions"><span class="status-chip" id="statusline" role="status">appearance</span><button class="btn" type="button">Reload Studio</button></div>
@@ -346,7 +346,7 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
 
   <div class="panel" data-deck="character">
     <h2 class="sec">Your color</h2>
-    <div class="row"><div><b>Your color</b></div><p>The workspace accent. Bunraku builds the whole palette from it: this color for primary actions and highlights, and its two neighbours on the color wheel for selection and links. Entity colors stay independent.</p>
+    <div class="row"><div><b>Your color</b></div><p>The workspace accent. Bunzai builds the whole palette from it: this color for primary actions and highlights, and its two neighbours on the color wheel for selection and links. Entity colors stay independent.</p>
       <div class="ctl"><div class="swatches" data-single>
         <span class="sw" role="button" tabindex="0" data-accent="#e11d48" aria-label="Rose" style="--c:#e11d48"></span>
         <span class="sw" role="button" tabindex="0" data-accent="#8b5cf6" aria-label="Violet" style="--c:#8b5cf6"></span>
@@ -385,9 +385,9 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
 
 <!-- ============ STUDIO ============ -->
 <section class="tab stack" id="t-studio" data-label="studio" hidden>
-  <div class="pghead"><div class="kicker left">Your studio</div><h2>The <em>studio</em></h2><p>Where Bunraku opens, what the Library shows first, where you publish, and the engines this machine has.</p></div>
+  <div class="pghead"><div class="kicker left">Your studio</div><h2>The <em>studio</em></h2><p>Where Bunzai opens, what the Library shows first, where you publish, and the engines this machine has.</p></div>
   <div class="panel" data-deck="character">
-    <h2 class="sec">Home</h2><p class="sec-note">The room Bunraku opens in when you start it.</p>
+    <h2 class="sec">Home</h2><p class="sec-note">The room Bunzai opens in when you start it.</p>
     <div class="seg wrap" role="radiogroup" aria-label="Home"><span role="radio" tabindex="0" aria-pressed="false">Workbench</span><span role="radio" tabindex="0" aria-pressed="true">Library</span><span role="radio" tabindex="0" aria-pressed="false">Scenes</span><span role="radio" tabindex="0" aria-pressed="false">Press</span><span role="radio" tabindex="0" aria-pressed="false">CSS Workshop</span><span role="radio" tabindex="0" aria-pressed="false">Agent</span><span role="radio" tabindex="0" aria-pressed="false">Macro Lab</span></div>
   </div>
   <div class="panel" data-deck="lorebook">
@@ -472,7 +472,7 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
 
 <!-- ============ CONNECTIONS ============ -->
 <section class="tab stack stateful" id="t-connections" data-label="connections" data-state="normal" hidden>
-  <div class="pghead"><div class="kicker left">The agent</div><h2><em>Connections</em></h2><p>MCP in both directions: servers this machine runs so their tools join Kit's belt, and Bunraku's own belt for any MCP client.</p></div>
+  <div class="pghead"><div class="kicker left">The agent</div><h2><em>Connections</em></h2><p>MCP in both directions: servers this machine runs so their tools join Kit's belt, and Bunzai's own belt for any MCP client.</p></div>
   <div class="wf-states"><b>Preview state</b><button data-s="normal" aria-pressed="true">Servers saved</button><button data-s="empty">No servers yet</button><button data-s="rejected">Rejected config lines</button></div>
   <div class="panel protected" data-deck="regex">
     <div class="vault"><svg aria-hidden="true"><use href="#lock"/></svg><span><b>Protected.</b> An entry is a command this machine executes. Host only; environment values go in and never come back, only key names do. Every external tool asks at the Gate before it runs.</span></div>
@@ -498,8 +498,8 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
     </div>
   </div>
   <div class="panel protected" data-deck="persona">
-    <h2 class="sec">Bunraku as a server</h2><p class="sec-note">Point any MCP client at Bunraku's own belt: the library, catalogs and renderers. Your client asks before each tool runs.</p>
-    <code class="block">claude mcp add bunraku -- bunraku mcp "C:\Users\chiev\Documents\Studio"</code>
+    <h2 class="sec">Bunzai as a server</h2><p class="sec-note">Point any MCP client at Bunzai's own belt: the library, catalogs and renderers. Your client asks before each tool runs.</p>
+    <code class="block">claude mcp add bunzai -- bunzai mcp "C:\Users\chiev\Documents\Studio"</code>
   </div>
 </section>
 
@@ -512,10 +512,10 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
     <div class="state-line" role="status" style="margin-bottom:16px"><span class="dot" data-st="no err"></span><span class="dot busy" data-st="wait" hidden></span><span class="dot on" data-st="yes nopremium" hidden></span>
       <b data-st="no err">Not connected</b><b data-st="wait" hidden>Waiting for Spotify...</b><b data-st="yes" hidden>Connected as chibi_rabbit</b><b data-st="nopremium" hidden>Connected as chibi_rabbit, without Premium</b></div>
     <div class="grid3">
-      <div class="panel tight step" data-deck="pack"><div class="n">1</div><h3>Client ID</h3><p class="small dim">Make an app at developer.spotify.com/dashboard and paste its Client ID (32 letters and digits). It is yours alone; Bunraku has no shared key. The sign-in is kept in this computer's key vault.</p><input class="field mono" value="0a1b2c3d4e5f60718293a4b5c6d7e8f9" spellcheck="false" aria-label="Spotify Client ID"></div>
-      <div class="panel tight step" data-deck="pack"><div class="n">2</div><h3>Redirect address</h3><p class="small dim">Add this to your Spotify app's Redirect URIs, exactly. Spotify allows a plain http address only for 127.0.0.1, and lets that address use any port, so it still works when Bunraku starts on another one.</p><code class="block">http://127.0.0.1/spotify/callback</code></div>
+      <div class="panel tight step" data-deck="pack"><div class="n">1</div><h3>Client ID</h3><p class="small dim">Make an app at developer.spotify.com/dashboard and paste its Client ID (32 letters and digits). It is yours alone; Bunzai has no shared key. The sign-in is kept in this computer's key vault.</p><input class="field mono" value="0a1b2c3d4e5f60718293a4b5c6d7e8f9" spellcheck="false" aria-label="Spotify Client ID"></div>
+      <div class="panel tight step" data-deck="pack"><div class="n">2</div><h3>Redirect address</h3><p class="small dim">Add this to your Spotify app's Redirect URIs, exactly. Spotify allows a plain http address only for 127.0.0.1, and lets that address use any port, so it still works when Bunzai starts on another one.</p><code class="block">http://127.0.0.1/spotify/callback</code></div>
       <div class="panel tight step" data-deck="pack"><div class="n">3</div><h3>Account</h3>
-        <p class="small dim" data-st="no wait err">Connect opens Spotify's sign-in in your browser. Bunraku sees only the playback state and the controls, never your password.</p>
+        <p class="small dim" data-st="no wait err">Connect opens Spotify's sign-in in your browser. Bunzai sees only the playback state and the controls, never your password.</p>
         <p class="small dim" data-st="yes nopremium" hidden>Disconnect forgets the sign-in on this computer. To take the app's access away at Spotify too, remove it at spotify.com/account/apps.</p>
         <div class="acts" data-st="no err"><button class="btn primary" type="button">Connect</button></div>
         <div class="acts" data-st="wait" hidden><button class="btn primary off" type="button">Connect</button></div>
@@ -561,11 +561,11 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
     </div>
 
     <div class="panel protected" data-deck="persona" data-st="password" hidden>
-      <h3>Striking the set</h3><p class="small dim" style="margin:6px 0 12px">After the change. The old key is still being cleared from the library file (2 rows). Bunraku will try again in the background.</p><button class="btn sm" type="button">Try again now</button>
+      <h3>Striking the set</h3><p class="small dim" style="margin:6px 0 12px">After the change. The old key is still being cleared from the library file (2 rows). Bunzai will try again in the background.</p><button class="btn sm" type="button">Try again now</button>
       <p class="problem">could not try again. (Shown after a failed retry or lock move.)</p>
     </div>
     <div class="panel protected" data-deck="persona" data-st="password" hidden>
-      <h3>Still know your lines?</h3><p class="small dim" style="margin:6px 0 12px">Three months since the last run-through. Bunraku stores no single word, so the whole script is asked for.</p>
+      <h3>Still know your lines?</h3><p class="small dim" style="margin:6px 0 12px">Three months since the last run-through. Bunzai stores no single word, so the whole script is asked for.</p>
       <div class="acts"><button class="btn sm" type="button">Run my lines</button><button class="btn sm" type="button">Write new lines</button></div>
     </div>
 
@@ -603,7 +603,7 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
       <div class="grid2">
         <div class="panel prompt protected"><div class="act">Stage manager</div><h3>Is it <em>you?</em></h3><p>Changing the password, the lines, or the remembered computers needs the password or your lines. You will not be asked again for five minutes.</p><label class="f">Current password<input class="field" type="password" value="password" aria-label="Current password"></label><div class="acts" style="margin-top:14px"><button class="btn primary" type="button">It is me</button><button class="btn quiet" type="button">Cancel</button></div></div>
         <div class="panel prompt protected"><div class="act">Act II, The Key</div><h3>A key for the <em>door</em></h3><p>Once set, every computer forgets its own key and the door asks for this one.</p><div class="formgrid"><label class="f">New password<input class="field" type="password" value="password" aria-label="New password"></label><label class="f">Say it again<input class="field" type="password" value="password" aria-label="Say it again"></label></div><div class="acts" style="margin-top:14px"><button class="btn primary" type="button">Lock the door</button><button class="btn quiet" type="button">Cancel</button></div></div>
-        <div class="panel prompt protected"><div class="act">Act 0, Prologue</div><h3>Your opening <em>lines</em></h3><p>Twelve words that open your library on any computer. Write them down; Bunraku stores no single word. Then you recite them back (Act 1, The Audition: "Take the stage") before your old lines stop working. Rehearsal asks for the whole script ("Run my lines").</p><div class="acts"><button class="btn primary" type="button">On to the audition</button><button class="btn quiet" type="button">Cancel</button></div></div>
+        <div class="panel prompt protected"><div class="act">Act 0, Prologue</div><h3>Your opening <em>lines</em></h3><p>Twelve words that open your library on any computer. Write them down; Bunzai stores no single word. Then you recite them back (Act 1, The Audition: "Take the stage") before your old lines stop working. Rehearsal asks for the whole script ("Run my lines").</p><div class="acts"><button class="btn primary" type="button">On to the audition</button><button class="btn quiet" type="button">Cancel</button></div></div>
         <div class="panel prompt protected"><div class="act">Recast</div><h3>Forget <em>Studio laptop?</em></h3><p>It will no longer open the library by itself. To open it there again, you will need your lines.</p><div class="acts"><button class="btn primary" type="button">Forget it</button><button class="btn quiet" type="button">Cancel</button></div></div>
       </div>
     </div>
@@ -622,7 +622,7 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
       <div class="panel tile" data-deck="pack"><div class="k">Next copy</div><div class="v" style="font-size:18px">Within the hour, if anything changed</div></div>
     </div>
     <ul class="proof" style="margin-top:20px">
-      <li><span class="pm">+</span><span>A copy is made every hour while Bunraku is open, with no pause in your work.</span></li>
+      <li><span class="pm">+</span><span>A copy is made every hour while Bunzai is open, with no pause in your work.</span></li>
       <li><span class="pm">+</span><span>Copies are encrypted exactly like your library, so a stolen copy shows nothing.</span></li>
       <li data-st="normal empty"><span class="pm">+</span><span>A copy opens on a new computer with your lines (recovery words).</span></li>
       <li class="not" data-st="warn" hidden><span class="pm">-</span><span>Until you write your lines (recovery words), a copy only opens on this computer.</span></li>
@@ -642,7 +642,7 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
   </div>
   <div class="panel protected" data-deck="pack">
     <h2 class="sec">Copies</h2>
-    <div class="empty" data-st="empty" hidden>No copies yet. The first one is made shortly after Bunraku opens, or press Back up now.</div>
+    <div class="empty" data-st="empty" hidden>No copies yet. The first one is made shortly after Bunzai opens, or press Back up now.</div>
     <div data-st="normal warn">
       <div class="copy"><div><b>Today, 2:00 PM</b> <span class="chip">Hourly</span><div class="m small dim">Monday, October 26 &middot; <span class="num">14.2 MB</span></div></div><div class="acts"><button class="btn sm" type="button">Restore</button></div></div>
       <div class="copy"><div><b>Today, 11:42 AM</b> <span class="chip ok">Made by you</span><div class="m small dim">Monday, October 26 &middot; <span class="num">14.1 MB</span></div></div><div class="acts"><button class="btn sm danger" type="button" title="Moves the copy to the trash folder beside the copies; nothing is deleted">Remove</button><button class="btn sm" type="button">Restore</button></div></div>
@@ -658,23 +658,23 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
 
 <!-- ============ REMOTE ACCESS ============ -->
 <section class="tab stack stateful" id="t-remote" data-label="remote access" data-state="off" hidden>
-  <div class="pghead"><div class="kicker left">The house</div><h2>Remote <em>access</em></h2><p>Reach this studio from your phone or another computer, over a private, encrypted link. Off by default. Turning it on needs a one-time free Tailscale sign-in; Bunraku opens that page for you. <span class="dim">(Without the helper the line reads: "Reach this studio from your phone or another computer on the same network. Off by default, and no account needed.")</span></p></div>
+  <div class="pghead"><div class="kicker left">The house</div><h2>Remote <em>access</em></h2><p>Reach this studio from your phone or another computer, over a private, encrypted link. Off by default. Turning it on needs a one-time free Tailscale sign-in; Bunzai opens that page for you. <span class="dim">(Without the helper the line reads: "Reach this studio from your phone or another computer on the same network. Off by default, and no account needed.")</span></p></div>
   <div class="wf-states"><b>Preview state</b>
     <button data-s="off" aria-pressed="true">Off</button><button data-s="unavailable">Helper missing</button><button data-s="starting">Starting</button><button data-s="login">Needs sign-in</button><button data-s="https">Needs HTTPS</button><button data-s="on">Connected</button><button data-s="error">Error</button><button data-s="elsewhere">Remote session</button>
     <button type="button" class="eye" id="eye" aria-pressed="false" style="margin-left:auto">Hide details for a screenshot</button></div>
   <div class="panel protected" data-deck="fog">
-    <div class="vault"><svg aria-hidden="true"><use href="#lock"/></svg><span><b>Protected.</b> Managed only on the computer actually running Bunraku, never from a device that connected in.</span></div>
+    <div class="vault"><svg aria-hidden="true"><use href="#lock"/></svg><span><b>Protected.</b> Managed only on the computer actually running Bunzai, never from a device that connected in.</span></div>
 
     <div data-st="off">
-      <h2 class="sec">Turn on remote access</h2><p class="small dim" style="margin:6px 0 14px;max-width:70ch">Bunraku stays on your machine. A private, encrypted link lets your own devices reach it, with no router changes and no ports opened. You sign in to Tailscale once (free); we open that page for you.</p>
+      <h2 class="sec">Turn on remote access</h2><p class="small dim" style="margin:6px 0 14px;max-width:70ch">Bunzai stays on your machine. A private, encrypted link lets your own devices reach it, with no router changes and no ports opened. You sign in to Tailscale once (free); we open that page for you.</p>
       <button class="btn primary big" type="button">Enable remote access</button>
       <p class="small dim" style="margin-top:14px">Mesh helper downloaded with v1.74.1. <button class="btn sm quiet" type="button">Get it again</button></p>
       <p class="problem">The download did not finish. Nothing was installed. (Shown after a failed fetch.)</p>
     </div>
     <div data-st="unavailable" hidden>
-      <h2 class="sec">Add the private-mesh link</h2><p class="small dim" style="margin:6px 0 14px;max-width:70ch">The private-mesh link needs one extra piece that is not bundled with the app, to keep the download small. Bunraku can fetch it for you now, once.</p>
+      <h2 class="sec">Add the private-mesh link</h2><p class="small dim" style="margin:6px 0 14px;max-width:70ch">The private-mesh link needs one extra piece that is not bundled with the app, to keep the download small. Bunzai can fetch it for you now, once.</p>
       <div class="acts"><button class="btn primary" type="button">Download the extra piece</button><span class="state-line"><span class="dot busy"></span>While downloading: About 31 MB. This takes a moment.</span></div>
-      <p class="small dim" style="margin-top:14px">It is downloaded from Bunraku's own releases and checked against a fingerprint built into this copy; a file that does not match is thrown away rather than used. You can skip this entirely and use <b>LAN mode</b> below, which needs no download.</p>
+      <p class="small dim" style="margin-top:14px">It is downloaded from Bunzai's own releases and checked against a fingerprint built into this copy; a file that does not match is thrown away rather than used. You can skip this entirely and use <b>LAN mode</b> below, which needs no download.</p>
       <p class="small dim" style="margin-top:10px">Not offered for this platform: "Private-mesh link not available in this copy". Nothing is wrong with your studio, and nothing else is affected. Use <b>LAN mode</b> below to reach this studio from another device on the same network.</p>
     </div>
     <div data-st="starting" hidden><h2 class="sec">Bringing up the private link</h2><div class="state-line" style="margin-top:12px"><span class="dot busy"></span>Starting. This is quick.</div></div>
@@ -682,15 +682,15 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
     <div data-st="https" hidden><h2 class="sec">One more setup step: turn on HTTPS</h2><p class="small dim" style="margin:6px 0 14px;max-width:70ch">Tailscale needs HTTPS certificates enabled for your account, a one-time switch. Open your Tailscale settings, turn on <b>HTTPS Certificates</b>, and this connects on its own, you do not need to come back here and click anything.</p><div class="acts"><button class="btn sm primary" type="button">Open Tailscale HTTPS settings</button><span class="state-line"><span class="dot busy"></span>Waiting for HTTPS to be turned on</span></div></div>
     <div data-st="on" hidden>
       <h2 class="sec"><span class="dot on"></span>On, reachable</h2><p class="small dim" style="margin:6px 0 14px;max-width:70ch">Open this link on any device signed into the same Tailscale account, your phone, another computer. It is a real, trusted https link with no certificate warnings.</p>
-      <div class="urlbar"><svg aria-hidden="true"><use href="#lock"/></svg><span data-mask>https://bunraku-desk.tail4f2a1.ts.net</span></div>
+      <div class="urlbar"><svg aria-hidden="true"><use href="#lock"/></svg><span data-mask>https://bunzai-desk.tail4f2a1.ts.net</span></div>
       <div class="acts" style="margin-top:14px"><button class="btn sm" type="button" data-copy>Copy link</button><button class="btn sm danger" type="button">Turn off</button></div>
       <p class="small dim" style="margin-top:12px">To add a device: install the free Tailscale app on it, sign in with the same account, then open the link above.</p>
       <div class="devs"><div class="dt">Connected devices</div>
         <div class="item"><span data-mask>Chi's phone</span><button class="btn sm danger" type="button">Remove</button></div>
         <div class="item"><span data-mask>studio-laptop</span><button class="btn sm danger" type="button">Remove</button></div></div>
     </div>
-    <div data-st="error" hidden><h2 class="sec">Remote access could not start</h2><p class="state-line" style="margin-top:10px"><span class="dot bad"></span>The Tailscale helper exited before it answered.</p><p class="small dim" style="margin:8px 0 14px">Nothing else in Bunraku is affected.</p><button class="btn sm primary" type="button">Try again</button></div>
-    <div data-st="elsewhere" hidden><h2 class="sec">Managed on the host device</h2><p class="small dim" style="margin-top:8px;max-width:70ch">You are connected to this studio remotely. Remote access is turned on or off, and devices are managed, only on the computer actually running Bunraku, never from a device that connected in. Open Bunraku on that computer to change these settings.</p></div>
+    <div data-st="error" hidden><h2 class="sec">Remote access could not start</h2><p class="state-line" style="margin-top:10px"><span class="dot bad"></span>The Tailscale helper exited before it answered.</p><p class="small dim" style="margin:8px 0 14px">Nothing else in Bunzai is affected.</p><button class="btn sm primary" type="button">Try again</button></div>
+    <div data-st="elsewhere" hidden><h2 class="sec">Managed on the host device</h2><p class="small dim" style="margin-top:8px;max-width:70ch">You are connected to this studio remotely. Remote access is turned on or off, and devices are managed, only on the computer actually running Bunzai, never from a device that connected in. Open Bunzai on that computer to change these settings.</p></div>
   </div>
 
   <div class="panel protected stateful" data-deck="fog" data-state="lanoff" data-st="off unavailable starting login https on error" id="lan">
@@ -747,11 +747,11 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
   </div>
 
   <div>
-    <h2 class="sec">Switch prompts</h2><p class="sec-note">Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunraku restarts itself when it is ready.</p>
+    <h2 class="sec">Switch prompts</h2><p class="sec-note">Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunzai restarts itself when it is ready.</p>
     <div class="grid3">
-      <div class="panel prompt"><h3>Update to <em>v0.14.2?</em></h3><div class="jump">v0.14.0 &rarr; v0.14.2</div><p>Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunraku restarts itself when it is ready.</p><div class="acts"><button class="btn primary" type="button">Update</button><button class="btn sm quiet" type="button">Cancel</button></div></div>
+      <div class="panel prompt"><h3>Update to <em>v0.14.2?</em></h3><div class="jump">v0.14.0 &rarr; v0.14.2</div><p>Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunzai restarts itself when it is ready.</p><div class="acts"><button class="btn primary" type="button">Update</button><button class="btn sm quiet" type="button">Cancel</button></div></div>
       <div class="panel prompt"><h3>Roll back to <em>v0.12.9?</em></h3><div class="jump">v0.14.0 &rarr; v0.12.9</div><div class="note" style="margin:0 0 12px">v0.12.9 is older than this Updates screen. After the restart it will not show a confirmation or an Undo button, so <b>this screen is your receipt</b>.</div><p>Your studio folder is never touched, only the program changes.</p><div class="acts"><button class="btn danger" type="button">Roll back</button><button class="btn sm quiet" type="button">Cancel</button></div></div>
-      <div class="panel prompt"><h3>Switching <em>version</em></h3><div class="state-line"><span class="dot busy"></span>Downloading and checking the build...</div><p style="margin-top:12px">Do not close Bunraku. It restarts itself when the switch is ready.</p></div>
+      <div class="panel prompt"><h3>Switching <em>version</em></h3><div class="state-line"><span class="dot busy"></span>Downloading and checking the build...</div><p style="margin-top:12px">Do not close Bunzai. It restarts itself when the switch is ready.</p></div>
       <div class="panel prompt"><h3>You are now on <em>v0.14.2</em></h3><p>Done. Everything is ready.</p><div class="acts"><button class="btn primary" type="button">Done</button><button class="btn sm" type="button">Undo, back to v0.14.0</button></div></div>
       <div class="panel prompt"><h3>Still on <em>v0.14.0</em></h3><p>The switch to v0.14.2 did not complete, so nothing changed. Your app is exactly as it was.</p><div class="acts"><button class="btn primary" type="button">OK</button></div></div>
       <div class="panel prompt"><h3>Could not switch / <em>Download ready</em></h3><p>Either the failure message, or (packaged build) the verified download's message, with a single OK.</p><div class="acts"><button class="btn primary" type="button">OK</button></div></div>
@@ -761,14 +761,14 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
 
 <!-- ============ ABOUT ============ -->
 <section class="tab stack stateful" id="t-about" data-label="about" data-state="packaged" hidden>
-  <div class="pghead"><div class="kicker left">The house</div><h2>About <em>Bunraku</em></h2><p>The running build, where your studio lives on disk, the project links, and the app's own controls.</p></div>
+  <div class="pghead"><div class="kicker left">The house</div><h2>About <em>Bunzai</em></h2><p>The running build, where your studio lives on disk, the project links, and the app's own controls.</p></div>
   <div class="wf-states"><b>Preview state</b><button data-s="packaged" aria-pressed="true">Installed app</button><button data-s="source">Running from source</button><button data-s="browser">Browser studio</button></div>
 
   <div class="panel" data-deck="preset">
     <h2 class="sec">Updates</h2>
     <p class="small dim" style="margin:6px 0 14px" data-st="packaged">Version 0.14.0, installed app. Checks GitHub only when you press the button; nothing runs on its own.</p>
     <p class="small dim" style="margin:6px 0 14px" data-st="source" hidden>Version 0.14.0, running from source. Checks GitHub only when you press the button; nothing runs on its own.</p>
-    <p class="small dim" style="margin:6px 0 14px" data-st="browser" hidden>Version 0.14.0, temporary browser studio. The hosted build updates when Bunraku deploys it.</p>
+    <p class="small dim" style="margin:6px 0 14px" data-st="browser" hidden>Version 0.14.0, temporary browser studio. The hosted build updates when Bunzai deploys it.</p>
     <div class="acts" data-st="packaged source"><button class="btn sm" type="button">Check for updates</button><button class="btn sm primary" type="button" data-st="packaged">View release</button><button class="btn sm" type="button" data-st="source" hidden>View release</button>
       <span class="small" role="status" data-st="packaged">v0.14.2 is out.</span><span class="small" role="status" data-st="source" hidden>v0.14.2 is out. Your checkout updates with: git pull (then bun install).</span></div>
     <div class="acts" data-st="browser" hidden><span class="small dim">Reload after a new hosted version is deployed.</span></div>
@@ -787,7 +787,7 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
   <div class="panel" data-deck="pack" data-st="packaged source">
     <h2 class="sec">The app</h2>
     <p class="sec-note" style="max-width:80ch">Restart relaunches the studio in place; Quit stops it fully (browser tabs stop working until you start it again). Unsaved edits on the Workbench are lost either way. Reset this window forgets only what this page remembers - the app you were on, the agent conversation, the overlay's position - and never touches your studio, your tabs or your settings.</p>
-    <div class="acts"><button class="btn sm" type="button" data-arm="restart" data-label="Restart Bunraku" data-armed="Really restart?">Restart Bunraku</button><button class="btn sm" type="button" data-arm="quit" data-label="Quit Bunraku" data-armed="Really quit?">Quit Bunraku</button><button class="btn sm" type="button" title="Forget the app you were on, the agent conversation, and where you put the overlay. Your tabs, settings and studio are untouched.">Reset this window</button></div>
+    <div class="acts"><button class="btn sm" type="button" data-arm="restart" data-label="Restart Bunzai" data-armed="Really restart?">Restart Bunzai</button><button class="btn sm" type="button" data-arm="quit" data-label="Quit Bunzai" data-armed="Really quit?">Quit Bunzai</button><button class="btn sm" type="button" title="Forget the app you were on, the agent conversation, and where you put the overlay. Your tabs, settings and studio are untouched.">Reset this window</button></div>
     <p class="small dim" style="margin-top:12px">Press Restart or Quit once to arm it (it turns "Really ...?" for four seconds), again to fire. While restarting: "Waiting for the studio to come back..." After quit: "You can close this tab. Start it again from your shortcut."</p>
   </div>
 </section>

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "guide/platforms/backyard",
   "sourcePath": "docs/guide/platforms/backyard.md",
-  "sourceHash": "sha256:bd279db589878906e28cb2c079d1ee359882e545587af0fe7657b2e955f6d35a",
-  "summary": "Backyard.ai formerly Faraday ships two character shapes and Bunraku reads and writes both. What Bunraku reads: older flat JSON with aiName aiPersona customDialogue keys, and modern .byaf zip of character scenarios and images; two separate adapters tell them apart by content not rename. What comes across cleanly keeps the original and lifts display name nickname description personality scenario system first message examples creator tags from flat JSON; from .byaf also alternate greetings portrait gallery background content rating as explicit or all-ages source dates; flat JSON rewrites single-brace placeholders to double braces while .byaf text is untouched. What changes when you convert to another app treats same-shape round-trip as full keep but moving between Backyard shapes counts as conversion like a different app so personality does not travel flat-to-byaf and byaf-only media rating dates drop on legacy; lore items not yet lifted to editable lorebook. Editing on the Workbench covers core fields with whole-card save. Exporting back out offers Backyard .byaf and Backyard legacy JSON as two Press targets. Common questions cover same-shape exact return, picture only on byaf, placeholder rewrite rules, and lore items stay escrowed.",
+  "sourceHash": "sha256:b64dc6e7abf7c7aa7ee8b12d5a04e85f3ca3053025007b5dd49a16b1e186e7e3",
+  "summary": "Backyard.ai formerly Faraday ships two character shapes and Bunzai reads and writes both. What Bunzai reads: older flat JSON with aiName aiPersona customDialogue keys, and modern .byaf zip of character scenarios and images; two separate adapters tell them apart by content not rename. What comes across cleanly keeps the original and lifts display name nickname description personality scenario system first message examples creator tags from flat JSON; from .byaf also alternate greetings portrait gallery background content rating as explicit or all-ages source dates; flat JSON rewrites single-brace placeholders to double braces while .byaf text is untouched. What changes when you convert to another app treats same-shape round-trip as full keep but moving between Backyard shapes counts as conversion like a different app so personality does not travel flat-to-byaf and byaf-only media rating dates drop on legacy; lore items not yet lifted to editable lorebook. Editing on the Workbench covers core fields with whole-card save. Exporting back out offers Backyard .byaf and Backyard legacy JSON as two Press targets. Common questions cover same-shape exact return, picture only on byaf, placeholder rewrite rules, and lore items stay escrowed.",
   "topics": [
     "Backyard two shapes",
     "flat JSON and byaf",
@@ -15,11 +15,11 @@
   ],
   "sections": [
     {
-      "slug": "what-bunraku-reads",
-      "title": "What Bunraku reads",
+      "slug": "what-bunzai-reads",
+      "title": "What Bunzai reads",
       "level": 2,
-      "sourceHash": "sha256:4262942de1b9ac5629756d64e6cdcc17fb4fbee41a4050f94d646e1fe9ca54e4",
-      "summary": "Bunraku reads both shapes Backyard has shipped. The older flat JSON export from Faraday-era versions is a plain .json with keys like aiName aiPersona and customDialogue. The modern .byaf archive is a zip that bundles the character one or more scenarios and any images together. These are not two names for the same thing; each has its own vocabulary and two separate adapters. Drop either on the Library; Bunraku looks inside a .byaf by zip signature and manifest shape and flat JSON by Backyard-only keys so renaming does not confuse it. Full walkthrough lives in the importing guide.",
+      "sourceHash": "sha256:3fa9922b0e1ffd4b5727a6a2cc1191a66f9d052965868f9e1e8425a417c6c30d",
+      "summary": "Bunzai reads both shapes Backyard has shipped. The older flat JSON export from Faraday-era versions is a plain .json with keys like aiName aiPersona and customDialogue. The modern .byaf archive is a zip that bundles the character one or more scenarios and any images together. These are not two names for the same thing; each has its own vocabulary and two separate adapters. Drop either on the Library; Bunzai looks inside a .byaf by zip signature and manifest shape and flat JSON by Backyard-only keys so renaming does not confuse it. Full walkthrough lives in the importing guide.",
       "topics": [
         "flat JSON Faraday",
         "byaf zip archive",
@@ -33,8 +33,8 @@
       "slug": "what-comes-across-cleanly",
       "title": "What comes across cleanly",
       "level": 2,
-      "sourceHash": "sha256:14b10de7fe76e29f3b1edec890902d969b8da3ecff33767acb814343d14e558d",
-      "summary": "Importing loses nothing. Bunraku keeps a complete original then lifts editable parts. From older flat JSON: display name and separate nickname when short char name differs; description and personality as two fields; scenario system prompt first message example messages creator tags and optional version tag. From a .byaf archive: display name nickname single description no separate personality; scenario from primary narrative; system first message alternate greetings examples; avatar-labeled or first image as portrait other images as gallery; scenario background; creator source URL created and updated dates; content rating as explicit or all-ages only because byaf stores a plain NSFW switch so mature never comes from Backyard import. Across both shapes Backyard placeholders are single braces; flat JSON rewrites to double braces on the way in while .byaf text comes across exactly as written without rewrite.",
+      "sourceHash": "sha256:36c9f885b612fa41dd6e2c05bbbe69ca2e7ddee760468caf514c8cbd47d97f82",
+      "summary": "Importing loses nothing. Bunzai keeps a complete original then lifts editable parts. From older flat JSON: display name and separate nickname when short char name differs; description and personality as two fields; scenario system prompt first message example messages creator tags and optional version tag. From a .byaf archive: display name nickname single description no separate personality; scenario from primary narrative; system first message alternate greetings examples; avatar-labeled or first image as portrait other images as gallery; scenario background; creator source URL created and updated dates; content rating as explicit or all-ages only because byaf stores a plain NSFW switch so mature never comes from Backyard import. Across both shapes Backyard placeholders are single braces; flat JSON rewrites to double braces on the way in while .byaf text comes across exactly as written without rewrite.",
       "topics": [
         "flat JSON fields",
         "byaf fields media",
@@ -48,8 +48,8 @@
       "slug": "what-changes-when-you-convert-to-another-app",
       "title": "What changes when you convert to another app",
       "level": 2,
-      "sourceHash": "sha256:83163ea1a2222e632ae649d9ac03eb98bda10ebe8baec738b7930b6e89061878",
-      "summary": "Same-shape round-trip keeps everything: flat JSON to flat JSON or .byaf to .byaf because Bunraku kept the original and only rewrites changed fields. Moving between the two Backyard shapes counts as conversion not same-app: only listed shared fields cross. Personality is the clearest case; flat JSON keeps it but .byaf has one persona field so personality does not travel on export to byaf. Alternate greetings portrait gallery background content rating source dates keep on byaf round-trip and drop on flat JSON which has none of them. Lore items sampler generation settings prompt template grammar chat transcript and other Backyard extras without a canonical slot stay on same-shape and drop elsewhere. Lore items stay on the twin but are not yet lifted into an editable lorebook so they do not cross into another app lore fields. Another app includes SillyTavern RoleCall Agnai Risu and the other Backyard shape.",
+      "sourceHash": "sha256:41872c197e9932256cc63e8441e101ad35d436f1d17e907c14996feb4a30440e",
+      "summary": "Same-shape round-trip keeps everything: flat JSON to flat JSON or .byaf to .byaf because Bunzai kept the original and only rewrites changed fields. Moving between the two Backyard shapes counts as conversion not same-app: only listed shared fields cross. Personality is the clearest case; flat JSON keeps it but .byaf has one persona field so personality does not travel on export to byaf. Alternate greetings portrait gallery background content rating source dates keep on byaf round-trip and drop on flat JSON which has none of them. Lore items sampler generation settings prompt template grammar chat transcript and other Backyard extras without a canonical slot stay on same-shape and drop elsewhere. Lore items stay on the twin but are not yet lifted into an editable lorebook so they do not cross into another app lore fields. Another app includes SillyTavern RoleCall Agnai Risu and the other Backyard shape.",
       "topics": [
         "same-shape full keep",
         "cross-shape is convert",
@@ -63,8 +63,8 @@
       "slug": "editing-on-the-workbench",
       "title": "Editing on the Workbench",
       "level": 2,
-      "sourceHash": "sha256:c37c66fbebab6c1e3b590b024be5ca3f7e2f7707e0b9f8f1e172c4378c4b3b85",
-      "summary": "Send a piece from the Library to the Workbench and it opens as a tab. Edit name nickname description personality scenario first message and any alternate greetings and example messages. When you save Bunraku writes the whole card back so parts you did not touch stay exactly as they were.",
+      "sourceHash": "sha256:690c3e42bade5ede71ceda2dc9aeeedf384d16e158349132fc3e2ff2daac40ae",
+      "summary": "Send a piece from the Library to the Workbench and it opens as a tab. Edit name nickname description personality scenario first message and any alternate greetings and example messages. When you save Bunzai writes the whole card back so parts you did not touch stay exactly as they were.",
       "topics": [
         "Workbench tab edit",
         "core character fields",
@@ -77,8 +77,8 @@
       "slug": "exporting-back-out",
       "title": "Exporting back out",
       "level": 2,
-      "sourceHash": "sha256:414199e877093fab54cd42d505544fa536fb3027179f8af5e14379cac67e6d86",
-      "summary": "Stage a ready piece for the Press via right-click or the Press rail. Each run exports staged pieces to one target you pick. Backyard shows as two targets: Backyard for modern .byaf and Backyard legacy for flat JSON. Bunraku writes .byaf as a zip and legacy as .json. Pick the target that matches where the card is going; the other applies the drop story like a different app. Plain .txt or .md copies are available for reading text only.",
+      "sourceHash": "sha256:0c0d7015f5c6bb916fdc53bfb30a9cda009740f37a2e7c4d87f854396d726f75",
+      "summary": "Stage a ready piece for the Press via right-click or the Press rail. Each run exports staged pieces to one target you pick. Backyard shows as two targets: Backyard for modern .byaf and Backyard legacy for flat JSON. Bunzai writes .byaf as a zip and legacy as .json. Pick the target that matches where the card is going; the other applies the drop story like a different app. Plain .txt or .md copies are available for reading text only.",
       "topics": [
         "Press dual targets",
         "byaf and legacy JSON",
@@ -92,7 +92,7 @@
       "slug": "common-questions",
       "title": "Common questions",
       "level": 2,
-      "sourceHash": "sha256:ae6e5b7148cf72c9e2573fb9e99c788fef1e0152acf32b282e251068337aefa1",
+      "sourceHash": "sha256:28d68174a5be3cd11912692a37a90cad56044f7c226f0ba606f4b2f137636621",
       "summary": "Will the card come back exactly as it was? Yes only when exported to the exact import shape; switching shapes follows the same crossing rule as a different app. Imported .byaf returns as .byaf only if you pick Backyard; Backyard legacy writes flat JSON and drops alternate greetings images background and content rating. Pictures ride on .byaf round-trip including gallery; flat JSON has no image archive. Flat JSON single-brace placeholders convert to double braces on read and only re-convert if you edited the field; .byaf text is never touched that way. Archive lore items stay attached on .byaf round-trip but are not yet lifted into an editable lorebook so they will not cross into another app lore fields.",
       "topics": [
         "same-shape exact return",

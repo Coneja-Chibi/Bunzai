@@ -1,6 +1,6 @@
 /**
  * The carrier a chat-log adapter hands the import path: a finished
- * conversation in Bunraku's own words, with every name still a NAME, because the scene's cast is
+ * conversation in Bunzai's own words, with every name still a NAME, because the scene's cast is
  * resolved against the library at save time (src/studio/scene-import.ts), never at read time. It is
  * not a library entity: a scene lives in the ChatStore, so it has no canonical kind, no profiles and no
  * escrow, and `parseCanonicalEntity` refuses it by design. Types, a guard, and the refusal an adapter

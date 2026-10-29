@@ -8,13 +8,13 @@
 <link rel="stylesheet" href="../rc-port/port.css">
 <link rel="stylesheet" href="../rc-port/rc-parts.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
- * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunraku. Every size below was
+ * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunzai. Every size below was
  * read off the running page on 2026-09-24 (computed styles at 1920x945 and 390x844) or from the
  * component source (WingRail, WingItem, WingShell, FoldoutTabs, GreetingSelector,
- * composer-shell-styles). Colors are Bunraku tokens:
+ * composer-shell-styles). Colors are Bunzai tokens:
  *   RC zinc-300 / zinc-400 / zinc-500 / zinc-600  ->  --stage-soft / --stage-text-dim / --stage-mute / --stage-line
  *   RC black/55 bubble, white/8 edge              ->  color-mix of --stage-black and --stage-card
  *   RC user accent (violet)                       ->  --accent
@@ -370,8 +370,8 @@ body:has([data-s="editing"][style*="outline"]) .ta { border-color: var(--w); }
 
 /* ---- TrackHare, a Prop (ported from the SillyTavern extension, github Coneja-Chibi/TrackHare) ----
  * Proposed new token (not yet in tokens.css): --prop-hare, TrackHare's own orange (#ff6b35 in ST).
- * Everything else is Bunraku's stage tokens. No glass, no emoji: TrackHare's emoji icons become
- * the icon set, its blur panels become Bunraku's flat stage panels. */
+ * Everything else is Bunzai's stage tokens. No glass, no emoji: TrackHare's emoji icons become
+ * the icon set, its blur panels become Bunzai's flat stage panels. */
 :root { --prop-hare: #ff6b35; /* PROPOSED TOKEN */ }
 .hare-btn { position: absolute; left: 96px; bottom: 28px; z-index: 44; width: 48px; height: 48px; display: grid; place-items: center; background: var(--stage-panel); border: 1px solid color-mix(in srgb, var(--prop-hare) 45%, transparent); color: var(--prop-hare); cursor: pointer; box-shadow: 4px 4px 0 var(--stage-black); }
 .hare-btn svg { width: 26px; height: 30px; }
@@ -647,7 +647,7 @@ body.compact .tags, body.compact .he .tk { display: none; }
   <span>|</span><button data-c="1">Compact</button>
   <button data-theme-switch>Theme</button><a href="../index.html">All</a>
 </div>
-<div class="wf-note"><b>TrackHare, ported from your SillyTavern extension as a Prop.</b> Switch it on per scene in the Props wing; its button sits on the stage with a count of what fired, click opens what fired on the last reply, right-click opens options, and it drags and resizes like it did in ST. <b>Kept from ST:</b> the button and badge, the popover grouped by book with Detailed and Compact, reason badges, sticky countdowns, the Tokens itemizer (chart, legend with click-to-leave-out what-if and drag to reorder, context budget bar, sections with raw text, copy and export), and the Chains view (starters, links, ends, standalone). <b>Now possible because Bunraku owns the data (no log scraping or patching):</b> exact reasons with recursion loop, the actual chance roll, <b>Didn't fire</b> with why not (budget, chance, cooldown), any earlier reply (the seeded turn replays exactly), the lore share of the budget, and the raw request. <b>Left out:</b> VectHare (Bunraku has no vector search yet), Potato Mode (no glass or blur to strip), and the 18-tokenizer picker (it counts with the scene's model).</div>
+<div class="wf-note"><b>TrackHare, ported from your SillyTavern extension as a Prop.</b> Switch it on per scene in the Props wing; its button sits on the stage with a count of what fired, click opens what fired on the last reply, right-click opens options, and it drags and resizes like it did in ST. <b>Kept from ST:</b> the button and badge, the popover grouped by book with Detailed and Compact, reason badges, sticky countdowns, the Tokens itemizer (chart, legend with click-to-leave-out what-if and drag to reorder, context budget bar, sections with raw text, copy and export), and the Chains view (starters, links, ends, standalone). <b>Now possible because Bunzai owns the data (no log scraping or patching):</b> exact reasons with recursion loop, the actual chance roll, <b>Didn't fire</b> with why not (budget, chance, cooldown), any earlier reply (the seeded turn replays exactly), the lore share of the budget, and the raw request. <b>Left out:</b> VectHare (Bunzai has no vector search yet), Potato Mode (no glass or blur to strip), and the 18-tokenizer picker (it counts with the scene's model).</div>
 
 <script>
 (function () {

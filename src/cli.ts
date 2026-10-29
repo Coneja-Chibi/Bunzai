@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * bunraku - the Bunraku command line.
+ * bunzai - the Bunzai command line.
  * First heartbeat: it boots, it knows who it is, it tells you what is coming.
  * The engine (canonical model + format adapters) gets poured in next.
  */
@@ -87,20 +87,20 @@ function sourceCardOf(src: FormatAdapter | undefined, input: AdapterInput): unkn
 }
 
 const BANNER = `
-  bunraku  ${VERSION}
+  bunzai  ${VERSION}
   the forge for AI-roleplay content
 `;
 
 const HELP = `${BANNER}
   Usage
-    bunraku <command> [options]
+    bunzai <command> [options]
 
   Commands
     convert <in> <out>    Convert a file from one format to another
     inspect <file>        Show what is inside a file
-    validate <file>       Detect + parse; exit 0 if bunraku can open it
+    validate <file>       Detect + parse; exit 0 if bunzai can open it
     label <file>          Guess a card's format and which app it is likely from
-    formats               List the formats bunraku knows about
+    formats               List the formats bunzai knows about
     ui [port] [studio]    Open the Studio on loopback (remote access is configured inside the Studio)
     export <folder> [studio]  Write your library out as a plain, unencrypted studio folder
     derived --stats|--clear [studio]  Inspect or clear rebuildable derived cache rows
@@ -115,9 +115,9 @@ const HELP = `${BANNER}
     --json                version/formats/validate/convert: machine-readable stdout
 
   Example
-    bunraku convert vera.png vera.charx --to risu
-    bunraku convert card.json out.charx --to lumiverse --yes
-    bunraku validate samples/sillytavern/characters/v3-full.json
+    bunzai convert vera.png vera.charx --to risu
+    bunzai convert card.json out.charx --to lumiverse --yes
+    bunzai validate samples/sillytavern/characters/v3-full.json
 
   Status
     Converter jewel (M1): open/inspect/validate/convert across discovered adapters.
@@ -140,7 +140,7 @@ async function holdConsoleIfClicked(noArguments: boolean): Promise<void> {
   });
   if (!hold) return;
   console.log("  This is the command-line tool. Run it from a terminal with a command above.");
-  console.log("  Looking for the app? That is Bunraku.exe.\n");
+  console.log("  Looking for the app? That is Bunzai.exe.\n");
   console.log("  Press Enter to close.");
   await new Promise<void>((resolve) => {
     process.stdin.once("data", () => resolve());
@@ -152,7 +152,7 @@ async function main(argv: string[]): Promise<number> {
   const args = argv.slice(2);
   // Safe mode: every theme resolves to core for this launch; nothing is revoked or removed (ui/server-theme-extensions.ts reads the variable).
   const safeAt = args.indexOf("--safe-themes");
-  if (safeAt >= 0) { args.splice(safeAt, 1); process.env.BUNRAKU_SAFE_THEMES = "1"; }
+  if (safeAt >= 0) { args.splice(safeAt, 1); process.env.BUNZAI_SAFE_THEMES = "1"; }
   const first = args[0];
   const json = wantsJson(args);
 
@@ -204,7 +204,7 @@ async function main(argv: string[]): Promise<number> {
   if (first === "validate") {
     const path = args.find((a) => a !== "validate" && a !== "--json");
     if (!path) {
-      console.log(`\n  Usage: bunraku validate <file> [--json]\n`);
+      console.log(`\n  Usage: bunzai validate <file> [--json]\n`);
       return 1;
     }
     await ensureFormats();
@@ -214,7 +214,7 @@ async function main(argv: string[]): Promise<number> {
       if (json) console.log(JSON.stringify({ ok: false, path, error: "unrecognized" }));
       else {
         console.log(`\n  INVALID  ${path}`);
-        console.log(`  bunraku does not recognize this file.\n`);
+        console.log(`  bunzai does not recognize this file.\n`);
       }
       return 1;
     }
@@ -239,11 +239,11 @@ async function main(argv: string[]): Promise<number> {
   }
 
   /**
-   * `bunraku mcp` - serve the studio's tools over MCP on stdio.
+   * `bunzai mcp` - serve the studio's tools over MCP on stdio.
    *
-   * The subcommand exists so nothing has to know where Bunraku's source lives. Kit's Claude
+   * The subcommand exists so nothing has to know where Bunzai's source lives. Kit's Claude
    * provider spawns this same binary, and a person can register it with their own client
-   * (`claude mcp add --transport stdio bunraku -- bunraku mcp`). A packaged build has no
+   * (`claude mcp add --transport stdio bunzai -- bunzai mcp`). A packaged build has no
    * src/mcp/main.ts on disk to point at, so pointing at a FILE was only ever going to work from a
    * checkout.
    *
@@ -283,7 +283,7 @@ async function main(argv: string[]): Promise<number> {
       startUi(p, studioDir, PACKAGED_ASSETS ?? undefined, library));
     const opened = await library.open();
     if (bound !== port) {
-      console.log(`\n  Port ${port} is held by something that is not Bunraku - using ${bound}.`);
+      console.log(`\n  Port ${port} is held by something that is not Bunzai - using ${bound}.`);
     }
     const { url, sandboxUrl } = started;
     const { forwardingGuide } = await import("./ui/forwarding");
@@ -291,7 +291,7 @@ async function main(argv: string[]): Promise<number> {
       new URL(url).port,
       sandboxUrl ? new URL(sandboxUrl).port : undefined,
     );
-    console.log(`\n  Bunraku. is up: ${url}`);
+    console.log(`\n  Bunzai. is up: ${url}`);
     const phase = await library.phase();
     const where = opened
       ? `your library is encrypted in library.db there${opened.state === "locked" ? ", and locked" : ""}`
@@ -318,14 +318,14 @@ async function main(argv: string[]): Promise<number> {
   if (first === "inspect") {
     const path = args[1];
     if (!path) {
-      console.log(`\n  Usage: bunraku inspect <file>\n`);
+      console.log(`\n  Usage: bunzai inspect <file>\n`);
       return 1;
     }
     await ensureFormats();
     const input = await readInput(path);
     const src = registry.detect(input);
     if (!src) {
-      console.log(`\n  bunraku does not recognize "${path}".`);
+      console.log(`\n  bunzai does not recognize "${path}".`);
       console.log(`  Known formats: ${registry.all().map((a) => a.id).join(", ")}\n`);
       return 1;
     }
@@ -340,7 +340,7 @@ async function main(argv: string[]): Promise<number> {
   if (first === "label") {
     const path = args[1];
     if (!path) {
-      console.log(`\n  Usage: bunraku label <file>\n`);
+      console.log(`\n  Usage: bunzai label <file>\n`);
       return 1;
     }
     await ensureFormats();
@@ -363,13 +363,13 @@ async function main(argv: string[]): Promise<number> {
     const flags = parseConvertFlags(convertArgs);
     if (!flags.ok) {
       console.log(`\n  ${flags.error}`);
-      console.log(`  Usage: bunraku convert <in> <out> [--to <format>] [--yes] [--strict]\n`);
+      console.log(`  Usage: bunzai convert <in> <out> [--to <format>] [--yes] [--strict]\n`);
       return 1;
     }
     const inPath = flags.rest[0];
     const outPath = flags.rest[1];
     if (!inPath || !outPath || flags.rest.length !== 2) {
-      console.log(`\n  Usage: bunraku convert <in> <out> [--to <format>] [--yes] [--strict]\n`);
+      console.log(`\n  Usage: bunzai convert <in> <out> [--to <format>] [--yes] [--strict]\n`);
       return 1;
     }
 
@@ -383,7 +383,7 @@ async function main(argv: string[]): Promise<number> {
     const input = await readInput(inPath);
     const src = registry.detect(input);
     if (!src) {
-      console.log(`\n  bunraku does not recognize "${inPath}".`);
+      console.log(`\n  bunzai does not recognize "${inPath}".`);
       console.log(`  Known formats: ${registry.all().map((a) => a.id).join(", ")}\n`);
       return 1;
     }
@@ -391,7 +391,7 @@ async function main(argv: string[]): Promise<number> {
     const target = resolveTarget(flags.to, outPath);
     if (!target.ok) {
       console.log(`\n  ${target.error}`);
-      console.log(`  Pass one explicitly: bunraku convert ${inPath} ${outPath} --to <format>`);
+      console.log(`  Pass one explicitly: bunzai convert ${inPath} ${outPath} --to <format>`);
       console.log(`  Known formats: ${registry.all().map((a) => a.id).join(", ")}\n`);
       return 1;
     }
@@ -476,7 +476,7 @@ async function main(argv: string[]): Promise<number> {
   }
 
   console.log(`\n  Unknown command: ${first}`);
-  console.log(`  Run "bunraku help" to see what is available.\n`);
+  console.log(`  Run "bunzai help" to see what is available.\n`);
   return 1;
 }
 

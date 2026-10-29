@@ -5,7 +5,7 @@ import { loadUserFont } from "../../_shared/user-fonts";
 import styles from "./styles.module.css";
 
 export function FontPreview({ sha, name }: { sha: string; name: string }): JSX.Element {
-  const family = `Bunraku-${sha}`;
+  const family = `Bunzai-${sha}`;
   const [ready, setReady] = useState(false);
   const asset = useAsset({ sha });
   useEffect(() => {

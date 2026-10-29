@@ -15,10 +15,10 @@ export default function AttractTitle({ state }: { state: TitleState }): JSX.Elem
     ["import", "Import a piece", importPiece], ["browse", "Browse stories", browseStories],
   ];
   return (
-    <section ref={sheetRef} tabIndex={-1} data-part="shell.title" aria-label="Bunraku title screen" className={`${styles.stage}${closing ? ` ${styles.closing}` : ""}`}>
+    <section ref={sheetRef} tabIndex={-1} data-part="shell.title" aria-label="Bunzai title screen" className={`${styles.stage}${closing ? ` ${styles.closing}` : ""}`}>
       <div className={styles.frame}>
         <header className={styles.head}>
-          <h1 className={styles.word}>Bunraku</h1>
+          <h1 className={styles.word}>Bunzai</h1>
           <div className={styles.bar} aria-hidden="true">{Array.from({ length: 16 }, (_, i) => <span key={i} />)}</div>
           <p className={styles.tag}>Every story deserves a stage.</p>
         </header>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { installDom, teardownAllDoms } from "../_shared/test-dom";
-import type { AppContext, BunrakuApp } from "../app-contract";
+import type { AppContext, BunzaiApp } from "../app-contract";
 import { AppRooms } from "./AppRooms";
 import { useShellStore } from "./store";
 
@@ -14,12 +14,12 @@ test("an editor survives visiting a tool, including the asynchronous loading gap
   const host = dom.window.document.getElementById("root")!; const root = createRoot(host); const original = useShellStore.getState();
   let mounts = 0; let publishFromEditor = () => {}; let publications = 0;
   const ctx = { agent: { publish: () => { publications++; } } } as unknown as AppContext;
-  const editor: BunrakuApp = { manifest: { id: "editor", title: "Editor", editsPieces: true, markSvg: "", accent: "", order: 1 }, Component: ({ ctx }) => {
+  const editor: BunzaiApp = { manifest: { id: "editor", title: "Editor", editsPieces: true, markSvg: "", accent: "", order: 1 }, Component: ({ ctx }) => {
     useState(() => { mounts++; return null; }); publishFromEditor = () => ctx.agent.publish({ headline: "Editor" });
     return <textarea defaultValue="Original" />;
   } };
-  const tool: BunrakuApp = { manifest: { ...editor.manifest, id: "tool", editsPieces: false }, Component: () => <button>Tool</button> };
-  const render = (app: BunrakuApp | null, id: string) => flushSync(() => { useShellStore.setState({ activeAppId: id }); root.render(<AppRooms app={app} activeAppId={id} workspaceAppId={id} overlayAppId="" workspace={host} overlay={null} overlayOpen={false} ctx={ctx} />); });
+  const tool: BunzaiApp = { manifest: { ...editor.manifest, id: "tool", editsPieces: false }, Component: () => <button>Tool</button> };
+  const render = (app: BunzaiApp | null, id: string) => flushSync(() => { useShellStore.setState({ activeAppId: id }); root.render(<AppRooms app={app} activeAppId={id} workspaceAppId={id} overlayAppId="" workspace={host} overlay={null} overlayOpen={false} ctx={ctx} />); });
   try {
     render(editor, "editor"); const input = host.querySelector("textarea")!; input.value = "Unsaved";
     render(null, "tool"); expect(input.isConnected).toBe(true); expect(input.closest("[hidden]")).not.toBeNull();

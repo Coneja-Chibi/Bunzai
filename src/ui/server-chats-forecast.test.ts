@@ -11,20 +11,20 @@ import { apiReq } from "./server-test-rig";
 import type { SceneForecast } from "./app-contract-scenes";
 
 setDefaultTimeout(30_000);
-const HOME = join(tmpdir(), `bunraku-forecast-route-${randomUUID()}`);
+const HOME = join(tmpdir(), `bunzai-forecast-route-${randomUUID()}`);
 const UNLOCK = { passphrase: "forecast-route-test" };
 let localId = "";
 let calls = 0;
 let server: ReturnType<typeof Bun.serve>;
 
 beforeAll(async () => {
-  process.env.BUNRAKU_HOME = HOME;
+  process.env.BUNZAI_HOME = HOME;
   server = Bun.serve({ port: 0, async fetch() { calls++; return new Response("{}"); } });
   localId = (await saveProvider({ kind: "local", model: "qwen3", baseURL: `http://127.0.0.1:${server.port}/v1`, name: "Desk" }, UNLOCK)).id!;
 });
 afterAll(async () => {
   server.stop(true);
-  delete process.env.BUNRAKU_HOME;
+  delete process.env.BUNZAI_HOME;
   await rm(HOME, { recursive: true, force: true });
 });
 afterEach(cleanupChatRouteRigs);

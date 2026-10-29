@@ -14,7 +14,7 @@ export const figures = {
     support: {
       type: "matrix", fig: "fig·01", title: "one card, nine apps",
       caption:
-        "What each app's adapter actually reads and writes today. A blank cell isn't a bug, that app never had that piece to begin with, RisuAI has no persona file, Marinara only ever shipped regex and personas. Chub cards are the SillyTavern row: Chub has no wire shape of its own, it rides SillyTavern's Character Card v2/v3 with one extra block along for the ride. Bunraku's own native JSON isn't in this table, it's the local storage format every kind is already saved as, not a convert destination.",
+        "What each app's adapter actually reads and writes today. A blank cell isn't a bug, that app never had that piece to begin with, RisuAI has no persona file, Marinara only ever shipped regex and personas. Chub cards are the SillyTavern row: Chub has no wire shape of its own, it rides SillyTavern's Character Card v2/v3 with one extra block along for the ride. Bunzai's own native JSON isn't in this table, it's the local storage format every kind is already saved as, not a convert destination.",
       cols: ["Character", "Lorebook", "Persona", "Regex"],
       rows: [
         { label: "SillyTavern", cells: [true, true, true, true] },

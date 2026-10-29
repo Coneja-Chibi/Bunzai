@@ -2,14 +2,14 @@
 id: reference/cli
 title: CLI reference
 audience: dev
-summary: Every bunraku command and flag, verified against src/cli.ts and src/cli-io.ts, with usage, behavior, JSON output shapes, and exit codes.
+summary: Every bunzai command and flag, verified against src/cli.ts and src/cli-io.ts, with usage, behavior, JSON output shapes, and exit codes.
 tags: [cli, reference]
 related: [reference/architecture, reference/ui]
 ---
 
 # CLI reference
 
-`bunraku` is the command line for the same engine the desktop Studio runs (see [architecture.md](architecture.md)
+`bunzai` is the command line for the same engine the desktop Studio runs (see [architecture.md](architecture.md)
 and [ui.md](ui.md)): one canonical model, adapters discovered from `src/formats/`. `src/cli.ts` is the whole
 dispatcher, one `main(argv)` function with an if-chain per command. `src/cli-io.ts` holds the pure IO policy
 the `convert` command leans on: flag parsing, path-identity comparison, container agreement, and atomic file
@@ -17,42 +17,42 @@ publish. This page documents every command and flag exactly as the code implemen
 
 ## Invocation
 
-- In the repo: `bun run src/cli.ts <command> [args]`, or the package script `bun run bunraku <command> [args]`.
-- `package.json`'s `bin` field maps the `bunraku` command straight to `src/cli.ts`, so an installed or linked
+- In the repo: `bun run src/cli.ts <command> [args]`, or the package script `bun run bunzai <command> [args]`.
+- `package.json`'s `bin` field maps the `bunzai` command straight to `src/cli.ts`, so an installed or linked
   package exposes it directly.
-- `bun run build:cli` compiles a standalone binary to `dist/bunraku` (`bun build --compile src/cli.ts`).
-- `bun run dev` is `bunraku ui 8321`.
+- `bun run build:cli` compiles a standalone binary to `dist/bunzai` (`bun build --compile src/cli.ts`).
+- `bun run dev` is `bunzai ui 8321`.
 
 ## Commands
 
 | Command | Does |
 | --- | --- |
-| `bunraku convert <in> <out> [--to <format>] [--yes \| -y] [--strict]` | Convert a file and print its loss report. |
-| `bunraku inspect <file>` | Show what is inside a file: format, kind, key fields. |
-| `bunraku validate <file>` | Detect and parse a file against its format and the canonical schema. |
-| `bunraku label <file>` | Guess a card's format spec and its likely origin app. |
-| `bunraku formats` | List every adapter the registry discovered. |
-| `bunraku ui [port] [studioDir]` | Launch the desktop Studio's primary loopback server. |
-| `bunraku export <folder> [studioDir]` | Write the library out as a plain, unencrypted studio folder. |
-| `bunraku derived --stats [studioDir] [--json]` | Show per-family process hits/misses, saved rows, estimated bytes, and mean derivation cost. |
-| `bunraku derived --clear [studioDir]` | Delete only rebuildable derived rows; canonical library data is unaffected. |
-| `bunraku version` | Print the version. |
-| `bunraku help` | Print the built-in help text. |
-| (no arguments) | Same as `bunraku help`. |
+| `bunzai convert <in> <out> [--to <format>] [--yes \| -y] [--strict]` | Convert a file and print its loss report. |
+| `bunzai inspect <file>` | Show what is inside a file: format, kind, key fields. |
+| `bunzai validate <file>` | Detect and parse a file against its format and the canonical schema. |
+| `bunzai label <file>` | Guess a card's format spec and its likely origin app. |
+| `bunzai formats` | List every adapter the registry discovered. |
+| `bunzai ui [port] [studioDir]` | Launch the desktop Studio's primary loopback server. |
+| `bunzai export <folder> [studioDir]` | Write the library out as a plain, unencrypted studio folder. |
+| `bunzai derived --stats [studioDir] [--json]` | Show per-family process hits/misses, saved rows, estimated bytes, and mean derivation cost. |
+| `bunzai derived --clear [studioDir]` | Delete only rebuildable derived rows; canonical library data is unaffected. |
+| `bunzai version` | Print the version. |
+| `bunzai help` | Print the built-in help text. |
+| (no arguments) | Same as `bunzai help`. |
 | (an unrecognized first argument) | Prints an error naming it and exits 1. |
 
 ## Global flags
 
 | Flag | Where | Does |
 | --- | --- | --- |
-| `-v`, `--version` | Standalone, before any command | Same as `bunraku version` (`cli.ts:135`). |
-| `-h`, `--help` | Standalone, before any command | Same as `bunraku help` (`cli.ts:141`). |
+| `-v`, `--version` | Standalone, before any command | Same as `bunzai version` (`cli.ts:135`). |
+| `-h`, `--help` | Standalone, before any command | Same as `bunzai help` (`cli.ts:141`). |
 | `--json` | `version`, `formats`, `validate`, `convert`, `derived --stats` | Emit JSON to stdout instead of human-readable output. `inspect`, `label`, `ui`, `help`, and `derived --clear` do not read this flag. |
 | `--to <format>` | `convert` only | Force the output adapter id, bypassing extension resolution. |
 | `--yes`, `-y` | `convert` only | Allow replacing an existing output file. Never overwrites the input. |
 | `--strict` | `convert` only | Refuse before writing when fields are dropped or target coverage is undeclared. |
 
-## `bunraku derived --stats|--clear`
+## `bunzai derived --stats|--clear`
 
 These commands open the existing encrypted library and require it to be unlocked. They do not run the
 normal session-copy, Trash-purge, or summary-rebuild open maintenance. `--stats` prints one row per
@@ -60,12 +60,12 @@ derived family; `--json` emits the same array as JSON. `--clear` removes the der
 the in-memory tier, which the application can rebuild as needed. A missing library or locked library
 returns an error without creating a new one.
 
-## `bunraku convert <in> <out>`
+## `bunzai convert <in> <out>`
 
 ```
-bunraku convert <in> <out> [--to <format>] [--yes | -y] [--strict] [--json]
-bunraku convert vera.png vera.charx --to risu
-bunraku convert card.json out.charx --to lumiverse --yes
+bunzai convert <in> <out> [--to <format>] [--yes | -y] [--strict] [--json]
+bunzai convert vera.png vera.charx --to risu
+bunzai convert card.json out.charx --to lumiverse --yes
 ```
 
 Flags may appear anywhere after `convert`, in any order: `parseConvertFlags` (`cli-io.ts:17-45`) scans the
@@ -123,10 +123,10 @@ unknown dropped count rather than zero; JSON uses `coverage: "unknown"` and `cou
 
 @fig convert
 
-## `bunraku inspect <file>`
+## `bunzai inspect <file>`
 
 ```
-bunraku inspect <file>
+bunzai inspect <file>
 ```
 
 Detects the source adapter, converts to the canonical entity, validates the complete runtime schema
@@ -146,10 +146,10 @@ Does not honor `--json`; always prints the human-readable form. `<file>` is read
 The canonical inspect formatter has a media-pack branch, but no live format adapter currently imports a
 pack, so that branch is not reachable from this command.
 
-## `bunraku validate <file>`
+## `bunzai validate <file>`
 
 ```
-bunraku validate <file> [--json]
+bunzai validate <file> [--json]
 ```
 
 Detects the adapter, converts through `toCanonical`, then parses the result through the exhaustive
@@ -169,10 +169,10 @@ the format id, kind, and name. Exit code is 0 on `OK`, 1 on any `INVALID` case.
 { "ok": false, "path": "vera.png", "format": "sillytavern", "error": "<the thrown message>" }
 ```
 
-## `bunraku label <file>`
+## `bunzai label <file>`
 
 ```
-bunraku label <file>
+bunzai label <file>
 ```
 
 Guesses a card's spec and likely origin app without fully parsing it into the canonical model
@@ -192,10 +192,10 @@ Prints:
 
 Does not honor `--json`. `<file>` is `args[1]` (`cli.ts:279`), same positional caveat as `inspect`.
 
-## `bunraku formats`
+## `bunzai formats`
 
 ```
-bunraku formats [--json]
+bunzai formats [--json]
 ```
 
 Loads every adapter the loader discovers under `src/formats/*/index.ts` (`loadFormats`) and lists each
@@ -209,12 +209,12 @@ reminder that a new format is a folder drop-in (copy `src/formats/_template`).
 { "schema": "1", "adapters": [ { "id": "sillytavern", "kind": "character", "label": "SillyTavern character card (v2/v3, png/json)", "outputExtensions": ["json"] } ] }
 ```
 
-## `bunraku ui [port] [studioDir]`
+## `bunzai ui [port] [studioDir]`
 
 ```
-bunraku ui
-bunraku ui 8321
-bunraku ui 8321 "C:\Users\me\Documents\Bunraku Studio"
+bunzai ui
+bunzai ui 8321
+bunzai ui 8321 "C:\Users\me\Documents\Bunzai Studio"
 ```
 
 Starts the Studio's primary loopback server (`startUi`, see [ui.md](ui.md)) and blocks forever:
@@ -223,15 +223,15 @@ keeps the process alive and `main` awaits a promise that never resolves, so the 
 interrupt (`cli.ts:219-231`).
 
 `port` is `Number(args[1]) || 8321` (`cli.ts:222`): a missing, non-numeric, or literal `0` value all fall
-back to `8321`, since `0` is falsy. `studioDir` is `args[2]`, defaulting to `<home>/Documents/Bunraku Studio`;
+back to `8321`, since `0` is falsy. `studioDir` is `args[2]`, defaulting to `<home>/Documents/Bunzai Studio`;
 it can only be set by also passing a `port` first, since it reads the third positional token regardless of
 the second. Does not honor `--json`.
 
-## `bunraku export <folder> [studioDir]`
+## `bunzai export <folder> [studioDir]`
 
 ```
-bunraku export "C:\Users\me\Desktop\studio backup"
-bunraku export ./backup "C:\Users\me\Documents\Bunraku Studio"
+bunzai export "C:\Users\me\Desktop\studio backup"
+bunzai export ./backup "C:\Users\me\Documents\Bunzai Studio"
 ```
 
 Writes the studio's encrypted library out as a plain studio folder (`src/cli-export.ts`, which calls
@@ -252,25 +252,25 @@ the exact layout the folder import reads. The Trash and each piece's earlier ver
   running, a piece edited during the export may go out in either version.
 - A missing `<folder>` prints usage and exits 2. Does not honor `--json`.
 
-## `bunraku version`
+## `bunzai version`
 
 ```
-bunraku version
-bunraku -v
-bunraku --version
+bunzai version
+bunzai -v
+bunzai --version
 ```
 
 All three are equivalent; the `-v`/`--version` forms are checked before any other command match, ahead of
 the no-arguments and `help` fallback (`cli.ts:135-139`). Plain form prints just the version string.
 `--json` shape: `{ "version": "0.1.0", "schema": "1" }`.
 
-## `bunraku help`
+## `bunzai help`
 
 ```
-bunraku help
-bunraku -h
-bunraku --help
-bunraku
+bunzai help
+bunzai -h
+bunzai --help
+bunzai
 ```
 
 All four print the same built-in `HELP` banner: usage line, the command table, the flag list, one example
@@ -305,5 +305,5 @@ arguments falls through to the same branch as `help` (`cli.ts:141`). Does not ho
 | Folder discovery (`loadFormats`) | `src/core/loader.ts` |
 | Bundle extract/re-embed on convert | `src/convert.ts` |
 | Card provenance labeler (`labelCard`, `sniffContainer`) | `src/entities/character/provenance.ts` |
-| Studio server started by `bunraku ui` | `src/ui/server.ts` (see [ui.md](ui.md)) |
+| Studio server started by `bunzai ui` | `src/ui/server.ts` (see [ui.md](ui.md)) |
 | Invocation surfaces (`bin`, scripts) | `package.json` |

@@ -1,7 +1,7 @@
 /**
  * The Cast wing's Participants tab, RoleCall's Participant Registry (ParticipantRegistryPanel.tsx), drawn from its live screenshots: the
  * hero, the REGISTERED, NPCS and ON STAGE counters, RECONCILE RECENT SCENE, then the main character, the player, any cards and the NPCs,
- * each with its Ping, Color and Scene. Left out, with reasons: ROSTER DIRECTOR (it chooses which agent maintains the roster; Bunraku has
+ * each with its Ping, Color and Scene. Left out, with reasons: ROSTER DIRECTOR (it chooses which agent maintains the roster; Bunzai has
  * no such agent, and RoleCall's own Reconcile ignores it), the VOICE line and editor (text-to-speech is out of scope), and Suggested Main
  * Slot (the scene's character is always the main until Set Main moves it). RETIRED lists what DELETE removed, with Restore.
  * Mounted by the Cast wing's `tab === "participants"`.

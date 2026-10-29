@@ -1,5 +1,5 @@
 /*
- * Bunraku design system, contract v1: the one stylesheet a page links.
+ * Bunzai design system, contract v1: the one stylesheet a page links.
  * Cascade layers fix who wins, whatever the selector:
  *   bk.access     the person's own settings (reduced motion, more contrast, forced colors)
  *   bk.protected  lock screen, Kit Gate, secrets, mod manager tokens

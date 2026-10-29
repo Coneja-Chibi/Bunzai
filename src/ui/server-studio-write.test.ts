@@ -18,7 +18,7 @@ afterEach(async () => {
 
 describe("/api/studio/save", () => {
   test("returns the complete entity with its revision for an editor load", async () => {
-    const root = await mkdtemp(join(tmpdir(), "bunraku-studio-write-"));
+    const root = await mkdtemp(join(tmpdir(), "bunzai-studio-write-"));
     roots.push(root);
     const store = new StudioStore(root);
     const security = filledSec();
@@ -44,7 +44,7 @@ describe("/api/studio/save", () => {
   });
 
   test("returns a bounded 400 and writes nothing for malformed optional canonical data", async () => {
-    const root = await mkdtemp(join(tmpdir(), "bunraku-studio-write-"));
+    const root = await mkdtemp(join(tmpdir(), "bunzai-studio-write-"));
     roots.push(root);
     const store = new StudioStore(root);
     const security = filledSec();
@@ -80,7 +80,7 @@ describe("/api/studio/save", () => {
   });
 
   test("rejects a stale editor revision without overwriting the newer entity", async () => {
-    const root = await mkdtemp(join(tmpdir(), "bunraku-studio-write-"));
+    const root = await mkdtemp(join(tmpdir(), "bunzai-studio-write-"));
     roots.push(root);
     const store = new StudioStore(root);
     const security = filledSec();

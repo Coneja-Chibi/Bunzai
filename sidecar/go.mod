@@ -1,4 +1,4 @@
-module bunraku/sidecar
+module bunzai/sidecar
 
 go 1.26.5
 

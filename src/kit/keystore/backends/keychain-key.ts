@@ -1,7 +1,7 @@
 /**
  * The shape both OS-keychain backends share (macOS Keychain, Linux Secret Service): one random
  * 256-bit key lives in the operating system's secret store, and every seal is AES-256-GCM under it
- * (the shared aes.ts). The key never touches Bunraku's own files, which is what makes these stronger
+ * (the shared aes.ts). The key never touches Bunzai's own files, which is what makes these stronger
  * than identity-file, and it is passed to the OS tool over stdin, never as an argument, so it never
  * shows in a process listing (the DPAPI backend's rule).
  *
@@ -12,8 +12,8 @@
  *   a stale lock is moved aside by one atomic rename and checked after the move, so a fresh lock that
  *   replaced it meanwhile is put back, never taken; the holder re-checks the lock just before it
  *   writes the key;
- * - a "key made" marker lives in the OS store next to the key, not in a Bunraku folder, so every
- *   Bunraku home on the machine sees it, and wiping the keyring clears both;
+ * - a "key made" marker lives in the OS store next to the key, not in a Bunzai folder, so every
+ *   Bunzai home on the machine sees it, and wiping the keyring clears both;
  * - before making a key, the marker is written and read back, which proves the store is unlocked
  *   and writable; a store that answers "no key" while the marker exists is refused, never replaced;
  * - after the marker is written the key is looked up again, because a locked Linux keyring can
@@ -62,7 +62,7 @@ export interface KeyStoreTool {
 export interface KeychainDeps {
   run?: Runner;
   platform?: NodeJS.Platform;
-  /** Where the lock file lives; BUNRAKU_HOME, like the identity file. */
+  /** Where the lock file lives; BUNZAI_HOME, like the identity file. */
   home?: string;
   /** How long a lock may go without a heartbeat before it counts as left by a crashed process. */
   staleLockMs?: number;
@@ -76,7 +76,7 @@ const creating = new Map<string, Promise<Buffer>>();
 export function keychainKeyBackend(id: string, label: string, tool: KeyStoreTool, deps: KeychainDeps = {}): KeystoreBackend {
   const run = deps.run ?? spawnRunner;
   const platform = deps.platform ?? process.platform;
-  const dir = () => join(deps.home ?? process.env["BUNRAKU_HOME"] ?? homedir(), ".bunraku");
+  const dir = () => join(deps.home ?? process.env["BUNZAI_HOME"] ?? homedir(), ".bunzai");
   const lockPath = () => join(dir(), `${id}.lock`);
   const staleMs = deps.staleLockMs ?? 30_000;
   const beatMs = deps.heartbeatMs ?? Math.max(10, Math.floor(staleMs / 5));
@@ -178,7 +178,7 @@ export function keychainKeyBackend(id: string, label: string, tool: KeyStoreTool
       if (already) return already;
       if ((await tool.read(run, "marker")) !== null) {
         throw new Error(
-          `keystore: ${label} says it holds no Bunraku key, but one was made before. Unlock it and try again; if the key was deleted, open the library with its recovery words instead`,
+          `keystore: ${label} says it holds no Bunzai key, but one was made before. Unlock it and try again; if the key was deleted, open the library with its recovery words instead`,
         );
       }
       // Writing the marker and reading it back proves the store is unlocked and keeps what it is given.

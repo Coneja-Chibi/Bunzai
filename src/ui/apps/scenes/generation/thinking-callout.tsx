@@ -9,7 +9,7 @@ export function ThinkingCallout(): JSX.Element {
     <div className="gn-callout" data-part="scene.generation.kinds">
       <span className="gn-cico"><Ic name="mdi:lightbulb-on-outline" size={20} /></span>
       <div>
-        <p><b>Two kinds of thinking in Bunraku.</b></p>
+        <p><b>Two kinds of thinking in Bunzai.</b></p>
         <p><b>Provider reasoning:</b> the model&apos;s own reasoning, sent separately from the reply and set by the Reasoning level below. Hidden (or summarized) unless your provider surfaces it.</p>
         <p><b>Thinking in the reply:</b> thought blocks the model writes <i>inside the reply itself</i>, usually because your preset asks for it. Thinking in Replies below sets what gets caught. Common shapes:{" "}
           {SHAPES.map((s) => <code key={s}>{s}</code>)}.</p>

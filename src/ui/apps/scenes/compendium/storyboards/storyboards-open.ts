@@ -6,7 +6,7 @@
  */
 import type { DossierType } from "../../../../../core/compendium/dossiers";
 
-export const STORYBOARDS_OPEN_EVENT = "bunraku:storyboards-open";
+export const STORYBOARDS_OPEN_EVENT = "bunzai:storyboards-open";
 const EXPIRES_MS = 5000;
 let pending: { type: DossierType; at: number } | null = null;
 

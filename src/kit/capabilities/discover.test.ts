@@ -22,7 +22,7 @@ describe("discoverCapabilities", () => {
   });
 
   test("rejects a malformed drop-in instead of silently omitting it", async () => {
-    const root = await mkdtemp(join(tmpdir(), "bunraku-capability-"));
+    const root = await mkdtemp(join(tmpdir(), "bunzai-capability-"));
     const folder = join(root, "lorebook", "capabilities");
     await mkdir(folder, { recursive: true });
     await writeFile(

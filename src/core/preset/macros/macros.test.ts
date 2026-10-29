@@ -249,7 +249,7 @@ describe("regression: real macros the old filtered catalog hid", () => {
  * Risu joins as a REFERENCE dialect, not as a write-for lens.
  *
  * The distinction is the whole point of MacroDialect: somebody can read RisuAI's macro list without
- * Bunraku claiming it can author a preset for Risu or translate one into it. These pin both halves,
+ * Bunzai claiming it can author a preset for Risu or translate one into it. These pin both halves,
  * because the tempting shortcut - adding "risu" to PRESET_WRITE_FOR_PROFILES - would make every
  * assertion below pass except the ones that matter.
  */
@@ -282,7 +282,7 @@ describe("the Risu dialect", () => {
 
   test("answers support questions like any other dialect", () => {
     expect(isMacroSupported("risu", "{{char}}")).toBe(true);
-    expect(isMacroSupported("risu", "{{bunraku_not_a_macro}}")).toBe(false);
+    expect(isMacroSupported("risu", "{{bunzai_not_a_macro}}")).toBe(false);
     expect(findMacro("risu", "{{char}}")?.description).toBeTruthy();
   });
 

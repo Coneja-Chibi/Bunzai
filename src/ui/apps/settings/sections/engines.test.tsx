@@ -39,7 +39,7 @@ const stRow = (over: Partial<Row> = {}): Row => ({
   id: "sillytavern",
   label: "SillyTavern",
   install: "a SillyTavern checkout",
-  rootVar: "BUNRAKU_ST_ROOT",
+  rootVar: "BUNZAI_ST_ROOT",
   saved: "",
   env: "",
   root: "",
@@ -177,7 +177,7 @@ describe("the engine rows in Settings", () => {
     // change what it uses.
     expect(field()?.disabled).toBe(true);
     expect(byText("Save")?.disabled).toBe(true);
-    expect(bodyText()).toContain("BUNRAKU_ST_ROOT");
+    expect(bodyText()).toContain("BUNZAI_ST_ROOT");
     expect(bodyText()).toContain("C:\\FromVar");
     unmountRows(flushSync);
   });

@@ -1,4 +1,4 @@
-/** `bunraku derived --stats|--clear`: inspect or discard only rebuildable derived rows. */
+/** `bunzai derived --stats|--clear`: inspect or discard only rebuildable derived rows. */
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { clearDerivedRows, derivedStats } from "./core/derive/derive";
@@ -6,7 +6,7 @@ import { LIBRARY_FILE } from "./studio/fs-backend";
 
 export async function runDerived(action: string | undefined, studioDir: string, json: boolean): Promise<number> {
   if (action !== "--stats" && action !== "--clear") {
-    console.error("  usage: bunraku derived --stats|--clear [studio]");
+    console.error("  usage: bunzai derived --stats|--clear [studio]");
     return 2;
   }
   if (!existsSync(join(studioDir, LIBRARY_FILE))) {

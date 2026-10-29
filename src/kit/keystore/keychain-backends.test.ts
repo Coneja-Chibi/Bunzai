@@ -88,7 +88,7 @@ afterEach(() => {
   for (const h of homes.splice(0)) rmSync(h, { recursive: true, force: true });
 });
 const newHome = () => {
-  const h = mkdtempSync(join(tmpdir(), "bunraku-kc-"));
+  const h = mkdtempSync(join(tmpdir(), "bunzai-kc-"));
   homes.push(h);
   return h;
 };
@@ -104,8 +104,8 @@ for (const c of cases) {
     const backend = (fake: ReturnType<typeof fakeTool>, home = newHome(), platform: NodeJS.Platform = c.platform, id = `test-${++unique}`) =>
       keychainKeyBackend(id, c.name, c.tool, { run: fake.run, platform, home, staleLockMs: 400, heartbeatMs: 50 });
     const lockAt = (home: string, id: string) => {
-      mkdirSync(join(home, ".bunraku"), { recursive: true });
-      return join(home, ".bunraku", `${id}.lock`);
+      mkdirSync(join(home, ".bunzai"), { recursive: true });
+      return join(home, ".bunzai", `${id}.lock`);
     };
 
     test("seals and opens, making the key once and reusing it", async () => {
@@ -179,7 +179,7 @@ for (const c of cases) {
       expect(await b.open(sealed, {})).toBe("after the wipe");
     });
 
-    test("a second Bunraku home sees the same marker, so a locked store is refused there too", async () => {
+    test("a second Bunzai home sees the same marker, so a locked store is refused there too", async () => {
       const fake = fakeTool(c.kind);
       await backend(fake).seal("x", {});
       fake.lock();
@@ -232,7 +232,7 @@ for (const c of cases) {
       const fake = fakeTool(c.kind, { delay: 300 });
       const home = newHome();
       const id = `test-${++unique}`;
-      const lockFile = join(home, ".bunraku", `${id}.lock`);
+      const lockFile = join(home, ".bunzai", `${id}.lock`);
       const pending = backend(fake, home, c.platform, id).seal("slow", {});
       const ages: number[] = [];
       const watch = setInterval(() => {

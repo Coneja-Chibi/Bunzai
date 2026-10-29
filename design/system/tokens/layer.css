@@ -1,5 +1,5 @@
 /*
- * Bunraku design system: elevation and layering, contract v1.
+ * Bunzai design system: elevation and layering, contract v1.
  * HUD elevation is flat: a thing sits higher because it is framed, scrimmed or offset, never
  * because of a blurred glow. Every z-index in the app comes from this list.
  * --bk-z-protected and above belong to the host: lock screen, Kit approvals (the Gate), secrets,

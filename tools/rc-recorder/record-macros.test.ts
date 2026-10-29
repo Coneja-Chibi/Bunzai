@@ -1,7 +1,7 @@
 // @vitest-environment node
 /**
  * Records RoleCall's macro engine on its own characterization corpus
- * (lib/macros/__characterization__/corpus.ts at the pin), as the parity target for Bunraku's
+ * (lib/macros/__characterization__/corpus.ts at the pin), as the parity target for Bunzai's
  * ported engine in src/core/macros. Per entry: the parse tree, and the full process result minus
  * timing, under RoleCall's golden-test context (TestChar / TestUser, empty variables). The clock is
  * frozen and Math.random is seeded per entry, and each entry runs twice and must match, so even

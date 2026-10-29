@@ -2,7 +2,7 @@
  * What the Press tells the agent about a conversion that has not happened yet.
  *
  * The assertions are about sentences a model will act on. This room is where somebody's pieces leave
- * Bunraku for another platform, so "it printed" when three rows were skipped is not a rounding
+ * Bunzai for another platform, so "it printed" when three rows were skipped is not a rounding
  * error - it is an agent telling somebody their lorebooks shipped when no file was ever written.
  */
 import { describe, expect, test } from "bun:test";

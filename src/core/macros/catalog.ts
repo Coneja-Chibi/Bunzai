@@ -59,7 +59,7 @@ export const CATALOG: readonly MacroDefinition[] = [
   ...COMPOSITION_MACROS,
   ...PHASE_MACROS_MACROS,
   ...MATH_MACROS,
-  // Bunraku's own, last so they never take a RoleCall name
+  // Bunzai's own, last so they never take a RoleCall name
   ...CHAT_WATCH_MACROS,
   ...TRACKER_MACROS,
 ];

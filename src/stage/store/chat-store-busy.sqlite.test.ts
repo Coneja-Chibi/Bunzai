@@ -24,8 +24,8 @@ afterEach(() => {
 
 /** A store on a real file, and a second connection to the same file that can hold the write lock. */
 async function twoWriters() {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-busy-"));
-  const path = join(dir, "bunraku.db");
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-busy-"));
+  const path = join(dir, "bunzai.db");
   const database = openStageDatabase(path, MIGRATIONS);
   const keys = subkeys(newDataKey());
   const store = sqliteChatStore(database, cellCipher(() => keys));

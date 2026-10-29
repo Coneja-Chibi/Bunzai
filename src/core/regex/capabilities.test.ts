@@ -24,7 +24,7 @@ describe("isRegexWriteForProfile / parseWriteFor", () => {
 
 describe("REGEX_WRITE_FOR_LABELS", () => {
   test("full reads as the studio name", () => {
-    expect(REGEX_WRITE_FOR_LABELS.full).toBe("Bunraku");
+    expect(REGEX_WRITE_FOR_LABELS.full).toBe("Bunzai");
   });
 });
 

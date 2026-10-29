@@ -1,4 +1,4 @@
-# Bunraku visual design approvals
+# Bunzai visual design approvals
 
 This ledger records the accepted designs and requested behavior as approvals continue.
 Approval authorizes implementation; it does not claim that a mockup's controls or assets have shipped.

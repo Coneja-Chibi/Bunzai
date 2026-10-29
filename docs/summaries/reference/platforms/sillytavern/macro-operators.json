@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/sillytavern/macro-operators",
   "sourcePath": "docs/reference/platforms/sillytavern/macro-operators.md",
-  "sourceHash": "sha256:724bc60e3404e8c7fb6b047f6975f4699c9c0e89a566a04fb324b6f7bcc1f3fa",
-  "summary": "Complete operational model of the pinned SillyTavern macro parser. It specifies case-insensitive brace tokens, single and multi-argument separators, legacy colon syntax, ignored definition whitespace, inner-first nesting, scoped final arguments, trimming and dedenting, preserved whitespace, truthiness, inversion, else branches, implemented and planned flags, comments, and literal-brace escaping. Variable sections distinguish chat-local and installation-global prefixes, identifier restrictions, nested assigned values, and every shorthand operator with mutation, comparison, fallback, lazy evaluation, and return behavior. Full-form equivalence covers get, set, add, increment, and decrement, while existence and deletion remain named macros. Legacy angle markers map to modern forms without authoring-time normalization. The safety contract makes field registry and processing stage part of semantics and keeps all macro payloads sealed during Bunraku import and conversion.",
+  "sourceHash": "sha256:8e914ea475f1c97e15d66917ffa786a7f4c07f8480f6673c7ac920d9d2bd89f4",
+  "summary": "Complete operational model of the pinned SillyTavern macro parser. It specifies case-insensitive brace tokens, single and multi-argument separators, legacy colon syntax, ignored definition whitespace, inner-first nesting, scoped final arguments, trimming and dedenting, preserved whitespace, truthiness, inversion, else branches, implemented and planned flags, comments, and literal-brace escaping. Variable sections distinguish chat-local and installation-global prefixes, identifier restrictions, nested assigned values, and every shorthand operator with mutation, comparison, fallback, lazy evaluation, and return behavior. Full-form equivalence covers get, set, add, increment, and decrement, while existence and deletion remain named macros. Legacy angle markers map to modern forms without authoring-time normalization. The safety contract makes field registry and processing stage part of semantics and keeps all macro payloads sealed during Bunzai import and conversion.",
   "topics": [
     "macro parser syntax",
     "nested and scoped evaluation",
@@ -130,8 +130,8 @@
       "slug": "legacy-markers",
       "title": "Legacy markers",
       "level": 2,
-      "sourceHash": "sha256:7b3f97c8a5de4bdfdd25d838a579237db534f0a94fadc347884623962c1ce4d6",
-      "summary": "Legacy markers maps USER to the user macro, BOT and CHAR to character, GROUP to group, and CHARIFNOTGROUP to the solo-character form. SillyTavern still recognizes these angle-bracket forms during processing for backward compatibility, but current authoring should use braces. Bunraku preserves legacy source during same-format round trips instead of performing cosmetic rewrites, because exact or tiered source stability may matter and another platform may interpret the text differently.",
+      "sourceHash": "sha256:4c9e9784ac677a45712cc69c18729798ff2764bb5adb7b9b727ac2c69041e4e4",
+      "summary": "Legacy markers maps USER to the user macro, BOT and CHAR to character, GROUP to group, and CHARIFNOTGROUP to the solo-character form. SillyTavern still recognizes these angle-bracket forms during processing for backward compatibility, but current authoring should use braces. Bunzai preserves legacy source during same-format round trips instead of performing cosmetic rewrites, because exact or tiered source stability may matter and another platform may interpret the text differently.",
       "topics": [
         "legacy USER marker",
         "legacy character markers",
@@ -145,8 +145,8 @@
       "slug": "evaluation-and-safety-contract",
       "title": "Evaluation and safety contract",
       "level": 2,
-      "sourceHash": "sha256:4e77eadea7bf3bae95de3b79ccb4048d325dfa07c947de24804654643792da6f",
-      "summary": "Evaluation and safety contract states that grammar validity does not prove a macro is registered in a particular field or processed at the expected stage. Variables, deletion, random choice, banned-word controls, and extension macros can alter state or generation behavior rather than merely returning text. Bunraku therefore treats every macro payload as sealed during import, inspection, conversion, and export and never runs it to infer meaning. Cross-format conversion preserves supported literal text, reports unrepresentable dialect behavior, and refuses name-only substitutions between superficially similar languages.",
+      "sourceHash": "sha256:40349010b4909c4ff27e462eb75c0c54fa53a073fdd6ef4bbb2522b92bea09a5",
+      "summary": "Evaluation and safety contract states that grammar validity does not prove a macro is registered in a particular field or processed at the expected stage. Variables, deletion, random choice, banned-word controls, and extension macros can alter state or generation behavior rather than merely returning text. Bunzai therefore treats every macro payload as sealed during import, inspection, conversion, and export and never runs it to infer meaning. Cross-format conversion preserves supported literal text, reports unrepresentable dialect behavior, and refuses name-only substitutions between superficially similar languages.",
       "topics": [
         "field-specific registration",
         "processing stage",

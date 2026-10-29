@@ -31,7 +31,7 @@ const FRIENDLY: Record<string, string> = {
   backyard: "Backyard (legacy)",
   byaf: "Backyard",
   "novelai-lorebook": "NovelAI",
-  "vaud-json": "Bunraku",
+  "vaud-json": "Bunzai",
   lumiverse: "Lumiverse",
   "lumiverse-archive": "Lumiverse",
   pygmalion: "Pygmalion",
@@ -154,7 +154,7 @@ export function unsupportedShapeLine(text: string | undefined): string | null {
   // Every ST template file imports for real now (presets, sampler sets, system prompts, reasoning
   // and prompt formats each have a codec), so only another app's library wrapper is named here.
   if (typeof o.type === "string" && "exportedAt" in o && isRecord(o.data)) {
-    return `This is a RoleCall library export of a ${o.type}. Bunraku cannot import these yet.`;
+    return `This is a RoleCall library export of a ${o.type}. Bunzai cannot import these yet.`;
   }
   return null;
 }

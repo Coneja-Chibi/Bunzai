@@ -51,8 +51,8 @@ describe("locating the sidecar binary", () => {
   const name = process.platform === "win32" ? "sidecar.exe" : "sidecar";
 
   test("looks beside the running executable, not only in the source tree", () => {
-    const candidates = sidecarCandidates(join("C:", "Applications", "Bunraku", "Bunraku.exe"));
-    expect(candidates).toContain(join("C:", "Applications", "Bunraku", "sidecar", name));
+    const candidates = sidecarCandidates(join("C:", "Applications", "Bunzai", "Bunzai.exe"));
+    expect(candidates).toContain(join("C:", "Applications", "Bunzai", "sidecar", name));
   });
 
   test("still looks in the repo's own sidecar folder, where `bun sidecar/build.ts` writes", () => {
@@ -67,7 +67,7 @@ describe("locating the sidecar binary", () => {
   });
 
   test("the downloaded copy is checked LAST, so a deliberately placed helper still wins", () => {
-    const candidates = sidecarCandidates(join("C:", "Applications", "Bunraku", "Bunraku.exe"));
+    const candidates = sidecarCandidates(join("C:", "Applications", "Bunzai", "Bunzai.exe"));
     expect(candidates.indexOf(auxSidecarPath())).toBe(candidates.length - 1);
   });
 
@@ -229,7 +229,7 @@ describe("/api/remote control plane", () => {
       const sec = filledSec();
       const handler = createHandler(new StudioStore(dir), new SettingsStore(dir), undefined, sec);
       const req = apiReq("/api/version");
-      req.headers.set("x-bunraku-sidecar-secret", "leaked");
+      req.headers.set("x-bunzai-sidecar-secret", "leaked");
       const res = await handler(req);
       expect(res.status).toBe(403);
     });
@@ -239,7 +239,7 @@ describe("/api/remote control plane", () => {
 describe("checkRemoteApiRequest (the untrusted remote gate)", () => {
   const SECRET = "the-per-boot-shared-secret";
   const withSecret = (req: Request): Request => {
-    req.headers.set("x-bunraku-sidecar-secret", SECRET);
+    req.headers.set("x-bunzai-sidecar-secret", SECRET);
     return req;
   };
 
@@ -249,7 +249,7 @@ describe("checkRemoteApiRequest (the untrusted remote gate)", () => {
 
   test("wrong secret is 403", () => {
     const req = apiReq("/api/remote/status");
-    req.headers.set("x-bunraku-sidecar-secret", "nope");
+    req.headers.set("x-bunzai-sidecar-secret", "nope");
     expect(checkRemoteApiRequest(req, filledSec(), SECRET)?.status).toBe(403);
   });
 
@@ -314,7 +314,7 @@ describe("untrusted remote handler gates every path (not just /api)", () => {
         SECRET,
       );
       const req = apiReq("/");
-      req.headers.set("x-bunraku-sidecar-secret", SECRET);
+      req.headers.set("x-bunzai-sidecar-secret", SECRET);
       const res = await handler(req);
       expect(res.status).toBe(200);
     });
@@ -338,7 +338,7 @@ describe("untrusted remote handler gates every path (not just /api)", () => {
         token: sec.token,
         contentType: "application/json",
       });
-      req.headers.set("x-bunraku-sidecar-secret", SECRET);
+      req.headers.set("x-bunzai-sidecar-secret", SECRET);
       const res = await handler(req);
       expect(res.status).toBe(403); // a tailed-in device cannot turn remote access off or kick devices
     });
@@ -398,7 +398,7 @@ describe("untrusted remote handler gates every path (not just /api)", () => {
         method: "POST", token: sec.token, contentType: "application/json",
         body: JSON.stringify({ messages: [{ role: "user", content: "hi" }] }),
       });
-      proxied.headers.set("x-bunraku-sidecar-secret", SECRET);
+      proxied.headers.set("x-bunzai-sidecar-secret", SECRET);
       expect((await asTailedIn(proxied)).status).toBe(403);
     });
   });
@@ -428,7 +428,7 @@ describe("untrusted remote handler gates every path (not just /api)", () => {
       // And the same request over the sidecar-proxied (tailed-in) door.
       const asTailedIn = createHandler(new StudioStore(dir), new SettingsStore(dir), undefined, sec);
       const proxied = post("/api/remote/helper/download");
-      proxied.headers.set("x-bunraku-sidecar-secret", SECRET);
+      proxied.headers.set("x-bunzai-sidecar-secret", SECRET);
       expect((await asTailedIn(proxied)).status).toBe(403);
     });
   });
@@ -467,7 +467,7 @@ describe("untrusted remote handler gates every path (not just /api)", () => {
         contentType: "application/json",
         body: JSON.stringify({ engine: "sillytavern", text: "{{char}}" }),
       });
-      proxied.headers.set("x-bunraku-sidecar-secret", SECRET);
+      proxied.headers.set("x-bunzai-sidecar-secret", SECRET);
       expect((await asTailedIn(proxied)).status).toBe(403);
     });
   });

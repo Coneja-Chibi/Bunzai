@@ -246,7 +246,7 @@ button { font: inherit; color: inherit; }
   <button class="chip" data-wf="damage" aria-pressed="true">Damage notice</button></div>
 <div class="stage"><div class="rays"><canvas id="rays"></canvas></div><main class="room" id="room">
   <header class="marquee" id="marquee">
-    <div class="kicker">Bunraku <span aria-hidden="true">&middot;</span> your collection <span class="co">1</span></div>
+    <div class="kicker">Bunzai <span aria-hidden="true">&middot;</span> your collection <span class="co">1</span></div>
     <h1>The Library</h1>
     <p class="lede">Every character, world, persona and preset in your studio, shelved by deck. Stage what you need, then send it to the Workbench.</p>
     <div class="hero-actions">
@@ -555,7 +555,7 @@ button { font: inherit; color: inherit; }
   }
 
   function damageHTML(dismiss) {
-    return '<section class="panel damage" data-deck="fog" role="region" aria-labelledby="dn"><div class="hd"><b id="dn">' + plural(DAMAGE.length, 'file') + ' in your studio folder could not be read</b><span class="co">9</span>' + (dismiss ? '<button class="btn quiet sm" data-act="dismiss" title="Put this away. It comes back if another file stops loading.">Dismiss</button>' : '') + '</div><p>The files are still on disk and Bunraku did not change them.</p><details><summary>Show files and recovery details</summary><ul>' + DAMAGE.map(function (x) { return '<li><code>' + x.f + '</code> ' + x.why + '.</li>'; }).join('') + '</ul><p class="dim" style="margin-top:10px"><code>C:\\Users\\chi\\Studio</code></p><p class="dim">Restore a file from backup, or remove it yourself to clear this notice.</p></details></section>';
+    return '<section class="panel damage" data-deck="fog" role="region" aria-labelledby="dn"><div class="hd"><b id="dn">' + plural(DAMAGE.length, 'file') + ' in your studio folder could not be read</b><span class="co">9</span>' + (dismiss ? '<button class="btn quiet sm" data-act="dismiss" title="Put this away. It comes back if another file stops loading.">Dismiss</button>' : '') + '</div><p>The files are still on disk and Bunzai did not change them.</p><details><summary>Show files and recovery details</summary><ul>' + DAMAGE.map(function (x) { return '<li><code>' + x.f + '</code> ' + x.why + '.</li>'; }).join('') + '</ul><p class="dim" style="margin-top:10px"><code>C:\\Users\\chi\\Studio</code></p><p class="dim">Restore a file from backup, or remove it yourself to clear this notice.</p></details></section>';
   }
   function trashHTML() {
     if (S.grave.length === 0) return '<div class="trash-empty">' + svg('trash').replace('class="ico ', 'style="width:44px;height:44px" class="ico ') + '<h2>Trash is empty</h2><p class="dim">Deleted pieces and scenes remain here for 3 days, ready to restore.</p><button class="btn" data-act="trash">Back to library</button></div>';

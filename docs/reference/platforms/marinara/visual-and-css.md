@@ -68,8 +68,8 @@ prompt hint and cannot guarantee transparency. Prompt exposure pauses for review
 Missing `ffmpeg` or video connection fails explicitly; some Android/Termux builds that cannot load the
 image library disable sprite generation entirely.
 
-## Bunraku
+## Bunzai
 
 Native Marinara export may carry CSS in Creator Notes and media folders. Compatible Tavern PNG does not
 prove preservation of Marinara-specific CSS, background libraries, animated expressions, or media
-generation settings, and Bunraku does not execute those assets during import.
+generation settings, and Bunzai does not execute those assets during import.

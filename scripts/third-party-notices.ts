@@ -63,7 +63,7 @@ function render(): string {
   const mods = goModules();
   return `# Third-party notices
 
-Bunraku is AGPL-3.0-or-later (see [LICENSE](LICENSE)). This file lists what ships with it. Regenerate it with
+Bunzai is AGPL-3.0-or-later (see [LICENSE](LICENSE)). This file lists what ships with it. Regenerate it with
 \`bun run notices\`; \`bun run notices:check\` fails when it is stale.
 
 ## Notes

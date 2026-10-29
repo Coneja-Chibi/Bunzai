@@ -5,9 +5,9 @@
  * entries, near-duplicate entries (RoleCall's trigram rule: content alone at 0.85, or a similar title at 0.70 with content at 0.50,
  * the first 500 entries of a book), entries missing from a built tree, the Historian's interval, the recall token budget (RoleCall's "Retrieved lore token budget", warn under 512: here the
  * lore share of the model's window, the cap recall really has), and recaps with no plot. The narrator's tool calls
- * (RoleCall's "Mandatory tool calls" row, `tv-diagnostics.ts:314-320`, which only echoed `tv_mandatory_tool`): Bunraku never forces a tool call
+ * (RoleCall's "Mandatory tool calls" row, `tv-diagnostics.ts:314-320`, which only echoed `tv_mandatory_tool`): Bunzai never forces a tool call
  * (04b F13), so the row states the Narrator explore tool and Narrator Tool Access as they are, and warns when one is on without the other.
- * Not ported, because Bunraku has no setting they could check: the summary token budget (RoleCall stores it and never reads it). Pure: the page reads the books and hands them in.
+ * Not ported, because Bunzai has no setting they could check: the summary token budget (RoleCall stores it and never reads it). Pure: the page reads the books and hands them in.
  */
 import type { LorebookEntry } from "../../entities/lorebook/schema";
 import type { StoredLayout } from "../../stage/contracts/chat-tree-types";

@@ -143,7 +143,7 @@ export async function handleInspectArchive(req: Request, session: string): Promi
   try {
     await retryArchiveCleanup();
     if (failedArchiveCleanup.size > 0) return err("A previous backup upload is still being cleaned up.", 503);
-    dir = await mkdtemp(join(tmpdir(), "bunraku-lvbak-upload-"));
+    dir = await mkdtemp(join(tmpdir(), "bunzai-lvbak-upload-"));
     tempPath = join(dir, "upload.lvbak");
     const staged = await streamBodyToFile(req, tempPath, LVBAK_ARCHIVE_BOUNDS.maxArchiveBytes);
     if (!staged.ok) return staged.response;
@@ -206,11 +206,11 @@ export function archiveErrorMessage(error: unknown): string {
   if (error instanceof LvbakSchemaError) {
     return (
       `This backup was made by a newer version of Lumiverse (schema ${error.schemaVersion}) than ` +
-      `this build of Bunraku understands (schema ${LVBAK_SCHEMA_VERSION}). Update Bunraku and try again.`
+      `this build of Bunzai understands (schema ${LVBAK_SCHEMA_VERSION}). Update Bunzai and try again.`
     );
   }
   if (isArchiveLimitError(error)) {
-    return "This archive is larger or more complex than Bunraku can safely read right now.";
+    return "This archive is larger or more complex than Bunzai can safely read right now.";
   }
   if (isArchiveFormatError(error)) {
     return "This archive's container looks damaged or is not a valid ZIP; we could not read it safely.";
@@ -223,7 +223,7 @@ export function archiveErrorMessage(error: unknown): string {
   // Anything else is OUR failure, not the backup's. Blaming the file here sent a real user
   // chasing a corrupt-backup theory when the actual fault was a response-size crash server-side.
   console.error("[inspect-archive] unexpected failure:", error);
-  return "Something went wrong on Bunraku's side while reading this backup. The details were logged; the backup itself is probably fine.";
+  return "Something went wrong on Bunzai's side while reading this backup. The details were logged; the backup itself is probably fine.";
 }
 
 export async function handleExport(store: StudioStoreLike, body: unknown): Promise<Response> {

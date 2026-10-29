@@ -1,5 +1,5 @@
 /*
- * Bunraku's G3 "Arcade HUD" identity: less soft, more video-game'y. Loaded AFTER
+ * Bunzai's G3 "Arcade HUD" identity: less soft, more video-game'y. Loaded AFTER
  * src/ui/theme/tokens.css, same as tokens-soft.css: keeps every token name from the soft
  * identity and changes what they mean. Dark only (no paper block - the
  * gamer pass to stay night-mode). Crisp framed panels instead of the soft offset shadow

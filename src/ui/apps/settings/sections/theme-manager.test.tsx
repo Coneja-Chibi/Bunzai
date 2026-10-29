@@ -31,7 +31,7 @@ beforeAll(() => {
           calls.push({ path, method, body });
           let out: unknown = { ok: true };
           if (path === "/api/themes/packages") out = catalog;
-          else if (path === "/api/themes/examples") out = [{ id: "bunraku.theme.encore", name: "Encore", version: "1.0.0", digest: "x", requestedScopes: [] }];
+          else if (path === "/api/themes/examples") out = [{ id: "bunzai.theme.encore", name: "Encore", version: "1.0.0", digest: "x", requestedScopes: [] }];
           else if (path === "/api/themes/remove") catalog = catalog.filter((i) => i.id !== (body as { id: string }).id);
           return new Response(JSON.stringify(out), { status: 200, headers: { "content-type": "application/json" } }) as unknown as Response;
         },
@@ -71,14 +71,14 @@ const settle = async (flushSync: Awaited<ReturnType<typeof mount>>, button: HTML
 
 describe("theme manager with a package that fails checks", () => {
   test("the invalid row says why, offers Remove and Reinstall, and Remove deletes it", async () => {
-    catalog = [entry({}), entry({ id: "bunraku.theme.encore", name: "Encore", builtIn: false, enabled: false, invalid: REASON })];
+    catalog = [entry({}), entry({ id: "bunzai.theme.encore", name: "Encore", builtIn: false, enabled: false, invalid: REASON })];
     const flushSync = await mount();
     expect(text()).toContain(`This theme no longer passes checks: ${REASON}. Remove it or install it again.`);
     expect(text()).toContain("Theater");
     expect(byText("Reinstall")).toBeDefined();
     expect(byText("Enable")).toBeUndefined();
     await settle(flushSync, byText("Remove")!);
-    expect(calls.find((c) => c.path === "/api/themes/remove")?.body).toEqual({ id: "bunraku.theme.encore" });
+    expect(calls.find((c) => c.path === "/api/themes/remove")?.body).toEqual({ id: "bunzai.theme.encore" });
     expect(text()).not.toContain("no longer passes checks");
     flushSync(() => root.unmount());
     host.remove();

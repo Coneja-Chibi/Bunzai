@@ -1,7 +1,7 @@
 /**
  * The Debug tab (RoleCall's DebugTab, StoryDirectorWingPanel.tsx:1474-1767): the spoiler warning, "Show Debug Data" / "Hide Spoilers", then the Director's hidden state as sections that open one at
  * a time: Shadow World (hidden arcs and DM Notes), Narrative Seeds, and the raw hidden data. RoleCall's Tool Calls, Storyboards AI Context, NPC Off-Screen Actions, Parallel Timelines and Memory
- * Updates are not drawn: nothing in Bunraku writes them. NEW: the last directive as raw data, what was removed and is kept for you, and how full the story is.
+ * Updates are not drawn: nothing in Bunzai writes them. NEW: the last directive as raw data, what was removed and is kept for you, and how full the story is.
  */
 import { useState, type JSX, type ReactNode } from "react";
 import { Button, Disclosure, IconButton } from "../../../../components/button";

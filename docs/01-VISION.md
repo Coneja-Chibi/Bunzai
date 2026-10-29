@@ -34,10 +34,10 @@ Simple for simple folk, an absolute unit for power users. Concretely, four peopl
 
 ## What we are not
 
-- Not only a studio. The Studio makes the content; the Stage plays it. Bunraku is the
+- Not only a studio. The Studio makes the content; the Stage plays it. Bunzai is the
   one place where the card you just finished can be played immediately, locally, with
   a visible prompt trace, and then exported anywhere. Hoplight remains the neutral
-  studio without a stage; Bunraku is the same studio with the show attached.
+  studio without a stage; Bunzai is the same studio with the show attached.
 - Not a card hosting site or community platform. Files are the social layer; people
   share them where they already gather.
 - Not a RoleCall funnel. RC-branded lineage, but every platform is a first-class

@@ -14,7 +14,7 @@ import { apiReq } from "./server-test-rig";
 afterEach(cleanupChatRouteRigs);
 setDefaultTimeout(30_000);
 
-const HOME = join(tmpdir(), `bunraku-tracker-item-routes-${randomUUID()}`);
+const HOME = join(tmpdir(), `bunzai-tracker-item-routes-${randomUUID()}`);
 const UNLOCK = { passphrase: "tracker-item-routes-test" };
 let server: ReturnType<typeof Bun.serve>;
 const GOOD = JSON.stringify({ name: "Fire Sword", description: "Hot.", category: "weapon", rarity: "rare", quantity: 1 });
@@ -23,7 +23,7 @@ const asked: { model: string; temperature?: number; messages: { role: string; co
 let localId = "";
 
 beforeAll(async () => {
-  process.env.BUNRAKU_HOME = HOME;
+  process.env.BUNZAI_HOME = HOME;
   server = Bun.serve({
     port: 0,
     async fetch(req) {
@@ -38,7 +38,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   server.stop(true);
-  delete process.env.BUNRAKU_HOME;
+  delete process.env.BUNZAI_HOME;
   await rm(HOME, { recursive: true, force: true });
 });
 

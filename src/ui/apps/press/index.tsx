@@ -14,7 +14,7 @@ import { Panel } from "../../components/panel";
 import { RoomHeader } from "../../components/room-header";
 import { useEffect, useMemo, useState, type CSSProperties, type JSX } from "react";
 import { deckMeta } from "../../_shared/decks";
-import type { AppContext, CoverageInfo, StudioEntitySummary, BunrakuApp } from "../../app-contract";
+import type { AppContext, CoverageInfo, StudioEntitySummary, BunzaiApp } from "../../app-contract";
 import { SETTING_KEYS } from "../../../studio/settings-shape";
 import { mediaExportSummary } from "../../components/export-dialog/honesty";
 import { drainToBlob, saveBlob } from "../../_shared/download-sink";
@@ -465,7 +465,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
   );
 }
 
-const app: BunrakuApp = {
+const app: BunzaiApp = {
   OverlayWidgets,
   manifest: {
     id: "press",

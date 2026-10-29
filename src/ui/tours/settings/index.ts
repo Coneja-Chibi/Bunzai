@@ -22,7 +22,7 @@ const settingsTour: Tour = {
     {
       id: "studio",
       title: "Studio",
-      body: "The big choices from your first-run setup, changeable any time: which room Bunraku opens in, which deck greets you, and the platforms you publish to.",
+      body: "The big choices from your first-run setup, changeable any time: which room Bunzai opens in, which deck greets you, and the platforms you publish to.",
     },
     {
       id: "workbench",

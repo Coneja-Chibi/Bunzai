@@ -1,5 +1,5 @@
 /**
- * Which regex rules a scene runs, and at what depth: RoleCall's `display_only` and `prompt_only` placements on Bunraku's rule
+ * Which regex rules a scene runs, and at what depth: RoleCall's `display_only` and `prompt_only` placements on Bunzai's rule
  * shape (apps/rc lib/regex/apply-regex.ts:96-130, hooks/scene/useDisplayMessages.ts:329-348, lib/ai/prompt-assembly.ts:3496-3522).
  * Pure selection only; nothing here compiles or runs a rule. Execution is the sandbox worker's alone (ADR-009, AGENTS rule 3).
  */

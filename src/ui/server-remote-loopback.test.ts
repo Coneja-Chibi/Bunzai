@@ -54,7 +54,7 @@ describe("archive import stays loopback-only (a disk-fill vector on the untruste
         SECRET,
       );
       const req = archiveReq(sec.token);
-      req.headers.set("x-bunraku-sidecar-secret", SECRET);
+      req.headers.set("x-bunzai-sidecar-secret", SECRET);
       const res = await handler(req);
       expect(res.status).toBe(403);
       expect(await res.json()).toEqual({ error: "This import operation is available on the local desktop app only." });
@@ -102,7 +102,7 @@ describe("archive import stays loopback-only (a disk-fill vector on the untruste
         SECRET,
       );
       const proxied = stagedReq(sec.token);
-      proxied.headers.set("x-bunraku-sidecar-secret", SECRET);
+      proxied.headers.set("x-bunzai-sidecar-secret", SECRET);
       expect((await asTailedIn(proxied)).status).toBe(403);
 
       const asLan = createHandler(

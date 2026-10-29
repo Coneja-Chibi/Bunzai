@@ -50,7 +50,7 @@ const chub: NativeSchema = {
       control: "css-workshop",
       cssPack: "chub-card",
       help:
-        "Chub page styling as plain CSS. Sealed preview only in Bunraku; never applied to the app.",
+        "Chub page styling as plain CSS. Sealed preview only in Bunzai; never applied to the app.",
     },
     {
       path: `${CHUB}.preset`,

@@ -3,9 +3,9 @@
   "docId": "03-CONVENTIONS",
   "sourcePath": "docs/03-CONVENTIONS.md",
   "sourceHash": "sha256:d0bc0aeafb180e52b88bde4563ad5b929acf546dae177da3a784bfa3b4d82839",
-  "semanticSummaryHash": "sha256:d40ab53a9b472a4b18403e0b935ffeb2ac3bdad55b242432c6b5663097677ad5",
+  "semanticSummaryHash": "sha256:f04f4b58d5b721f38b8f7f26841f03883bee08880166d8cdb595342081788db4",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Repository and page summaries match source; virtual-list exports and boundary hook verified; author check passes",
-  "reviewedAt": "2026-10-26T16:09:18.215Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:41.942Z"
 }

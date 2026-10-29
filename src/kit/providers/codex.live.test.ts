@@ -1,7 +1,7 @@
 /**
  * The Codex subscription provider against the real service, driven through Kit's own ChatFn.
  *
- * Opt-in only, via BUNRAKU_LIVE_CODEX=1: run `BUNRAKU_LIVE_CODEX=1 bun test src/kit/providers/codex.live.test.ts`.
+ * Opt-in only, via BUNZAI_LIVE_CODEX=1: run `BUNZAI_LIVE_CODEX=1 bun test src/kit/providers/codex.live.test.ts`.
  * A live run spends somebody's subscription, so it must never fire just because `bun test` found a
  * login on disk. The pure decisions are covered in codex-auth.test.ts; these are the four facts that
  * can only be established by asking the service, and all four were wrong in the first draft:
@@ -21,7 +21,7 @@ import { spokes } from "./registry";
 import { guardedFetch } from "./egress";
 
 const HAVE = existsSync(codexAuthPath());
-const RUN_LIVE = process.env.BUNRAKU_LIVE_CODEX === "1";
+const RUN_LIVE = process.env.BUNZAI_LIVE_CODEX === "1";
 
 /** Read from the live catalogue rather than pinned, so a retired model id fails as a skip, not a lie. */
 async function liveModel(): Promise<string> {

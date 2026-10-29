@@ -16,7 +16,7 @@ test("finish reasons keep the provider's own word and get RoleCall's tone", () =
   expect(finishChip("length")?.title).toBe('Raw finish_reason: "length"');
 });
 
-test("Bunraku's own endings: stopped is a plain note, interrupted is a warning", () => {
+test("Bunzai's own endings: stopped is a plain note, interrupted is a warning", () => {
   expect(finishChip("stopped")).toMatchObject({ label: "stopped", tone: "info" });
   expect(finishChip("interrupted")).toMatchObject({ label: "interrupted", tone: "warn" });
 });

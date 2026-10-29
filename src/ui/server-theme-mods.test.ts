@@ -6,7 +6,7 @@ import { modThemePackage } from "../extensions/theme-mod-fixture";
 import { handleThemeRoutes } from "./server-theme-extensions";
 import { htmlSecurityHeaders } from "./server-security";
 
-const ID = "bunraku.theme.modtest";
+const ID = "bunzai.theme.modtest";
 const settings = { read: async () => ({ theme: ID }) } as never;
 const get = (path: string): [Request, URL] => { const url = new URL("http://127.0.0.1" + path); return [new Request(url), url]; };
 const post = (path: string, body: unknown): [Request, URL] => {

@@ -1,7 +1,7 @@
 /**
  * Attaching a standalone regex set to a preset, and the properties that must hold while doing it.
  *
- * This closes a real asymmetry: Bunraku could always READ a preset's embedded rules
+ * This closes a real asymmetry: Bunzai could always READ a preset's embedded rules
  * (`extractRegex`) and had no way to write a set back, so a person asking to attach one was told the
  * Studio "does not expose a way" - accurate about the operations, and easily read as a limit of the
  * format. The format carries the field; only the emit half was missing.

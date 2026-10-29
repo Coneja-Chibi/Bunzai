@@ -142,7 +142,7 @@ export function CrossingPanel({
           {/* Reassurance, deliberately out of the severity list: nothing here is lost to the user,
               only to the file, and colouring it like damage would have said the opposite. */}
           <text fg={theme.quiet}>
-            The original is not written to the file. Bunraku keeps it, so converting back restores it.
+            The original is not written to the file. Bunzai keeps it, so converting back restores it.
           </text>
         </>
       ) : null}

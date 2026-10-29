@@ -101,7 +101,7 @@
   // ---------------- copy that knows the visitor's system ----------------
   function osCopy() {
     var others = ["windows", "mac", "linux"].filter(function (o) { return o !== OS; }).map(function (o) { return OS_NAME[o]; });
-    var cta = app.querySelector("[data-os-cta]"); if (cta) cta.textContent = "Get Bunraku for " + OS_NAME[OS];
+    var cta = app.querySelector("[data-os-cta]"); if (cta) cta.textContent = "Get Bunzai for " + OS_NAME[OS];
     var note = app.querySelector("[data-os-note]"); if (note) note.textContent = "Also for " + others.join(" and ") + " · no account needed";
   }
   function serial() {
@@ -196,7 +196,7 @@
 
   // ---------------- download ----------------
   var PLATS = {
-    windows: { name: "Windows", ic: "W", match: /\.exe$|win/i, size: "about 140 MB", file: "Bunraku.exe" },
+    windows: { name: "Windows", ic: "W", match: /\.exe$|win/i, size: "about 140 MB", file: "Bunzai.exe" },
     mac: { name: "Mac", ic: "M", match: /darwin|mac/i, size: "about 90 MB", file: "Apple chip or Intel" },
     linux: { name: "Linux", ic: "L", match: /linux/i, size: "about 90 MB", file: "x64 or ARM" },
   };
@@ -208,7 +208,7 @@
       function size(a) { return a ? Math.round(a.size / 1048576) + " MB" : PLATS[OS].size; }
       var mine = asset(OS);
       app.querySelector("[data-dl-adm]").textContent = "ADMIT ONE · " + OS_NAME[OS].toUpperCase();
-      app.querySelector("[data-dl-title]").textContent = "BUNRAKU";
+      app.querySelector("[data-dl-title]").textContent = "BUNZAI";
       app.querySelector("[data-dl-ver]").textContent = "Version " + r.tag.replace(/^v/, "") + (r.date ? ", released " + ago(r.date) : "") + ".";
       app.querySelector("[data-dl-size]").textContent = "One file, " + (mine ? size(mine) : PLATS[OS].size) + ", for " + OS_NAME[OS] + ".";
       var btn = app.querySelector("[data-dl-btn]");

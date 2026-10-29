@@ -80,7 +80,7 @@ afterEach(() => {
 
 test("after a delete the name is free at once: a create from the name takes the next id, one asking for the deleted id is refused", async () => {
   for (const [tool, rawArgs, kind] of cases) {
-    const dir = mkdtempSync(join(tmpdir(), "bunraku-create-retired-"));
+    const dir = mkdtempSync(join(tmpdir(), "bunzai-create-retired-"));
     studios.push(dir);
     const real = createBridge(dir);
     const changes = createChangeSession();

@@ -1,6 +1,6 @@
 /**
  * Regression: stopping a generation mid-stream must never leave the PREVIOUS turn's reasoning
- * attached to the terminated one. Bunraku's turn loop (../studio/scene-turn.ts) only ever reads
+ * attached to the terminated one. Bunzai's turn loop (../studio/scene-turn.ts) only ever reads
  * `completion.reasoning` off the provider's final, successful completion object; the "stopped"
  * commit path builds its `generation` record from scratch with no `reasoning` key at all, and
  * streamed `reasoning`-channel events are never accumulated into anything the stopped path reads

@@ -50,7 +50,7 @@ const fail = (msg: string): never => {
   process.exit(1);
 };
 
-const stRoot = arg("st-root") ?? process.env["BUNRAKU_ST_ROOT"] ?? "";
+const stRoot = arg("st-root") ?? process.env["BUNZAI_ST_ROOT"] ?? "";
 if (!stRoot) fail("pass --st-root=<a SillyTavern checkout>");
 
 interface DumpedMacro {

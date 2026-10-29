@@ -3,7 +3,7 @@
  * lorebook rows: `metadata.entry_type` names one of eleven types and `metadata.structured_data` holds the typed fields
  * (`lib/compendium/computed.ts` `structuredOf`/`typeOf`, `route.ts:12-20`). An entry without a known type is classic.
  * `data` is the structured data exactly as stored, unknown fields included: nothing here drops authored data.
- * Bunraku keeps "featured" in `metadata.featured` (the entry has no column) and a retired entry as
+ * Bunzai keeps "featured" in `metadata.featured` (the entry has no column) and a retired entry as
  * `metadata.retired` beside `enabled: false` (04b rules R3 and A5).
  */
 import type { LorebookEntry } from "../../entities/lorebook/schema";

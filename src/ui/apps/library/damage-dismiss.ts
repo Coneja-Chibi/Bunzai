@@ -2,7 +2,7 @@
  * Putting the unreadable-files notice away, without putting away the next one.
  *
  * A DISMISSAL IS ABOUT THESE FILES, NOT ABOUT THE NOTICE. "Never show this again" would be the easy
- * build and the wrong one: the banner is the only place Bunraku ever says a file in somebody's
+ * build and the wrong one: the banner is the only place Bunzai ever says a file in somebody's
  * studio did not load, so a permanent off switch means the next unreadable preset arrives in
  * silence and the deck is quietly short by one. What is remembered is WHICH files were waved away,
  * so a new one - or an old one failing for a new reason - brings the notice straight back.

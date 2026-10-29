@@ -1,7 +1,7 @@
 /**
  * Settings, Backups: the approved wireframe (design/wireframes/backups/index.html), in Security's
  * grammar (its hero, stat tiles, mono proof block, card rows, chips, ghost buttons) and its protected
- * restore dialog. Copies are made hourly while Bunraku is open; this screen
+ * restore dialog. Copies are made hourly while Bunzai is open; this screen
  * lists them, makes one now, and restores one after showing what would change. Over the host-only
  * routes (src/ui/server-library-care.ts); a remote or LAN device sees none of it.
  */
@@ -29,7 +29,7 @@ const chipClass = (tone: "plain" | "ok" | "warn"): string | undefined => (tone =
 /** Plain, checkable lines about what a copy does, and the things it does not do. */
 export function proofLines(needsWords: boolean): { text: string; not?: boolean }[] {
   return [
-    { text: "+ A copy is made every hour while Bunraku is open, with no pause in your work." },
+    { text: "+ A copy is made every hour while Bunzai is open, with no pause in your work." },
     { text: "+ Copies are encrypted exactly like your library, so a stolen copy shows nothing." },
     needsWords
       ? { text: "- Until you write your lines (recovery words), a copy only opens on this computer.", not: true }
@@ -154,7 +154,7 @@ function Backups(): JSX.Element {
 
       <div className={styles.card}>
         <div className={styles.cardTitle}>Copies</div>
-        {total === 0 ? <div className={styles.cardBody}>No copies yet. The first one is made shortly after Bunraku opens, or press Back up now.</div> : null}
+        {total === 0 ? <div className={styles.cardBody}>No copies yet. The first one is made shortly after Bunzai opens, or press Back up now.</div> : null}
         <VirtualRows items={shown} keyOf={(c) => c.id} estimate={COPY_ROW_PX} render={(c, i) => (
           <div className={i === shown.length - 1 && total <= SHOWN ? `${styles.pc} ${styles.pcLast}` : styles.pc}>
             <div>

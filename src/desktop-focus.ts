@@ -1,11 +1,11 @@
 /**
- * Second launch: bring the running Bunraku window forward instead of opening another onto the same
+ * Second launch: bring the running Bunzai window forward instead of opening another onto the same
  * library (decision 9). The NEW process does the raising, because a process
  * the user just launched is allowed to take the foreground and the running one is not; and because it
  * holds no session token, nothing is added to the server for a local caller to hit.
  *
  * The window is only trusted when it belongs to the process LISTENING on our port: a title alone would
- * raise any look-alike window, or another Bunraku on another port. Windows only; any other platform,
+ * raise any look-alike window, or another Bunzai on another port. Windows only; any other platform,
  * or a runner whose window never appears, returns false and the caller opens a window as before.
  */
 import { dlopen, ptr, type Pointer } from "bun:ffi";

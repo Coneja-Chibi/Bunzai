@@ -8,9 +8,9 @@ import { createThemeAssetUrls } from "./theme-asset-urls";
 const source = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><path d="M0 0h1v1z"/></svg>';
 const digest = sha256HexBytes(new TextEncoder().encode(source));
 const appearance: EffectiveThemeAppearance = {
-  themeId: "bunraku.theme.encore", packageId: "bunraku.theme.encore", digest: "a".repeat(64),
+  themeId: "bunzai.theme.encore", packageId: "bunzai.theme.encore", digest: "a".repeat(64),
   grantedScopes: deriveThemeScopes({ assets: 1, fonts: 0, styles: false, slots: 0 }), appearance: null, fonts: [], styles: null, slots: {},
-  assets: [{ id: "mark", url: `/api/themes/assets/bunraku.theme.encore/mark?digest=${"a".repeat(64)}`, digest, mediaType: "image/svg+xml" }],
+  assets: [{ id: "mark", url: `/api/themes/assets/bunzai.theme.encore/mark?digest=${"a".repeat(64)}`, digest, mediaType: "image/svg+xml" }],
 };
 const response = (): Response => new Response(source, { headers: { "content-type": "image/svg+xml; charset=utf-8" } });
 

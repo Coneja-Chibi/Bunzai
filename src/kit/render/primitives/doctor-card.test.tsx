@@ -10,7 +10,7 @@ test("renders every check and its honest status", async () => {
         { id: "vault", label: "Vault", status: "ok", detail: "sealed with dpapi" },
         { id: "provider", label: "Provider", status: "warn", detail: "not connected" },
         { id: "studio", label: "Studio", status: "fail", detail: "unreadable" },
-        { id: "version", label: "Version", status: "ok", detail: "Bunraku 0.1.13" },
+        { id: "version", label: "Version", status: "ok", detail: "Bunzai 0.1.13" },
       ]}
     />,
     { width: 72, height: 10 },

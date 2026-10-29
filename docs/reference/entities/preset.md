@@ -17,18 +17,18 @@ RoleCall, Marinara, and Lumiverse's preset dialects all center on. `src/entities
 source of truth for the types; this page is the source of truth for what each field MEANS and which
 formats produce it.
 
-ST's other preset subtypes land here when Bunraku can use them. KoboldAI, TextGen and NovelAI sampler sets land on
+ST's other preset subtypes land here when Bunzai can use them. KoboldAI, TextGen and NovelAI sampler sets land on
 `samplers` (flagged `samplerSet`, so the Library calls them sampler sets), a system prompt template lands as the
 `main` block, and a reasoning template lands as `reasoning` (the markers a scene hides from the transcript). Each
 is seeded with ST's stock prompt order so choosing it in a scene still sends the card. Instruct and context
 templates are a separate kind, the [prompt format](promptformat.md) piece, because they configure a
-text-completion formatter that Bunraku does not have yet. See [formats/sillytavern.md](../formats/sillytavern.md),
+text-completion formatter that Bunzai does not have yet. See [formats/sillytavern.md](../formats/sillytavern.md),
 "Quirks".
 
 `PresetAdapter` is a member of the `FormatAdapter` union in `src/core/adapter.ts` (see
 [architecture.md](../architecture.md), "The canonical entity"), and four adapters read and write a
 `CanonicalPreset`: SillyTavern, RoleCall, Marinara, and Lumiverse, each registered in its own format
-folder's codec list. The `bunraku` CLI has no dedicated preset subcommand; presets travel through the
+folder's codec list. The `bunzai` CLI has no dedicated preset subcommand; presets travel through the
 generic `inspect` and `convert` commands like any other kind. The Library and Workbench also author a
 `PresetBody` directly (`createAndOpenPreset`, `PresetEditorView`). The Producers column below names the
 wire format each field was verified against, which is what the shape models.
@@ -89,7 +89,7 @@ are `relative` (in preset order), `in_chat` (own message at depth), `append` (gl
 depth), `append_preset` (very bottom), and `prepend_preset` (very top); the type is an open union so a
 platform-specific stop can still pass through unclaimed. When `marker` is true the block is a structural
 placeholder with no content of its own, and `markerSlot` names which slot it fills, for example
-`chatHistory` or `worldInfoBefore`. Bunraku's feature markers (`FEATURE_MARKER_SLOTS` in `core/preset/build.ts`:
+`chatHistory` or `worldInfoBefore`. Bunzai's feature markers (`FEATURE_MARKER_SLOTS` in `core/preset/build.ts`:
 `trackers`, `linkedTrackers`, `storyboards`, `skills`) put that feature's messages where the block stands, with the block's
 role, before the guides are placed (`core/assembly/feature-slots.ts`); the block's own text is not sent, an `append`
 marker becomes its own message at that depth (glued on, the feature would ride a history message the budget may
@@ -109,7 +109,7 @@ id comes back as a plain marker.
 | `enabled` | `boolean` | - |  |
 | `systemPrompt` | `boolean` | ST | ST `system_prompt`: rendered as a system-role prompt-manager entry. |
 | `marker` | `boolean` | - | structural placeholder (chat history / world info / examples) with no content of its own. |
-| `markerSlot?` | `string` | RC, ST | When `marker`, the slot identity: ST-compatible (chatHistory, worldInfoBefore, worldInfoAfter, dialogueExamples, personaDescription), RC's named marker slots, or a Bunraku feature marker (trackers, linkedTrackers, storyboards, skills: core/preset/build.ts FEATURE_MARKER_SLOTS). |
+| `markerSlot?` | `string` | RC, ST | When `marker`, the slot identity: ST-compatible (chatHistory, worldInfoBefore, worldInfoAfter, dialogueExamples, personaDescription), RC's named marker slots, or a Bunzai feature marker (trackers, linkedTrackers, storyboards, skills: core/preset/build.ts FEATURE_MARKER_SLOTS). |
 | `placement` | `PromptPlacement` | - |  |
 | `injectionDepth` | `number` | ST | message depth for in_chat/append placements (0 = most recent; ST `injection_depth`, def 4). |
 | `injectionOrder` | `number` | ST | relative-order weight; lower appears first (ST `injection_order`, default 100). |

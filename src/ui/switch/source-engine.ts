@@ -1,5 +1,5 @@
 /**
- * Source-checkout switch engine: move a `git`-run Bunraku to a release tag by checking it out and
+ * Source-checkout switch engine: move a `git`-run Bunzai to a release tag by checking it out and
  * reinstalling. Refuses a dirty TRACKED tree and names the files (never stashes a user's work); captures
  * the exact prior ref BEFORE any mutation and, on any failure, restores that ref + reinstalls so a failed
  * switch always lands back where it started, never a broken half-checkout. Orchestration only, tested with

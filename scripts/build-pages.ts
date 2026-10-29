@@ -83,7 +83,7 @@ for (const input of await exampleThemeInventory()) {
   exampleThemePackages[id] = { manifest: input.manifest, assets: input.assets as Record<string, string>, ...(typeof input.licenseText === "string" ? { licenseText: input.licenseText } : {}) };
 }
 
-await write("pocket-data.js", `globalThis.__BUNRAKU_POCKET_DATA__=${JSON.stringify({
+await write("pocket-data.js", `globalThis.__BUNZAI_POCKET_DATA__=${JSON.stringify({
   manifests,
   setupSteps,
   docsIndex,
@@ -99,7 +99,7 @@ await copyFile(join(root, "build", "vaude-256.png"), join(output, "icon-256.png"
 
 const rawHtml = await Bun.file(join(ui, "index.html")).text();
 const html = rawHtml
-  .replace("<head>", '<head>\n<base href="./">\n<meta name="vaude-session" content="browser-tab">\n<meta name="bunraku-runtime" content="browser">')
+  .replace("<head>", '<head>\n<base href="./">\n<meta name="vaude-session" content="browser-tab">\n<meta name="bunzai-runtime" content="browser">')
   .replaceAll('href="/', 'href="./')
   .replaceAll('src="/', 'src="./')
   .replaceAll('"/vendor/', '"./vendor/')
@@ -109,8 +109,8 @@ await Bun.write(join(site, ".nojekyll"), "");
 await copyFile(join(root, "build", "vaude.ico"), join(site, "favicon.ico"));
 const sitePages = await buildSite(root, site);
 await write("app.webmanifest", JSON.stringify({
-  name: "Bunraku Studio",
-  short_name: "Bunraku",
+  name: "Bunzai Studio",
+  short_name: "Bunzai",
   start_url: "./",
   display: "standalone",
   icons: [{ src: "./icon-256.png", sizes: "256x256", type: "image/png" }],

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/platforms/pygmalion",
   "sourcePath": "docs/guide/platforms/pygmalion.md",
-  "sourceHash": "sha256:364b45a30e2b1b9958711fa4d9b6de06dd431554cc4ae401d597c2541fa3708a",
-  "semanticSummaryHash": "sha256:84a9950a0806137d8f863717aa823b0e88ea546aff1e95379418a4acbe43ec84",
+  "sourceHash": "sha256:329ae3ca1bb0171264fa3147c549a279d31ef9023fe14137bbe3f36c169820c2",
+  "semanticSummaryHash": "sha256:2d6579f36f066de3f7686c3d20e3bdabb267cd572c55d48911ca688679787bab",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:46.828Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:38.881Z"
 }

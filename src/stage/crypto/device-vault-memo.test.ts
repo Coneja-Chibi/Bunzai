@@ -40,16 +40,16 @@ mock.module("../../kit/keystore/keystore", () => {
 });
 
 let home = "";
-const saved = process.env["BUNRAKU_HOME"];
-const idFile = () => join(home, ".bunraku", "computer-id");
+const saved = process.env["BUNZAI_HOME"];
+const idFile = () => join(home, ".bunzai", "computer-id");
 
 beforeAll(() => {
-  home = mkdtempSync(join(tmpdir(), "bunraku-devicevault-memo-"));
-  process.env["BUNRAKU_HOME"] = home;
+  home = mkdtempSync(join(tmpdir(), "bunzai-devicevault-memo-"));
+  process.env["BUNZAI_HOME"] = home;
 });
 afterAll(() => {
-  if (saved === undefined) delete process.env["BUNRAKU_HOME"];
-  else process.env["BUNRAKU_HOME"] = saved;
+  if (saved === undefined) delete process.env["BUNZAI_HOME"];
+  else process.env["BUNZAI_HOME"] = saved;
   rmSync(home, { recursive: true, force: true });
 });
 beforeEach(() => {

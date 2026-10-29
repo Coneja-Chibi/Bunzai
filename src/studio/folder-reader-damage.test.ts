@@ -4,7 +4,7 @@
  * A real studio put 145 files behind this notice and the message on 123 of them was the word
  * `undefined`; the rest said the files did not match a data version, which was not true either.
  * These tests are about the sentence, because the sentence is the entire product here - the file is
- * on disk and unchanged, and the only thing Bunraku actually delivers is an accurate reason.
+ * on disk and unchanged, and the only thing Bunzai actually delivers is an accurate reason.
  */
 import { describe, expect, test } from "bun:test";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -32,7 +32,7 @@ describe("the reason a file is not listed", () => {
      * The case that started this: a 2.4MB character called `ludovic-&-levi.json`. Perfectly good
      * work, refused for one ampersand, and reported with a word that meant nothing.
      */
-    await withTempDir("bunraku-damage-", async (dir) => {
+    await withTempDir("bunzai-damage-", async (dir) => {
       await studioWith(dir, { "my &preset.json": canonical("my-preset") });
       const { damaged, pieces: entities } = await readStudioFolder(dir);
       expect(entities).toHaveLength(0);
@@ -49,7 +49,7 @@ describe("the reason a file is not listed", () => {
      * format here recognises a numeric-keyed map, which is the shape four of the leftovers in a real
      * studio actually had.
      */
-    await withTempDir("bunraku-damage-", async (dir) => {
+    await withTempDir("bunzai-damage-", async (dir) => {
       await studioWith(dir, {
         "Loggo's Preset (13-06).json": JSON.stringify({ "0": "a", "1": "b", "2": "c" }),
       });
@@ -63,7 +63,7 @@ describe("the reason a file is not listed", () => {
   test("a file that is not JSON at all is still reported, never skipped", async () => {
     // Reported rather than dropped: the inventory that silently skipped these is why a folder of
     // 147 presets listed three and said nothing about the other 144.
-    await withTempDir("bunraku-damage-", async (dir) => {
+    await withTempDir("bunzai-damage-", async (dir) => {
       await studioWith(dir, { "broken.json": "{ not json" });
       const { damaged } = await readStudioFolder(dir);
       expect(damaged).toHaveLength(1);

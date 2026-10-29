@@ -57,7 +57,7 @@ describe("the desktop notice", () => {
   test("a reply while the window is away shows 'New reply from X' tagged with the scene, and nothing else", () => {
     const env = envOf();
     replyNotice(on(), "chat1", who, env);
-    expect(env.shown).toEqual([{ title: "Bunraku", body: "New reply from Mara", tag: "chat1" }]);
+    expect(env.shown).toEqual([{ title: "Bunzai", body: "New reply from Mara", tag: "chat1" }]);
   });
 
   test("off by default: no notice, and nothing asked", () => {

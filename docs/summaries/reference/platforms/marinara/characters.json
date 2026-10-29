@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/characters",
   "sourcePath": "docs/reference/platforms/marinara/characters.md",
-  "sourceHash": "sha256:7a7862a1be94fb1d3159bf64aa4f22703920e3c846db2910f4b8eebe05a46697",
-  "summary": "Documents Marinara character and persona authoring at the pinned Engine revision. Character creation and editing covers required name, optional avatar, Metadata, Card, Convo, Lorebook, Sprites, Gallery, Colors, Stats, Advanced, save states, version history, and reversible agent Keep or Restore updates. Convo semantics include display name and declare-on-card behavior, About Me defaults and chat-specific overrides, update_about_me Public versus Chat scopes, Convo Behavior insertion modes, and Conversation-only macros. Personas cover library filtering, one active global persona, per-chat override precedence, equivalent editor tabs, and user-name fallback. Import and export distinguishes JSON CCv2, embedded PNG, charx, richest Marinara native packages, batch tag and regex choices, embedded-lorebook promotion, compatible loss, and native-only bulk ZIP. Bunraku has no dedicated Marinara character codec; adapter claims and sprite or gallery fidelity must come from implemented format support.",
+  "sourceHash": "sha256:52d4700d54d97a85b91ac048c477e55ae0802164a8d48b3b5b21b8eb9eabcc6d",
+  "summary": "Documents Marinara character and persona authoring at the pinned Engine revision. Character creation and editing covers required name, optional avatar, Metadata, Card, Convo, Lorebook, Sprites, Gallery, Colors, Stats, Advanced, save states, version history, and reversible agent Keep or Restore updates. Convo semantics include display name and declare-on-card behavior, About Me defaults and chat-specific overrides, update_about_me Public versus Chat scopes, Convo Behavior insertion modes, and Conversation-only macros. Personas cover library filtering, one active global persona, per-chat override precedence, equivalent editor tabs, and user-name fallback. Import and export distinguishes JSON CCv2, embedded PNG, charx, richest Marinara native packages, batch tag and regex choices, embedded-lorebook promotion, compatible loss, and native-only bulk ZIP. Bunzai has no dedicated Marinara character codec; adapter claims and sprite or gallery fidelity must come from implemented format support.",
   "topics": [
     "character editor tabs",
     "Convo Display Name About Me Behavior",
@@ -11,7 +11,7 @@
     "native vs compatible export",
     "tag regex lorebook import options",
     "agent Keep Restore updates",
-    "Bunraku adapter boundary"
+    "Bunzai adapter boundary"
   ],
   "sections": [
     {
@@ -137,11 +137,11 @@
       "children": []
     },
     {
-      "slug": "bunraku",
-      "title": "Bunraku",
+      "slug": "bunzai",
+      "title": "Bunzai",
       "level": 2,
-      "sourceHash": "sha256:dcd0fcd0d591c43924adae30e1bfdd7b7cb57757b32e5a6e1aeff1c019c67ae8",
-      "summary": "Bunraku has no dedicated marinara character codec; Tavern-shaped cards often use SillyTavern adapters. Persona and regex Marinara codecs exist. Do not invent sprite or gallery fidelity on compatible PNG export. Report losses honestly when Marinara-only assets leave the native package format.",
+      "sourceHash": "sha256:2000d7ebeb0b75341fd3f7a83e6875b974c3061fde27964fcc188be8109a0dc6",
+      "summary": "Bunzai has no dedicated marinara character codec; Tavern-shaped cards often use SillyTavern adapters. Persona and regex Marinara codecs exist. Do not invent sprite or gallery fidelity on compatible PNG export. Report losses honestly when Marinara-only assets leave the native package format.",
       "topics": [
         "no marinara character codec",
         "SillyTavern adapters for cards",

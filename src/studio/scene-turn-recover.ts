@@ -1,7 +1,7 @@
 /**
  * Smart Recovery's call (RoleCall's worker recoverMissingReasoningWithHelper): once a reply is written, when the scene's
  * recent replies had thinking and this one has none, the scene's own connection is asked, once, for the first words of the
- * visible reply (core/reasoning-rescue.ts holds the question and the checks). RoleCall asks a helper model; Bunraku has none,
+ * visible reply (core/reasoning-rescue.ts holds the question and the checks). RoleCall asks a helper model; Bunzai has none,
  * so the scene's model answers, with no reasoning, 80 tokens at most and a 12 second limit. The answer only ever sets a
  * boundary kept with the reply; any failure, refusal or unsafe answer leaves the reply as it is.
  */

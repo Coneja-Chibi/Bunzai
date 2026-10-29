@@ -1,7 +1,7 @@
 /**
  * The Control Booth's Generation rules. RoleCall warns when Max Context is at the model's window and the
  * window is large (QuickPlayPanel.tsx:2013-2019, VVS-643): every message then resends that much history.
- * Bunraku's Context tokens left unset send up to the window too (presetWindow never goes past a stated
+ * Bunzai's Context tokens left unset send up to the window too (presetWindow never goes past a stated
  * window), so unset counts as maxed. A window the connection does not state is unknown: no warning, never
  * an invented number (RoleCall's three different fallbacks, flaw F3). Pure.
  */

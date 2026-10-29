@@ -221,7 +221,7 @@ staging cycle in the observations Kit returns.
 Two things are still refused rather than approximated. `push` is not rendered, for the reason above:
 one hook becomes as many rules as the array has slots, and that count comes from how the preset reads
 the array rather than from the hook, so a single plausible rule would run while keeping one value.
-Bunraku also still seals `macro_engine_yaml` as escrow and never executes it
+Bunzai also still seals `macro_engine_yaml` as escrow and never executes it
 ([architecture.md](../architecture.md)) - the rules are read as declarations and rendered as text.
 
 Placing the rendered rules into a target is a separate act. Kit hands them over; it does not write

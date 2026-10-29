@@ -19,7 +19,7 @@ export interface TransitionHost {
  *   overlay          the same circular sweep drawn with an ordinary element
  *   none             switch instantly, for reduced motion
  *
- * WHY WEBVIEW2 GETS THE OVERLAY. Bunraku.exe is a WebView2 window, and repeated theme toggles there
+ * WHY WEBVIEW2 GETS THE OVERLAY. Bunzai.exe is a WebView2 window, and repeated theme toggles there
  * crashed the renderer with STATUS_BREAKPOINT, taking the whole page down. View Transitions snapshot
  * and cross-fade the entire document through the compositor, and that crash signature is a renderer
  * or GPU fault, which no JavaScript can catch: the page is simply gone.

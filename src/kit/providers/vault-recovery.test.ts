@@ -25,14 +25,14 @@ let home = "";
 let priorHome: string | undefined;
 
 beforeEach(async () => {
-  priorHome = process.env["BUNRAKU_HOME"];
+  priorHome = process.env["BUNZAI_HOME"];
   home = await mkdtemp(join(tmpdir(), "kit-vault-recovery-"));
-  process.env["BUNRAKU_HOME"] = home;
+  process.env["BUNZAI_HOME"] = home;
 });
 
 afterEach(async () => {
-  if (priorHome === undefined) delete process.env["BUNRAKU_HOME"];
-  else process.env["BUNRAKU_HOME"] = priorHome;
+  if (priorHome === undefined) delete process.env["BUNZAI_HOME"];
+  else process.env["BUNZAI_HOME"] = priorHome;
   await rm(home, { recursive: true, force: true });
 });
 
@@ -42,7 +42,7 @@ async function freshVault(): Promise<typeof import("./vault")> {
   return import(url) as Promise<typeof import("./vault")>;
 }
 
-const dir = (): string => join(home, ".bunraku");
+const dir = (): string => join(home, ".bunzai");
 const KEY_PATH = (): string => join(dir(), "kit.identity");
 const VAULT_PATH = (): string => join(dir(), "kit-vault.json");
 

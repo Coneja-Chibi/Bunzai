@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/sillytavern/README",
   "sourcePath": "docs/reference/platforms/sillytavern/README.md",
-  "sourceHash": "sha256:fd22a2ec599f042037f9d806d6850e38f708ac2c0ac8705d87deaf119b48cffa",
-  "semanticSummaryHash": "sha256:f2a875f6b711b029c992dbf33a3521f966604b9bb5c529415602e16053ecf83d",
+  "sourceHash": "sha256:0f780a1071b2a12e52859e31a3b0083f6f25c50e23ea285c31c2ee9e1ae665e4",
+  "semanticSummaryHash": "sha256:c2e453c167a8ab0a6da41b208e036ee9645a8a6509ef5a5f1e51303756b36d53",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:48:00.097Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:54.433Z"
 }

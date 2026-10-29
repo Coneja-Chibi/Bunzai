@@ -2,7 +2,7 @@
 id: guide/platforms/risu
 title: RisuAI
 audience: user
-summary: Bringing RisuAI .charx cards, lorebooks, and regex scripts into Bunraku and back out.
+summary: Bringing RisuAI .charx cards, lorebooks, and regex scripts into Bunzai and back out.
 tags: [platform, risu, import, export, convert]
 related: [guide/converting, guide/importing, reference/formats/risu]
 ---
@@ -10,23 +10,23 @@ related: [guide/converting, guide/importing, reference/formats/risu]
 # RisuAI
 
 RisuAI is a roleplay client whose own export bundles a character into one `.charx` file: a zip archive
-holding `card.json` (the fields Bunraku reads) plus an `assets` folder of images, and sometimes a
+holding `card.json` (the fields Bunzai reads) plus an `assets` folder of images, and sometimes a
 `module.risum` package of regex, trigger, and lorebook rows bundled separately from the card. This page
-shows you how to bring one of those files into Bunraku, edit it, and send it back out, whether to RisuAI
+shows you how to bring one of those files into Bunzai, edit it, and send it back out, whether to RisuAI
 again or to another app.
 
 @fig journey
 
-## What Bunraku reads
+## What Bunzai reads
 
-Bunraku reads the file types RisuAI gives you:
+Bunzai reads the file types RisuAI gives you:
 
 - **Cards**, as a `.charx` (a zip archive holding `card.json` plus an `assets` folder of images, and
   sometimes a bundled `module.risum` package).
 - **Lorebooks**, exported from Risu as a plain `.json` (or `.lorebook`) file.
 - **Regex scripts**, either a `.risum` module that carries rule rows, or a bare `.json` list of rows.
 
-To bring one in, drag the file onto the Library and drop it anywhere in the room. Bunraku reads the file
+To bring one in, drag the file onto the Library and drop it anywhere in the room. Bunzai reads the file
 and shows you a plain-words receipt: what it read, and what it kept. It recognizes a `.charx` by its zip
 signature and the `card.json` entry inside it, not by the file's name, so a renamed export still imports
 fine. For the full walkthrough, see [the importing guide](../importing.md).
@@ -35,7 +35,7 @@ fine. For the full walkthrough, see [the importing guide](../importing.md).
 
 ## What comes across cleanly
 
-Importing loses nothing. Bunraku keeps a complete copy of the original card, then lifts the parts you
+Importing loses nothing. Bunzai keeps a complete copy of the original card, then lifts the parts you
 actually work with into fields you can see and edit directly:
 
 - Name, nickname, and description
@@ -53,10 +53,10 @@ actually work with into fields you can see and edit directly:
   toggles, as data you can read and edit
 - Prebuilt-asset generation config: Risu's asset command, exclude, and style settings
 - The privileged flag, meaning the card requested Risu's privileged low-level script API; a warning
-  marker, never something Bunraku executes
+  marker, never something Bunzai executes
 - An embedded lorebook, with entries, keywords, and placement
 
-None of the script rows run. Bunraku parses, edits, and writes them back as plain data; it never
+None of the script rows run. Bunzai parses, edits, and writes them back as plain data; it never
 evaluates them.
 
 Every image in the card rides along too, portrait included, but as bytes in the background: Risu points at
@@ -86,7 +86,7 @@ purpose.
 | The bundled `.risum` package, internal ids, and other Risu-only bookkeeping | Kept | Dropped |
 
 "Another app" here means a genuinely different app such as SillyTavern, Agnai, Backyard, RoleCall, or
-Pygmalion. The drop is deliberate: Bunraku never blind-copies one app's private settings or scripts into
+Pygmalion. The drop is deliberate: Bunzai never blind-copies one app's private settings or scripts into
 another app's file. Your regex and trigger scripts stay where they were written, which is where they
 actually work anyway. And where the other app simply has fewer slots than Risu, whatever it cannot hold is
 dropped on its side, not yours.
@@ -95,7 +95,7 @@ dropped on its side, not yours.
 
 Send a piece from the Library to the Workbench and it opens as a tab. There you can edit the name,
 description, personality, scenario, first message, and example messages, the same fields as any card. When
-you save, Bunraku writes the whole card back, so the parts you did not touch stay exactly as they were.
+you save, Bunzai writes the whole card back, so the parts you did not touch stay exactly as they were.
 
 A card that carries Risu's own scripts gets a second tab next to Fields: Workshop. That is where the
 regex rows, trigger rows, virtual script, background HTML/CSS, and default variables live, laid out as
@@ -112,7 +112,7 @@ When a piece is ready to leave, stage it for the Press: right-click it and choos
 or drop it in from the Press's own rail. The Press works only the pieces you staged, and each run exports
 to one target format that you pick.
 
-Bunraku writes RisuAI cards as `.charx`, the same zip container Risu itself exports, so it loads back
+Bunzai writes RisuAI cards as `.charx`, the same zip container Risu itself exports, so it loads back
 into Risu the same way any of its own exports would. If a piece carries a linked lorebook, it rides along,
 written into the card's own `character_book` slot, the same slot Risu reads on import. You can also ask
 for a plain `.txt` or `.md` copy when you just want to read the text. Choosing a different app as the
@@ -129,20 +129,20 @@ nowhere to land in a Risu export yet.
 
 - **Will my card come back exactly as it was?** In every way that matters, yes, if you export it back to
   RisuAI: every field, every asset, every script row survives. The exact bytes of the `.charx` are not
-  guaranteed to match, though. Bunraku rebuilds the archive and re-prints the JSON on every export, so
+  guaranteed to match, though. Bunzai rebuilds the archive and re-prints the JSON on every export, so
   spacing, compression, and entry order can shift even when nothing you can see has changed.
-- **I imported a `.charx`. Do I get a `.charx` back?** Yes. RisuAI's own container is what Bunraku writes
+- **I imported a `.charx`. Do I get a `.charx` back?** Yes. RisuAI's own container is what Bunzai writes
   back out, so nothing changes about the file type.
 - **Does my character's picture come with it?** The bytes do, always, on a same-app round trip. Whether it
   shows up as a live preview on the Workbench depends on how Risu pointed at the image inside its own
   archive; some Risu cards will not preview even though the art is safely carried along and exports back
   out untouched.
 - **What about my regex and trigger scripts?** They stay on the RisuAI card and are not copied into
-  another app's file, because Bunraku does not move one app's scripts into another. On the Workbench they
+  another app's file, because Bunzai does not move one app's scripts into another. On the Workbench they
   show up as data you can read and edit, never as something that runs.
 - **My card carries a `.risum` package. Can I edit it?** You can open it and look, on the Workbench's
   Workshop tab. Leave it alone and it exports whole. Edit it, and export is currently blocked rather than
   risk writing back a broken package; if you need to change the package itself, do that in RisuAI for now.
-- **My worldbook was inside the card. Is it still there?** Yes. Bunraku pulls the embedded lorebook out
+- **My worldbook was inside the card. Is it still there?** Yes. Bunzai pulls the embedded lorebook out
   so you can edit it on its own, and puts it back into the card's `character_book` slot when you export to
   an app that reads one.

@@ -225,7 +225,7 @@ const repeatMacro: MacroDefinition = {
     const count = parseInt(args[1] ?? "", 10);
     if (isNaN(count) || count < 0) return { value: "", success: false, error: "Invalid count" };
     if (count > 1000) return { value: "", success: false, error: "Count too large (max 1000)" };
-    // Bunraku's bound (ADR-012): refuse before allocating a result past the output ceiling.
+    // Bunzai's bound (ADR-012): refuse before allocating a result past the output ceiling.
     if (text.length * count > MAX_OUTPUT_CHARS) return { value: "", success: false, error: `Result too large (max ${MAX_OUTPUT_CHARS} characters)` };
     return { value: text.repeat(count), success: true };
   },
@@ -288,7 +288,7 @@ const padMacro: MacroDefinition = {
     const direction = (args[3] || "right").toLowerCase();
     if (isNaN(length) || length < 0) return { value: "", success: false, error: "Invalid length" };
     if (text.length >= length) return { value: text, success: true };
-    // Bunraku's bound (ADR-012): refuse before allocating a result past the output ceiling.
+    // Bunzai's bound (ADR-012): refuse before allocating a result past the output ceiling.
     if (length > MAX_OUTPUT_CHARS) return { value: "", success: false, error: `Length too large (max ${MAX_OUTPUT_CHARS})` };
     const padChar = char.charAt(0) || " ";
     switch (direction) {

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/sillytavern/prompts-and-presets",
   "sourcePath": "docs/reference/platforms/sillytavern/prompts-and-presets.md",
-  "sourceHash": "sha256:62ff90c29a8b533710ab46a796c80f0ad0fe0152747cbd004ec6a400a6eff35d",
-  "semanticSummaryHash": "sha256:f1a2a7d8d510dcd48cc9dfede853f3bdcb4b8f14b7d054680dcc5642bcb4b38b",
+  "sourceHash": "sha256:ceca8de8cdfadcef04a4d8f1fe0c372e0ec111e671e5a886ebe25ae83cfbbc30",
+  "semanticSummaryHash": "sha256:aadf11918d67273e645802cff22626c8b471c7dcad4fedd8ca7aa3b25bdf2740",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:59.860Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:56.854Z"
 }

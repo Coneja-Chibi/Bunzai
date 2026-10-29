@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/macro-engine",
   "sourcePath": "docs/reference/macro-engine.md",
-  "sourceHash": "sha256:030bce50eec1ed40b40741541f8b69184a565ef415466be3f823b4fb0ea45aef",
-  "semanticSummaryHash": "sha256:c835b6ced5de9974dc75ccefdeca93228975b7c10978e1f6b27e0d12bb0b4745",
+  "sourceHash": "sha256:03917009ae2660ebbe7901503d8dde828461262e68a9461d292fb97b0f93b130",
+  "semanticSummaryHash": "sha256:5a7681c81adfc4981dc3ba40a4c97d10379f22187a29d444b7123caed7509296",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "promptBudgetMs is shown in seconds under Settings > You > Studio > Time budgets, and a stopped macro is named under the reply via Generation.outOfTime (generation-rules.ts, outOfTimeOf, reply-changes.tsx). Summary matches; who-may-call-it remains the existing 59-word warning.",
-  "reviewedAt": "2026-10-28T15:31:26.862Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:09.339Z"
 }

@@ -67,7 +67,7 @@ export const setSampler = (
 /* ---------- marker slots ---------- */
 
 /**
- * Append a marker block for a slot (ST-compatible or a Bunraku feature marker). A marker carries NO authored content - the engine
+ * Append a marker block for a slot (ST-compatible or a Bunzai feature marker). A marker carries NO authored content - the engine
  * splices the real thing in at build - so it gets the slot's plain-language name and an empty body,
  * and the row renders it as a slot rather than handing anyone a textarea.
  *

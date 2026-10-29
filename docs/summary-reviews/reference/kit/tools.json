@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/kit/tools",
   "sourcePath": "docs/reference/kit/tools.md",
-  "sourceHash": "sha256:2f3989ddf182678b12f339e5d9dd98961d08e77d9a4650b638c2139580cf379a",
-  "semanticSummaryHash": "sha256:25e9174b64c46e4b846c7788992d705fe1219279e12736069c56021f72d7d7f1",
+  "sourceHash": "sha256:41b009903182b13bb84a5ea7ed73fa29cf669070cc6c0eff940e5d2770e8ec93",
+  "semanticSummaryHash": "sha256:748e1811d96a3d6a5792635bae56ce28a8189d6eaa30b389dbdae8f4fcf2a227",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Line no longer names the deleted workbench generated.ts; src/generated/capabilities.ts exists and is checked by capabilities:check (current), Kit imports it.",
-  "reviewedAt": "2026-10-13T14:49:12.705Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:50.427Z"
 }

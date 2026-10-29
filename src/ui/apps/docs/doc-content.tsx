@@ -37,7 +37,7 @@ export function DocContent({ doc, docs, figures, body, anchor, loading, onPick }
   };
 
   const openGitHub = (): void => {
-    requestExternal(`https://github.com/Coneja-Chibi/Bunraku/blob/Mainstage/${doc.path}`, `View ${doc.title} on GitHub`);
+    requestExternal(`https://github.com/Coneja-Chibi/Bunzai/blob/Mainstage/${doc.path}`, `View ${doc.title} on GitHub`);
   };
 
   return (

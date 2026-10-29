@@ -1,9 +1,9 @@
 /** Signal-driven server sampler used by S21; it adds no polling timer to the process under measurement. */
 import { appendFileSync, readFileSync, writeFileSync } from "node:fs";
 
-const output = process.env["BUNRAKU_SCALE_PROBE_OUTPUT"];
-const phaseFile = process.env["BUNRAKU_SCALE_PROBE_PHASE"];
-const readyFile = process.env["BUNRAKU_SCALE_PROBE_READY"];
+const output = process.env["BUNZAI_SCALE_PROBE_OUTPUT"];
+const phaseFile = process.env["BUNZAI_SCALE_PROBE_PHASE"];
+const readyFile = process.env["BUNZAI_SCALE_PROBE_READY"];
 if (!output || !phaseFile || !readyFile) throw new Error("S21 server probe requires isolated output, phase, and readiness files");
 let previousCpu = process.cpuUsage();
 let previousAt = performance.now();

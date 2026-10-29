@@ -10,7 +10,7 @@
  * - The stripped features' fields are gone (visual novel, mechanics, Orison), and so are their
  *   handlers; their macros are unknown here, as pipeline-hooks.md's stripped list says.
  * - Results carry render segments with authored-source offsets, which the preset workbench's
- *   editable preview is built on (Bunraku's addition; RoleCall has no editable preview).
+ *   editable preview is built on (Bunzai's addition; RoleCall has no editable preview).
  */
 
 import type { ChoiceGroup, ChoiceSelections } from "./choice-groups";

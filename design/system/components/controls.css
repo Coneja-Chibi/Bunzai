@@ -1,5 +1,5 @@
 /*
- * Bunraku design system, Builder A: controls.html only. Prefix .ctl-, area id "controls".
+ * Bunzai design system, Builder A: controls.html only. Prefix .ctl-, area id "controls".
  * Tokens only: no hex, rgb, named color, font family or literal font size. A literal px is used
  * only for hairlines, the meter/pip/thumb geometry already fixed in tokens/size.css, and the
  * notch-rail tick pattern below (ornament, same class as a meter's segment cut).

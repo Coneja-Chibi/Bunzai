@@ -1,7 +1,7 @@
 /**
  * The Prompt Inspector's Lore & state sub-tab (RoleCall `RightWingPanelContent.tsx:234-308` over `DebugWingPanelV2.tsx`). Before any reply only State shows, with RoleCall's sentence ("Lore,
  * macros, sources and the prompt layout appear here after you send a message."). After one: "Last captured assembly" with its message and token line, the Context Pressure meter, and the
- * tabs State, Lore, Macros, Sources, Flow and Compose over the one trace. The Est. Cost line is left out (Bunraku has no price source) and the
+ * tabs State, Lore, Macros, Sources, Flow and Compose over the one trace. The Est. Cost line is left out (Bunzai has no price source) and the
  * Tracker / History toggle (the request itself is Compose's text and This turn's Raw JSON). The meter's marks and target are per-viewer prefs.
  */
 import { useState, type JSX } from "react";

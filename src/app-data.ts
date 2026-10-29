@@ -1,5 +1,5 @@
 /**
- * Where Bunraku keeps MACHINE-LOCAL support files - one owner, so two features cannot disagree.
+ * Where Bunzai keeps MACHINE-LOCAL support files - one owner, so two features cannot disagree.
  *
  * This is deliberately NOT the studio folder. The studio holds the user's pieces: it is theirs, it is
  * usually under Documents, and on a lot of machines that means OneDrive syncs it and backup software
@@ -24,7 +24,7 @@ export function appDataDir(): string {
       : process.platform === "darwin"
         ? join(process.env.HOME || tmpdir(), "Library", "Application Support")
         : process.env.XDG_STATE_HOME || join(process.env.HOME || tmpdir(), ".local", "state");
-  return join(base, "Bunraku");
+  return join(base, "Bunzai");
 }
 
 /** Where a downloaded remote-access helper is cached. Its own folder, so clearing it is unambiguous. */

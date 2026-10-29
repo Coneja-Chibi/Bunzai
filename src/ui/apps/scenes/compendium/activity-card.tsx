@@ -1,7 +1,7 @@
 /**
  * One card of the Activity feed (RoleCall `LorebookActivityFeed.tsx` card, rc-world-comp-activity.png): the icon and label, an
  * Error chip, the phase and model chips, the line and its time, the entries it touched as chips (a PRE card: its title, book,
- * Retrieved and token count), an expandable Details, and for a recalled entry "Why this entry". Bunraku adds Undo and File again,
+ * Retrieved and token count), an expandable Details, and for a recalled entry "Why this entry". Bunzai adds Undo and File again,
  * which RoleCall's feed has no equivalent of (04b F25). Colours are theme tokens; the 6px left edge takes the phase's colour.
  */
 import { useState, type JSX } from "react";

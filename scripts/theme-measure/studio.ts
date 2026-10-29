@@ -1,7 +1,7 @@
 /**
  * The throwaway studio theme:measure screenshots: a real handler over a library folder inside `work`, a fake
  * model that streams canned prose, and enough seeded pieces and one chat that every app has content.
- * BUNRAKU_HOME is pointed at `work` before anything loads, so A real studio is never opened.
+ * BUNZAI_HOME is pointed at `work` before anything loads, so A real studio is never opened.
  */
 import { mkdirSync } from "node:fs";
 
@@ -20,7 +20,7 @@ export async function startStudio(work: string): Promise<Studio> {
   const home = `${work}/home`;
   const root = `${work}/root`;
   mkdirSync(root, { recursive: true });
-  process.env.BUNRAKU_HOME = home;
+  process.env.BUNZAI_HOME = home;
   const { SettingsStore } = await import("../../src/studio/settings");
   const { StudioStore } = await import("../../src/studio/store");
   const { createHandler, createSecurityContext } = await import("../../src/ui/server");
@@ -55,7 +55,7 @@ export async function startStudio(work: string): Promise<Studio> {
   sec.expectedOrigin = `http://127.0.0.1:${PORT}`;
   const handler = createHandler(store, settings, undefined, sec, undefined, undefined, undefined, undefined, undefined, undefined, undefined, library);
   const server = Bun.serve({ port: PORT, hostname: "127.0.0.1", idleTimeout: 120, fetch: handler });
-  const headers = { host: `127.0.0.1:${PORT}`, origin: `http://127.0.0.1:${PORT}`, "x-bunraku-token": sec.token, "content-type": "application/json" };
+  const headers = { host: `127.0.0.1:${PORT}`, origin: `http://127.0.0.1:${PORT}`, "x-bunzai-token": sec.token, "content-type": "application/json" };
   const post = (path: string, body: unknown) => handler(new Request(`http://127.0.0.1:${PORT}${path}`, { method: "POST", headers, body: JSON.stringify(body) }));
 
   await store.save({ schemaVersion: sv, kind: "character", id: "marguerite", body: {

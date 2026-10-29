@@ -4,7 +4,7 @@ const heading = document.getElementById('destination-title');
 const body = document.getElementById('destination-body');
 const list = entries => `<div class="preview-list">${entries.map(([name, detail, target]) => `<a class="preview-item" href="#${target}"><strong>${name}</strong><small>${detail}</small></a>`).join('')}</div>`;
 const views = {
-  apps: ['Apps', '<p>The existing Dock opens the packaged app catalog here.</p>' + list([['Help / Docs','Find your way around Bunraku','help'],['The Library','Browse your cast and worlds','library']])],
+  apps: ['Apps', '<p>The existing Dock opens the packaged app catalog here.</p>' + list([['Help / Docs','Find your way around Bunzai','help'],['The Library','Browse your cast and worlds','library']])],
   agent: ['The Agent', '<p>The existing agent workspace opens here. This wireframe does not contact a model.</p>'],
   scenes: ['Your stories', '<p>Pick up a saved story or begin a new one.</p>' + list([['The Paper Moon','Act II · Scene 07 · 3 cast members','resume'],['The Orchard After Dark','Act I · Scene 03 · 2 cast members','resume'],['A House Without Doors','Opening scene · 1 cast member','resume']]) + '<p><a class="button primary" href="#new-story">New story</a></p>'],
   resume: ['The Paper Moon', '<span class="eyebrow gilt">Act II · The last letter</span><p>The post office has been closed for thirty years. Tonight, a light burns behind its door.</p><p>This is where the selected scene workspace would open, with its cast, conversation and branches.</p>' + list([['Choose another story','Return to your saved scenes','scenes'],['Review the cast','Characters attached to this scene','cast']])],

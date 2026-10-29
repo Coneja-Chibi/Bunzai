@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/concepts/detection",
   "sourcePath": "docs/reference/concepts/detection.md",
-  "sourceHash": "sha256:8903d8a72b0ac2b11cc80e9e97d7763de7d2fec4b752ac6bf1bef887ea5ff291",
-  "summary": "Detection and the registry explain how Bunraku sniffs file content rather than trusting extensions. Every adapter scores AdapterInput confidence; registry.detect keeps the single best score at or above DETECT_THRESHOLD 0.5 or returns undefined. Content, not extension builds bytes always and text only for valid UTF-8 json or txt. The registry pass is one winner with strict-greater selection and deliberate score spread so order does not decide ties. Confidence scores ladder specific readers over generic shared shapes, with weak in-band and sub-threshold soft nos. Not detection: the origin labeler is a separate bunraku label pass after format choice. The cross-kind firewall forces zero on other kinds so worldbooks never steal character readers, backed by detection.test.ts and kind-discriminated convert. Adding a format never edits detection: folders-as-schema registers each detect locally without core changes. Source of truth maps registry adapter loader tests CLI and provenance ownership.",
+  "sourceHash": "sha256:9fcdbdff99d9c5e7ea607c2be114948bc56f2900ee8b2bf70f8dedd06aae0565",
+  "summary": "Detection and the registry explain how Bunzai sniffs file content rather than trusting extensions. Every adapter scores AdapterInput confidence; registry.detect keeps the single best score at or above DETECT_THRESHOLD 0.5 or returns undefined. Content, not extension builds bytes always and text only for valid UTF-8 json or txt. The registry pass is one winner with strict-greater selection and deliberate score spread so order does not decide ties. Confidence scores ladder specific readers over generic shared shapes, with weak in-band and sub-threshold soft nos. Not detection: the origin labeler is a separate bunzai label pass after format choice. The cross-kind firewall forces zero on other kinds so worldbooks never steal character readers, backed by detection.test.ts and kind-discriminated convert. Adding a format never edits detection: folders-as-schema registers each detect locally without core changes. Source of truth maps registry adapter loader tests CLI and provenance ownership.",
   "topics": [
     "content sniff not extension",
     "registry detect threshold",
@@ -34,7 +34,7 @@
       "slug": "the-registry-pass",
       "title": "The registry pass",
       "level": 2,
-      "sourceHash": "sha256:b2fd86e1f1ff7fa52d24c872fe875c44b3d1d0195484f192343c22ca109c9f9f",
+      "sourceHash": "sha256:359dec6cd88242bf5a620150005681f7fd1619f45a5e850da895dbed61438bbc",
       "summary": "registry.ts is the pure in-memory adapter table. detect walks every registered adapter, tracks the highest score, and returns that adapter only if score clears DETECT_THRESHOLD 0.5 inclusive; otherwise undefined. One pass one winner against the same input with no format-to-format probing. No match is real: callers report unrecognized rather than guess. Selection uses strict greater so equal later scores never displace earlier ones, which is why confidence ladders are deliberately spread. convert inspect validate and label CLI commands plus studio inspect all call registry.detect first.",
       "topics": [
         "DETECT_THRESHOLD 0.5",
@@ -64,8 +64,8 @@
       "slug": "not-detection-the-origin-labeler",
       "title": "Not detection: the origin labeler",
       "level": 2,
-      "sourceHash": "sha256:13532b723607ea19ce34b65ab8467e3d15a7892ade248c32c89344c3a30d632d",
-      "summary": "bunraku label runs a second scoring pass after detection already chose the format. labelCard guesses which app likely authored the card by testing app-namespaced extension blocks and reports the winning rule weight as 0 to 1 confidence. That answers origin heuristic where detect confidence answers which adapter reads the file. They are different numbers from different passes and must not be conflated.",
+      "sourceHash": "sha256:9853695d190fe141266c7edc2b93809b86f34e803ee7cb987f20eb61286ef4c8",
+      "summary": "bunzai label runs a second scoring pass after detection already chose the format. labelCard guesses which app likely authored the card by testing app-namespaced extension blocks and reports the winning rule weight as 0 to 1 confidence. That answers origin heuristic where detect confidence answers which adapter reads the file. They are different numbers from different passes and must not be conflated.",
       "topics": [
         "labelCard separate pass",
         "origin vs routing confidence",

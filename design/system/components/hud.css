@@ -1,5 +1,5 @@
 /*
- * Bunraku design system, Builder B: hud.html area CSS. Prefix .hud-, area id "hud" (plus "cards").
+ * Bunzai design system, Builder B: hud.html area CSS. Prefix .hud-, area id "hud" (plus "cards").
  * Tokens only: every selector starts with .hud- or [data-taste-id^="hud."] / [data-taste-id^="cards."].
  * Variant CSS hangs off [data-taste-id="..."].
  */

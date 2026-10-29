@@ -65,7 +65,7 @@ export async function crossingForExport(
       changes: outcome.translation ?? [],
       carried: carriedOf((entity as { body?: unknown }).body),
       // The source's own escrow has nowhere to live in another platform's file. Reported as
-      // reassurance rather than loss: Bunraku still holds it, so converting back restores it.
+      // reassurance rather than loss: Bunzai still holds it, so converting back restores it.
       escrowDropped: (outcome.loss?.dropped ?? []).some((field) => field.startsWith("original.")),
       warningCount: outcome.loss?.warnings?.length ?? 0,
     });

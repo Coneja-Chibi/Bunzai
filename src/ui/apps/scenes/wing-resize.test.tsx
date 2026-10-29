@@ -185,7 +185,7 @@ describe("a press outside the wing", () => {
     unmount(flushSync);
   });
   test("other themes keep the pause: a press outside leaves the wing open and the Scene Paused mark closes it", async () => {
-    doc().documentElement.dataset["chrome"] = "bunraku";
+    doc().documentElement.dataset["chrome"] = "bunzai";
     const flushSync = await open("ai");
     press(flushSync, rig.host.querySelector(".scroll")!);
     expect(width()).toBe("720px");

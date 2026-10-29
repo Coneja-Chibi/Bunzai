@@ -110,7 +110,7 @@ export interface ConversionSuccess {
    *
    * THE EDITOR ALREADY SHOWS THIS AND THAT WAS NOT ENOUGH. `travelLint` was reachable only from the
    * rule page, so a set converted by Kit crossed with nothing said. The likeliest case is also the
-   * quietest: Bunraku's own engine runs JavaScript's `$&`, so it is natural to author, works while
+   * quietest: Bunzai's own engine runs JavaScript's `$&`, so it is natural to author, works while
    * being edited, and stops working the moment the set is written for another platform.
    */
   ruleNotes?: RuleTravelNote[];
@@ -324,7 +324,7 @@ export async function convertStoredPiece(
     // rules somewhere else entirely. Rendering them here means the crossing arrives with the second
     // half of itself rather than leaving the logic behind and saying nothing. Only when the dialect
     // actually changes - a same-engine round trip already has its hooks.
-    // A regex set is the case the editor's lint could never reach from here: Bunraku runs $& , so a
+    // A regex set is the case the editor's lint could never reach from here: Bunzai runs $& , so a
     // rule using it works while authored and breaks on arrival. Checked on the SOURCE rules, which
     // are what the adapter is about to write out.
     const ruleNotes = kind === "regex" ? await lintRegexTravel(entity, to) : [];

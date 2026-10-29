@@ -15,7 +15,7 @@ const roots: string[] = [];
 afterEach(async () => { await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true }))); });
 
 test("three pieces opened at the same moment (the one running plus the two the lane lets wait) all load; none is refused as reserved by other work", async () => {
-  const root = await mkdtemp(join(tmpdir(), "bunraku-concurrent-get-"));
+  const root = await mkdtemp(join(tmpdir(), "bunzai-concurrent-get-"));
   roots.push(root);
   const library = createLibrary(root, { vault: fakeComputer(), sessionsDir: join(root, "sessions") });
   await library.open();
@@ -37,7 +37,7 @@ test("three pieces opened at the same moment (the one running plus the two the l
 });
 
 test("five at once: the overflow is a retryable 503 with a code and Retry-After, never a 500", async () => {
-  const root = await mkdtemp(join(tmpdir(), "bunraku-concurrent-get-"));
+  const root = await mkdtemp(join(tmpdir(), "bunzai-concurrent-get-"));
   roots.push(root);
   const library = createLibrary(root, { vault: fakeComputer(), sessionsDir: join(root, "sessions") });
   await library.open();

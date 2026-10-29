@@ -1,6 +1,6 @@
 /**
  * CLI validation boundary. Adapter output is still untrusted until the exhaustive canonical runtime
- * schema accepts it, so `bunraku validate` cannot mistake a permissive adapter parse for validity.
+ * schema accepts it, so `bunzai validate` cannot mistake a permissive adapter parse for validity.
  */
 import type { AdapterInput, FormatAdapter } from "./core";
 import { parseCanonicalEntity, type ParsedCanonicalEntity } from "./entities/runtime-schema";

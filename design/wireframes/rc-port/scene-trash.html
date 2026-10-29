@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
 <link rel="stylesheet" href="port.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
   /* library-client-v2: the collection sidebar */
   .side { width: 320px; background: var(--bg); border-right: 2px solid var(--hard); display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0; }
@@ -128,8 +128,8 @@
   .cimg { position: relative; width: 180px; flex: none; min-height: 180px; background: var(--t); display: grid; place-items: center; font-family: var(--font-fancy); font-size: 3rem; color: color-mix(in srgb, var(--stage-white) 55%, transparent); }
   .cimg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, color-mix(in srgb, var(--stage-well) 80%, transparent) 0%, transparent 30%); }
   .ccontent { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-  /* RoleCall's Trash (library-client-v2, selectedCollection "deleted"), on Bunraku tokens: RC's
-     red-500 plate is Bunraku's danger plate, RC's accent-bordered Restore is --accent. */
+  /* RoleCall's Trash (library-client-v2, selectedCollection "deleted"), on Bunzai tokens: RC's
+     red-500 plate is Bunzai's danger plate, RC's accent-bordered Restore is --accent. */
   .asset.trash .tile { color: var(--stage-danger-text); }
   .asset.trash.on { background: linear-gradient(90deg, color-mix(in srgb, var(--stage-danger-edge) 14%, transparent), transparent); border-left-color: var(--stage-danger-edge); }
   .asset.trash.on .tile { background: color-mix(in srgb, var(--stage-danger-edge) 22%, transparent); border-color: var(--stage-danger-edge); }

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/formats/rolecall-to-sillytavern",
   "sourcePath": "docs/reference/formats/rolecall-to-sillytavern.md",
-  "sourceHash": "sha256:40288e8748543d58ea14cee5f724d5848ed02b3406dbcefc58f7f1c5bae0f0cf",
-  "semanticSummaryHash": "sha256:49580f42ad97e212284bf5b33616ae6cdb80bcc0f147624c81c41b4b6c3d982d",
+  "sourceHash": "sha256:38b5cb12b21327e046310635d69f6bf5cb17f2136a455306fe497d3cd58bcf54",
+  "semanticSummaryHash": "sha256:caf97dd8fbe8bcf31e13e0128b1b553bc39aea6ae6666c8d88592ea85baec434",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:54.009Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:48.706Z"
 }

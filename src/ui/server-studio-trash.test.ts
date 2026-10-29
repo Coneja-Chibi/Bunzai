@@ -22,7 +22,7 @@ afterEach(async () => {
 const vera = testCharacter("vera", [], { name: "Vera" });
 
 test("delete, list the Trash, restore home, and a second restore is a 404", async () => {
-  const root = await mkdtemp(join(tmpdir(), "bunraku-trash-route-"));
+  const root = await mkdtemp(join(tmpdir(), "bunzai-trash-route-"));
   roots.push(root);
   const content = createContentStore(memoryDocumentBackend());
   const store = new StudioStore(root, () => content);

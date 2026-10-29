@@ -1,12 +1,12 @@
 // Command sidecar embeds a Tailscale node (via tsnet) inside its own process and reverse-proxies
-// tailnet traffic into a SEPARATE, UNTRUSTED local port that the Bunraku server treats as hostile.
+// tailnet traffic into a SEPARATE, UNTRUSTED local port that the Bunzai server treats as hostile.
 //
-// It is launched and driven by the Bunraku process, never by a human at a terminal. It speaks a
+// It is launched and driven by the Bunzai process, never by a human at a terminal. It speaks a
 // machine-readable control channel: one JSON status object per line on STDOUT (see statusEvent), so
-// Bunraku can render the whole flow, "Enable" button, sign-in prompt, connected state, as UI. tsnet's
+// Bunzai can render the whole flow, "Enable" button, sign-in prompt, connected state, as UI. tsnet's
 // own chatter stays on stderr and is silent unless -verbose.
 //
-// This is the Phase 0/1 substrate for Bunraku remote access. It proves and carries the four
+// This is the Phase 0/1 substrate for Bunzai remote access. It proves and carries the four
 // load-bearing assumptions the feature rests on:
 //
 //	C1  identity: every remote request is resolved to a tailnet user via LocalClient.WhoIs, so the app
@@ -50,13 +50,13 @@ import (
 type config struct {
 	hostname     string // tailnet node name; keep it non-identifying (ts.net certs are CT-logged)
 	stateDir     string // explicit writable dir so tsnet never tries to mkdir a system path
-	upstream     string // the UNTRUSTED local port the Bunraku server exposes for remote traffic
+	upstream     string // the UNTRUSTED local port the Bunzai server exposes for remote traffic
 	sharedSecret string // stamped on every proxied request; the trusted port must refuse it
-	watchParent  bool   // exit when Bunraku (our parent) closes stdin, so no stale node survives it
+	watchParent  bool   // exit when Bunzai (our parent) closes stdin, so no stale node survives it
 	verbose      bool
 }
 
-// statusEvent is the control channel: one JSON object per line on stdout. Bunraku reads these to drive
+// statusEvent is the control channel: one JSON object per line on stdout. Bunzai reads these to drive
 // the UI, so the sign-in URL and connected state never touch a terminal.
 type statusEvent struct {
 	Event   string `json:"event"`             // always "status"
@@ -167,16 +167,16 @@ func main() {
 
 func parseFlags() config {
 	var cfg config
-	flag.StringVar(&cfg.hostname, "hostname", envOr("BUNRAKU_TSNET_HOSTNAME", "bunraku-studio"),
+	flag.StringVar(&cfg.hostname, "hostname", envOr("BUNZAI_TSNET_HOSTNAME", "bunzai-studio"),
 		"tailnet node name (keep it non-identifying; ts.net certs are publicly enumerable)")
-	flag.StringVar(&cfg.stateDir, "state-dir", envOr("BUNRAKU_TSNET_DIR", defaultStateDir()),
+	flag.StringVar(&cfg.stateDir, "state-dir", envOr("BUNZAI_TSNET_DIR", defaultStateDir()),
 		"writable directory for tsnet state")
-	flag.StringVar(&cfg.upstream, "upstream", envOr("BUNRAKU_UNTRUSTED_UPSTREAM", "127.0.0.1:8788"),
-		"the UNTRUSTED local address the Bunraku server exposes for remote traffic")
-	flag.StringVar(&cfg.sharedSecret, "shared-secret", os.Getenv("BUNRAKU_SIDECAR_SECRET"),
+	flag.StringVar(&cfg.upstream, "upstream", envOr("BUNZAI_UNTRUSTED_UPSTREAM", "127.0.0.1:8788"),
+		"the UNTRUSTED local address the Bunzai server exposes for remote traffic")
+	flag.StringVar(&cfg.sharedSecret, "shared-secret", os.Getenv("BUNZAI_SIDECAR_SECRET"),
 		"secret stamped on proxied requests; the trusted port must reject requests carrying it")
 	flag.BoolVar(&cfg.watchParent, "watch-parent", false,
-		"exit when the parent process (Bunraku) closes stdin, so no stale node survives an app restart")
+		"exit when the parent process (Bunzai) closes stdin, so no stale node survives an app restart")
 	flag.BoolVar(&cfg.verbose, "verbose", false, "log tsnet internals to stderr")
 	flag.Parse()
 	return cfg
@@ -226,7 +226,7 @@ func resolveOwnerID(ctx context.Context, lc *local.Client) tailcfg.UserID {
 }
 
 // waitForRunning polls the backend until the node joins the tailnet, emitting the sign-in URL the instant
-// control hands it over so Bunraku can open it. With no auth key it kicks interactive login itself. It
+// control hands it over so Bunzai can open it. With no auth key it kicks interactive login itself. It
 // returns the node's tailnet name; it does NOT emit "running" (the node being joined is not the same as
 // the link actually serving, which only serve() can confirm).
 func waitForRunning(ctx context.Context, lc *local.Client) (string, error) {
@@ -363,7 +363,7 @@ func newProxy(cfg config, lc identityResolver, ownerID tailcfg.UserID, tracker *
 		r.Host = target.Host
 		r.Header.Del("X-Tailscale-User")
 		r.Header.Del("X-Tailscale-Node")
-		r.Header.Del("X-Bunraku-Sidecar-Secret")
+		r.Header.Del("X-Bunzai-Sidecar-Secret")
 		id, ok := r.Context().Value(identityKey).(identity)
 		if !ok {
 			return
@@ -372,7 +372,7 @@ func newProxy(cfg config, lc identityResolver, ownerID tailcfg.UserID, tracker *
 		r.Header.Set("X-Tailscale-Node", id.node)
 		if cfg.sharedSecret != "" {
 			// C2: the trusted 127.0.0.1 port rejects any request carrying this; only the sidecar knows it.
-			r.Header.Set("X-Bunraku-Sidecar-Secret", cfg.sharedSecret)
+			r.Header.Set("X-Bunzai-Sidecar-Secret", cfg.sharedSecret)
 		}
 	}
 
@@ -424,7 +424,7 @@ func fail(scope string, err error) error {
 }
 
 // watchCommands reads host->sidecar commands (one JSON object per line) from stdin and applies them
-// (kick a device). When stdin closes (EOF), the parent (Bunraku) has died, so we exit: this both ties
+// (kick a device). When stdin closes (EOF), the parent (Bunzai) has died, so we exit: this both ties
 // our lifetime to the app and gives the host a control channel with no extra socket. Only the host can
 // write here, so kicking is inherently host-only.
 func watchCommands(tracker *deviceTracker) {
@@ -454,7 +454,7 @@ func defaultStateDir() string {
 	if err != nil || base == "" {
 		base = os.TempDir()
 	}
-	return base + string(os.PathSeparator) + "bunraku" + string(os.PathSeparator) + "tsnet"
+	return base + string(os.PathSeparator) + "bunzai" + string(os.PathSeparator) + "tsnet"
 }
 
 // secretsEqual is a constant-time compare, kept here so the eventual trusted-port check on the Bun side

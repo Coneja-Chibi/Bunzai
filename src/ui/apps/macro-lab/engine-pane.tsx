@@ -3,7 +3,7 @@
  *
  * THIS IS THE ONE ANSWER HERE THAT IS NOT OURS. It comes from a real SillyTavern or Marinara
  * checkout on this machine, assembled through the same code path a converted preset takes, and
- * nothing in this file models a macro. That is the whole value: everywhere else Bunraku tells you
+ * nothing in this file models a macro. That is the whole value: everywhere else Bunzai tells you
  * what it believes about an engine, and here the engine tells you.
  *
  * ON A BUTTON, NEVER ON A KEYSTROKE. Resolving spawns somebody else's application, and SillyTavern's
@@ -116,7 +116,7 @@ export function EnginePane({
           <span className={styles.quiet}>
             {engine
               ? "Press Resolve to run this text through the engine itself. Nothing is sent anywhere: it runs on this machine, against the checkout you installed."
-              : "This box needs a real engine to answer. Point Bunraku at a checkout and it will run your text through it."}
+              : "This box needs a real engine to answer. Point Bunzai at a checkout and it will run your text through it."}
           </span>
         </div>
       ) : null}

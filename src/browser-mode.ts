@@ -3,11 +3,11 @@ import type { PieceChangeEvent } from "./stage/contracts/piece-change-contract";
 export function isBrowserStudio(
   doc: Pick<Document, "querySelector"> | undefined = typeof document === "undefined" ? undefined : document,
 ): boolean {
-  return doc?.querySelector('meta[name="bunraku-runtime"]')?.getAttribute("content") === "browser";
+  return doc?.querySelector('meta[name="bunzai-runtime"]')?.getAttribute("content") === "browser";
 }
 
-export const BROWSER_STUDIO_CHANGE_EVENT = "bunraku:studio-change";
-export const BROWSER_THEME_REVISION_EVENT = "bunraku:theme-revision";
+export const BROWSER_STUDIO_CHANGE_EVENT = "bunzai:studio-change";
+export const BROWSER_THEME_REVISION_EVENT = "bunzai:theme-revision";
 
 /** Notify the shell to reload the effective appearance after a committed lifecycle change. */
 export function announceBrowserThemeRevision(revision: number): void {

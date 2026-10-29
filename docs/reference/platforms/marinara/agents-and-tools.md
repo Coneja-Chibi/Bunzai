@@ -108,7 +108,7 @@ Professor Mari also has an explicitly powerful repair boundary: it may inspect a
 short-lived commands only inside the Marinara install folder. It cannot write directly into saved app
 data through that path; saved-data changes use the reviewable application flow. Remote editing actions
 require Marinara remote access. This install-folder command ability is an upstream Marinara surface, not
-a capability Bunraku imports or executes.
+a capability Bunzai imports or executes.
 
 ## Maps
 
@@ -116,8 +116,8 @@ Hierarchical Maps has its complete authoring, save, travel, lore-link, import, a
 lifecycle under [Maps and game content](maps-and-game-content.md). Agent Game State or tracker results do
 not bypass that map's enable, save, current-location, and one-move rules.
 
-## Bunraku
+## Bunzai
 
-Bunraku currently provides Marinara regex and persona codecs for this cluster. Imported scripts remain
-sealed data. Bunraku does not run Marinara custom tools, agent pipelines, Professor Mari commands, or
+Bunzai currently provides Marinara regex and persona codecs for this cluster. Imported scripts remain
+sealed data. Bunzai does not run Marinara custom tools, agent pipelines, Professor Mari commands, or
 map updates during import.

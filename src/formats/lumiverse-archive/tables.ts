@@ -55,7 +55,7 @@ export const TABLE_KINDS: Record<MappedTable, LvbakKind | null> = {
 };
 
 /**
- * Tables the spec names as never imported. Chats especially: Bunraku is not a chat frontend and
+ * Tables the spec names as never imported. Chats especially: Bunzai is not a chat frontend and
  * no canonical chat entity exists. Lumia and Council packs are skipped pending a mapping decision.
  */
 export const KNOWN_SKIPPED_TABLES = [

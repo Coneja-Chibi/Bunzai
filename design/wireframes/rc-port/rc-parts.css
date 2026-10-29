@@ -1,5 +1,5 @@
 /*
- * RoleCall's scene-side parts, copied class for class from RC source and mapped to Bunraku tokens.
+ * RoleCall's scene-side parts, copied class for class from RC source and mapped to Bunzai tokens.
  * Used by the scene-trash, scene-latest-card and scene-messages wireframes.
  *   RC #1c1a22 / #17161b panels -> --stage-panel;  #211f27 header band -> panel lifted 5% toward --stage-card
  *   RC #26232d / #302d36 buttons -> --stage-faint;  #0d0d10 / #111114 wells -> --stage-sunken / --stage-row

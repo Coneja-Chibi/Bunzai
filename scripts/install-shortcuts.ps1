@@ -1,11 +1,11 @@
 # Create the packaged, browser, and live-development shortcuts from this checkout.
 # Run: powershell -ExecutionPolicy Bypass -File scripts/install-shortcuts.ps1
 $root = Split-Path -Parent $PSScriptRoot
-$exe = Join-Path $root "dist\Bunraku.exe"
+$exe = Join-Path $root "dist\Bunzai.exe"
 $icon = Join-Path $root "build\vaude.ico"
-$packagedLauncher = Join-Path $root "scripts\launch-bunraku.vbs"
-$browserLauncher = Join-Path $root "scripts\launch-bunraku-browser.vbs"
-$devLauncher = Join-Path $root "scripts\launch-bunraku-dev.vbs"
+$packagedLauncher = Join-Path $root "scripts\launch-bunzai.vbs"
+$browserLauncher = Join-Path $root "scripts\launch-bunzai-browser.vbs"
+$devLauncher = Join-Path $root "scripts\launch-bunzai-dev.vbs"
 $wscript = Join-Path $env:WINDIR "System32\wscript.exe"
 
 $required = @($exe, $packagedLauncher, $browserLauncher, $devLauncher, $wscript)
@@ -21,27 +21,27 @@ $programs = [Environment]::GetFolderPath("Programs")
 $desktop = [Environment]::GetFolderPath("Desktop")
 $definitions = @(
     @{
-        Name = "Bunraku"
+        Name = "Bunzai"
         Target = $wscript
         Arguments = "`"$packagedLauncher`""
         WorkingDirectory = (Split-Path -Parent $exe)
-        Description = "Bunraku - the forge for AI-roleplay content"
+        Description = "Bunzai - the forge for AI-roleplay content"
         Desktop = $true
     },
     @{
-        Name = "Bunraku (Browser)"
+        Name = "Bunzai (Browser)"
         Target = $wscript
         Arguments = "`"$browserLauncher`""
         WorkingDirectory = $root
-        Description = "Bunraku in the default browser, running from live source"
+        Description = "Bunzai in the default browser, running from live source"
         Desktop = $false
     },
     @{
-        Name = "Bunraku (Dev)"
+        Name = "Bunzai (Dev)"
         Target = $wscript
         Arguments = "`"$devLauncher`""
         WorkingDirectory = $root
-        Description = "Bunraku native development window, running from live source"
+        Description = "Bunzai native development window, running from live source"
         Desktop = $false
     }
 )

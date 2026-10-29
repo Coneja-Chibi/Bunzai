@@ -4,10 +4,10 @@
  * injected rng instead of the system's ambient random source, and [recency:Xm] reads
  * LoreScan.now / message.at instead of the system clock. Narrative conditionals
  * (mood/timeOfDay/location/weather/activity/relationship) are
- * RoleCall's TunnelVision-evaluated triggers; Bunraku has no TV sidecar, so they always return
+ * RoleCall's TunnelVision-evaluated triggers; Bunzai has no TV sidecar, so they always return
  * false, matching RoleCall's own documented TV-off fallback. [lorebookActive:X] and [isGroupChat:X]
  * are fixed at the pin too: prompt-assembly.ts never sets activeEntryIds (always false) or
- * isGroupChat (always false, Bunraku has no group scenes); [swipeCount:X] compares against a fixed
+ * isGroupChat (always false, Bunzai has no group scenes); [swipeCount:X] compares against a fixed
  * 0, since RoleCall's call site never sets swipeCount either.
  */
 import type { LoreScan } from "./types";

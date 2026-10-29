@@ -5,7 +5,7 @@
  *
  * Writes run one at a time (a read-modify-write over one document). A document that cannot be read is
  * refused, never read as empty, so a save cannot wipe the guides it failed to read. Deleting is soft:
- * the record stays with a `deletedAt` and shows nowhere (RoleCall hard-deletes; Bunraku keeps).
+ * the record stays with a `deletedAt` and shows nowhere (RoleCall hard-deletes; Bunzai keeps).
  */
 import { toAssemblyGuide, parseGuideInput, type GuideRecord } from "../core/guide-record";
 import type { AssemblyGuide } from "../core/assembly/guides";

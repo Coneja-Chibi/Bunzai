@@ -7,7 +7,7 @@
  * what the targets are.
  *
  * The keys are `${process.platform}-${process.arch}` as Node reports them, because that is exactly how a
- * running Bunraku looks its own helper up in the baked pins (see aux-download.ts platformKey).
+ * running Bunzai looks its own helper up in the baked pins (see aux-download.ts platformKey).
  */
 export const SIDECAR_TARGETS = {
   "win32-x64": { goos: "windows", goarch: "amd64", asset: "sidecar-windows-x64.exe" },

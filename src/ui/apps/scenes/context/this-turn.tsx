@@ -1,6 +1,6 @@
 /**
  * This turn, the Prompt Inspector's first sub-tab (RoleCall `OutboundCallsPanel.tsx`): "Earlier turn / Later turn / Refresh" over the reply being read, the
- * Calls / Sent / Received / Turn time tiles, then the calls grouped by when they ran (Before the reply, The reply). Bunraku records no model-call ledger, so
+ * Calls / Sent / Received / Turn time tiles, then the calls grouped by when they ran (Before the reply, The reply). Bunzai records no model-call ledger, so
  * it lists exactly what a reply's stored trace holds (this-turn-core.ts) and invents no row: the Compendium's filing and Historian runs happen after a
  * reply and live in the Compendium's Activity. Tokens are Exact (the provider's report) or Estimated (the turn's own estimate), as the legend says.
  */

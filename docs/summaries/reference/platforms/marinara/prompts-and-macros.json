@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/prompts-and-macros",
   "sourcePath": "docs/reference/platforms/marinara/prompts-and-macros.md",
-  "sourceHash": "sha256:5d199790f4eeb05de3781c6ae400a4a1b3f70dcb7049dc3e3187b1da02224c47",
-  "summary": "Documents Marinara macro rules, conditionals, preset variables, the full prompt-preset lifecycle, media prompt overrides, Chat Settings Presets, and generation controls at the pinned Engine docs. It routes exact built-in names to the macro catalog while preserving evaluation rules and live /macros authority. Prompt presets cover panel organization, explicit save and dirty-exit behavior, Overview Sections Prompts tabs, live markers, groups, wrap formats, depth placement, assignment, Conversation and Game single-prompt differences, and Peek Prompt verification. Media overrides cover registered image and video templates, variables, preview, active paused default states, and reset. Chat Settings Presets bundle connection, prompt source, agents, tools, translation, memory, and advanced parameters while excluding chat content, with mode defaults and JSON interchange. Generation controls give ranges, Send defaults, provider extras, and baseline to connection to chat precedence. Bunraku preserves macro text without executing it.",
+  "sourceHash": "sha256:5a8d49c05f50f81afbdf4a5880baa4b4414ca5d94a25bb8a64ab0f4961860f31",
+  "summary": "Documents Marinara macro rules, conditionals, preset variables, the full prompt-preset lifecycle, media prompt overrides, Chat Settings Presets, and generation controls at the pinned Engine docs. It routes exact built-in names to the macro catalog while preserving evaluation rules and live /macros authority. Prompt presets cover panel organization, explicit save and dirty-exit behavior, Overview Sections Prompts tabs, live markers, groups, wrap formats, depth placement, assignment, Conversation and Game single-prompt differences, and Peek Prompt verification. Media overrides cover registered image and video templates, variables, preview, active paused default states, and reset. Chat Settings Presets bundle connection, prompt source, agents, tools, translation, memory, and advanced parameters while excluding chat content, with mode defaults and JSON interchange. Generation controls give ranges, Send defaults, provider extras, and baseline to connection to chat precedence. Bunzai preserves macro text without executing it.",
   "topics": [
     "macro system rules",
     "conditionals and operators",
@@ -118,11 +118,11 @@
       "children": []
     },
     {
-      "slug": "bunraku",
-      "title": "Bunraku",
+      "slug": "bunzai",
+      "title": "Bunzai",
       "level": 2,
-      "sourceHash": "sha256:6db187d4e943700c7206c06ae6be078f80a5c47aefea3589e05a4597940270a6",
-      "summary": "Bunraku maps canonical presets only when adapters define them. Macros are not executed at import or conversion. Preserve sealed macro text as data, report unsupported preset sections, and never invent execution or silent expansion during interchange merely because another platform has template syntax.",
+      "sourceHash": "sha256:6fb9b2c70e9dfccc95b3d58399a4a4b6e7eba86a3f5608d5783150a92a818287",
+      "summary": "Bunzai maps canonical presets only when adapters define them. Macros are not executed at import or conversion. Preserve sealed macro text as data, report unsupported preset sections, and never invent execution or silent expansion during interchange merely because another platform has template syntax.",
       "topics": [
         "adapter-defined preset mapping",
         "macros not executed at import",

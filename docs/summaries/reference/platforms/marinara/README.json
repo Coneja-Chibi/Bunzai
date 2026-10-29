@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/README",
   "sourcePath": "docs/reference/platforms/marinara/README.md",
-  "sourceHash": "sha256:2c10977c64538ce68933d7a1b625865fec15717ad2f259b859ebdf2e8ee764ba",
-  "summary": "Entry map for Kit's Marinara Engine authoring corpus. The collection routes characters, personas, and Convo profiles; Conversation schedules and custom media; sprites, galleries, colors, and stats; visual assets and card CSS; lorebooks; prompts, macros, and the exhaustive macro catalog; agents, custom tools, regex, memory, and Professor Mari; chat interchange and group behavior; maps, game state, HUDs, scenes, and storyboards; data layout, backup, and SillyTavern import; and the source-coverage manifest. Authority pins Pasta-Devs/Marinara-Engine commit b7545a63e7e264a1cd9eeea1a5490d50c08ddb29 retrieved 2026-07-26 under AGPL-3.0. Questions should open the narrow owning page and read the complete surrounding section. Upstream behavior never proves Bunraku adapter support: the Marinara format page governs implemented preservation, and SillyTavern macro behavior must not be projected onto Marinara.",
+  "sourceHash": "sha256:3feb630a202485001109d60f3ff274340829f79eaf819ff2d86f9278c88b3e7f",
+  "summary": "Entry map for Kit's Marinara Engine authoring corpus. The collection routes characters, personas, and Convo profiles; Conversation schedules and custom media; sprites, galleries, colors, and stats; visual assets and card CSS; lorebooks; prompts, macros, and the exhaustive macro catalog; agents, custom tools, regex, memory, and Professor Mari; chat interchange and group behavior; maps, game state, HUDs, scenes, and storyboards; data layout, backup, and SillyTavern import; and the source-coverage manifest. Authority pins Pasta-Devs/Marinara-Engine commit b7545a63e7e264a1cd9eeea1a5490d50c08ddb29 retrieved 2026-07-26 under AGPL-3.0. Questions should open the narrow owning page and read the complete surrounding section. Upstream behavior never proves Bunzai adapter support: the Marinara format page governs implemented preservation, and SillyTavern macro behavior must not be projected onto Marinara.",
   "topics": [
     "collection map destinations",
     "Conversation Mode destination",
@@ -31,8 +31,8 @@
       "slug": "authority",
       "title": "Authority",
       "level": 2,
-      "sourceHash": "sha256:acb7c076f870c5818703fecee70fc8cd22249fd3253a9d16f128e0806d80b11b",
-      "summary": "Authority pins Pasta-Devs/Marinara-Engine at commit b7545a63e7e264a1cd9eeea1a5490d50c08ddb29, retrieved 2026-07-26, licensed AGPL-3.0. The Bunraku pages are independently worded rather than a verbatim mirror. Implementation claims about what Bunraku can preserve belong to the Marinara format adapter reference. Do not copy SillyTavern macro semantics onto Marinara macros, conditionals, or preset variables; the platforms differ and false equivalence is a conversion bug.",
+      "sourceHash": "sha256:554152fe6d95b582bde63b41cfda19f7c33d02e32f0d0f03f6af83d5d38f22d5",
+      "summary": "Authority pins Pasta-Devs/Marinara-Engine at commit b7545a63e7e264a1cd9eeea1a5490d50c08ddb29, retrieved 2026-07-26, licensed AGPL-3.0. The Bunzai pages are independently worded rather than a verbatim mirror. Implementation claims about what Bunzai can preserve belong to the Marinara format adapter reference. Do not copy SillyTavern macro semantics onto Marinara macros, conditionals, or preset variables; the platforms differ and false equivalence is a conversion bug.",
       "topics": [
         "Marinara-Engine pin",
         "commit and retrieval date",

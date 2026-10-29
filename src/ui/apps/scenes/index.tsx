@@ -5,7 +5,7 @@
  */
 import { OverlayWidgets } from "./overlay";
 import { useEffect, useState, type JSX } from "react";
-import type { AppContext, BunrakuApp } from "../../app-contract";
+import type { AppContext, BunzaiApp } from "../../app-contract";
 import { handedScene, handOffScene, onSceneHandoff, SCENES_APP } from "../../_shared/scene-handoff";
 import { LIST_STYLE } from "./list-style";
 import { SCENE_STYLE } from "./scene-style";
@@ -95,7 +95,7 @@ function Scenes({ ctx }: { ctx: AppContext }): JSX.Element {
   );
 }
 
-const app: BunrakuApp = {
+const app: BunzaiApp = {
   OverlayWidgets,
   manifest: {
     id: SCENES_APP,

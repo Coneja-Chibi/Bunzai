@@ -1,4 +1,4 @@
-/** Which rules a scene runs and at what depth (RoleCall's placements on Bunraku's rule shape): pure, no execution. */
+/** Which rules a scene runs and at what depth (RoleCall's placements on Bunzai's rule shape): pure, no execution. */
 import { expect, test } from "bun:test";
 import type { RegexRule } from "../../entities/regex/schema";
 import { displayDepth, promptDepths, rulesForRole, sceneRules, type SceneSet } from "./scene-pass";

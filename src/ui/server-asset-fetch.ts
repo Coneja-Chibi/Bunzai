@@ -33,7 +33,7 @@ function platformCheck(url: URL): void {
 
 /** Fetches the link's body through the vetted-URL egress door; returns the response and the file name to stage it under. */
 export async function fetchLink(raw: string, signal: AbortSignal, deps?: VettedDeps): Promise<{ response: Response; name: string }> {
-  const { response, url } = await guardedFetchVetted(raw, { signal, timeoutMs: TIMEOUT_MS, vetUrl: platformCheck, headers: { accept: "image/*,video/*,audio/*", "user-agent": "Bunraku" } }, deps);
+  const { response, url } = await guardedFetchVetted(raw, { signal, timeoutMs: TIMEOUT_MS, vetUrl: platformCheck, headers: { accept: "image/*,video/*,audio/*", "user-agent": "Bunzai" } }, deps);
   if (!response.ok || !response.body) throw new FetchRefused(`That link did not answer with a file (${String(response.status)}).`);
   const type = response.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase() ?? "";
   const fromPath = /\.([a-z0-9]{2,5})$/i.exec(url.pathname)?.[1]?.toLowerCase();

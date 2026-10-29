@@ -38,15 +38,15 @@ export async function claimPort<T extends { stop: () => void }>(
       if (last) throw error;
       continue;
     }
-    if (await runningBunrakuAt(port)) return { server: attempt, port };
+    if (await runningBunzaiAt(port)) return { server: attempt, port };
     attempt.stop();
-    if (last) throw new Error(`ports ${from}-${port} are held by something that is not Bunraku`);
+    if (last) throw new Error(`ports ${from}-${port} are held by something that is not Bunzai`);
   }
   throw new Error(`no free port between ${from} and ${from + tries - 1}`);
 }
 
-/** The studio's URL if a Bunraku is answering here, else null. Never throws. */
-export async function runningBunrakuAt(port: number): Promise<string | null> {
+/** The studio's URL if a Bunzai is answering here, else null. Never throws. */
+export async function runningBunzaiAt(port: number): Promise<string | null> {
   try {
     const res = await fetch(`http://127.0.0.1:${port}/api/version`, { signal: AbortSignal.timeout(1500) });
     if (!res.ok) return null;

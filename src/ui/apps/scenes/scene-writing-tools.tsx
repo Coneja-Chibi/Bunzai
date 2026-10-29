@@ -1,5 +1,5 @@
 /**
- * The Prompting wing's Writing Tools tab: RoleCall's WritingToolsPanel on Bunraku. Every built tool that
+ * The Prompting wing's Writing Tools tab: RoleCall's WritingToolsPanel on Bunzai. Every built tool that
  * rewrites a reply or drafts yours (the table in writing-tools-core.ts, also read by the composer and
  * message menus), grouped, each with the prompt it uses. A tool whose prompt is a preset field edits it
  * here through the wing's one text writer, the same field the Preset tab's Templates section edits; what

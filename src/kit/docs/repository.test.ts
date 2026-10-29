@@ -2,7 +2,7 @@
  * Integration proof that the real authored corpus is searchable and navigable.
  */
 import { expect, test } from "bun:test";
-import { createBunrakuDocs } from "./repository";
+import { createBunzaiDocs } from "./repository";
 
 const DOCUMENTED_SILLYTAVERN_MACROS = [
   "user", "char", "group", "groupNotMuted", "charIfNotGroup", "notChar",
@@ -32,7 +32,7 @@ const VARIABLE_SHORTHAND_OPERATORS = [
 ] as const;
 
 test("full-text search returns the best catalog section for body-only wording", async () => {
-  const docs = createBunrakuDocs();
+  const docs = createBunzaiDocs();
   const hits = await docs.search("shared secret world readable process table");
   expect(hits[0]?.id).toBe("reference/security/remote-access");
   expect(hits[0]?.section).toBe("two-listeners-one-trust-boundary");
@@ -40,7 +40,7 @@ test("full-text search returns the best catalog section for body-only wording", 
 });
 
 test("browse root is metadata-only and lists real collections", async () => {
-  const docs = createBunrakuDocs();
+  const docs = createBunzaiDocs();
   const root = await docs.browse();
   expect(root).not.toBeNull();
   expect(root!.collection).toBeNull();
@@ -50,7 +50,7 @@ test("browse root is metadata-only and lists real collections", async () => {
 });
 
 test("browse refuses path escape and outline returns a real page map", async () => {
-  const docs = createBunrakuDocs();
+  const docs = createBunzaiDocs();
   expect(await docs.browse({ collection: "../SECURITY" })).toBeNull();
   const outline = await docs.outline("reference/security/remote-access");
   expect(outline).not.toBeNull();
@@ -62,7 +62,7 @@ test("browse refuses path escape and outline returns a real page map", async () 
 });
 
 test("whole-document reads can continue until the complete source is consumed", async () => {
-  const docs = createBunrakuDocs();
+  const docs = createBunzaiDocs();
   const first = await docs.read("01-VISION", { maxChars: 1_000 });
   expect(first).not.toBeNull();
   expect(first!.section).toBeNull();
@@ -81,7 +81,7 @@ test("whole-document reads can continue until the complete source is consumed", 
 });
 
 test("SillyTavern authoring references are searchable and readable by section", async () => {
-  const docs = createBunrakuDocs();
+  const docs = createBunzaiDocs();
   const hits = await docs.search("World Info outlet recursion timed effects");
   expect(hits.some((hit) => hit.id === "reference/platforms/sillytavern/world-info")).toBe(true);
 
@@ -114,7 +114,7 @@ test("SillyTavern reference enumerates every macro and operator in the pinned ma
   expect(operators).toContain("`#` | Preserves all whitespace");
   expect(operators).toContain("planned but not");
 
-  const docs = createBunrakuDocs();
+  const docs = createBunzaiDocs();
   const macroHits = await docs.search("charNegativePrefix image generation macro");
   expect(macroHits[0]?.id).toBe("reference/platforms/sillytavern/macro-reference");
   const operatorHits = await docs.search("nullish coalescing assign lazy fallback macro");

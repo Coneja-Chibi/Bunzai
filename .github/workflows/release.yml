@@ -4,7 +4,7 @@ name: release
 #  - push a tag like v0.1.0 by hand, or
 #  - get called by auto-release.yml (workflow_call with the tag it just cut).
 # Builds the desktop exe (Windows), the CLI binaries for five targets, Kit for four (the same bake, so
-# `bunraku ui` serves the packaged studio anywhere), checksums everything, and publishes with the
+# `bunzai ui` serves the packaged studio anywhere), checksums everything, and publishes with the
 # install guide (.github/RELEASE-NOTES-INSTALL.md) at the top of the notes. The tag must match
 # package.json's version.
 
@@ -66,16 +66,16 @@ jobs:
       # `bun scripts/pin-sidecar.ts <tag>` and commit the result.
       - name: Build the remote-access helper
         run: bun sidecar/build.ts --target=windows-x64
-      - name: Build Bunraku.exe + Windows CLI + Kit
+      - name: Build Bunzai.exe + Windows CLI + Kit
         run: bun run scripts/build-desktop.ts --cli-targets=bun-windows-x64 --kit
       - name: Install the isolated CDP browser
         run: bunx playwright install chromium
       - name: Produce low-end S21 release evidence against these exact binaries
         shell: pwsh
-        run: bun run scale:timed -- --release-evidence --profile low-end --n 10000 --artifact "$env:RUNNER_TEMP\s21-release-evidence.json" --packaged-cli "$PWD\dist\bunraku-cli-windows-x64.exe" --packaged-desktop "$PWD\dist\Bunraku.exe"
+        run: bun run scale:timed -- --release-evidence --profile low-end --n 10000 --artifact "$env:RUNNER_TEMP\s21-release-evidence.json" --packaged-cli "$PWD\dist\bunzai-cli-windows-x64.exe" --packaged-desktop "$PWD\dist\Bunzai.exe"
       - name: Consume S21 evidence before a release can proceed
         shell: pwsh
-        run: bun run scale:release-evidence -- "$env:RUNNER_TEMP\s21-release-evidence.json" --packaged-cli "$PWD\dist\bunraku-cli-windows-x64.exe" --packaged-desktop "$PWD\dist\Bunraku.exe"
+        run: bun run scale:release-evidence -- "$env:RUNNER_TEMP\s21-release-evidence.json" --packaged-cli "$PWD\dist\bunzai-cli-windows-x64.exe" --packaged-desktop "$PWD\dist\Bunzai.exe"
       - uses: actions/upload-artifact@v4
         with:
           name: s21-release-evidence
@@ -87,9 +87,9 @@ jobs:
         with:
           name: windows
           path: |
-            dist/Bunraku.exe
-            dist/bunraku-cli-windows-x64.exe
-            dist/bunraku-kit-windows-x64.exe
+            dist/Bunzai.exe
+            dist/bunzai-cli-windows-x64.exe
+            dist/bunzai-kit-windows-x64.exe
             dist/sidecar-windows-x64.exe
           if-no-files-found: error
 
@@ -124,9 +124,9 @@ jobs:
         with:
           name: linux
           path: |
-            dist/bunraku-cli-linux-x64
-            dist/bunraku-cli-linux-arm64
-            dist/bunraku-kit-linux-x64
+            dist/bunzai-cli-linux-x64
+            dist/bunzai-cli-linux-arm64
+            dist/bunzai-kit-linux-x64
             dist/sidecar-linux-x64
             dist/sidecar-linux-arm64
           if-no-files-found: error
@@ -151,7 +151,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: linux-arm64
-          path: dist/bunraku-kit-linux-arm64
+          path: dist/bunzai-kit-linux-arm64
           if-no-files-found: error
 
   build-macos:
@@ -182,9 +182,9 @@ jobs:
         with:
           name: macos
           path: |
-            dist/bunraku-cli-darwin-arm64
-            dist/bunraku-cli-darwin-x64
-            dist/bunraku-kit-darwin-arm64
+            dist/bunzai-cli-darwin-arm64
+            dist/bunzai-cli-darwin-x64
+            dist/bunzai-kit-darwin-arm64
             dist/sidecar-darwin-arm64
             dist/sidecar-darwin-x64
           if-no-files-found: error
@@ -206,10 +206,10 @@ jobs:
       - name: Checksums
         run: |
           cd dist
-          sha256sum Bunraku.exe \
-            bunraku-cli-windows-x64.exe bunraku-cli-linux-x64 bunraku-cli-linux-arm64 \
-            bunraku-cli-darwin-arm64 bunraku-cli-darwin-x64 \
-            bunraku-kit-windows-x64.exe bunraku-kit-linux-x64 bunraku-kit-linux-arm64 bunraku-kit-darwin-arm64 \
+          sha256sum Bunzai.exe \
+            bunzai-cli-windows-x64.exe bunzai-cli-linux-x64 bunzai-cli-linux-arm64 \
+            bunzai-cli-darwin-arm64 bunzai-cli-darwin-x64 \
+            bunzai-kit-windows-x64.exe bunzai-kit-linux-x64 bunzai-kit-linux-arm64 bunzai-kit-darwin-arm64 \
             sidecar-windows-x64.exe sidecar-linux-x64 sidecar-linux-arm64 \
             sidecar-darwin-arm64 sidecar-darwin-x64 \
             > SHA256SUMS
@@ -226,7 +226,7 @@ jobs:
             echo "**Changes**: https://github.com/${GITHUB_REPOSITORY}/commits/${RELEASE_TAG}" >> notes.md
             RANGE="${RELEASE_TAG}"
           fi
-          # Machine-parseable commit block: Bunraku's in-app version timeline reads EXACTLY this fence.
+          # Machine-parseable commit block: Bunzai's in-app version timeline reads EXACTLY this fence.
           # One "<shorthash> <subject>" per commit, newest first; grammar ^[0-9a-f]{7,40} .+$. The app
           # derives each release's headline from the first non-release, non-merge subject; absence of the
           # fence just renders "commit log unavailable" (the parser never guesses from prose).
@@ -241,18 +241,18 @@ jobs:
         run: |
           gh release create "${RELEASE_TAG}" \
             --repo "${GITHUB_REPOSITORY}" \
-            --title "Bunraku ${RELEASE_TAG}" \
+            --title "Bunzai ${RELEASE_TAG}" \
             --notes-file notes.md \
-            dist/Bunraku.exe \
-            dist/bunraku-cli-windows-x64.exe \
-            dist/bunraku-cli-linux-x64 \
-            dist/bunraku-cli-linux-arm64 \
-            dist/bunraku-cli-darwin-arm64 \
-            dist/bunraku-cli-darwin-x64 \
-            dist/bunraku-kit-windows-x64.exe \
-            dist/bunraku-kit-linux-x64 \
-            dist/bunraku-kit-linux-arm64 \
-            dist/bunraku-kit-darwin-arm64 \
+            dist/Bunzai.exe \
+            dist/bunzai-cli-windows-x64.exe \
+            dist/bunzai-cli-linux-x64 \
+            dist/bunzai-cli-linux-arm64 \
+            dist/bunzai-cli-darwin-arm64 \
+            dist/bunzai-cli-darwin-x64 \
+            dist/bunzai-kit-windows-x64.exe \
+            dist/bunzai-kit-linux-x64 \
+            dist/bunzai-kit-linux-arm64 \
+            dist/bunzai-kit-darwin-arm64 \
             dist/sidecar-windows-x64.exe \
             dist/sidecar-linux-x64 \
             dist/sidecar-linux-arm64 \

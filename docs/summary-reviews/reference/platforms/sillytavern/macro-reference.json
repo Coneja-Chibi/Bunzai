@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/sillytavern/macro-reference",
   "sourcePath": "docs/reference/platforms/sillytavern/macro-reference.md",
-  "sourceHash": "sha256:1ae66a0de77b5f55ebf42eb236acc686c9b91532005420f2475d31b92df1e8b3",
-  "semanticSummaryHash": "sha256:730740a4510a3989c11b51618e39494cf542928254271fdf1b1f6cb78e51e7a3",
+  "sourceHash": "sha256:c209e8a4ba066ca23405b4114d455cae4d201f474f71ae33248e283f0f87bea0",
+  "semanticSummaryHash": "sha256:01c0ad27ec8883541f3ead340a10e95f7de15f91ea77ea457832deca06f52fab",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:59.152Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:55.832Z"
 }

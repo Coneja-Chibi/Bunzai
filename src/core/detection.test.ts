@@ -163,7 +163,7 @@ const CASES: Case[] = [
     input: asText({ schemaVersion: "compendium-v1.0.0", format: "rolecall-compendium", exportDate: "2026-01-01", lorebook: { name: "W" }, entries: [{ id: "a", title: "T", content: "C", metadata: { entry_type: "character" } }], tree: null, nodeConstraints: [], categories: [] }),
   },
   {
-    label: "a Bunraku-written compendium file (entries and lorebook only, no marker beyond the schema) -> rolecall-compendium",
+    label: "a Bunzai-written compendium file (entries and lorebook only, no marker beyond the schema) -> rolecall-compendium",
     expected: "rolecall-compendium",
     input: asText({ schemaVersion: "compendium-v1.0.0", lorebook: { name: "W" }, entries: [{ id: "a", title: "T", content: "C", comment: "note", triggers: [{ keyword: "k", isRegex: false }] }] }),
   },

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/cli",
   "sourcePath": "docs/reference/cli.md",
-  "sourceHash": "sha256:283f17e8964a77b4ab03b02d723b4391147bca68f36d81600232daf226ee5035",
-  "semanticSummaryHash": "sha256:f7a0903fe89e11f784a748a8b8580e385cf71cf73fd4f2d23fece87d96bdbf4e",
+  "sourceHash": "sha256:bc7544bc227bbc49510205e3a98d511a3a71620c03144a5460b5e6e591fc9ffa",
+  "semanticSummaryHash": "sha256:04b9136e803fbb5d2e8f754120bc7afb28bd50a8533fe334de68ce76720b5a8a",
   "verdict": "APPROVE",
-  "reviewer": "gpt-6.1-sol-high",
-  "notes": "Independent full-page and section semantic review, including the refrozen derived JSON, usage exit 2, operational stderr refusals, and command-specific output corrections. Accurate description of current CLI quirks; CLI execution was not performed.",
-  "reviewedAt": "2026-10-02T20:25:07.995Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:41.643Z"
 }

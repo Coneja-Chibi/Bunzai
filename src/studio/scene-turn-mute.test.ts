@@ -1,6 +1,6 @@
 /**
  * A reply that is only native reasoning (a model that thought and wrote nothing): kept as an empty message with its reasoning and
- * times, and left out of the next request. RoleCall refuses such a reply (worker.ts, MODEL_RESPONSE_MISSING); Bunraku keeps it on
+ * times, and left out of the next request. RoleCall refuses such a reply (worker.ts, MODEL_RESPONSE_MISSING); Bunzai keeps it on
  * the person's choice. Fixtures are scene-turn.test.ts's own.
  */
 import { describe, expect, test } from "bun:test";
@@ -60,7 +60,7 @@ function mute(clock: { t: number }) {
   return { provider, sent };
 }
 
-// RoleCall refuses this reply (worker.ts MODEL_RESPONSE_MISSING); Bunraku keeps it.
+// RoleCall refuses this reply (worker.ts MODEL_RESPONSE_MISSING); Bunzai keeps it.
 test("a reply that is only native reasoning is stored with its reasoning and times, not refused", async () => {
   const clock = { t: 0 };
   const s = await scene(mute(clock).provider);

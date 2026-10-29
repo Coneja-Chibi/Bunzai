@@ -2,7 +2,7 @@
 import { describe, expect, test } from "bun:test";
 import { makePlatformOwns, makeWriteForProfiles } from "./write-for";
 
-const LABELS = { full: "Bunraku", sillytavern: "SillyTavern", risu: "Risu" } as const;
+const LABELS = { full: "Bunzai", sillytavern: "SillyTavern", risu: "Risu" } as const;
 
 describe("makeWriteForProfiles", () => {
   test("the profile list follows the labels object's own key order", () => {

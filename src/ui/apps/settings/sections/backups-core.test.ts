@@ -40,7 +40,7 @@ test("the preview has the four rows of the wireframe", () => {
 
 test("a refusal gets the wireframe's label, whatever the plain sentence says", () => {
   expect(refusalLabel("not enough free disk space; nothing was changed")).toBe("No room in the wings");
-  expect(refusalLabel("this snapshot was made by a different version of Bunraku and cannot be restored here")).toBe("Made by another version");
+  expect(refusalLabel("this snapshot was made by a different version of Bunzai and cannot be restored here")).toBe("Made by another version");
   expect(refusalLabel("this snapshot does not open with this library's key: it is from another library, or damaged")).toBe("Not this library");
 });
 

@@ -1,5 +1,5 @@
 /**
- * Read-only meta-tool for searching, browsing, outlining, and reading Bunraku docs.
+ * Read-only meta-tool for searching, browsing, outlining, and reading Bunzai docs.
  */
 import { z } from "zod";
 import type { HarnessTool } from "./tool";
@@ -96,7 +96,7 @@ export function createDocsQueryTool(): HarnessTool<z.infer<typeof input>> {
   return {
     name: "docs_query",
     description:
-      "Search, traverse collapsed collections and page outlines, or read Bunraku docs. "
+      "Search, traverse collapsed collections and page outlines, or read Bunzai docs. "
       + "Prefer a whole-document read for context; use section reads for targeted nuggets. "
       + "Continue bounded reads with the returned offset.",
     exposure: "direct",
@@ -118,7 +118,7 @@ export function createDocsQueryTool(): HarnessTool<z.infer<typeof input>> {
       if (!docs) {
         return {
           summary: "docs unavailable",
-          output: "Bunraku's documentation corpus is unavailable in this Kit session.",
+          output: "Bunzai's documentation corpus is unavailable in this Kit session.",
         };
       }
       if (args.action === "search") {
@@ -129,7 +129,7 @@ export function createDocsQueryTool(): HarnessTool<z.infer<typeof input>> {
         if (matches.length === 0) {
           return {
             summary: `docs search "${args.query}": 0`,
-            output: `No Bunraku documentation matches "${args.query}".`,
+            output: `No Bunzai documentation matches "${args.query}".`,
           };
         }
         const rows = matches.map((doc) => {

@@ -27,7 +27,7 @@ afterEach(async () => {
 const PASSWORD = "moonlit harbor lantern";
 
 async function rig(opts: { timer?: () => number; idleCheckMs?: number; dir?: string; vault?: ReturnType<typeof fakeComputer> } = {}) {
-  const dir = opts.dir ?? join(mkdtempSync(join(tmpdir(), "bunraku-server-library-")), "Bunraku Studio");
+  const dir = opts.dir ?? join(mkdtempSync(join(tmpdir(), "bunzai-server-library-")), "Bunzai Studio");
   if (!opts.dir) dirs.push(join(dir, ".."));
   const vault = opts.vault ?? fakeComputer();
   const library = createLibrary(dir, {

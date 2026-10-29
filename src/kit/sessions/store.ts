@@ -30,7 +30,7 @@ export interface SessionStore {
   writeExport(exportDir: string, filename: string, body: string): Promise<string>;
 }
 
-/** Where sessions live on disk; BUNRAKU_HOME (via configDir) makes it portable and test-friendly. */
+/** Where sessions live on disk; BUNZAI_HOME (via configDir) makes it portable and test-friendly. */
 export const sessionsDir = (): string => join(configDir(), "sessions");
 
 /** A fresh session/fork id, minted at the edge and injected into the pure ops. */

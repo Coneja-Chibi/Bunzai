@@ -6,12 +6,12 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/media/hoplight-wordmark-dark.png">
-  <img src="docs/media/hoplight-wordmark-light.png" alt="Bunraku" width="460">
+  <img src="docs/media/hoplight-wordmark-light.png" alt="Bunzai" width="460">
 </picture>
 
 *RoleCall, local. A studio for portable AI-roleplay content, and the stage that plays it.*
 
-*Built on [Hoplight](https://github.com/Coneja-Chibi/Hoplight). From the maker of
+*Built on [Hoplight](https://github.com/Vaudeville-Studios/Hoplight). From the maker of
 [BunnyMo](https://github.com/Coneja-Chibi/BunnyMo),
 [TunnelVision](https://github.com/Coneja-Chibi/TunnelVision), and
 [VectHare](https://github.com/Coneja-Chibi/VectHare).*
@@ -31,27 +31,25 @@
 > **Create, edit, and keep your work in a studio linked to no platform. Publish it into a
 > platform's format only when you choose.**
 
-Bunraku has three structural foundations:
+Bunzai has three structural foundations:
 
 - one canonical model in the middle
 - one honest adapter per platform
 - one local library in one database, exported to plain JSON whenever you want files
 
-### Why "Bunraku"
+### Why "Bunzai"
 
-Bunraku is the Japanese puppet theater where the puppeteers stand on stage in plain view.
-That is the whole idea of this app: the characters perform, and you can always see who is
-holding the strings. It also runs on Bun, and the maker's other tools are named after
-rabbits. Three meanings in one word felt like a sign.
+Bun, as in the runtime it is built on and the rabbits the maker's other tools are named after,
+and *banzai*, the cheer. A happy bunny shouting hooray for your stories.
 
-Bunraku is a fork of [Hoplight](https://github.com/Coneja-Chibi/Hoplight), the content studio.
-Hoplight stays the neutral studio for every platform; Bunraku is that studio with a stage
+Bunzai is a fork of [Hoplight](https://github.com/Vaudeville-Studios/Hoplight), the content studio.
+Hoplight stays the neutral studio for every platform; Bunzai is that studio with a stage
 attached, so the work you make can be played locally, with your own keys, on your own machine.
 Every format remains a first-class export target here too.
 
 ## Table of contents
 
-1. [What is Bunraku?](#-what-is-bunraku)
+1. [What is Bunzai?](#-what-is-bunzai)
 2. [Install](#-install)
 3. [The format problem](#-the-format-problem)
 4. [How it works](#%EF%B8%8F-how-it-works)
@@ -64,9 +62,9 @@ Every format remains a first-class export target here too.
 11. [Architecture](#%EF%B8%8F-architecture)
 12. [Contributing](#-contributing)
 
-## 🎪 What is Bunraku?
+## 🎪 What is Bunzai?
 
-Bunraku is a local studio for AI-roleplay work. Characters, lorebooks, personas, presets, regex
+Bunzai is a local studio for AI-roleplay work. Characters, lorebooks, personas, presets, regex
 sets, and sprite packs live together instead of being scattered across the apps that consume them.
 Its primary surfaces are:
 
@@ -77,33 +75,33 @@ Its primary surfaces are:
 
 The Studio copy is authoritative. Platforms are export targets.
 
-When you import something, Bunraku maps it into a canonical piece and keeps the original source
+When you import something, Bunzai maps it into a canonical piece and keeps the original source
 and unmapped platform fields in escrow. When you export, an adapter writes the target format and
 reports what was exported, what was retained locally, and what the target cannot represent.
 
-<img src="docs/media/shot-library.png" alt="The Bunraku Library">
+<img src="docs/media/shot-library.png" alt="The Bunzai Library">
 
 ## 🚀 Install
 
 Want to try the editing Studio first? Open the
-[browser edition](https://coneja-chibi.github.io/Bunraku/studio/). It needs no install or account and
+[browser edition](https://coneja-chibi.github.io/Bunzai/studio/). It needs no install or account and
 keeps work only in the current page. Export anything you want to keep before reloading or closing
 the tab. Kit, provider connections, remote access, updates, and host-filesystem tools require the
 installed app.
 
-Download the latest build from [Releases](https://github.com/Coneja-Chibi/Bunraku/releases).
+Download the latest build from [Releases](https://github.com/Coneja-Chibi/Bunzai/releases).
 
 | Platform | Download | Run |
 | --- | --- | --- |
-| **Windows** | `Bunraku.exe` | Double-click it |
-| **macOS** | `bunraku-cli-darwin-arm64` or `bunraku-cli-darwin-x64` | `chmod +x`, run it with `ui`, open the printed address |
-| **Linux** | `bunraku-cli-linux-x64` or `bunraku-cli-linux-arm64` | `chmod +x`, run it with `ui`, open the printed address |
+| **Windows** | `Bunzai.exe` | Double-click it |
+| **macOS** | `bunzai-cli-darwin-arm64` or `bunzai-cli-darwin-x64` | `chmod +x`, run it with `ui`, open the printed address |
+| **Linux** | `bunzai-cli-linux-x64` or `bunzai-cli-linux-arm64` | `chmod +x`, run it with `ui`, open the printed address |
 
 Windows may show a SmartScreen warning because the binary is unsigned. Releases include
 `SHA256SUMS` if you want to verify the download. If the app starts without opening a window, install
 [Microsoft WebView2](https://developer.microsoft.com/microsoft-edge/webview2/).
 
-Your pieces live in `Documents/Bunraku Studio`. Updating or replacing the app does not replace
+Your pieces live in `Documents/Bunzai Studio`. Updating or replacing the app does not replace
 that folder.
 
 ### Run from source
@@ -111,8 +109,8 @@ that folder.
 You need [Bun](https://bun.sh) 1.3 or newer.
 
 ```bash
-git clone https://github.com/Coneja-Chibi/Bunraku
-cd Bunraku
+git clone https://github.com/Coneja-Chibi/Bunzai
+cd Bunzai
 bun install
 bun run dev
 ```
@@ -121,7 +119,7 @@ The Studio binds to loopback. Open the local address it prints.
 
 ### Update
 
-Bunraku does not update itself. Use **Settings > About > Check for updates**, then replace your
+Bunzai does not update itself. Use **Settings > About > Check for updates**, then replace your
 downloaded binary with the new release.
 
 For a source checkout:
@@ -131,19 +129,19 @@ git pull
 bun install
 ```
 
-Restart Bunraku afterward. Your Studio library stays where it is.
+Restart Bunzai afterward. Your Studio library stays where it is.
 
 ### Bring in your work
 
-Drop a card, book, preset, or archive into the Library. Bunraku detects the format, imports every
+Drop a card, book, preset, or archive into the Library. Bunzai detects the format, imports every
 piece it can identify, and gives you a plain-language receipt.
 
 Example commands:
 
 ```bash
-bun run bunraku formats
-bun run bunraku inspect samples/sillytavern/characters/Seraphina.png
-bun run bunraku convert samples/sillytavern/characters/v3-full.json out.charx --to risu
+bun run bunzai formats
+bun run bunzai inspect samples/sillytavern/characters/Seraphina.png
+bun run bunzai convert samples/sillytavern/characters/v3-full.json out.charx --to risu
 ```
 
 ## 🧠 The format problem
@@ -161,9 +159,9 @@ unrelated formats with different capabilities:
 A file opening in two apps does not mean those apps read the same fields. Copies also drift as soon
 as you edit them independently.
 
-Bunraku keeps one canonical piece and translates at the boundary:
+Bunzai keeps one canonical piece and translates at the boundary:
 
-| Platform-bound workflow | Bunraku |
+| Platform-bound workflow | Bunzai |
 | --- | --- |
 | One copy per app | One master with many publish targets |
 | Embedded lorebook welded into a card | Linked, separately editable pieces |
@@ -176,7 +174,7 @@ Bunraku keeps one canonical piece and translates at the boundary:
 Platform editors are built to make content work inside that platform. That is their job. They
 cannot reliably show another platform's view of the same piece.
 
-Bunraku's editor lens can:
+Bunzai's editor lens can:
 
 - dim or hide fields the selected target does not carry
 - show native platform fields without turning the editor into a JSON dump
@@ -208,7 +206,7 @@ Real fixtures and round-trip tests verify the adapter's claims.
 ### Escrow
 
 Import does not discard data just because the canonical model lacks a first-class field for it.
-Bunraku stores:
+Bunzai stores:
 
 - the parsed source snapshot
 - unmapped platform fields
@@ -220,7 +218,7 @@ of pretending every concept has an equivalent.
 
 ### Sealed scripts
 
-Cards can carry Lua, macros, and regex rules. Bunraku treats them as data during import,
+Cards can carry Lua, macros, and regex rules. Bunzai treats them as data during import,
 conversion, storage, and export.
 
 Execution is user-invoked only inside the isolated Lua or regex test bench. There is no second
@@ -354,14 +352,14 @@ The CLI is another shell over the same engine.
 
 | Command | Purpose |
 | --- | --- |
-| `bunraku inspect <file>` | Describe a file in plain language |
-| `bunraku validate <file>` | Detect and parse; exit 0 when openable |
-| `bunraku label <file>` | Identify likely format and origin |
-| `bunraku convert <in> <out> [--to id]` | Convert through the canonical model |
-| `bunraku formats` | List installed adapters |
-| `bunraku ui [port] [studioDir]` | Start the visual Studio |
-| `bunraku export <folder> [studioDir]` | Write your library out as a plain, unencrypted folder |
-| `bunraku derived --stats|--clear [studioDir]` | Inspect or clear rebuildable derived cache rows |
+| `bunzai inspect <file>` | Describe a file in plain language |
+| `bunzai validate <file>` | Detect and parse; exit 0 when openable |
+| `bunzai label <file>` | Identify likely format and origin |
+| `bunzai convert <in> <out> [--to id]` | Convert through the canonical model |
+| `bunzai formats` | List installed adapters |
+| `bunzai ui [port] [studioDir]` | Start the visual Studio |
+| `bunzai export <folder> [studioDir]` | Write your library out as a plain, unencrypted folder |
+| `bunzai derived --stats|--clear [studioDir]` | Inspect or clear rebuildable derived cache rows |
 
 Add `--json` to validate, formats, convert, or `derived --stats` for machine-readable output. Inspect currently prints
 human-readable detail; [the CLI reference](docs/reference/cli.md) records the exact current contract.
@@ -373,7 +371,7 @@ release binaries.
 
 ## 📡 Supported formats
 
-Bunraku currently covers formats from:
+Bunzai currently covers formats from:
 
 - SillyTavern and portable CCv2/CCv3
 - RisuAI
@@ -391,7 +389,7 @@ Support varies by content kind, direction, and field. The generated
 
 ## 🔒 Safety and privacy
 
-Bunraku is local-first and fail-closed:
+Bunzai is local-first and fail-closed:
 
 - Studio content is plain JSON in a folder you control.
 - The local server binds to loopback by default.
@@ -415,7 +413,7 @@ use provider-backed features. Remote access must be enabled explicitly.
 
 ### Can conversion damage the source?
 
-Bunraku stores the imported source snapshot and unmapped data in escrow. Same-format round trips
+Bunzai stores the imported source snapshot and unmapped data in escrow. Same-format round trips
 must meet the adapter's declared fidelity tier. Cross-format output includes a loss report because
 some concepts genuinely have no destination.
 
@@ -424,7 +422,7 @@ some concepts genuinely have no destination.
 No for importing, editing, inspecting, validating, converting, or deterministic analysis.
 Provider-backed Kit and generation features are optional and use your configured provider.
 
-### Will Bunraku run scripts embedded in cards?
+### Will Bunzai run scripts embedded in cards?
 
 Not during import, conversion, storage, or export. Execution exists only in explicit isolated test
 benches.
@@ -447,7 +445,7 @@ suite, the round-trip law, and the CI guards. Bugs get fixed the same way too.
 
 ## 🗺️ Project status
 
-Bunraku is in active development.
+Bunzai is in active development.
 
 | Area | Status |
 | --- | --- |
@@ -462,7 +460,7 @@ Milestones are complete only after live verification in a real install.
 
 ## 🏗️ Architecture
 
-Bunraku uses Bun and strict TypeScript. The engine is pure where possible; filesystem, server,
+Bunzai uses Bun and strict TypeScript. The engine is pure where possible; filesystem, server,
 provider, and UI effects stay at the edges. The CLI, Studio, and Kit share the same engine.
 
 ```text
@@ -503,7 +501,7 @@ AI-assisted contributions are welcome. Disclose the model used in the pull reque
 bun run verify:ci
 ```
 
-Bunraku is licensed under AGPL-3.0. See [LICENSING.md](LICENSING.md).
+Bunzai is licensed under AGPL-3.0. See [LICENSING.md](LICENSING.md).
 
 <div align="center">
 

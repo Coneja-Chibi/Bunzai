@@ -42,7 +42,7 @@ describe("matchSpecialTrigger: comparisons and context", () => {
     expect(matchSpecialTrigger("[lorebookActive:AnyEntry]", scan(), fakeRng())).toBe(false);
   });
 
-  test("narrative conditionals always false (no TunnelVision sidecar in Bunraku)", () => {
+  test("narrative conditionals always false (no TunnelVision sidecar in Bunzai)", () => {
     for (const type of ["mood", "timeOfDay", "location", "weather", "activity", "relationship"]) {
       expect(matchSpecialTrigger(`[${type}:anything]`, scan(), fakeRng())).toBe(false);
     }

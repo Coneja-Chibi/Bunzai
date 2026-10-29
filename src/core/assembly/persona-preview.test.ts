@@ -1,7 +1,7 @@
 /**
  * The Cast wing's persona preview and the preset scan, proved against the assembler itself: the preview is the persona
  * block assemble() sends, the wrapper reaches the request, the stored position moves it only as persona-position.test.ts proves (RoleCall's assembler ignores the stop,
- * prompt-assembly.ts:1874-1890 only prepends injection_prefix; Bunraku honours what the Persona tab promises), and the scan names the block that already carries {{persona}} the way fillSlots counts it.
+ * prompt-assembly.ts:1874-1890 only prepends injection_prefix; Bunzai honours what the Persona tab promises), and the scan names the block that already carries {{persona}} the way fillSlots counts it.
  */
 import { describe, expect, test } from "bun:test";
 import type { CharacterBody } from "../../entities/character/schema";

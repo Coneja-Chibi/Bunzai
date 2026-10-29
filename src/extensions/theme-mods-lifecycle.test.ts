@@ -6,7 +6,7 @@ import { modThemePackage, png, pngBytes, woff2Bytes } from "./theme-mod-fixture"
 import { fixtureThemePackage } from "./theme-test-fixture";
 import type { ThemePackageInput } from "./theme-contract";
 
-const ID = "bunraku.theme.modtest";
+const ID = "bunzai.theme.modtest";
 type Lifecycle = Awaited<ReturnType<typeof createThemeLifecycle>>;
 const plain = async (): Promise<ThemePackageInput> => fixtureThemePackage(ID, "Mod test");
 async function approve(themes: Lifecycle, input: ThemePackageInput): Promise<string> {

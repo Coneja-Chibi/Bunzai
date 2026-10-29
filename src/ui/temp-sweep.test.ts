@@ -1,4 +1,4 @@
-/** The temp sweep (temp-sweep.ts): stale Bunraku leftovers go, fresh ones and anything else stay. */
+/** The temp sweep (temp-sweep.ts): stale Bunzai leftovers go, fresh ones and anything else stay. */
 import { afterEach, expect, test } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -10,8 +10,8 @@ afterEach(() => {
   for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true });
 });
 
-test("removes Bunraku's temp leftovers older than a day, and keeps fresh ones and other programs' files", () => {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-sweep-test-"));
+test("removes Bunzai's temp leftovers older than a day, and keeps fresh ones and other programs' files", () => {
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-sweep-test-"));
   dirs.push(dir);
   const old = (Date.now() - 2 * 24 * 60 * 60_000) / 1000;
   const make = (name: string, stale: boolean, folder = true) => {
@@ -23,10 +23,10 @@ test("removes Bunraku's temp leftovers older than a day, and keeps fresh ones an
     if (stale) utimesSync(path, old, old);
     return path;
   };
-  const staleStaged = make("bunraku-lvbak-staged-abc", true);
-  const staleLargeImport = make("bunraku-import-staged-abc", true);
+  const staleStaged = make("bunzai-lvbak-staged-abc", true);
+  const staleLargeImport = make("bunzai-import-staged-abc", true);
   const stalePaste = make("kit-paste-1.png", true, false);
-  const freshStaged = make("bunraku-lvbak-staged-live", false);
+  const freshStaged = make("bunzai-lvbak-staged-live", false);
   const someoneElse = make("other-app-cache", true);
   expect(sweepStaleTemp(dir)).toBe(3);
   expect(existsSync(staleStaged)).toBe(false);
@@ -37,5 +37,5 @@ test("removes Bunraku's temp leftovers older than a day, and keeps fresh ones an
 });
 
 test("a missing temp folder is not an error", () => {
-  expect(sweepStaleTemp(join(tmpdir(), "bunraku-no-such-folder-xyz"))).toBe(0);
+  expect(sweepStaleTemp(join(tmpdir(), "bunzai-no-such-folder-xyz"))).toBe(0);
 });

@@ -2,7 +2,7 @@
  * Settings section: Remote access - reach this studio from another device over a private, encrypted
  * link (the embedded Tailscale sidecar). Its own richly-styled page, NOT the plain settings rows. It
  * polls the sidecar state and drives Enable / Turn-off; the server opens the Tailscale sign-in page for
- * the user, so the whole flow lives inside Bunraku, never a terminal.
+ * the user, so the whole flow lives inside Bunzai, never a terminal.
  */
 import { useEffect, useRef, useState } from "react";
 import type { JSX } from "react";
@@ -62,7 +62,7 @@ function StateCard({
         <div className={`${styles.card} ${styles.hero}`}>
           <div className={styles.cardTitle}>Turn on remote access</div>
           <div className={styles.cardBody}>
-            Bunraku stays on your machine. A private, encrypted link lets your own devices reach it, with
+            Bunzai stays on your machine. A private, encrypted link lets your own devices reach it, with
             no router changes and no ports opened. You sign in to Tailscale once (free); we open that page
             for you.
           </div>
@@ -187,7 +187,7 @@ function StateCard({
             <span className={styles.dot} />
             {state.error ?? "Something stopped the link from coming up."}
           </span>
-          <div className={styles.cardBody}>Nothing else in Bunraku is affected.</div>
+          <div className={styles.cardBody}>Nothing else in Bunzai is affected.</div>
           <div className={styles.actions}>
             <Button size="sm" variant="primary" disabled={a.busy} onClick={() => a.enable()}>
               Try again
@@ -303,7 +303,7 @@ function RemoteAccessSection({ ctx }: { ctx: AppContext }): JSX.Element {
           ) : (
             <>
               Reach this studio from your phone or another computer, over a private, encrypted link. Off by
-              default. Turning it on needs a one-time free Tailscale sign-in, Bunraku opens that page for
+              default. Turning it on needs a one-time free Tailscale sign-in, Bunzai opens that page for
               you.
             </>
           )}
@@ -314,8 +314,8 @@ function RemoteAccessSection({ ctx }: { ctx: AppContext }): JSX.Element {
           <div className={styles.cardTitle}>Managed on the host device</div>
           <div className={styles.cardBody}>
             You are connected to this studio remotely. Remote access is turned on or off, and devices are
-            managed, only on the computer actually running Bunraku, never from a device that connected in.
-            Open Bunraku on that computer to change these settings.
+            managed, only on the computer actually running Bunzai, never from a device that connected in.
+            Open Bunzai on that computer to change these settings.
           </div>
         </div>
       ) : (
@@ -345,7 +345,7 @@ const section: SettingsSection = {
   act: "house",
   title: "Remote access",
   lede: "",
-  protectedNote: "Managed only on the computer actually running Bunraku, never from a device that connected in.",
+  protectedNote: "Managed only on the computer actually running Bunzai, never from a device that connected in.",
   status: (ctx) => (ctx.prefs.get(SETTING_KEYS.remoteAccessEnabled) === true ? "On" : "Off"),
   label: "Remote access",
   order: 85,

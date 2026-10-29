@@ -1,6 +1,6 @@
 /**
  * The Story Director's turn events, held where the panel and the floating button can both read them (the page forwards each `director` TurnEvent here, use-scene-turn.ts).
- * RoleCall keeps a session store the stream writes (stores/dm-activity.ts); Bunraku's lines live in the saved state, so this holds only what the state cannot: that the Director is
+ * RoleCall keeps a session store the stream writes (stores/dm-activity.ts); Bunzai's lines live in the saved state, so this holds only what the state cannot: that the Director is
  * planning right now, why its last plan failed, a counter that tells the readers to read the state again, and a request to open the panel on a tab (the button's "View All Activity").
  */
 import { useSyncExternalStore } from "react";
@@ -40,5 +40,5 @@ export function useDirectorLive(chatId: string): DirectorLive {
 }
 
 /** "Change in Story Director": the Booth's line and a tracker's menu ask the page to open the Props wing at the Story Director's settings (the same window-event door the Stage and Storyboards use, use-stage-open.ts). */
-export const DIRECTOR_SETTINGS_OPEN_EVENT = "bunraku:director-settings-open";
+export const DIRECTOR_SETTINGS_OPEN_EVENT = "bunzai:director-settings-open";
 export const openDirectorSettings = (): void => { window.dispatchEvent(new Event(DIRECTOR_SETTINGS_OPEN_EVENT)); };

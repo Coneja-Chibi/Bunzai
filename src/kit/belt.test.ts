@@ -22,14 +22,14 @@ let studio = "";
 const saved: Record<string, string | undefined> = {};
 
 beforeAll(async () => {
-  for (const key of ["BUNRAKU_HOME", "BUNRAKU_MCP"]) saved[key] = process.env[key];
-  home = await mkdtemp(join(tmpdir(), "bunraku-belt-home-"));
-  studio = await mkdtemp(join(tmpdir(), "bunraku-belt-studio-"));
-  process.env["BUNRAKU_HOME"] = home;
-  process.env["BUNRAKU_MCP"] = "on"; // the explicit override; without it the test runner never connects
-  await mkdir(join(home, ".bunraku"), { recursive: true });
+  for (const key of ["BUNZAI_HOME", "BUNZAI_MCP"]) saved[key] = process.env[key];
+  home = await mkdtemp(join(tmpdir(), "bunzai-belt-home-"));
+  studio = await mkdtemp(join(tmpdir(), "bunzai-belt-studio-"));
+  process.env["BUNZAI_HOME"] = home;
+  process.env["BUNZAI_MCP"] = "on"; // the explicit override; without it the test runner never connects
+  await mkdir(join(home, ".bunzai"), { recursive: true });
   await writeFile(
-    join(home, ".bunraku", "mcp.json"),
+    join(home, ".bunzai", "mcp.json"),
     JSON.stringify({ servers: [{ id: "fake", command: process.execPath, args: [FIXTURE] }] }),
   );
 });
@@ -60,13 +60,13 @@ describe("assembleBelt", () => {
   }, 30_000);
 
   test("without the explicit override, the test runner never connects to anything", async () => {
-    delete process.env["BUNRAKU_MCP"];
+    delete process.env["BUNZAI_MCP"];
     try {
       const belt = await assembleBelt([], studio);
       expect(belt.tools.filter((t) => t.name.startsWith("mcp_"))).toEqual([]);
       expect(belt.externalAccess).toEqual([]);
     } finally {
-      process.env["BUNRAKU_MCP"] = "on";
+      process.env["BUNZAI_MCP"] = "on";
     }
   });
 });

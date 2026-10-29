@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/security/script-sandbox",
   "sourcePath": "docs/reference/security/script-sandbox.md",
-  "sourceHash": "sha256:5c5efecf5feda658202426455a41bf3e2049745ed42cf4ea94ad862c673b26d8",
-  "semanticSummaryHash": "sha256:ab2dbc9f2b337e6c53b36330828272aa53fdcc583a27de63cfa5064fd5450c6b",
+  "sourceHash": "sha256:5da7fd10c1eedf959290a0d1ec5e69e8d23a5e1f63e160472efeee4eb07b8ee0",
+  "semanticSummaryHash": "sha256:91fa3df583f15552aa24fa832a8a691ef09c76be0972788c3a749c803f1840c7",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:48:02.164Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:59.488Z"
 }

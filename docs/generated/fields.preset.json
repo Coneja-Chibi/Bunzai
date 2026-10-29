@@ -65,7 +65,7 @@
           "name": "markerSlot",
           "optional": true,
           "type": "string",
-          "meaning": "When `marker`, the slot identity: ST-compatible (chatHistory, worldInfoBefore, worldInfoAfter, dialogueExamples, personaDescription), RC's named marker slots, or a Bunraku feature marker (trackers, linkedTrackers, storyboards, skills: core/preset/build.ts FEATURE_MARKER_SLOTS).",
+          "meaning": "When `marker`, the slot identity: ST-compatible (chatHistory, worldInfoBefore, worldInfoAfter, dialogueExamples, personaDescription), RC's named marker slots, or a Bunzai feature marker (trackers, linkedTrackers, storyboards, skills: core/preset/build.ts FEATURE_MARKER_SLOTS).",
           "producers": [
             "RC",
             "ST"

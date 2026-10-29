@@ -6,7 +6,7 @@
 
 ## Context
 
-Bunraku needs to answer a question it cannot answer today: will this preset's macros actually work
+Bunzai needs to answer a question it cannot answer today: will this preset's macros actually work
 after it is converted to another platform's format? The current answer is name-level only.
 `src/core/preset/macros/support.ts` says so in its own header: a macro name missing from the target
 engine is a reliable "this dies", but a name that is present proves nothing about syntax or meaning.
@@ -22,7 +22,7 @@ inside the Lua or regex test bench: Lua runs in wasmoon and regex runs in a term
 on the isolated sandbox origin described by ADR-009. Do not add another execution path."
 
 Rule 3 names macros. Read at its widest, it forbids the macro engine the specs already describe. Read
-at its narrowest, it governs only the sealed script payloads Bunraku imports from other platforms.
+at its narrowest, it governs only the sealed script payloads Bunzai imports from other platforms.
 The rule cannot be quietly reinterpreted in a code comment by whoever implements the evaluator first.
 It needs a decision.
 
@@ -39,7 +39,7 @@ The two things rule 3 currently covers with one sentence are not the same hazard
 | Failure mode | Escape, exfiltration, hang | Wrong text, unbounded expansion |
 | Existing mitigation | Worker isolation, wasmoon, distinct origin (ADR-009) | Bounded depth, bounded output, no I/O |
 
-A Lua interpreter runs whatever the payload says. A macro evaluator runs only handlers Bunraku
+A Lua interpreter runs whatever the payload says. A macro evaluator runs only handlers Bunzai
 wrote, selected by name from a closed registry; an unrecognized name is emitted as literal text.
 Those are different risk classes and giving them the same mitigation is not conservatism, it is a
 category error that would put a pure text-substitution pass behind a cross-origin worker for no
@@ -93,7 +93,7 @@ satisfy this ADR.
   gets executed as code, at import or at conversion, ever.
 - A reviewer gains a specific list to check an implementation against, instead of arguing about
   whether rule 3 applies.
-- If this ADR is rejected, the consequence is concrete and should be stated plainly: Bunraku cannot
+- If this ADR is rejected, the consequence is concrete and should be stated plainly: Bunzai cannot
   ever prove macro behavior, only compare macro names, and the transfer report stays permanently at
   the name-level honesty it has today.
 
@@ -102,7 +102,7 @@ satisfy this ADR.
 The chat shows messages the way RoleCall does (`useDisplayMessages`): every message, the greeting
 included, runs through the full evaluator each time it is displayed, with the chat's cast, messages,
 and variables, so every macro the engine knows resolves in the bubble. One difference from RoleCall is decided
-elsewhere and wins: RoleCall reads the live card, but a Bunraku chat keeps its own frozen copy of its
+elsewhere and wins: RoleCall reads the live card, but a Bunzai chat keeps its own frozen copy of its
 cast (ChatStore rule 10), so display resolves against that copy. Two RoleCall
 behaviors are kept on purpose and stay inside this ADR's constraints:
 

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "decisions/ADR-011-runtime-boundary-schemas",
   "sourcePath": "docs/decisions/ADR-011-runtime-boundary-schemas.md",
-  "sourceHash": "sha256:ef46ffadb65f598f08bf6e6bca2b5be02e785b8d9a16d5c61a474e9b6abb47f0",
+  "sourceHash": "sha256:8b75837d67b04b231e9f1a1ce646cf33336bda41fd84d1034b35ad93b063ac59",
   "summary": "Accepted on 2026-07-26, ADR-011 makes exhaustive runtime decoding the canonical boundary contract while preserving handwritten domain interfaces. TypeScript alone cannot validate JSON from disk, HTTP, adapters, or Kit drafts, and the former central decoder accepted only a required floor. The decision adds one adjacent runtime decoder per content kind and routes every decoded object through defineExhaustiveShape<T>(), which infers concrete Zod schemas before demanding exact domain-compatible inputs and outputs. Missing or extra keys, narrowed unions, coercion, any at any nesting depth, and never fail typecheck. Six strict bodies compose the public discriminated union; unknown same-version keys fail outside declared open record bags; profiles validate as kind-matched shallow partial bodies. Adapter-corpus tests, fully populated fixtures, malformed-family matrices, and storage, HTTP, Kit validation, and final-apply tests prove adoption. Strictness forces explicit schema evolution while leaving declared escrow and extension bags lossless and inert. ADR-005's canonical superset, escrow envelope, and Round-Trip Law remain in force.",
   "topics": [
     "exhaustive runtime schemas",
@@ -20,7 +20,7 @@
       "slug": "context",
       "title": "Context",
       "level": 2,
-      "sourceHash": "sha256:b429b2faa98c666dd0b54f7b3df90aa3d33bfeea3ae98d02c91916d3e139aa4b",
+      "sourceHash": "sha256:71d12f45352c6930421dcf28b70c1f8035fe429ecf52ecea962111205cdf0d5a",
       "summary": "Canonical entities use rich handwritten TypeScript interfaces under src/entities/<kind>/schema.ts, but TypeScript types disappear at runtime and cannot validate JSON arriving from storage, HTTP, format adapters, or Kit drafts. The former central decoder checked the common envelope and only a required subset of each entity body. Because loose objects did not exhaust optional field families, a parse could succeed while carrying values that contradicted the domain interface into durable storage or editing logic. Replacing every interface with a schema-inferred type would cause broad disruption and still would not prove that every producer and consumer crosses one shared validation boundary. The problem is therefore boundary completeness and adoption, not merely the syntax used to declare types.",
       "topics": [
         "erased TypeScript types",

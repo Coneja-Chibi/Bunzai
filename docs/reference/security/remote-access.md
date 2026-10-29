@@ -2,7 +2,7 @@
 id: reference/security/remote-access
 title: Remote access: Tailscale and LAN
 audience: dev
-summary: How bunraku lets you reach the studio from another device over a private Tailscale link or the local network, and the gates that keep everyone else out. Two listeners (trusted loopback, untrusted sidecar-fed), an owner-only Tailscale gate, and a connect-code + per-device-approval LAN gate. Off by default; driven entirely from Settings, never a terminal.
+summary: How bunzai lets you reach the studio from another device over a private Tailscale link or the local network, and the gates that keep everyone else out. Two listeners (trusted loopback, untrusted sidecar-fed), an owner-only Tailscale gate, and a connect-code + per-device-approval LAN gate. Off by default; driven entirely from Settings, never a terminal.
 tags: [security, remote-access, tailscale, lan, sidecar, owner-gate, connect-code]
 related: [reference/security/script-sandbox, reference/architecture]
 ---
@@ -22,8 +22,8 @@ Neither mode ever exposes the studio to the open internet, and every device is g
 
 ## Containers and SSH forwarding
 
-Running Bunraku in a container or on a headless machine does not require a browser inside that
-environment. The `bunraku ui` startup receipt prints:
+Running Bunzai in a container or on a headless machine does not require a browser inside that
+environment. The `bunzai ui` startup receipt prints:
 
 - the local Studio URL;
 - one copyable SSH command with a forward for the Studio port; and
@@ -126,7 +126,7 @@ though it is the owner's own account (`deviceTracker`, `sidecar/main.go`). On LA
 
 ## Where the sidecar binary comes from
 
-The sidecar is compiled Go, and it is **not** inside `Bunraku.exe`. Three locations are checked, in this
+The sidecar is compiled Go, and it is **not** inside `Bunzai.exe`. Three locations are checked, in this
 order (`sidecarCandidates`, `src/ui/server-remote.ts`):
 
 1. the repository's own `sidecar/` folder, where `bun sidecar/build.ts` writes it - the from-source path;
@@ -177,7 +177,7 @@ The host allowlist is defence in depth, not the guarantee. If GitHub renames its
 availability and keeps integrity, which is the correct way round.
 
 The installed helper is **not** re-hashed before each spawn. It lives in the owner's own per-account support
-directory, so anyone able to rewrite it can equally rewrite `Bunraku.exe`; re-verifying would defend
+directory, so anyone able to rewrite it can equally rewrite `Bunzai.exe`; re-verifying would defend
 against an attacker who already holds the account. There is deliberately no "your helper is out of date"
 signal either: the pinned hash changes on every release whether the helper changed or not, so a staleness
 warning derived from it would fire after every app update about a helper that works. The panel reports which

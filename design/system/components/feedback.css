@@ -1,5 +1,5 @@
 /*
- * Bunraku design system, Builder B: feedback.html area CSS. Prefix .fb-, area ids "feedback" and
+ * Bunzai design system, Builder B: feedback.html area CSS. Prefix .fb-, area ids "feedback" and
  * "protected". Tokens only: every selector starts with .fb- or [data-taste-id^="feedback."] /
  * [data-taste-id^="protected."]. Variant CSS hangs off [data-taste-id="..."].
  *

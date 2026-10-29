@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/extending/make-a-theme",
   "sourcePath": "docs/reference/extending/make-a-theme.md",
-  "sourceHash": "sha256:8498b03b98dc495f45b2bbfa1b10751f61257568fbf8fc2dff10568f0ff542aa",
+  "sourceHash": "sha256:66d28b51d1f5c7fa03d82cc0ef65daa5bb7e950de04239f9bf35aebb59511fc4",
   "summary": "A theme is a folder of data and, optionally, one checked stylesheet: a schemaVersion 2 manifest that picks one host-built variant for any of 29 surfaces and sets a lowercase-hex palette held to contrast floors, bundled fonts by id, frame, density and motion, and accent behavior, with optional inert SVG marks. Beyond the descriptor it may add one checked stylesheet, woff2 fonts, PNG and WebP images and static slot content, each behind its own scope; it carries no code and no rule may name the protected layer, which a watchdog guards. Permissions are derived from the fields used and bound to the package digest, any edit needs fresh approval, and the protected layer is never themeable. A copy-paste starter validates in a test. Five themes ship: four identity themes held to a 50 percent surface-difference floor, and RoleCall, the default, which is colour-only on purpose (RoleCall palette, Cinzel and Inter, no surface picks) and exempt from that floor by name. Built-in themes get no power a package lacks: scan:theme-keys rejects host CSS or TypeScript keyed on a theme id. The manual theme:measure gate scores structural difference with recolour and font-only controls and lists the protected gate screens without scoring them.",
   "topics": [
     "data-only theme package",
@@ -17,7 +17,7 @@
       "slug": "what-a-package-is",
       "title": "What a package is",
       "level": 2,
-      "sourceHash": "sha256:9285d529a53a874c998659d9930d2b59e915bac46608e1a2b8a843af16d955a9",
+      "sourceHash": "sha256:23b150b480ba1da15e69fb958bdc11b17810b09d0b5b6d29a18ffee27ad81549",
       "summary": "A package is a folder with manifest.json, an optional license, optional images (SVG, PNG, WebP), optional woff2 fonts and an optional styles.css, imported through Settings as one JSON envelope with binary files as base64. The Encore example can be downloaded in that shape, and bundled themes are discovered from folders under src/extensions/themes.",
       "topics": [
         "package folder layout",
@@ -30,8 +30,8 @@
       "slug": "the-manifest",
       "title": "The manifest",
       "level": 2,
-      "sourceHash": "sha256:cf688274a7d490d8882907b2c1437d626298ff41f9d2fd437d03a45ce05829f0",
-      "summary": "Every manifest field is required except styles, fonts and slots, and any unknown key at any depth is an error. The top level carries the package id, version, display name, requested scopes and the image list, plus the optional styles file, fonts and slots. The appearance object holds the surface picks, the palette, the type choices, the shape settings, the accent behavior and the optional marks naming image ids. Ids follow the bunraku.theme namespace, versions are semantic, names are bounded, and at most twenty-four images may be listed: SVG of ninety-six kilobytes or less, PNG and WebP of one hundred twenty-eight kilobytes or less. The sub-sections below define surfaces, palette, and type, shape and accent in detail, with the exact allowed values.",
+      "sourceHash": "sha256:547d323dfd795b302147a6b9051f9d3a84fa3204a83a8a886e4f5c4f6cc70604",
+      "summary": "Every manifest field is required except styles, fonts and slots, and any unknown key at any depth is an error. The top level carries the package id, version, display name, requested scopes and the image list, plus the optional styles file, fonts and slots. The appearance object holds the surface picks, the palette, the type choices, the shape settings, the accent behavior and the optional marks naming image ids. Ids follow the bunzai.theme namespace, versions are semantic, names are bounded, and at most twenty-four images may be listed: SVG of ninety-six kilobytes or less, PNG and WebP of one hundred twenty-eight kilobytes or less. The sub-sections below define surfaces, palette, and type, shape and accent in detail, with the exact allowed values.",
       "topics": [
         "required fields",
         "optional styles fonts slots",
@@ -71,7 +71,7 @@
           "slug": "type-shape-and-accent",
           "title": "Type, shape and accent",
           "level": 3,
-          "sourceHash": "sha256:b86c59633d3b14a72d948609918e6977a157e807b5e2b7425a3715caa9c881ef",
+          "sourceHash": "sha256:b28fe13ea1d0a9e3e3f6939a84b789ade11be851d4e3e75a28502202e1839a83",
           "summary": "Fonts come from the bundled ids, including Inter for body text, with a scale step that never drops body text below 16px. Shape sets frame style, width 1 to 3, density and motion; there is no radius field and reduced motion wins. Accent follows the user by mapping the Settings accent onto brand role and its neighbour hues onto action and select, or stays locked.",
           "topics": [
             "bundled fonts",
@@ -102,7 +102,7 @@
       "slug": "copy-paste-starter",
       "title": "Copy-paste starter",
       "level": 2,
-      "sourceHash": "sha256:f11a3f73794a8d422837aa4a1011c390c2606c09187771929b2cbb8bf031bfd6",
+      "sourceHash": "sha256:d88fb2bef4a2740d3cc91ab3cefcf36db1392078531c458d6c112255edb386aa",
       "summary": "The guide embeds a complete manifest derived from the Encore example, minus its SVG marks, so it needs no asset files. A test parses the fenced JSON block from the page and inspects it as a package, which keeps the starter honest as the contract changes. Authors copy it, change the id, name and values, keep the requested scopes equal to the scopes the manifest derives, and import the result through Settings. It shows Encore's picks; the difference test prints all four themes' picks.",
       "topics": [
         "starter manifest",
@@ -114,7 +114,7 @@
       "slug": "going-further",
       "title": "Going further",
       "level": 2,
-      "sourceHash": "sha256:d6a7560419ce733f0056c7442391591a21fff01dc9459d06ae461adb9c219e3d",
+      "sourceHash": "sha256:d97465fd0e3bb6d6154db424f562ef90fad8604d6976b196e4445246d67cd693",
       "summary": "Four optional fields take a theme past picks, each through the same install, approval, update and revoke path and each adding one scope the installer shows. Stable data-part names let a stylesheet aim at surfaces and key parts, styles ships one checked stylesheet, fonts adds woff2 faces, images widen to PNG and WebP, and slots place static text and images in named places, now including each scene wing and its tabs. Encore uses all of them.",
       "topics": [
         "data-part",
@@ -146,8 +146,8 @@
           "slug": "styles-one-stylesheet-any-selector",
           "title": "Styles: one stylesheet, any selector",
           "level": 3,
-          "sourceHash": "sha256:884da24db7ff38d3f734081372946892412daf99d0ac7aa8b3c4482d37aa112f",
-          "summary": "A styles.css of at most 64 KB can hide, move, restyle and animate anything outside the protected layer. It is tokenized and checked whole: no @import or @layer, no url() except asset ids, no foreign font-face, no nested rules, attr(), image-set, host keyframe names, --host properties or protected-layer names. Rules load last and are scoped off the protected layer, the protected root keeps its tokens in a higher layer, and a watchdog drops styles and slots and revokes the theme as broken if a protected prompt is covered. The layer is hardened, not isolated. A font-face may not redefine any family Bunraku ships, including Lexend, OpenDyslexic, Crimson Pro, Playfair Display and JetBrains Mono.",
+          "sourceHash": "sha256:70f0d48ec883a2562ff5900837664348453b68967b71d0eef1b04391671b7a62",
+          "summary": "A styles.css of at most 64 KB can hide, move, restyle and animate anything outside the protected layer. It is tokenized and checked whole: no @import or @layer, no url() except asset ids, no foreign font-face, no nested rules, attr(), image-set, host keyframe names, --host properties or protected-layer names. Rules load last and are scoped off the protected layer, the protected root keeps its tokens in a higher layer, and a watchdog drops styles and slots and revokes the theme as broken if a protected prompt is covered. The layer is hardened, not isolated. A font-face may not redefine any family Bunzai ships, including Lexend, OpenDyslexic, Crimson Pro, Playfair Display and JetBrains Mono.",
           "topics": [
             "appearance.styles",
             "allowed at-rules",
@@ -175,8 +175,8 @@
           "slug": "images",
           "title": "Images",
           "level": 3,
-          "sourceHash": "sha256:c89b0764ef63e232b44698d5cc239fc782089c25f00ec757dde179a63bfdf6c3",
-          "summary": "Assets accept SVG, PNG and WebP, referenced from CSS as url(asset:id), from slot items by id, or from marks. Bunraku serves each file from its own digest URL.",
+          "sourceHash": "sha256:1b12e96dd71769396ffa71d4a3f598429153e9cc76812985af695e1095bdbb77",
+          "summary": "Assets accept SVG, PNG and WebP, referenced from CSS as url(asset:id), from slot items by id, or from marks. Bunzai serves each file from its own digest URL.",
           "topics": [
             "appearance.assets",
             "digest URL"
@@ -187,7 +187,7 @@
           "slug": "slots-content-in-named-places",
           "title": "Slots: content in named places",
           "level": 3,
-          "sourceHash": "sha256:a38e346185c3025d377c9fe01090d6a479483c116e31ab779c279c65c9a991c0",
+          "sourceHash": "sha256:b742613ecb449a501dc31e8e95154dc908e331ff0f17f60f0bf7e891eefd537e",
           "summary": "Slots hold one to four static items each, 24 per package: an image of a package asset, or text of at most 280 characters drawn as text with an optional class that starts with mod- and is defined in the package styles as a sole-class rule. A table lists the slots, the eleven page ones and scene.wing.<wing> and scene.wing.<wing>.<tab> for each wing and tab, and where each is drawn; wrappers are named slot.<id> for styling.",
           "topics": [
             "ui.slots",
@@ -215,7 +215,7 @@
       "slug": "checking-your-work",
       "title": "Checking your work",
       "level": 2,
-      "sourceHash": "sha256:1889b31154d907b4ecd4a88c5fcb7ff34cceeca44d9a9edb1481445f15e5b16b",
+      "sourceHash": "sha256:df27961757ec0ba1efcf5fb96ce8c5cd9c93214c97d0a1ed5d70fc01144534ed",
       "summary": "Authors verify a theme in three steps. First import the envelope in Settings, Appearance and read the review, where an appearance error names the failing field or the contrast pair that missed its floor, while a bad envelope, id or asset path reports only that the package is invalid. Second compare the surface picks against the matrix printed by the theme difference test, which also reports the share of surfaces where the theme differs from the others. Third open every screen in the theme, remembering that a variant the host has not built yet shows the current rendering until its component lands, so some screens will not change.",
       "topics": [
         "import review",

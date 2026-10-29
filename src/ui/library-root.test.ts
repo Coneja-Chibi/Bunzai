@@ -32,9 +32,9 @@ afterEach(async () => {
   await Promise.all(dirs.splice(0).map(removeTempDir));
 });
 const studio = () => {
-  const d = mkdtempSync(join(tmpdir(), "bunraku-library-root-"));
+  const d = mkdtempSync(join(tmpdir(), "bunzai-library-root-"));
   dirs.push(d);
-  return join(d, "Bunraku Studio");
+  return join(d, "Bunzai Studio");
 };
 const card = (id: string) =>
   ({ schemaVersion: CANONICAL_SCHEMA_VERSION, kind: "character", id, body: { identity: { name: id }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {} } }) as never;

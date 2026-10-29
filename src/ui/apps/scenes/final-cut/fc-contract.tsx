@@ -1,7 +1,7 @@
 /**
  * The Pipeline Prompt Contract (RoleCall's PipelinePromptContract, PostProductionPanel.tsx:466-623): a chip per pass with its tokens, a total,
  * a click to look at one pass alone, Copy XML, and the XML in a fold. What it shows is each pass's real system prompt (fc-core.ts contractOf),
- * not a second written copy. Tokens are Bunraku's estimate (the same count the Tokens view starts from), not a tokenizer's.
+ * not a second written copy. Tokens are Bunzai's estimate (the same count the Tokens view starts from), not a tokenizer's.
  */
 import { useState, type JSX } from "react";
 import { Button, Chip } from "../../../components/button";

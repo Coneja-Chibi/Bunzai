@@ -40,7 +40,7 @@ const safeTempChild = (candidate: string): boolean => {
   return rel !== "" && rel !== "." && rel !== ".." && !rel.startsWith(`..${sep}`) && !isAbsolute(rel);
 };
 if (sandboxArg && !isAbsolute(sandboxArg)) throw new Error("--sandbox must be an absolute path under the OS temporary directory");
-const sandbox = sandboxArg ? resolve(sandboxArg) : join(tempRoot, `bunraku-scale-${randomUUID()}`);
+const sandbox = sandboxArg ? resolve(sandboxArg) : join(tempRoot, `bunzai-scale-${randomUUID()}`);
 if (!safeTempChild(sandbox)) throw new Error("sandbox must be a child of the OS temporary directory; repository and user libraries are refused");
 const isDescendant = (parent: string, candidate: string): boolean => {
   const rel = relative(parent, candidate);
@@ -60,7 +60,7 @@ if (artifactArg) {
   const fromSandbox = relative(sandbox, artifactPath);
   if (fromSandbox === "" || (!fromSandbox.startsWith(`..${sep}`) && fromSandbox !== ".." && !isAbsolute(fromSandbox))) throw new Error("evidence artifact cannot be written inside the disposable sandbox that this run removes");
 }
-const marker = join(sandbox, ".bunraku-scale-owner.json");
+const marker = join(sandbox, ".bunzai-scale-owner.json");
 const owner = randomUUID();
 writeFileSync(marker, JSON.stringify({ owner, createdAt: new Date().toISOString() }), { flag: "wx" });
 
@@ -83,7 +83,7 @@ try {
 }
 
 for (const [key, dir] of Object.entries({
-  BUNRAKU_HOME: join(sandbox, "home"),
+  BUNZAI_HOME: join(sandbox, "home"),
   LOCALAPPDATA: join(sandbox, "local-app-data"),
   CODEX_HOME: join(sandbox, "codex"),
   CLAUDE_CONFIG_DIR: join(sandbox, "claude"),
@@ -175,7 +175,7 @@ async function probePackagedCli(studio: string): Promise<void> {
     const timer = setTimeout(() => rejectReady(new Error("compiled CLI did not announce readiness within 60 seconds")), 60_000);
     child.stdout?.on("data", (chunk: Buffer) => {
       output = (output + chunk.toString()).slice(-16_384);
-      const match = /Bunraku\. is up: (\S+)/.exec(output);
+      const match = /Bunzai\. is up: (\S+)/.exec(output);
       if (match) { clearTimeout(timer); resolveReady(match[1]!); }
     });
     child.once("error", (error) => { clearTimeout(timer); rejectReady(error); });

@@ -112,7 +112,7 @@ const blockLookup: HarnessTool<z.infer<typeof input>> = {
           output: pattern
             // Compliance shaping is catalogued and deliberately ships no starting block; saying so is
             // better than an empty result a model reads as a bug.
-            ? `${pattern.name} is catalogued but Bunraku ships no starting block for it. Use explain.`
+            ? `${pattern.name} is catalogued but Bunzai ships no starting block for it. Use explain.`
             : `No pattern called "${args.pattern}".`,
         };
       }

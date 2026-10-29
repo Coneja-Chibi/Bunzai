@@ -12,7 +12,7 @@ related: [reference/macro-engine, reference/entities/tool, reference/entities/di
 A `CanonicalFormula` is `CanonicalEntity<"formula", FormulaBody>`: a `name`, a `description`, and `text`, one macro
 expression (bounded only by the hostile-input text ceiling, 1,000,000 characters), such as `{{calc::{{mentions::storm::20}} + {{roll::1d6}}}}`. A formula is
 macro text and nothing else: what it can do is what the macro engine gives it ([macro-engine.md](../macro-engine.md)),
-including Bunraku's own `{{mentions}}`, `{{lastmention}}`, `{{tally}}` and `{{odds}}`. The decoder checks only the
+including Bunzai's own `{{mentions}}`, `{{lastmention}}`, `{{tally}}` and `{{odds}}`. The decoder checks only the
 shape and the size; an unknown macro or a bad argument is reported when the formula runs.
 
 ## Where formulas run

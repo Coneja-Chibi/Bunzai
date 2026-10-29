@@ -1,6 +1,6 @@
 /**
  * The Prompting wing's Preset tab (approved wireframe rc-port/scene-preset-wing.html): RoleCall's
- * PresetPanel on Bunraku's library. The scene follows its library preset (ChatStore rule 19, owner
+ * PresetPanel on Bunzai's library. The scene follows its library preset (ChatStore rule 19, owner
  * decision 2026-09-28): the switches and sampler values set here are the scene's own and save to the
  * scene; prompt text edits save to the preset in the library, guarded by its revision, so every
  * scene using it sends the new text. The picker lists the library's presets; "Open in Workbench"

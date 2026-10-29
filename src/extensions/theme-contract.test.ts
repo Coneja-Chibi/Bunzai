@@ -24,7 +24,7 @@ describe("appearance package public boundary", () => {
   test("every bundled and example manifest validates against the host registry", async () => {
     for (const input of [...(await themeInventory()), ...(await exampleThemeInventory())]) {
       const id = (input.manifest as { id: string }).id;
-      expect((await inspectThemePackage(input, id.startsWith("bunraku.") ? undefined : id)).id).toBe(id);
+      expect((await inspectThemePackage(input, id.startsWith("bunzai.") ? undefined : id)).id).toBe(id);
     }
   });
 
@@ -91,11 +91,11 @@ describe("appearance package public boundary", () => {
   });
 
   test("shares bounded imported IDs with the persisted theme-setting parser", async () => {
-    for (const id of ["bunraku.theme.ab", "bunraku.theme." + "a".repeat(59)]) {
+    for (const id of ["bunzai.theme.ab", "bunzai.theme." + "a".repeat(59)]) {
       expect(isThemePackageId(id)).toBe(true);
       expect((await inspectThemePackage(pkg((m) => { m.id = id; }))).id).toBe(id);
     }
-    for (const id of ["bunraku.theme.a", "bunraku.theme." + "a".repeat(60), "paper"]) expect(isThemePackageId(id)).toBe(false);
+    for (const id of ["bunzai.theme.a", "bunzai.theme." + "a".repeat(60), "paper"]) expect(isThemePackageId(id)).toBe(false);
   });
 
   test("a theme picks only surfaces and variants the host registry knows", async () => {

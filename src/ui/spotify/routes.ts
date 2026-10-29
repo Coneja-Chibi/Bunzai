@@ -35,8 +35,8 @@ export async function handleSpotifyCallback(req: Request, sec: UiSecurityContext
   if (!sec.expectedHost || !hostAllowed(req.headers.get("host") ?? "", sec.expectedHost)) return err("forbidden", 403);
   const ok = await svc.callback(new URL(req.url).searchParams).catch(() => false);
   return ok
-    ? page("Spotify connected", "Spotify is connected. You can close this tab and go back to Bunraku.", 200)
-    : page("Spotify not connected", "That sign-in could not be completed. Go back to Bunraku, open Settings, and press Connect again.", 400);
+    ? page("Spotify connected", "Spotify is connected. You can close this tab and go back to Bunzai.", 200)
+    : page("Spotify not connected", "That sign-in could not be completed. Go back to Bunzai, open Settings, and press Connect again.", 400);
 }
 
 function failure(e: unknown): Response {

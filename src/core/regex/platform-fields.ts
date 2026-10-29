@@ -109,7 +109,7 @@ export function phasesForProfile(profile: RegexWriteForProfile): readonly RegexP
  *
  * Grounded in design/REGEX-FORMATS.md:
  * - {{match}}: ST `replaceString` sugar for `$0` (survey "SillyTavern (RegexScriptData)"). RC runs it
- *   too. Bunraku runs it as well (core/regex/replace-ops.ts).
+ *   too. Bunzai runs it as well (core/regex/replace-ops.ts).
  * - case transforms (\u \l \U \L \E): a vaud-engine extension (replace-ops.ts); no surveyed wire
  *   executes them, so on every other lens they print literally.
  * - conditional chaining (run B only if A fired), overlay (display-only spans), and
@@ -118,7 +118,7 @@ export function phasesForProfile(profile: RegexWriteForProfile): readonly RegexP
  *   travel-lint detects them straight off the rule (field: "rule") - the earlier "no single-rule
  *   token" note predates the schema fields.
  * - <cbs> flag tokens: Risu-only output-macro processing (survey "RisuAI", live "gu<cbs>"); every
- *   other engine (Bunraku included - apply.ts strips it before compiling) ignores it.
+ *   other engine (Bunzai included - apply.ts strips it before compiling) ignores it.
  */
 export type RegexReplaceFeature =
   | "match-token"
@@ -152,7 +152,7 @@ export const REGEX_REPLACE_FEATURE_SUPPORT: Record<
 /**
  * PATTERN features every wire's JS engine supports on a CURRENT runtime but that OLDER installs may
  * reject (design/REGEX-FORMATS.md notes all five execute JS RegExp; the risk is the reader's engine
- * VERSION, not the platform). travel-lint flags these on every destination except full - Bunraku is the
+ * VERSION, not the platform). travel-lint flags these on every destination except full - Bunzai is the
  * current, controlled runtime, i.e. "home", never a travel hop.
  */
 export type RegexHostAgeFeature = "v-flag" | "lookbehind";

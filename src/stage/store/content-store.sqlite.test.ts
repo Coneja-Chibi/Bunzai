@@ -40,9 +40,9 @@ afterEach(() => {
   for (const dir of dirs.splice(0)) rmSync(dir, { recursive: true, force: true });
 });
 const onDisk = () => {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-content-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-content-"));
   dirs.push(dir);
-  const d = openStageDatabase(join(dir, "bunraku.db"), MIGRATIONS);
+  const d = openStageDatabase(join(dir, "bunzai.db"), MIGRATIONS);
   open.push(d);
   return d;
 };

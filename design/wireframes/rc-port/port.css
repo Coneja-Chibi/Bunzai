@@ -1,9 +1,9 @@
 /*
- * RoleCall's /scenes and /library, ported to Bunraku (wireframes). Shapes, sizes, borders, shadows,
+ * RoleCall's /scenes and /library, ported to Bunzai (wireframes). Shapes, sizes, borders, shadows,
  * gradients, and type follow RC's own components (ChatCard, StageCard, RecentChatsList,
  * SceneTabNav, library-client-v2, LibrarySectionHeader, ContentPresetCard, AssetCard,
- * HorizontalAssetRow). Colors come from Bunraku's tokens: RC's user accent is Bunraku's --accent,
- * a character's signature color is its deck tone, and RC's Inter body text is Bunraku's Archivo.
+ * HorizontalAssetRow). Colors come from Bunzai's tokens: RC's user accent is Bunzai's --accent,
+ * a character's signature color is its deck tone, and RC's Inter body text is Bunzai's Archivo.
  */
 * { box-sizing: border-box; margin: 0; }
 html, body { height: 100%; }
@@ -17,7 +17,7 @@ body {
 /* accent helpers: RC writes rgba(accent, n); color-mix does the same with a token */
 .tone { --t: var(--tone, var(--accent)); }
 
-/* Bunraku's shell dock (RC's own floating dock is replaced by this) */
+/* Bunzai's shell dock (RC's own floating dock is replaced by this) */
 .app { display: grid; grid-template-columns: 4.2rem auto 1fr; min-height: 100vh; }
 .dock { background: var(--raise); border-right: 2px solid var(--hard); display: flex; flex-direction: column; align-items: center; gap: 0.7rem; padding: 0.8rem 0; }
 .dock .mark { font-family: var(--font-fancy); font-weight: 900; font-size: 1.5rem; color: var(--accent); margin-bottom: 0.6rem; }

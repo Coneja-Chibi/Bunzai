@@ -1,10 +1,10 @@
 /**
- * SillyTavern's non-chat-completion preset files that DO have a home in a Bunraku preset: the
+ * SillyTavern's non-chat-completion preset files that DO have a home in a Bunzai preset: the
  * KoboldAI / TextGen / NovelAI sampler sets (their samplers land on the preset's samplers) and the
  * system prompt template (its text lands as the preset's main block), and the reasoning template (its
  * prefix, suffix and separator land as the preset's reasoning). Everything else in those files
  * (typical_p, tfs, mirostat, DRY, sampler order, and the instruct/context templates a TextGen file
- * may bundle) rides sealed in the raw twin, because Bunraku sends none of it. Instruct and context
+ * may bundle) rides sealed in the raw twin, because Bunzai sends none of it. Instruct and context
  * templates are NOT handled here: they are the prompt-format piece (promptformat.ts).
  * Pure: raw JSON in, canonical pieces out, and the inverse for export.
  */

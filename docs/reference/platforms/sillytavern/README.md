@@ -11,7 +11,7 @@ related: [guide/platforms/sillytavern, reference/formats/sillytavern, reference/
 
 This collection gives Kit an authoring-focused model of SillyTavern. It covers the content people make
 and move between applications, the prompt behavior that gives those files meaning, and the boundaries
-Bunraku must preserve during conversion. It intentionally omits installation, hosting, model-provider
+Bunzai must preserve during conversion. It intentionally omits installation, hosting, model-provider
 setup, and routine chat controls.
 
 ## Collection map
@@ -41,12 +41,12 @@ can be misleading without its surrounding constraints.
 
 ## Authority and provenance
 
-This is an independently organized Bunraku reference derived from SillyTavern's official documentation.
+This is an independently organized Bunzai reference derived from SillyTavern's official documentation.
 It is not a verbatim mirror and does not replace the upstream manual. The source snapshot was
 `SillyTavern/SillyTavern-Docs` commit `70e5e4d3c239253fca4692fe82e3936cb9c4b1b1`, retrieved on
 2026-07-26 (same pin as 2026-07-25). Every page links its principal upstream sources.
 
-The upstream documentation repository is licensed under AGPL-3.0. Bunraku is also AGPL-3.0-or-later.
+The upstream documentation repository is licensed under AGPL-3.0. Bunzai is also AGPL-3.0-or-later.
 The upstream copyright and contributor credits remain available in the
 [official documentation repository](https://github.com/SillyTavern/SillyTavern-Docs), including its
 [license](https://github.com/SillyTavern/SillyTavern-Docs/blob/main/LICENSE) and
@@ -57,19 +57,19 @@ The upstream copyright and contributor credits remain available in the
 Kit should distinguish three kinds of claims:
 
 1. Upstream behavior describes what SillyTavern does with a field or artifact.
-2. Bunraku format behavior describes what the current adapter can preserve or emit.
+2. Bunzai format behavior describes what the current adapter can preserve or emit.
 3. Authoring advice explains how fields interact, but does not prove that every target format can carry
    them.
 
 For an interoperability decision, read this collection together with
 [SillyTavern format](../../formats/sillytavern.md). If the two differ, the format page governs current
-Bunraku implementation and this collection governs upstream meaning. Kit must never invent adapter
+Bunzai implementation and this collection governs upstream meaning. Kit must never invent adapter
 support from an upstream feature description.
 
 ## Refresh policy
 
 SillyTavern evolves quickly. A future refresh should compare the pinned upstream revision, update only
-the affected Bunraku pages, regenerate their semantic sidecars, and obtain a new review. New upstream
+the affected Bunzai pages, regenerate their semantic sidecars, and obtain a new review. New upstream
 features should join this collection only when they change a content type, authoring workflow, prompt
 contract, or interoperability decision.
 

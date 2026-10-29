@@ -24,7 +24,7 @@ export function compareStart(current: number, count: number): { left: number; ri
   return { left: current, right: current < count - 1 ? current + 1 : Math.max(0, current - 1) };
 }
 
-// RoleCall prints these four, in this order and precision. Bunraku's preset samplers are camelCase.
+// RoleCall prints these four, in this order and precision. Bunzai's preset samplers are camelCase.
 const SAMPLER_ROWS: ReadonlyArray<{ key: string; label: string; digits: number }> = [
   { key: "temperature", label: "Temperature", digits: 2 },
   { key: "topP", label: "Top P", digits: 2 },

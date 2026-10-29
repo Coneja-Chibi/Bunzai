@@ -11,7 +11,7 @@ related: [reference/architecture, reference/entities/lorebook, reference/entitie
 
 Marinara-Engine is a roleplay platform whose server exposes regex scripts and personas as API data and
 lorebooks and prompt presets as versioned export envelopes. The adapters read those native shapes without
-adding a Bunraku wrapper.
+adding a Bunzai wrapper.
 
 The format is one folder, `src/formats/marinara/`, whose `index.ts` default-exports four codecs:
 

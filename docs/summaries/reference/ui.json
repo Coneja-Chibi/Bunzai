@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:eb4eba8d3b1056093d38311bd10c2566d05690f980fd4830fb83a4ac5886c187",
+  "sourceHash": "sha256:c67c960de2283741d97c7aa19698827dcbb4ac164fd594632977e0c7d83ceedc",
   "summary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for the canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, inert entity scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization and real favorites, and adds participants by form. Prior storage delivery keeps its focused-fixture evidence and live-proof limits. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries. Rooms share a Premiere header and panel; Settings is a four-act rail with a Stage lights choice.",
   "topics": [
     "Kit conversational terminal",
@@ -23,7 +23,7 @@
       "slug": "velvet-premiere-landing",
       "title": "Velvet premiere landing",
       "level": 2,
-      "sourceHash": "sha256:33373276d6caa549bc312a2bc15921ef4d05bc69956ca89e9d2c8d383daebba7",
+      "sourceHash": "sha256:d55563abaf8ea09fd1c29ba34c169563509c18bd842764050d3cc03db6fdb79f",
       "summary": "Fresh launches show the approved velvet theater landing with locally shipped panoramic, standard and portrait artwork, selected by pane container queries. A 90% overlay dims the artwork beneath live HTML branding, navigation and actions. Continue resumes the most recently updated scene; Now Playing reads the real scene API and handles empty or failed reads. A reusable black-and-ruby proscenium surrounds frozen scene artwork and HTML controls. Quick Start routes to Library, its import signal and Scenes. The Dock and app shortcuts remain usable and leave the landing. Existing boot rules still skip the title for restored workspaces, reloads, direct links and setup. Two OGL beams and roiling fog share a capped canvas that suspends while hidden. Mouse following uses 35% influence, touch is ignored. The rays appear only here and on the scene chooser. Settings Stage lights chooses Moving, Still (one fixed frame) or Off (nothing drawn); Reduce motion makes Moving act as Still. WebGL failure uses CSS fallbacks.",
       "topics": [
         "theater landing",
@@ -54,8 +54,8 @@
       "slug": "browser-studio",
       "title": "Browser Studio",
       "level": 2,
-      "sourceHash": "sha256:cb579b32b399a0030359496fb5d23ebe559ce8cb8793ef9dd147ddf6912db3da",
-      "summary": "The GitHub Pages build publishes the public website from src/site at its root (home, one tour page per part of the app, the user guides rendered from docs/guide, download, and what's new read live from the GitHub releases list) and, under studio/, runs the ordinary React shell, discovered applications, setup steps, adapters, import and export flows, and indexed documentation without an account or Bunraku server. Its API compatibility layer uses in-process ContentStore and StateStore owners plus shared inspect/export actions, so it does not fork entity schemas or conversion behavior. Pieces, collections, settings, Workbench state, previews, and portraits live only in Maps for the current page load; no Bunraku data enters browser persistence, and the ready-shell footer warns users to export before reload. The runtime answers the library status as unlocked, so the library gate opens straight into the Studio. Kit providers, MCP, remote controls, updates, local engine checkouts, Lumiverse archive imports, and Lua or regex execution remain installed-app operations. Script text stays editable, while Run refuses because static Pages cannot provide ADR-009's separate sandbox origin.",
+      "sourceHash": "sha256:38786eaf2dbab1f9a27bd7707c47ec04e47af1bf9c60c4e11d8a91964d725f84",
+      "summary": "The GitHub Pages build publishes the public website from src/site at its root (home, one tour page per part of the app, the user guides rendered from docs/guide, download, and what's new read live from the GitHub releases list) and, under studio/, runs the ordinary React shell, discovered applications, setup steps, adapters, import and export flows, and indexed documentation without an account or Bunzai server. Its API compatibility layer uses in-process ContentStore and StateStore owners plus shared inspect/export actions, so it does not fork entity schemas or conversion behavior. Pieces, collections, settings, Workbench state, previews, and portraits live only in Maps for the current page load; no Bunzai data enters browser persistence, and the ready-shell footer warns users to export before reload. The runtime answers the library status as unlocked, so the library gate opens straight into the Studio. Kit providers, MCP, remote controls, updates, local engine checkouts, Lumiverse archive imports, and Lua or regex execution remain installed-app operations. Script text stays editable, while Run refuses because static Pages cannot provide ADR-009's separate sandbox origin.",
       "topics": [
         "GitHub Pages Studio",
         "shared app and adapter bundles",
@@ -71,7 +71,7 @@
       "slug": "kit-terminal-shell",
       "title": "Kit terminal shell",
       "level": 2,
-      "sourceHash": "sha256:de60074f6347bb18b9d9bc8ede719db1e81b5fe62cb604a47d42db9b02784e3b",
+      "sourceHash": "sha256:5ae1ca6b5f736e3af3e8a585bfe3195c3559d647226508684f217ab46b088df6",
       "summary": "Kit is a terminal shell: multiline composer, paste cards, a bounded follow-up queue, draft-preserving history and search, interruptible streaming, and a palette that completes command arguments. Right-click pastes text, Alt+V attaches an image when the provider can read it, otherwise shows it on screen without sending it, and a path written into a message becomes reachable for that file alone, drawn as a link. Native scrolling, foldable replies, copy feedback and a stage watcher keep terminal behavior coherent. Atomic sessions support resume, rewind, fork and export; model settings, doctor, inventory and privacy are command surfaces. /rail keeps a preset's block list beside the conversation: ctrl+B moves the keyboard there, ctrl+shift+arrows resize it, ctrl+shift+D switches density, and < and > thumb through the studio's presets. What is on the rail rides in each turn's ambient context, and Enter stages accumulated edits as one ordinary draft at the same Gate. The tool loop performs bounded reads and replaces model save prose with a revision-checked REVIEW CHANGE gate; a conversion gets REVIEW CROSSING. Held calls wait at the Gate; applies serialize.",
       "topics": [
         "composer queue and search",
@@ -89,10 +89,10 @@
       "slug": "hyper-modularity-the-builds-spine",
       "title": "Hyper-modularity (the build's spine)",
       "level": 2,
-      "sourceHash": "sha256:c4694a4f921a2a22165e1d057cc220706bafbb013941850d307ccf8607ff03d5",
-      "summary": "UI applications are drop-in folders exporting a BunrakuApp manifest and component. Bun discovery skips private underscore folders, bundles apps on demand, puts ordinary apps on the Dock, and keeps catalogOnly tools available through the catalog without a central roster. Apps receive AppContext and may reach engine or filesystem behavior only through its API; the shell owns global navigation, tabs, theme, and status. Visual law comes from one token sheet rather than app-local colors or fixed layout. Bright accents remain marks, borders, and spines; any labeled accent fill uses a generated deep companion with stage-white text. Rose, house accent, deck, and per-piece pairs share tested deepening logic.",
+      "sourceHash": "sha256:33616b0348edf3727f00c65e4b3916b4d5ab08459421e9bf055c29f4e9546970",
+      "summary": "UI applications are drop-in folders exporting a BunzaiApp manifest and component. Bun discovery skips private underscore folders, bundles apps on demand, puts ordinary apps on the Dock, and keeps catalogOnly tools available through the catalog without a central roster. Apps receive AppContext and may reach engine or filesystem behavior only through its API; the shell owns global navigation, tabs, theme, and status. Visual law comes from one token sheet rather than app-local colors or fixed layout. Bright accents remain marks, borders, and spines; any labeled accent fill uses a generated deep companion with stage-white text. Rose, house accent, deck, and per-piece pairs share tested deepening logic.",
       "topics": [
-        "folder-derived BunrakuApp",
+        "folder-derived BunzaiApp",
         "Dock versus catalogOnly",
         "AppContext API boundary",
         "single token sheet",
@@ -105,7 +105,7 @@
       "slug": "first-run-setup-the-wizard",
       "title": "First-run setup (the wizard)",
       "level": 2,
-      "sourceHash": "sha256:59d6c1d2d8e3903ae52dd53b61ec25fb629019d2f539bb3c8d47d77af2bfe3cf",
+      "sourceHash": "sha256:f388a59b9e8654b6ad9d86c3d8dc1ef02b827b854fc857e4890b19cebcef0e6f",
       "summary": "First run is assembled from drop-in SetupStep folders that declare question, options, settings key, widget, stage treatment and recap; the wizard derives order, progress, defaults and summary from discovery. Settings are an open record parsed fail-closed per key and stored under the studio directory. Missing setupComplete opens the wizard; completion applies theme and house accent and the first landing, and later launches show the title screen and land on Scenes. Settings > Appearance offers host-verified bundled themes (Paper, GirliePop as stage, Theater) and approved data-only theme packages, with digest preview, disable, revoke, restore and remove; Encore ships uninstalled as an example. The saved theme is only a request: the shell paints the neutral core appearance until /api/themes/effective verifies it, and a local cache never activates one. Serialized PATCH writes merge concurrent changes. Boot paints the landing before the piece list; list loads retry after 2, 5 and 15 seconds, and a lasting failure leaves a sticky status note.",
       "topics": [
         "drop-in SetupStep",
@@ -139,7 +139,7 @@
       "slug": "apps-catalog-and-documentation",
       "title": "Apps catalog and documentation",
       "level": 2,
-      "sourceHash": "sha256:5c169bce6dc1ce29b9c3ea07798dc1808a9de86845757351f20fc8948bd6dea9",
+      "sourceHash": "sha256:ce0350a73fc482248710238403e6ea4e78a0b7c84e544c2598dc67cbb2d39ac7",
       "summary": "The Dock's Add app control discovers the manifest-marked catalog instead of naming an id, and the catalog derives cards from the running app roster. catalogOnly tools such as CSS Workshop and Help/Docs remain bundled without occupying everyday Dock space. Help/Docs reads the committed corpus through the generated docs index, which can merge frontmatter, semantic page summaries, retrieval topics, and nested section anchors. Navigation separates user workflows and platforms from developer API, architecture, data, format, security, extension, and decision material; ADR filenames remain canonical while titles are reader-friendly. Markdown uses the shared sanitizer, figures and images are restricted to generated or committed docs assets, the right rail follows current headings, and packaged content matches GitHub. External GitHub viewing passes through the leaving gate and URL allowlist. The catalog room is a room header over one framed card per app, marked On your Dock or Included app.",
       "topics": [
         "manifest-discovered app catalog",
@@ -156,7 +156,7 @@
       "slug": "dev-live-reload",
       "title": "Dev live-reload",
       "level": 2,
-      "sourceHash": "sha256:28072b22ad260a788476cdabc8f1b0d1515cd519331c4afaa5fac111c19924d3",
+      "sourceHash": "sha256:6f49de3d231f25e7765b29a72390e8388cd5dfc5dcd8b31e32e5ad18e30e1081",
       "summary": "Development Studio watches all of src (test files excluded) and broadcasts changes to every open page over the /dev/reload server-sent-event stream. Browser bundles are memoized and rebuilt only when the watcher sees an edit; the Browser shortcut serves production React while bun run dev keeps development React. Packaged executables serve baked assets, return 404 for the development stream, and let the client become quiet without a separate dependency.",
       "topics": [
         "whole-src watcher",
@@ -170,8 +170,8 @@
       "slug": "the-card-type-chip",
       "title": "The card-type chip",
       "level": 2,
-      "sourceHash": "sha256:1396de14f1919b629530c93987892f9ecb6ea7ee2b755425de17925d86b83009",
-      "summary": "Library summaries derive sourceFormat and sourceVariant from the first non-Bunraku escrow record. Labels come from the live format registry rather than a duplicated UI map: platform-specific adapters show platform and variant; generic Tavern/CC content shows CC plus the spec version on characters and no chip on other kinds, since CC means character card; pieces authored without a source adapter display no chip. The badge describes provenance without inventing one.",
+      "sourceHash": "sha256:1cbef17d8d22f53d599fa78deff291789b8d5e4de62d5d8c04a995021687b33d",
+      "summary": "Library summaries derive sourceFormat and sourceVariant from the first non-Bunzai escrow record. Labels come from the live format registry rather than a duplicated UI map: platform-specific adapters show platform and variant; generic Tavern/CC content shows CC plus the spec version on characters and no chip on other kinds, since CC means character card; pieces authored without a source adapter display no chip. The badge describes provenance without inventing one.",
       "topics": [
         "escrow source provenance",
         "live registry labels",
@@ -185,8 +185,8 @@
       "slug": "the-studio-store",
       "title": "The studio store",
       "level": 2,
-      "sourceHash": "sha256:1b383ad49218daa1015d9a441c8fdd470c2e555221cb7b4ae4f120e7b92c675d",
-      "summary": "StudioStore is the Studio view of the encrypted library.db: versioned pieces with a 3-day Trash and retired deleted ids, and Studio documents in the StateStore. A plain folder is imported once; bunraku export writes it back. Calls answer 423 while locked. Saves never overwrite silently; inventory reports damaged rows. Inventory, list and graveyard read sealed summaries, not bodies, falling back to a body only when a summary is missing or stale.",
+      "sourceHash": "sha256:8130722ee503d312586fd591a3e1729dc8b9abfb432cd4e790dda36821483f49",
+      "summary": "StudioStore is the Studio view of the encrypted library.db: versioned pieces with a 3-day Trash and retired deleted ids, and Studio documents in the StateStore. A plain folder is imported once; bunzai export writes it back. Calls answer 423 while locked. Saves never overwrite silently; inventory reports damaged rows. Inventory, list and graveyard read sealed summaries, not bodies, falling back to a body only when a summary is missing or stale.",
       "topics": [
         "StudioStore over ContentStore",
         "versions Trash retired ids",
@@ -236,7 +236,7 @@
       "slug": "the-library-room-the-shelves---deep-browse",
       "title": "The Library room (the shelves - deep browse)",
       "level": 2,
-      "sourceHash": "sha256:390cc9109715f061e0d5484b3528a75763e2f7bb1ed3d4dd549d7847731b8911",
+      "sourceHash": "sha256:3f8eaf3eb3baee0d9e7822dfb2c90a511373364f1e35aac895ae90a9ff6fdbd1",
       "summary": "Library shows first-run doors when empty and, when populated, RoleCall's /library layout: a rail with RC's Carousel/Grid switch, deck rows with live counts, collections, and Add, folding into chips below 48rem of pane width. Each non-empty deck gets a numbered section of RC's cards; every section header switches its deck among Cards and the drop-in views. Cards carry the shelf tools; a New tile ends each row. The art dial sizes cards, search reaches tags, and ranges, Select all, and the agent walk one drawn order; layout, order, views, and size persist per user. Start Scene under a character card opens a new scene. Move to Trash keeps a piece 3 days, frees its name at once, and retires its id; the Trash panel holds deleted pieces, cut scenes, and deleted takes with the time left, and removed versions of replies marked kept until restored, filtered All, Pieces, or Scenes, and Restore brings each back whole.",
       "topics": [
         "empty and populated Library",
@@ -254,7 +254,7 @@
       "slug": "scenes-the-librarys-chats",
       "title": "Scenes (the library's chats)",
       "level": 2,
-      "sourceHash": "sha256:691f3ceb14a1a7976f485d430035dc97ce495c463dc72edd38fc426f17768165",
+      "sourceHash": "sha256:6d7c82db90656d5572c73cf3e2ff013ca61cef112c35f4bf85611b0884fb7c3b",
       "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A first-open chooser sets Full Chat or Messenger once; Messenger draws the same chat in a Discord-style shell whose programs open the wings' tabs, and its Trackers program lists a scene's library trackers as editable cards. The take pill follows Scene Takes and links to the Branching Tree. Prompting has Preset, Guides, Scene Note and Writing Tools; Final Cut has passes, Anti-Slop banks and Regex; Stage has Appearance, Music and a Wardrobe. The Control Booth applies loadouts with a receipt and Undo. Under each Messenger reply, tracker changes draw as each tracker chose. World has Lorebook, Compendium and Storyboards, and Props holds twelve tracker Props whose state is scene state on the reply versions, written as the person's edit on the newest reply (Cast spends Stats and notes the Spellbook in one step), with an Undo line for the last update a reply made. The Memory tab keeps the chat summary as scene state too.",
       "topics": [
         "Start Scene from a card",
@@ -271,7 +271,7 @@
           "slug": "stage-gallery",
           "title": "Stage Gallery",
           "level": 3,
-          "sourceHash": "sha256:2cb79772a94f72c6c06c06f541cfb12d74391b8574e1fd5ccd42015642e60a18",
+          "sourceHash": "sha256:9d3075b473c0f00814e289e8c75449c483ac0b074fbf415b90fd91991556d437",
           "summary": "The Stage wing's Gallery tab ports RoleCall's Image Gallery as a two-column grid of square tiles over the scene's own art: the frozen portrait, the card's extra art and background, the persona's portrait and one pack's pictures, never a link. Tiles use 256 thumbnails and a virtualized window, the panel counts pictures, and the enlarged view offers Download and Use as background, which copies cast art into the scene's pack before setting the backdrop and reports a failed copy without changing it. Generated Received images are left out, and the strip shows no count chip.",
           "topics": [
             "Gallery tabs and count",
@@ -285,8 +285,8 @@
           "slug": "stage-wardrobe",
           "title": "Stage Wardrobe",
           "level": 3,
-          "sourceHash": "sha256:7eb39b0bb5e6b8f6b81358f66e381fb1121a2ac1ddc8685cc5aac7ed61b5a754",
-          "summary": "The Stage wing's Wardrobe tab ports RoleCall's WardrobeWingPanel and is shown for every scene, since Bunraku has no beta tier. It hangs the message themes the scene's regex sets carry: display rules whose replacement opens with a style block. An outfit is paired with the preset choice option that carries its name, and its chip writes that choice answer. Unclaimed outfits are loose garments. A standalone dress is worn or hung by switching its set for the scene. The look is the scene's display regex in the sandbox worker. A hung dress stays on the scene's own rack across reloads, fixing a RoleCall flaw.",
+          "sourceHash": "sha256:135b47c0cab2bbee59a130af654b02521555c1855d26658f53ea6ddc71be2125",
+          "summary": "The Stage wing's Wardrobe tab ports RoleCall's WardrobeWingPanel and is shown for every scene, since Bunzai has no beta tier. It hangs the message themes the scene's regex sets carry: display rules whose replacement opens with a style block. An outfit is paired with the preset choice option that carries its name, and its chip writes that choice answer. Unclaimed outfits are loose garments. A standalone dress is worn or hung by switching its set for the scene. The look is the scene's display regex in the sandbox worker. A hung dress stays on the scene's own rack across reloads, fixing a RoleCall flaw.",
           "topics": [
             "Wardrobe tab",
             "outfits and roster choices",
@@ -317,7 +317,7 @@
       "slug": "the-workbench-room-home-by-default---the-ide",
       "title": "The Workbench room (home by default - the IDE)",
       "level": 2,
-      "sourceHash": "sha256:5a5ef3f7103652b7bc8a18c7978334a955bf77c78067d216b3654bbd44bfbe5a",
+      "sourceHash": "sha256:8b0340c6de0602f261a3a005d740e1c7a6e9171d4c02a6a85c50d47c81a8333c",
       "summary": "Workbench owns persistent open tabs, follow policy, split view, recents, dirty-close confirmation and editor drafts. Editors use light baselines and serialized revision-checked patches with conflict choices and bounded history. Lore native folders share undo/save ownership; named asset changes are captured with accepted submissions. Complete export reads the full entity. Local asset uploads use session grants revoked on lock or close, with a picture capped at 10 MiB. Large lists use measured windows that keep focus and selection. Timer autosaves group by five minutes; manual saves keep version boundaries. The character editor opens in Grid unless the guided quiz was picked; the preset editor shows groups as a depth-first category tree; in the lorebook editor one entry owns the screen; quick-reply sets open as an ordered list of labeled messages; tracker, tool, dice and formula editors share one decoder-gated save. The dock collapses only through Hide dock, leaving a Show dock pill, for the session. These paths are source-reviewed and live proof remains pending. An empty or failed bench shows a centered room header in a framed panel.",
       "topics": [
         "shell-owned editor tabs",
@@ -432,7 +432,7 @@
       "slug": "the-macro-lab-catalog-only---what-a-macro-actually-does",
       "title": "The Macro Lab (catalog-only - what a macro actually does)",
       "level": 2,
-      "sourceHash": "sha256:dbfd593fc4c5493417406a65577066d52c04a3ec1279b8de55c27ffd7cb40a98",
+      "sourceHash": "sha256:7c0942e6abd5b09f4736f03db8e6a485d1fd9cb7225ace51e385a744a007c986",
       "summary": "A scratch pad for macro text and the only surface that needs no piece open to be useful. It keeps two answers apart on purpose. Reading is pure and local: each token is broken out against the chosen platform catalog, nested tokens report under their container, and where else does it work asks the translator rather than two catalogs, so a shared name meaning different things is a flagged collision instead of a clean trip. A token invoking no name is called that rather than supported, because isMacroSupported fails lenient by design. Resolving runs the text through the platform real engine as a one-block preset behind a host-only route, needs a local checkout pointed at in Settings or named by an environment variable, and refuses by name when absent. The bible lists every macro with click-to-insert, and the operations table derives from the catalogs with gaps sorted first. The room has its own header and a framed text panel; a dot marks platforms whose engine is installed.",
       "topics": [
         "two answers kept apart",
@@ -463,8 +463,8 @@
       "slug": "settings-drop-in-sections",
       "title": "Settings (drop-in sections)",
       "level": 2,
-      "sourceHash": "sha256:122e5f47b829b3d077c583d9bf9d1574b8617a655d007163e4e87723354f3cf8",
-      "summary": "Settings tabs derive from section modules exporting id, label, order and a component that receives AppContext; the registry is the sole browser seam. Controls act on persisted settings and repaint at once. Sections: Appearance (theme, house accent, studio-wide Chat layout), Models, Connections, Spotify (own Client ID, sign-in), Studio (home app, first deck, publish targets, engine checkouts), Security (lock, words, password, health check), Backups (Back up now, Export library as a plain unencrypted folder like the bunraku export command, kept copies, restore), Workbench, Memory & Summaries, Remote access, Updates and About. A library gate shows the stage door while locked. Connections manages MCP both ways, egress-gated. Engine checkout roots are machine facts in engines.json, marker-checked, and read by Kit. Rooms are a header over a rail of four acts (Your studio, The agent, The vault, The house) with per-tab status lines, collapsing to chips in narrow panes; each tab has a titled page and, when protected, a lock line. Appearance adds the Stage lights row and Theme packages as cards with Request and an Inspect button.",
+      "sourceHash": "sha256:bed144a34090f2c32992ba37f0452694191a3d2e63b5a42e528438252bf3b212",
+      "summary": "Settings tabs derive from section modules exporting id, label, order and a component that receives AppContext; the registry is the sole browser seam. Controls act on persisted settings and repaint at once. Sections: Appearance (theme, house accent, studio-wide Chat layout), Models, Connections, Spotify (own Client ID, sign-in), Studio (home app, first deck, publish targets, engine checkouts), Security (lock, words, password, health check), Backups (Back up now, Export library as a plain unencrypted folder like the bunzai export command, kept copies, restore), Workbench, Memory & Summaries, Remote access, Updates and About. A library gate shows the stage door while locked. Connections manages MCP both ways, egress-gated. Engine checkout roots are machine facts in engines.json, marker-checked, and read by Kit. Rooms are a header over a rail of four acts (Your studio, The agent, The vault, The house) with per-tab status lines, collapsing to chips in narrow panes; each tab has a titled page and, when protected, a lock line. Appearance adds the Stage lights row and Theme packages as cards with Request and an Inspect button.",
       "topics": [
         "drop-in SettingsSection",
         "registry-derived tabs",

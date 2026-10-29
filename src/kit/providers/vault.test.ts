@@ -22,11 +22,11 @@ const UNLOCK = { passphrase: "kit-vault-test-passphrase" };
 setDefaultTimeout(30000);
 
 beforeAll(() => {
-  process.env.BUNRAKU_HOME = HOME;
+  process.env.BUNZAI_HOME = HOME;
 });
 
 afterAll(async () => {
-  delete process.env.BUNRAKU_HOME;
+  delete process.env.BUNZAI_HOME;
   await rm(HOME, { recursive: true, force: true });
 });
 
@@ -64,8 +64,8 @@ describe("vault", () => {
   });
 
   test("with no active provider, resolve falls back to an env var", async () => {
-    const prev = process.env.BUNRAKU_HOME;
-    process.env.BUNRAKU_HOME = join(tmpdir(), `kit-vault-env-${randomUUID()}`);
+    const prev = process.env.BUNZAI_HOME;
+    process.env.BUNZAI_HOME = join(tmpdir(), `kit-vault-env-${randomUUID()}`);
     process.env.ANTHROPIC_API_KEY = "env-key-123";
     try {
       const cfg = await resolveProviderConfig();
@@ -73,7 +73,7 @@ describe("vault", () => {
       expect(cfg?.kind).toBe("anthropic");
     } finally {
       delete process.env.ANTHROPIC_API_KEY;
-      process.env.BUNRAKU_HOME = prev;
+      process.env.BUNZAI_HOME = prev;
     }
   });
 });

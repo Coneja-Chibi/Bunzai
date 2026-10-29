@@ -3,7 +3,7 @@
  * rail (one tile per character, most recent scene's art, a "now playing" marker) and, beside it, the
  * stage panel - Fan Favorites (a sliding carousel of starred scenes), This Week / Earlier recent
  * rows, the cut list with Restore (unchanged from the plain list), Smart Folders (Longest Stories),
- * and Folders with New Folder. No tabs (Bunraku has no group scenes) and no per-row message
+ * and Folders with New Folder. No tabs (Bunzai has no group scenes) and no per-row message
  * snippet (sceneTail is a per-scene call; fetching one per recent row would be N+1 requests, so
  * these rows show the character's name instead, same data the plain list showed).
  */

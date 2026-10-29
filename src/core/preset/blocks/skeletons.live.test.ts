@@ -18,7 +18,7 @@ import { runRenderer } from "../render/runner";
 import { unresolvedCount } from "../render/contract";
 import { starterBlocks } from "./skeletons";
 
-const ST_ROOT = process.env.BUNRAKU_ST_ROOT ?? "";
+const ST_ROOT = process.env.BUNZAI_ST_ROOT ?? "";
 const HAVE_ST = existsSync(join(ST_ROOT, "public", "scripts", "macros", "macro-system.js"));
 
 describe.skipIf(!HAVE_ST)("starter blocks, live", () => {
@@ -40,7 +40,7 @@ describe.skipIf(!HAVE_ST)("starter blocks, live", () => {
         order: blocks.map((block) => ({ identifier: block.identifier, enabled: true })),
       }],
     };
-    const path = join(tmpdir(), `bunraku-starter-${process.pid}.json`);
+    const path = join(tmpdir(), `bunzai-starter-${process.pid}.json`);
     await Bun.write(path, JSON.stringify(preset));
 
     const outcome = await runRenderer(

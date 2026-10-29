@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/lorebooks",
   "sourcePath": "docs/reference/platforms/marinara/lorebooks.md",
-  "sourceHash": "sha256:a761d54f2507ab9f92dfe5a7bb512a8f30b97dc1be7c659bda8a9db053113b18",
-  "summary": "Documents complete Marinara lorebook lifecycle at the pinned Engine docs. What a lorebook is defines keyword injection without API plus opt-in semantic matching. Library panel covers create import multi-export folders OFF badge and categories World Character NPC Spellbook Other. Activation how a book becomes active separates Global mutually exclusive with links Linked character or persona activation and Chat-pinned books plus Enabled kill switch. Overview defaults list Scan Depth Token Budget Entry Limit Max Depth Recursive and Vectors with defaults. Entries cover keys types Selective logic position depth order probability timing flags folders and recursion. Budgets and skips name per-book and chat-wide caps Entry Limit trim order and Active Context skip reasons. Semantic search covers embedding sources query score vector limits and quiet failures. Linking and ownership separates shared linked embedded promoted and chat-pinned books. Import export names native marinara json compatible folderless JSON bulk native zip date preservation and required re-vectorization after import. Bunraku mapping is adapter-specific.",
+  "sourceHash": "sha256:86da72f035ce92c32817cd764803d72727939232c066b2d36e791c115c4e2eab",
+  "summary": "Documents complete Marinara lorebook lifecycle at the pinned Engine docs. What a lorebook is defines keyword injection without API plus opt-in semantic matching. Library panel covers create import multi-export folders OFF badge and categories World Character NPC Spellbook Other. Activation how a book becomes active separates Global mutually exclusive with links Linked character or persona activation and Chat-pinned books plus Enabled kill switch. Overview defaults list Scan Depth Token Budget Entry Limit Max Depth Recursive and Vectors with defaults. Entries cover keys types Selective logic position depth order probability timing flags folders and recursion. Budgets and skips name per-book and chat-wide caps Entry Limit trim order and Active Context skip reasons. Semantic search covers embedding sources query score vector limits and quiet failures. Linking and ownership separates shared linked embedded promoted and chat-pinned books. Import export names native marinara json compatible folderless JSON bulk native zip date preservation and required re-vectorization after import. Bunzai mapping is adapter-specific.",
   "topics": [
     "lorebook activation modes",
     "overview defaults",
@@ -253,11 +253,11 @@
       "shortSource": true
     },
     {
-      "slug": "bunraku",
-      "title": "Bunraku",
+      "slug": "bunzai",
+      "title": "Bunzai",
       "level": 2,
-      "sourceHash": "sha256:c8f8de7d3e1f568baa50132836f27d686fe47d52b3174e317fc4f27c8998ca0c",
-      "summary": "Bunraku canonical lorebook mapping is adapter-specific. Marinara token budgets, recursive controls, semantic vectors, folder structure, timing fields, and activation ownership do not automatically round-trip through every target. Kit must consult the active format adapter and report unsupported fields instead of presenting cross-format export as silently lossless.",
+      "sourceHash": "sha256:0f1bb714a8ac93a8b1dbae754c5f13b7f6b3654a6e9514b1d8a3f7b16b94c9f7",
+      "summary": "Bunzai canonical lorebook mapping is adapter-specific. Marinara token budgets, recursive controls, semantic vectors, folder structure, timing fields, and activation ownership do not automatically round-trip through every target. Kit must consult the active format adapter and report unsupported fields instead of presenting cross-format export as silently lossless.",
       "topics": [
         "adapter-specific mapping",
         "no universal budget round-trip",

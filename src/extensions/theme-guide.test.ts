@@ -10,7 +10,7 @@ test("the copy-paste starter in the guide inspects as a valid package", async ()
   const json = /```json\n([\s\S]*?)\n```/.exec(guide)?.[1];
   expect(json).toBeDefined();
   const preview = await inspectThemePackage({ manifest: JSON.parse(json!), assets: {} });
-  expect(preview.id).toBe("bunraku.theme.starter");
+  expect(preview.id).toBe("bunzai.theme.starter");
   expect(preview.derivedScopes).not.toContain("appearance.assets");
 });
 

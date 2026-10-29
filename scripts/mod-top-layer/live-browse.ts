@@ -6,11 +6,11 @@ import { launch } from "../theme-measure/driver.ts";
 const [url, work, port] = process.argv.slice(2) as [string, string, string];
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const pkgs = { scale: JSON.parse(readFileSync(`${work}/hostile-scale.json`, "utf8")), overlay: JSON.parse(readFileSync(`${work}/hostile-overlay.json`, "utf8")) };
-const ID = "bunraku.theme.modtest";
+const ID = "bunzai.theme.modtest";
 
 const api = (page: Page, method: string, path: string, body?: unknown) => page.evaluate(async ([method, path, body]) => {
   const token = document.querySelector('meta[name="vaude-session"]')?.getAttribute("content") ?? "";
-  const res = await fetch(path as string, { method: method as string, headers: { "content-type": "application/json", "X-Bunraku-Token": token }, body: body === undefined ? undefined : JSON.stringify(body) });
+  const res = await fetch(path as string, { method: method as string, headers: { "content-type": "application/json", "X-Bunzai-Token": token }, body: body === undefined ? undefined : JSON.stringify(body) });
   return { status: res.status, json: await res.json().catch(() => null) as any };
 }, [method, path, body] as const);
 
@@ -59,7 +59,7 @@ try {
   });
   const scenes = {
     // loaded unlocked so the mod is painted, then locked the way the app learns of it: a 423 event
-    lock: async () => { await page.goto("about:blank"); await page.goto(url); await sleep(3000); await page.route("**/api/library/status", (r) => r.fulfill({ json: { phase: "locked", hasPassword: true, hasWords: true } })); await page.evaluate(() => window.dispatchEvent(new Event("bunraku:library-locked"))); await sleep(1500);
+    lock: async () => { await page.goto("about:blank"); await page.goto(url); await sleep(3000); await page.route("**/api/library/status", (r) => r.fulfill({ json: { phase: "locked", hasPassword: true, hasWords: true } })); await page.evaluate(() => window.dispatchEvent(new Event("bunzai:library-locked"))); await sleep(1500);
       // the shell paints core while locked, so the mod is gone here; put the worst of it back, unscoped and unchecked, to see the door survive it
       await page.addStyleTag({ content: "body::after { content: ''; position: fixed; inset: 0; z-index: 2147483647; background: #c00000; opacity: 0.5; }" }); await sleep(800); },
     kit: async () => {

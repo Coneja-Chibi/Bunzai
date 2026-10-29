@@ -15,7 +15,7 @@ export const AUTO_OPEN_KEY = "scenes.autoOpenReasoning";
 export const CAP_LONG_KEY = "scenes.capLongReasoning";
 /** RoleCall's auto-expand: on unless the person turned it off. */
 export const autoOpenReasoning = (pref: unknown): boolean => pref !== false;
-/** Bunraku's own opt-in cap (300px, scrolling inside): off unless the person turned it on. */
+/** Bunzai's own opt-in cap (300px, scrolling inside): off unless the person turned it on. */
 export const capLongReasoning = (pref: unknown): boolean => pref === true;
 
 /** What a bubble draws its blocks from: plain strings, numbers and booleans only, so a finished bubble's props stay stable and its memo holds. */

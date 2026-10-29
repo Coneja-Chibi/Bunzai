@@ -15,7 +15,7 @@ import { join } from "node:path";
 import { runRenderer, type RendererCommand } from "./runner";
 import { type RenderedPreset } from "./contract";
 
-const ROOT = process.env.BUNRAKU_MARINARA_ROOT ?? "";
+const ROOT = process.env.BUNZAI_MARINARA_ROOT ?? "";
 const PRESET = "samples/marinara/presets/marinara-universal-preset-v12.marinara.json";
 
 const ENGINE = join(ROOT, "packages", "shared", "src", "utils", "macro-engine.ts");

@@ -1,6 +1,6 @@
 /**
  * The chat layout chooser: RoleCall's first-run chat appearance page (components/scene/ChatAppearanceChooser.tsx, copy kept
- * word for word minus "We will save it to your account.", which is untrue in a local app) with the two layouts Bunraku has.
+ * word for word minus "We will save it to your account.", which is untrue in a local app) with the two layouts Bunzai has.
  * Full Chat is preselected; Preview opens the large view with a Choose button; Use hands the pick to onChoose.
  * The cards show real screenshots of one synthetic test scene in each layout (docs/media/chat-layouts/, 1920x947 like RoleCall's).
  * Look (wireframe design/wireframes/features/layout-chooser, header A): a centered marquee header under the title
@@ -45,7 +45,7 @@ export function LayoutChooser({ onChoose }: { onChoose: (layout: ChatLayout) => 
       <div className={styles.rays}><LightRays fog={false} /></div>
       <section className={styles.content} aria-labelledby="chat-layout-title">
         <header className={styles.marquee}>
-          <p className={styles.kicker}>Bunraku · A space for your stories</p>
+          <p className={styles.kicker}>Bunzai · A space for your stories</p>
           <h1 id="chat-layout-title" className={styles.title}>Choose your <span>chat layout.</span></h1>
           <p className={styles.subtitle}>Same characters. Same stories. Your kind of stage.</p>
           <p>Choose a layout for all your chats. You can change it anytime in Appearance.</p>

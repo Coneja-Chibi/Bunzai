@@ -1,6 +1,6 @@
 # Glossary
 
-Words that mean something particular in Bunraku, and the folder that owns each one. Read this
+Words that mean something particular in Bunzai, and the folder that owns each one. Read this
 before searching by name: several words here mean two different things, and a few folders are not
 what their names suggest. For where a specific file lives and what it does, search the generated
 [code map](../generated/CODE-MAP.md), which lists every source file with its one-line purpose.
@@ -25,7 +25,7 @@ when a folder directly under `src/` is missing from the table below.
 | `src/sandbox/` | Untrusted scripts (Lua, regex, triggers) run only inside isolated test benches the person opens. |
 | `src/site/` | The public website built into the GitHub Pages root: its pages, style, and the one script that reads the releases list. |
 | `src/pocket/` | The browser-only Studio for the static web build, kept in memory with nothing saved. |
-| `src/mcp/` | Bunraku's Model Context Protocol wire code. |
+| `src/mcp/` | Bunzai's Model Context Protocol wire code. |
 | `src/docs/` | Code that finds and checks documentation for the in-app readers. Not the documentation itself, which is the top-level `docs/`. |
 | `src/generated/` | Files written by scripts (import seams, packaged format lists). Never edit by hand. |
 | `src/types/` | Type declarations for dependencies that ship none. |
@@ -75,7 +75,7 @@ when a folder directly under `src/` is missing from the table below.
 
 | Word | Meaning here | Where | Watch out |
 |---|---|---|---|
-| Stage | Bunraku's chat runtime, built behind contracts. Its encrypted database holds the Studio's library and every scene. | `src/stage/` | The Studio makes content; the Stage plays it. |
+| Stage | Bunzai's chat runtime, built behind contracts. Its encrypted database holds the Studio's library and every scene. | `src/stage/` | The Studio makes content; the Stage plays it. |
 | contracts | The interfaces nothing may go around: the library store, the chat store, the provider, and the pipeline hooks. | `src/stage/contracts/` | |
 | spoke (provider) | One connection to a model service, such as the OpenAI-compatible one. | `src/stage/provider/` | Not the formats' "hub and spoke". |
 | cast | A chat's fixed roster (character, persona, preset) and the frozen copy taken when the chat starts. | `src/stage/store/` | Kit's `/gallery` shows card art; that is not the cast. |
@@ -117,4 +117,4 @@ when a folder directly under `src/` is missing from the table below.
 |---|---|---|---|
 | ADR | An accepted decision record. | `docs/decisions/` | |
 | sidecar (docs) | A doc page's summary file, which must be approved before it counts. | `docs/summaries/` | "Sidecar" also names the Go companion in `sidecar/`. |
-| Hoplight | The parent project Bunraku forked from; it has no Stage. | `docs/decisions/` | Stage code never flows back to it. |
+| Hoplight | The parent project Bunzai forked from; it has no Stage. | `docs/decisions/` | Stage code never flows back to it. |

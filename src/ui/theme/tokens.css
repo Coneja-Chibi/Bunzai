@@ -1,5 +1,5 @@
 /**
- * Bunraku design tokens - THE single CSS source of truth, transcribed from design/DECISIONS.md.
+ * Bunzai design tokens - THE single CSS source of truth, transcribed from design/DECISIONS.md.
  * Apps consume tokens only; hardcoding a color or layout pixel in an app is a review rejection.
  * Pixels appear ONLY for ornament (ink borders, stamp offsets) per the fluid law.
  */
@@ -105,7 +105,7 @@
   /* lore platform host accents (logos / press kits; minor use only: rail, dot, on-state). Fixed
      external brand marks - NOT reskinned by the soft retheme, unlike the app's own --rose. */
   --host-st: #c62828;   /* SillyTavern logo crimson, UI-lifted for dark stage */
-  --host-rc: #e11d48;   /* RoleCall / Bunraku house rose (fixed logo mark; --rose is the softer brand pink now) */
+  --host-rc: #e11d48;   /* RoleCall / Bunzai house rose (fixed logo mark; --rose is the softer brand pink now) */
   --host-nai: #9773ff;  /* NovelAI press-kit purple */
   --host-risu: #6ea8ff; /* Risu: calm stage-var blue until a stronger mark is locked */
 
@@ -228,7 +228,7 @@
 
 /* RoleCall chrome tokens. The names every scene surface uses for RoleCall's sizes, corners, zinc steps and wing colors.
    Defaults resolve to the theme's own values (square corners, the house sizes, its palette), so a theme with shape.chrome
-   "bunraku" is unchanged by a surface that reads them; shape.chrome "rolecall" (painted as html[data-chrome]) swaps in RoleCall's
+   "bunzai" is unchanged by a surface that reads them; shape.chrome "rolecall" (painted as html[data-chrome]) swaps in RoleCall's
    exact values, taken from RoleCall's global styles, Tailwind v4 zinc and RoleCall's standard layout (wing colors). */
 :root {
   --rc-text-micro: var(--text-meta); --rc-text-xs: var(--text-meta); --rc-text-sm: var(--text-control);

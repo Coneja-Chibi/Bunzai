@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/maps-and-game-content",
   "sourcePath": "docs/reference/platforms/marinara/maps-and-game-content.md",
-  "sourceHash": "sha256:bae5a9d700d38bf09656a3de72c94852ef646484ee67377ffef556e640918c9e",
-  "summary": "Documents Marinara hierarchical maps, Game assets, sessions, HUD widgets, party and NPC state, storyboards, Conversation-branched scenes, Roleplay trackers, and Narrative Director at the pinned Engine docs. Maps cover package and per-chat activation, authoring fields, AI draft review, explicit enable and save, exact-location lore, one-move travel, bindings, import, archive, and history-safe IDs. Game assets cover five categories, browser lifecycle, exact formats and limits, music path grammar, protected starter content, per-game folder selection, and local/admin device folders. Sessions cover immutable setup sharing, conclude and resume, read-only replay, editable history, spoiler state, autosave, and non-restorable checkpoints. Game and Roleplay HUDs remain distinct. Party, Scene, storyboard, and Secret Plot sections preserve their separate ownership and destructive boundaries. Bunraku makes no unproven game-state conversion claim.",
+  "sourceHash": "sha256:f907dd4d926627b55693f2fda81f14c06d428180bec4233bcdb19935442736f4",
+  "summary": "Documents Marinara hierarchical maps, Game assets, sessions, HUD widgets, party and NPC state, storyboards, Conversation-branched scenes, Roleplay trackers, and Narrative Director at the pinned Engine docs. Maps cover package and per-chat activation, authoring fields, AI draft review, explicit enable and save, exact-location lore, one-move travel, bindings, import, archive, and history-safe IDs. Game assets cover five categories, browser lifecycle, exact formats and limits, music path grammar, protected starter content, per-game folder selection, and local/admin device folders. Sessions cover immutable setup sharing, conclude and resume, read-only replay, editable history, spoiler state, autosave, and non-restorable checkpoints. Game and Roleplay HUDs remain distinct. Party, Scene, storyboard, and Secret Plot sections preserve their separate ownership and destructive boundaries. Bunzai makes no unproven game-state conversion claim.",
   "topics": [
     "hierarchical map nodes lifecycle",
     "game assets and sessions",
@@ -11,7 +11,7 @@
     "party NPC GM modes",
     "storyboard keyframes",
     "scenes trackers Secret Plot",
-    "Bunraku game boundary"
+    "Bunzai game boundary"
   ],
   "sections": [
     {
@@ -132,11 +132,11 @@
       "children": []
     },
     {
-      "slug": "bunraku",
-      "title": "Bunraku",
+      "slug": "bunzai",
+      "title": "Bunzai",
       "level": 2,
-      "sourceHash": "sha256:39029245745879c528f2eadbc15f7d7494b89b345e3842800504b1ac7b8c885e",
-      "summary": "Bunraku makes no claim of full Marinara game-state conversion. Hierarchical maps, asset selection, sessions, widgets, storyboards, scenes, party state, trackers, and Secret Plot remain platform-owned unless a future adapter maps each field and lifecycle through the canonical model with round-trip fixtures. Unknown state must be escrowed or reported rather than silently flattened.",
+      "sourceHash": "sha256:b87b2bc815d863d4cf16aa5578b7a92ae8dfcfca6ed1579c00b7700603a04704",
+      "summary": "Bunzai makes no claim of full Marinara game-state conversion. Hierarchical maps, asset selection, sessions, widgets, storyboards, scenes, party state, trackers, and Secret Plot remain platform-owned unless a future adapter maps each field and lifecycle through the canonical model with round-trip fixtures. Unknown state must be escrowed or reported rather than silently flattened.",
       "topics": [
         "no full game-state conversion",
         "product surface boundary",

@@ -1,5 +1,5 @@
 /*
- * Bunraku design system: color tokens, contract v1.
+ * Bunzai design system: color tokens, contract v1.
  * The values here ARE the G3 "Arcade HUD" base (dark). Theme files override these same names.
  * Jewel tones, one meaning per hue: the --bk-role-* triples below are the source of every UI color
  * that means something. Older names (accent, ok, warn, danger, info, focus, link, action) are kept

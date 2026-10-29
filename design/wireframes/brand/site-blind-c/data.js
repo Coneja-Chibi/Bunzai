@@ -1,14 +1,14 @@
 /* Site content. Plain objects so the page works from file:// with no fetches. */
-window.BUNRAKU_DATA = {
-  repo: "Coneja-Chibi/Bunraku",
-  releasesPage: "https://github.com/Coneja-Chibi/Bunraku/releases",
+window.BUNZAI_DATA = {
+  repo: "Coneja-Chibi/Bunzai",
+  releasesPage: "https://github.com/Coneja-Chibi/Bunzai/releases",
 
   sampleReleases: [
     {
       tag_name: "v0.1.42",
       name: "The Prompting wing",
       published_at: "2026-09-25T12:00:00Z",
-      html_url: "https://github.com/Coneja-Chibi/Bunraku/releases",
+      html_url: "https://github.com/Coneja-Chibi/Bunzai/releases",
       body: "- Pick a preset for each scene.\n- Switch prompts and samplers on and off per scene.\n- Imported presets keep their example dialogue.",
       assets: [],
       sample: true
@@ -17,7 +17,7 @@ window.BUNRAKU_DATA = {
       tag_name: "v0.1.41",
       name: "Scenes can talk",
       published_at: "2026-09-18T12:00:00Z",
-      html_url: "https://github.com/Coneja-Chibi/Bunraku/releases",
+      html_url: "https://github.com/Coneja-Chibi/Bunzai/releases",
       body: "- Chat with any character.\n- Swipes and retries.\n- Replies cut off by a crash come back.",
       assets: [],
       sample: true
@@ -26,7 +26,7 @@ window.BUNRAKU_DATA = {
       tag_name: "v0.1.40",
       name: "Takes and cuts",
       published_at: "2026-09-11T12:00:00Z",
-      html_url: "https://github.com/Coneja-Chibi/Bunraku/releases",
+      html_url: "https://github.com/Coneja-Chibi/Bunzai/releases",
       body: "- Branch scenes into takes.\n- Cut messages can be restored for 3 days.\n- Portrait cards in the Library.",
       assets: [],
       sample: true
@@ -91,7 +91,7 @@ window.BUNRAKU_DATA = {
       short: "Every card, world and preset you own, as portrait cards you can search.",
       lead: "Your Library holds everything you bring in or make. It lives on your computer, encrypted, and nobody else can read it.",
       points: [
-        { t: "Imports from many apps", d: "Bring cards from SillyTavern, RoleCall, Chub and other apps. Drag files in and Bunraku sorts them out." },
+        { t: "Imports from many apps", d: "Bring cards from SillyTavern, RoleCall, Chub and other apps. Drag files in and Bunzai sorts them out." },
         { t: "Portrait cards", d: "Characters show up as tall cards with their art, so you can find them by face." },
         { t: "Search", d: "Type a name, a tag or a word from a description and the Library narrows down as you type." },
         { t: "Encrypted on your machine", d: "Your library is stored privately and encrypted on your own computer. No account and no cloud." },
@@ -134,7 +134,7 @@ window.BUNRAKU_DATA = {
       title: "Your first scene",
       blurb: "From opening the app to your first reply, in about five minutes.",
       sections: [
-        { id: "add-a-key", h: "Add your AI key", p: ["Bunraku uses your own AI key to write replies. Open Settings, choose your provider, and paste your key. It is stored encrypted on your computer and only sent to the provider you picked."] },
+        { id: "add-a-key", h: "Add your AI key", p: ["Bunzai uses your own AI key to write replies. Open Settings, choose your provider, and paste your key. It is stored encrypted on your computer and only sent to the provider you picked."] },
         { id: "pick-a-character", h: "Pick a character", p: ["Open the Library and choose a character. If your Library is empty, import a card first (see Importing cards) or make one in the Workbench."] },
         { id: "start", h: "Start the scene", p: ["Press Start a scene. The character's first message appears. Type your reply at the bottom and press Enter to send."] },
         { id: "next", h: "What to try next", p: ["Swipe on a reply to see a different one. Start a take from any message to try another path. Everything saves as you go."] }
@@ -147,7 +147,7 @@ window.BUNRAKU_DATA = {
       sections: [
         { id: "what-works", h: "What you can bring in", p: ["Character cards from SillyTavern, RoleCall, Chub and other apps. PNG cards with the character tucked inside work, and so do JSON files. Lorebooks and presets come in too."] },
         { id: "how", h: "How to import", p: ["Drag files onto the Library, or press Import and pick them. You can bring in many at once."] },
-        { id: "after", h: "After importing", p: ["Each import becomes a portrait card in your Library. If something in a file could not be read, Bunraku tells you what it was and keeps the rest."] }
+        { id: "after", h: "After importing", p: ["Each import becomes a portrait card in your Library. If something in a file could not be read, Bunzai tells you what it was and keeps the rest."] }
       ]
     },
     {
@@ -188,7 +188,7 @@ window.BUNRAKU_DATA = {
       blurb: "Keep a copy of your Library and take it with you.",
       sections: [
         { id: "backup", h: "Making a backup", p: ["Open Settings and choose Back up library. You get one file with everything in it. Keep it somewhere safe, like a USB drive."] },
-        { id: "restore", h: "Moving to a new computer", p: ["Install Bunraku on the new computer, open Settings, and choose Restore from backup. Pick your backup file and your Library comes back."] },
+        { id: "restore", h: "Moving to a new computer", p: ["Install Bunzai on the new computer, open Settings, and choose Restore from backup. Pick your backup file and your Library comes back."] },
         { id: "export", h: "Exporting single pieces", p: ["To share one character or move it to another app, use the Press. It exports to 11 formats and tells you if anything won't fit."] }
       ]
     },
@@ -197,9 +197,9 @@ window.BUNRAKU_DATA = {
       title: "Something went wrong",
       blurb: "Common hiccups and how to get past them.",
       sections: [
-        { id: "windows-warning", h: "Windows says it doesn't recognize the app", p: ["Bunraku is new, so Windows may show a blue box saying it protected your PC. Click More info, then Run anyway. You only need to do this once."] },
+        { id: "windows-warning", h: "Windows says it doesn't recognize the app", p: ["Bunzai is new, so Windows may show a blue box saying it protected your PC. Click More info, then Run anyway. You only need to do this once."] },
         { id: "no-reply", h: "The character doesn't reply", p: ["Check that your AI key is added in Settings and that your provider account has credit. The error message in the scene says which one it is."] },
-        { id: "import-failed", h: "A card won't import", p: ["Some files are damaged or use a format Bunraku doesn't know yet. The import report says what went wrong. The rest of your files still come in."] },
+        { id: "import-failed", h: "A card won't import", p: ["Some files are damaged or use a format Bunzai doesn't know yet. The import report says what went wrong. The rest of your files still come in."] },
         { id: "lost-something", h: "I deleted something by mistake", p: ["Look in the Trash. Deleted things stay there for 3 days and can be restored in one click."] }
       ]
     }

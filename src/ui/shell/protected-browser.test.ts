@@ -12,7 +12,7 @@ type Box = { w: number; h: number };
 interface Seen { plain: Box; prot: Box; fill: string; spacing: string; shadow: string; plainFill: string; plainSpacing: string; modOn: boolean; broken: string[] }
 let r: { continuity: { before: number; after: number; color: string; colorAfter: string; transitionBefore: number; transitionAfter: number; extraScans: number; modOn: boolean; broken: unknown[] }; font: Record<string, Seen>; cover: { top: boolean; inside: string; control: string; modOn: boolean; broken: string[] }; small: { modOn: boolean; broken: string[] }; cost: { elements: number; fullMs: number; cheapMs: number; quietScansIn6500ms: number; modOn: boolean } };
 
-beforeAll(async () => { if (hasChrome()) r = (await measure(join(tmpdir(), "bunraku-top-layer-proof"), 9591 + Number(process.env.THEME_MEASURE_PORT_OFFSET ?? 0))) as typeof r; }, 120_000);
+beforeAll(async () => { if (hasChrome()) r = (await measure(join(tmpdir(), "bunzai-top-layer-proof"), 9591 + Number(process.env.THEME_MEASURE_PORT_OFFSET ?? 0))) as typeof r; }, 120_000);
 const chrome = test.skipIf(!hasChrome());
 
 describe("protected prompts under hostile mod CSS, in headless Chrome", () => {

@@ -1,7 +1,7 @@
 /**
  * RoleCall's tracker tile (StagecraftExtensions.tsx:895-990, `renderImmersionModuleToggle`): the Legacy Trackers and Storyboards boxes hold their
  * modules as tiles, not rows. A tile is the prop's icon and name; on, it takes the prop's tone, and it gains a gear that opens the module's panel.
- * RoleCall opens a module from a wing icon on the rail, which Bunraku's fixed rail has no room for, so the gear is the way in.
+ * RoleCall opens a module from a wing icon on the rail, which Bunzai's fixed rail has no room for, so the gear is the way in.
  * A storyboard tile is the taller card with its description and the Live or Off chip.
  */
 import type { CSSProperties, JSX, KeyboardEvent, MouseEvent } from "react";

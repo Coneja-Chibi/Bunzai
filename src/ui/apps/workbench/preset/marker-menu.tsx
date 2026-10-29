@@ -1,6 +1,6 @@
 /**
  * "+ Marker" in the prompt list's toolbar (wireframe design/wireframes/premiere/prompt-placement-nodes.html, Legacy,
- * callout 4): every marker slot, SillyTavern's and Bunraku's feature markers, with the placed ones greyed, since a slot
+ * callout 4): every marker slot, SillyTavern's and Bunzai's feature markers, with the placed ones greyed, since a slot
  * is placed once (session.ts addMarker refuses a second). The new marker lands at the end of the list.
  */
 import { useEffect, useRef, useState } from "react";

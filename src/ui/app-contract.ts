@@ -1,13 +1,13 @@
 /**
- * The Bunraku app contract v2 (ADR-008, CONTRACT V2) - the dock's folders-as-schema, React shaped.
- * An APP is a folder in src/ui/apps/<name>/ whose index.tsx default-exports a BunrakuApp. The server
+ * The Bunzai app contract v2 (ADR-008, CONTRACT V2) - the dock's folders-as-schema, React shaped.
+ * An APP is a folder in src/ui/apps/<name>/ whose index.tsx default-exports a BunzaiApp. The server
  * discovers and bundles them; the client builds the dock from the manifest and renders the app's
  * Component into the Workbench canvas. Drop a folder in, the dock gains a tile - nothing central
  * lists apps, exactly like format adapters. This file is shared by server (discovery) and client
  * (mounting), so it imports react and the menu types only as `import type` - erased at build time,
  * no runtime framework dependency leaks into discovery.
  */
-export type { BunrakuApp, OverlayWidgetProps } from "./app-contract-app";
+export type { BunzaiApp, OverlayWidgetProps } from "./app-contract-app";
 import type { ContextMenus } from "./shell/store";
 import type { ParseReport, SerializeReport } from "../core/reports";
 import type { LvbakImportReport } from "../formats/lumiverse-archive/report";
@@ -76,7 +76,7 @@ export interface AppManifestEntry {
 /** Everything an app may touch. Apps NEVER import the engine or reach the filesystem directly:
  * the shell hands them this context, and all IO goes through the local API - one engine, thin
  * shells. Theme lives in the shell store now (apps read it via useShellStore if they need it);
- * there is no `root` - a BunrakuApp renders JSX, the shell owns the DOM. */
+ * there is no `root` - a BunzaiApp renders JSX, the shell owns the DOM. */
 export interface AppContext {
   /** authenticated-local API base (loopback server) */
   api: ScenesApi & CompendiumApi & CompendiumAiApi & ParticipantsApi & ImportCompletionApi & SearchApi & SpotifyApi & {
@@ -143,7 +143,7 @@ export interface AppContext {
     /**
      * The Macro Lab's two engine calls (host-only; see server-macro-lab.ts).
      *
-     * `macroEngines` is a question about THIS MACHINE, not about what Bunraku models: the macro
+     * `macroEngines` is a question about THIS MACHINE, not about what Bunzai models: the macro
      * catalogs describe five dialects and only the engines listed here can actually run one. A
      * surface that lets someone pick a lens with no runtime behind it and then press Resolve is
      * promising an answer nobody can give.
@@ -472,7 +472,7 @@ export interface FormatInfo {
   outputExtensions: string[];
   /** human platform name for receipts/pickers ("SillyTavern", "RisuAI") */
   friendly: string;
-  /** Bunraku's own storage format: never offered as an external publish target */
+  /** Bunzai's own storage format: never offered as an external publish target */
   native: boolean;
   /** the generic reader of a family: its cards chip as "Default", not a platform name */
   generic: boolean;

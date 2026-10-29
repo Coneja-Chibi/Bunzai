@@ -109,7 +109,7 @@ export async function makeRig(runName: string, url: string): Promise<Rig> {
         if (!dock) return [];
         return Array.from(dock.querySelectorAll<HTMLElement>("button"))
           .map((b) => (b.getAttribute("aria-label") ?? b.innerText ?? "").trim().split("\n")[0]!.trim())
-          .filter((t) => t.length > 1 && !/collapse|add app|^home$|settings gear/i.test(t) && !/^bunraku\.?$/i.test(t));
+          .filter((t) => t.length > 1 && !/collapse|add app|^home$|settings gear/i.test(t) && !/^bunzai\.?$/i.test(t));
       });
     },
     async ensureGridView() {

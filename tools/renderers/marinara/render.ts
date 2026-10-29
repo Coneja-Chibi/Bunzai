@@ -30,9 +30,9 @@ const arg = (name: string): string | null => {
   return hit ? hit.slice(name.length + 3) : null;
 };
 
-const root = resolve(arg("marinara-root") ?? process.env.BUNRAKU_MARINARA_ROOT ?? "");
+const root = resolve(arg("marinara-root") ?? process.env.BUNZAI_MARINARA_ROOT ?? "");
 if (!root || !existsSync(root)) {
-  fail("no Marinara checkout declared; set BUNRAKU_MARINARA_ROOT or pass --marinara-root=<path>");
+  fail("no Marinara checkout declared; set BUNZAI_MARINARA_ROOT or pass --marinara-root=<path>");
 }
 const enginePath = join(root, "packages", "shared", "src", "utils", "macro-engine.ts");
 if (!existsSync(enginePath)) fail(`not a Marinara checkout: ${enginePath} is missing`);

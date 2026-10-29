@@ -2,7 +2,7 @@
  * Public API types for the lore engine plus the internal
  * book+entry pairing shared across engine/*.ts. Ported from RoleCall's lorebook engine
  * onto canonical LorebookBody/LorebookEntry,
- * with Bunraku's four changes: derived timers, seeded rng, sortOrder/priority split, positions
+ * with Bunzai's four changes: derived timers, seeded rng, sortOrder/priority split, positions
  * returned rather than placed. See the "Public API" section of the port plan for the exact contract.
  */
 import type { LorebookBody, LorebookEntry } from "../../../entities/lorebook/schema";

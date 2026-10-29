@@ -2,7 +2,7 @@
  * The Prompt Inspector's one pause gate (rc-parity 03 F16): a turn that asked to be reviewed stops here,
  * after the request is built and before anything is written or sent, until the page answers Send (with the
  * person's edits, if any) or Cancel. RoleCall pauses its durable job at the provider egress (coordinator.ts
- * coordinateModelCall); Bunraku's turn runs in this process, so the wait is a promise, not a polled row.
+ * coordinateModelCall); Bunzai's turn runs in this process, so the wait is a promise, not a polled row.
  * A Stop, or the page leaving, settles it as Cancel, so nothing can be left waiting.
  */
 import { turnGate } from "./scene-turn-gate";

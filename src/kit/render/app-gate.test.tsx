@@ -14,13 +14,13 @@ import railCommand from "../commands/rail";
 /**
  * A fresh-install gate policy, not this machine's.
  *
- * The App mounts the real gate controller, which remembers its mode from `~/.bunraku/gates.json`.
+ * The App mounts the real gate controller, which remembers its mode from `~/.bunzai/gates.json`.
  * Running `/gates full` in the app therefore turned this red: the write stopped confirming, so the
  * prompt this test waits for never appeared - and the failure read as "the gate stopped pausing on
- * writes", which is alarming and was not true. BUNRAKU_HOME is the seam the config already reads.
+ * writes", which is alarming and was not true. BUNZAI_HOME is the seam the config already reads.
  */
 beforeAll(() => {
-  process.env["BUNRAKU_HOME"] = mkdtempSync(join(tmpdir(), "bunraku-appgate-"));
+  process.env["BUNZAI_HOME"] = mkdtempSync(join(tmpdir(), "bunzai-appgate-"));
 });
 
 test("a confirmed write pauses in GatePrompt before the session continues", async () => {

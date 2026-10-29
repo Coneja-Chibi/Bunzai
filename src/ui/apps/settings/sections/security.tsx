@@ -132,7 +132,7 @@ function Security(): JSX.Element {
 
       {status.cleanupPending ? (
         <Dossier act="After the change" title="Striking the" accent="set">
-          <Direction>{`The old key is still being cleared from the library file (${status.cleanupPending}). Bunraku will try again in the background.`}</Direction>
+          <Direction>{`The old key is still being cleared from the library file (${status.cleanupPending}). Bunzai will try again in the background.`}</Direction>
           <GhostButton onClick={() => void securityApi.retryCleanup().then(refresh, (e: unknown) => setNotice(toErrorMessage(e, "could not try again")))}>Try again now</GhostButton>
         </Dossier>
       ) : null}
@@ -141,7 +141,7 @@ function Security(): JSX.Element {
       {rehearsalDue ? (
         <div className={styles.card}>
           <div className={styles.cardTitle}>Still know your lines?</div>
-          <div className={styles.cardBody}>Three months since the last run-through. Bunraku stores no single word, so the whole script is asked for.</div>
+          <div className={styles.cardBody}>Three months since the last run-through. Bunzai stores no single word, so the whole script is asked for.</div>
           <div className={styles.actions}>
             <Button size="sm" onClick={() => setDialog("rehearse")}>
               Run my lines

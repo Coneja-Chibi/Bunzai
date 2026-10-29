@@ -4,11 +4,11 @@
  *
  * THE WIRE HAS MANY SWITCHES AND THE CANONICAL MODEL WANTS FOUR. A qrList row carries auto-execute
  * hooks (startup, user message, AI message, chat change, group draft), context-menu chains, icons,
- * automation ids - none of which Bunraku edits. The row map therefore mirrors the regex codec's
+ * automation ids - none of which Bunzai edits. The row map therefore mirrors the regex codec's
  * doctrine exactly: label / message / title / hidden are first-class, EVERY other row key is spread
  * into `extras` and re-merged on export untouched, and set-level keys other than name/qrList ride
  * the body's own `extras` the same way. An untouched import preserves the parsed JSON value; export
- * uses Bunraku's stable pretty-printed JSON rather than claiming source-byte identity.
+ * uses Bunzai's stable pretty-printed JSON rather than claiming source-byte identity.
  *
  * A REPLY'S MESSAGE IS A SLASH-COMMAND SCRIPT AND STAYS DATA. Nothing here interprets it; the same
  * scripts-as-data rule the regex kind lives under.

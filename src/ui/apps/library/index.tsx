@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { OverlayWidgets } from "./overlay";
 import { ThemeSlot } from "../../_shared/theme-slot";
 import type { CSSProperties, DragEvent, JSX } from "react";
-import type { AppContext, StudioDamagedEntry, StudioEntitySummary, BunrakuApp } from "../../app-contract";
+import type { AppContext, StudioDamagedEntry, StudioEntitySummary, BunzaiApp } from "../../app-contract";
 import { useSurfaceVariant } from "../../_shared/surface-variant";
 import { deckHead, deckOf, knownDecks } from "../../_shared/decks";
 import { toErrorMessage } from "../../_shared/error-message";
@@ -480,7 +480,7 @@ function Library({ ctx }: { ctx: AppContext }): JSX.Element {
   );
 }
 
-const app: BunrakuApp = {
+const app: BunzaiApp = {
   OverlayWidgets,
   manifest: {
     id: "library",

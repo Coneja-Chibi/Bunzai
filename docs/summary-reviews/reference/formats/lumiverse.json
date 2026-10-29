@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/formats/lumiverse",
   "sourcePath": "docs/reference/formats/lumiverse.md",
-  "sourceHash": "sha256:211d2c171e2799307d4cc13d6efceb5abfeef58d32e6d97f7c26b813b7c7189a",
-  "semanticSummaryHash": "sha256:552710c254070b7905a66a15437fbd8a298314de47f20b158c82d6fed256073b",
+  "sourceHash": "sha256:efa71ca1cdb8bb38d1030aea972766658820cc4d16ac2f366021df7112c12b6e",
+  "semanticSummaryHash": "sha256:b0f24e2d0f10acf06c3024e4f5ac9f87b7774da6fb9ec0683b06636057548312",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Page matches the current sources, including the persona and preset codec paths; links and paths resolve; sidecar fresh.",
-  "reviewedAt": "2026-10-25T01:34:42.279Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:47.379Z"
 }

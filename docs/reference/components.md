@@ -68,7 +68,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | App | src/ui/shell/App.tsx | ({ forceSkipTitle = false, testListRetryDelaysMs, pieces: injectedPieces }: AppProps = {}) |  | .shellContainer .shell .appContents .studio-app-surface .studio-app-room .tourHelp .dirty |
 | AppCatalog | src/ui/apps/app-catalog/index.tsx | ({ ctx }: { ctx: AppContext }) | Browse and open every official app packaged in this build. | .room .grid .card .cardHead .mark .name .description .cardFoot ... |
 | AppMark | src/ui/components/app-mark/index.tsx | ({ markSvg, className }: AppMarkProps) | Render one sanitized application mark. |  |
-| AppRooms | src/ui/shell/AppRooms.tsx | ({ app, activeAppId, workspaceAppId, overlayAppId, workspace, overlay, overlayOpen, ctx }: { app: BunrakuApp \| null; ... |  |  |
+| AppRooms | src/ui/shell/AppRooms.tsx | ({ app, activeAppId, workspaceAppId, overlayAppId, workspace, overlay, overlayOpen, ctx }: { app: BunzaiApp \| null; a... |  |  |
 | ArcsTab | src/ui/apps/scenes/props/story-director/tab-arcs.tsx | ({ state, onResolve, locked }: { state: DirectorState; onResolve(id: string): void; locked: boolean }) |  |  |
 | Area | src/ui/apps/scenes/final-cut/fc-controls.tsx | ({ label, value, placeholder, onChange }: { label: string; value: string; placeholder?: string; onChange(next: string... |  |  |
 | AssetCard | src/ui/apps/library/rc-cards.tsx | (props: CardProps) | AssetCard (RC's library AssetCard, vertical, a fixed 520px): lorebooks get the square book cover |  |
@@ -284,7 +284,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | Empty | src/ui/apps/scenes/props/trackers/items/item-parts.tsx | ({ icon, title, hint }: { icon: IconName; title: string; hint: string }) |  |  |
 | EnemyCard | src/ui/apps/scenes/props/trackers/battle/battle-parts.tsx | ({ enemy, current, onDamage, onHeal, onRemove }: { enemy: Enemy; current: boolean; onDamage(n: number): void; onHeal(... |  |  |
 | EnginePane | src/ui/apps/macro-lab/engine-pane.tsx | ({ engine, lensLabel, state, onResolve, }: { engine: MacroEngineInfo \| null; lensLabel: string; state: EngineState; o... |  | .room .lenses .inst .boxes .stack .box .boxHead .boxTitle ... |
-| EngineRoots | src/ui/apps/settings/sections/engines.tsx | () | One row per engine Bunraku can drive: where its checkout is, and whether one answered. | .field .path .acts .note .good .said |
+| EngineRoots | src/ui/apps/settings/sections/engines.tsx | () | One row per engine Bunzai can drive: where its checkout is, and whether one answered. | .field .path .acts .note .good .said |
 | EntriesPanel | src/ui/apps/scenes/scene-lore-entries.tsx | ({ entries, selectedId, query, onQuery, bookId, lastTurn, saving, host, actions, onAddEntry, onOpenBook, children }: ... |  |  |
 | EntryBody | src/ui/apps/scenes/compendium/fields/blocks.tsx | ({ type, data }: { type: EntryType; data: Rec }) | Every type's body: tiles, blocks, then Other Fields (what no block names and the header does not show). |  |
 | EntryCounts | src/ui/apps/scenes/compendium/cells/cells-lists.tsx | ({ d }: { d: Dashboard }) |  |  |
@@ -373,7 +373,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | HealthPane | src/ui/apps/workbench/lore/health-pane.tsx | ({ body, onTransform, onJumpEntry, onClose, extraFindings = [], }: HealthPaneProps) |  | .pane .head .clean .gedge .gfirst .glast .gitem .ghead ... |
 | HealthPane | src/ui/apps/workbench/regex/health-pane.tsx | ({ findings, rules, onClose, onGoTo, onFix }: HealthPaneProps) |  | .pane .phead .pheadB .pheadKick .allClear .groups .groupTitle .row ... |
 | HealthReport | src/ui/apps/settings/sections/health-report.tsx | () | The Check my library card: nothing until asked, then the job's state. | .wrap .module .css .card .cardTitle .cardBody .subtle .actions ... |
-| HeldCard | src/ui/apps/scenes/scene-turn-parts.tsx | ({ draft, onDiscard, onKeep }: { draft: string; onDiscard(): void; onKeep(): void }) | Bunraku: the take changed while the reply was written; the reply waits to be added or discarded. |  |
+| HeldCard | src/ui/apps/scenes/scene-turn-parts.tsx | ({ draft, onDiscard, onKeep }: { draft: string; onDiscard(): void; onKeep(): void }) | Bunzai: the take changed while the reply was written; the reply waits to be added or discarded. |  |
 | HelpDot | src/ui/apps/workbench/preset/help-dot.tsx | ({ help }: { help: FieldHelp }) |  | .sideHead .sideHeadTitle .sideEmpty .sideEmptyTitle .sideEmptyHint .sideBody .sideRow .sideHintLine ... |
 | HelperInstalledLine | src/ui/apps/settings/sections/helper-card.tsx | ({ h }: { h: HelperControls }) | Shown on the `off` card: which helper is installed, and a way to fetch it again. | .wrap .module .css .blurb .card .hero .cardTitle .cardBody ... |
 | HelperMissingCard | src/ui/apps/settings/sections/helper-card.tsx | ({ detail, h }: { detail?: string; h: HelperControls }) | The `unavailable` card. NOT an error card and it never offers "Try again": the helper is absent from | .wrap .module .css .blurb .card .hero .cardTitle .cardBody ... |
@@ -423,7 +423,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | LayoutChooser | src/ui/apps/scenes/layout-chooser/index.tsx | ({ onChoose }: { onChoose: (layout: ChatLayout) => void }) |  | .page .dialog .title .sr .backdrop .veil .rays .content ... |
 | LayoutGate | src/ui/apps/scenes/layout-chooser/layout-gate.tsx | ({ ctx, children }: { ctx: AppContext; children: ReactNode }) |  |  |
 | LeavingGate | src/ui/components/leaving-gate/index.tsx | () |  | .scrim .card .kicker .lede .badge .tile .globe .pname ... |
-| LensRail | src/ui/components/lens-rail/index.tsx | ({ platforms, selected, onToggle, onClear, offTarget, onOffTarget }: LensRailProps) | One-line sideways-scrolling lens chips; Bunraku (full card) first, off-target mode at the tail. | .rail .scroll .offt .fade |
+| LensRail | src/ui/components/lens-rail/index.tsx | ({ platforms, selected, onToggle, onClear, offTarget, onOffTarget }: LensRailProps) | One-line sideways-scrolling lens chips; Bunzai (full card) first, off-target mode at the tail. | .rail .scroll .offt .fade |
 | LibraryCard | src/ui/apps/scenes/messenger/panels/trackers/library-draw.tsx | ({ tracker, onOpen }: { tracker: SceneTracker; onOpen(): void }) | The card of one linked tracker: its name, the Library tag, the reply that last changed it, and its fields or items. Clicking the head opens it. |  |
 | LibraryDetail | src/ui/apps/scenes/messenger/panels/trackers/library-detail.tsx | ({ ctx, data, tracker, edit, running, onBack }: { ctx: AppContext; data: SceneTrackers; tracker: SceneTracker; edit: ... |  |  |
 | LibraryGate | src/ui/shell/library-gate.tsx | ({ children, pieces: injectedPieces }: { children: ReactNode; pieces?: PieceStore }) |  | .stage .inner .row .rowText .rowLabel .rowHint .proof .count ... |
@@ -527,7 +527,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | NamedAssets | src/ui/components/named-assets/index.tsx | ({ value, onChange, assetFiles, macroHint = true, upload, onUploadGrant, }: NamedAssetsProps) |  | .sheet .table .assetScroll .thead .tbody .spacer .virtualRow .kind ... |
 | NamedAssetsDialog | src/ui/components/named-assets/dialog.tsx | ({ characterName, value, upload, assetFiles, onApply, discardUploads, pinUploads, unpinUploads, onClose, }: NamedAsse... |  | .sheet .table .assetScroll .thead .tbody .spacer .virtualRow .kind ... |
 | NamedSwatches | src/ui/apps/scenes/cast/cast-palette.tsx | ({ value, onChange, signature, onSignature, signatureCaption, lockSignatureName }: { value: readonly NamedSwatch[]; o... |  |  |
-| NavigationOverlay | src/ui/shell/NavigationOverlay.tsx | ({ onNavigate, ctx, Widgets, onSurfaceTarget }: { onNavigate(): void; ctx?: AppContext; Widgets?: BunrakuApp["Overlay... |  | .scrim .sheet .layout .appSurface .header .panel .quick .body ... |
+| NavigationOverlay | src/ui/shell/NavigationOverlay.tsx | ({ onNavigate, ctx, Widgets, onSurfaceTarget }: { onNavigate(): void; ctx?: AppContext; Widgets?: BunzaiApp["OverlayW... |  | .scrim .sheet .layout .appSurface .header .panel .quick .body ... |
 | NewInDeckButton | src/ui/apps/library/new-in-deck-button.tsx | ({ kind, ctx, onCreated, compact = false, tile = false }: NewInDeckButtonProps) |  |  |
 | NewPersona | src/ui/apps/scenes/cast/cast-dialogs.tsx | ({ busy, onCreate, onCancel }: { busy: boolean; onCreate(input: { name: string; content: string }, cast: boolean): vo... | The New persona form: a name and the identity text, then Create or Create and cast. |  |
 | NewStoryCard | src/ui/apps/scenes/scenes-cards.tsx | ({ characterName, onStart }: { characterName: string; onStart(): void }) |  |  |

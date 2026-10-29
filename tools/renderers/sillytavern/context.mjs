@@ -98,7 +98,7 @@ export function getContext() {
   return {
     variables,
     chat: [],
-    chatId: "bunraku-render",
+    chatId: "bunzai-render",
     characterId: 0,
     groupId: null,
     name1: identity.name1,

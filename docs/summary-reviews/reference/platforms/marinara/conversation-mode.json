@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/conversation-mode",
   "sourcePath": "docs/reference/platforms/marinara/conversation-mode.md",
-  "sourceHash": "sha256:5716ed9e1385e53f759bd43768d6252c9cbe2886cda21b1e24aea8410d783ee8",
-  "semanticSummaryHash": "sha256:957eb97f762af489166e93c601aba0ca4f4931394a281ccf163ea7c78589ac12",
+  "sourceHash": "sha256:8afb5db01dff9f3b2e28638e504b09d389d97760a5e57975d19f7673e0c07451",
+  "semanticSummaryHash": "sha256:48971722c676fffd271baa12665241086abe4021a564b10cb4a6f707364e7356",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:56.329Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:52.214Z"
 }

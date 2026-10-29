@@ -83,7 +83,7 @@ describe("turnMessages", () => {
 });
 
 describe("recordWindowTurn", () => {
-  const home = mkdtempSync(join(tmpdir(), "bunraku-winsession-"));
+  const home = mkdtempSync(join(tmpdir(), "bunzai-winsession-"));
   const previous = process.env["HOME"];
   const previousUser = process.env["USERPROFILE"];
   process.env["HOME"] = home;

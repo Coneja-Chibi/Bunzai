@@ -42,11 +42,11 @@ import { translateText, type MacroChangeKind } from "../../../core/preset/macros
  *
  * `full` is absent. It is the canonical superset lens the Workbench needs so a preset can be
  * authored without committing to a host - but its catalog IS RoleCall's, because vaud has no runtime
- * and inventing a dialect nothing executes would be worse. Here it was a button labelled "Bunraku"
+ * and inventing a dialect nothing executes would be worse. Here it was a button labelled "Bunzai"
  * showing RoleCall's macro list under a verdict naming an engine that does not exist.
  *
  * RisuAI is present, and is not a write-for lens. A person can read Risu's macro reference without
- * Bunraku claiming it can author a preset for Risu - see MacroDialect.
+ * Bunzai claiming it can author a preset for Risu - see MacroDialect.
  */
 export const LAB_LENSES: readonly MacroDialect[] = MACRO_DIALECTS;
 
@@ -75,7 +75,7 @@ export function noTranslationNote(lens: MacroDialect): string {
       + "SillyTavern rather than for one of them - so there is nothing to convert it into. Switch "
       + "to SillyTavern to see where a macro travels.";
   }
-  return `Bunraku does not yet model how ${MACRO_DIALECT_LABELS[lens]}'s macros map onto the `
+  return `Bunzai does not yet model how ${MACRO_DIALECT_LABELS[lens]}'s macros map onto the `
     + "other engines, so it cannot tell you what this becomes elsewhere. Its catalog carries no "
     + "operation annotations, and answering from names alone is what makes a macro look portable "
     + "when it is not.";
@@ -175,7 +175,7 @@ export function travelFor(token: string, from: MacroDialect): TravelRow[] {
   // NO_TRANSLATION_NOTE, which the pane shows in place of an empty list.
   if (!canTranslate(from)) return [];
   const rows: TravelRow[] = [];
-  // LAB_LENSES, not every write-for profile: a "Bunraku" row would repeat RoleCall's answer under
+  // LAB_LENSES, not every write-for profile: a "Bunzai" row would repeat RoleCall's answer under
   // a name with no engine behind it. See LAB_LENSES.
   for (const lens of LAB_LENSES) {
     if (lens === from || !canTranslate(lens)) continue;

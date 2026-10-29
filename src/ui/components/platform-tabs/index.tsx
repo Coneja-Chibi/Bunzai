@@ -1,7 +1,7 @@
 /**
  * The platform-tabs strip (vs-editor-2, transcribed): multi-select target platforms plus the
  * off-target treatment control. Tabs come from coverage DATA - this component names no platform.
- * Empty selection = the Bunraku tab is on (the full card, nothing judged). Reusable by
+ * Empty selection = the Bunzai tab is on (the full card, nothing judged). Reusable by
  * any editor kind: lorebooks and presets get the same strip against their own coverage.
  */
 import { Chip, Segmented } from "../button";
@@ -34,9 +34,9 @@ export function PlatformTabs({ platforms, selected, onToggle, onClear, offTarget
       <Chip
         pressed={selected.length === 0}
         onClick={onClear}
-        title="The full Bunraku card: every field kept, nothing dropped"
+        title="The full Bunzai card: every field kept, nothing dropped"
       >
-        Bunraku <i className={styles.hint}>full card</i>
+        Bunzai <i className={styles.hint}>full card</i>
       </Chip>
       {platforms.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (p) => (
         <Chip

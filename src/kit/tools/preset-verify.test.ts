@@ -34,16 +34,16 @@ describe("preset_verify", () => {
   test("an absent engine says nothing was checked, in those words", async () => {
     // "Absent" now means no variable AND no saved folder; a root applied by another file in this
     // run would answer, and the failure would read as this tool's bug rather than as leakage.
-    const before = process.env["BUNRAKU_MARINARA_ROOT"];
-    delete process.env["BUNRAKU_MARINARA_ROOT"];
+    const before = process.env["BUNZAI_MARINARA_ROOT"];
+    delete process.env["BUNZAI_MARINARA_ROOT"];
     applyEngineRoots({});
     const result = await run({
       engine: "marinara",
       preset: "minimal-preset",
     }).finally(() => {
-      if (before !== undefined) process.env["BUNRAKU_MARINARA_ROOT"] = before;
+      if (before !== undefined) process.env["BUNZAI_MARINARA_ROOT"] = before;
     });
-    expect(result.output).toContain("BUNRAKU_MARINARA_ROOT");
+    expect(result.output).toContain("BUNZAI_MARINARA_ROOT");
     // The sentence a model must not be able to misread as success.
     expect(result.output).toContain("do not treat this as a pass");
     expect(result.summary).toContain("not available");

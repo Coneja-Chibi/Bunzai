@@ -9,7 +9,7 @@ import { clearStagedAssets, openSessionUploads, stageAssetStream, stageAssetUplo
 const PNG_HEAD = Uint8Array.of(137, 80, 78, 71, 13, 10, 26, 10);
 const MP4_HEAD = Uint8Array.of(0, 0, 0, 16, 102, 116, 121, 112, 109, 112, 52, 50, 0, 0, 0, 0);
 const png = (size: number): Uint8Array => { const bytes = new Uint8Array(size).map((_, i) => (i * 7) % 256); bytes.set(PNG_HEAD); return bytes; };
-const stagingDirs = (): string[] => readdirSync(tmpdir()).filter((name) => name.startsWith("bunraku-asset-staged-"));
+const stagingDirs = (): string[] => readdirSync(tmpdir()).filter((name) => name.startsWith("bunzai-asset-staged-"));
 const unlocked = async (): Promise<boolean> => true;
 const upload = (body: Uint8Array, name: string, extra: Record<string, string> = {}): Request =>
   new Request("http://x/api/asset/upload", { method: "POST", body: new Blob([body as BlobPart]), headers: { "content-type": "application/octet-stream", "x-filename": encodeURIComponent(name), ...extra } });

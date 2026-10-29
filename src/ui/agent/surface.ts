@@ -2,7 +2,7 @@
  * What the agent knows about the screen it is standing on.
  *
  * THE POINT OF THE WHOLE WINDOW. An agent that answers the same way everywhere is a chat box that
- * happens to be inside Bunraku. This is the part that makes it worth having in the app: on the
+ * happens to be inside Bunzai. This is the part that makes it worth having in the app: on the
  * Library it knows which pieces are listed and which ones would not open, on the Workbench it knows
  * the piece under the cursor and whether it has unsaved work. Same agent, different footing.
  *

@@ -25,7 +25,7 @@ const { sweepStale } = stage;
 const DEAD_PID = 4_000_000;
 
 const withDir = (run: (dir: string) => void): void => {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-sweep-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-sweep-"));
   try {
     run(dir);
   } finally {
@@ -36,7 +36,7 @@ const withDir = (run: (dir: string) => void): void => {
 describe("sweepStale", () => {
   test("removes a staging directory whose process is gone", () => {
     withDir((dir) => {
-      const stale = join(dir, `.bunraku-render-${DEAD_PID}`);
+      const stale = join(dir, `.bunzai-render-${DEAD_PID}`);
       mkdirSync(stale);
       writeFileSync(join(stale, "macro-system.js"), "// a copy of somebody else's engine");
       sweepStale(dir);
@@ -50,7 +50,7 @@ describe("sweepStale", () => {
    */
   test("leaves a live process's directory alone, including its own", () => {
     withDir((dir) => {
-      const mine = join(dir, `.bunraku-render-${process.pid}`);
+      const mine = join(dir, `.bunzai-render-${process.pid}`);
       mkdirSync(mine);
       sweepStale(dir);
       expect(existsSync(mine)).toBe(true);
@@ -60,7 +60,7 @@ describe("sweepStale", () => {
   test("touches nothing that is not a staging directory", () => {
     withDir((dir) => {
       const real = join(dir, "macros");
-      const dotted = join(dir, ".bunraku-notes");
+      const dotted = join(dir, ".bunzai-notes");
       mkdirSync(real);
       mkdirSync(dotted);
       sweepStale(dir);
@@ -70,6 +70,6 @@ describe("sweepStale", () => {
   });
 
   test("says nothing and does nothing when the folder cannot be read", () => {
-    expect(() => sweepStale(join(tmpdir(), "bunraku-no-such-folder-at-all"))).not.toThrow();
+    expect(() => sweepStale(join(tmpdir(), "bunzai-no-such-folder-at-all"))).not.toThrow();
   });
 });

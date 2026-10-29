@@ -23,9 +23,9 @@ afterEach(() => {
 });
 
 const tempFile = () => {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-db-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-db-"));
   dirs.push(dir);
-  return join(dir, "bunraku.db");
+  return join(dir, "bunzai.db");
 };
 const track = (handle: StageDatabase) => {
   open.push(handle);
@@ -131,7 +131,7 @@ describe("the file", () => {
     expect(d.db.query("PRAGMA synchronous").get()).toEqual({ synchronous: 2 });
     d.transaction(() => d.db.query("INSERT INTO t (x) VALUES (?)").run(7));
     d.close();
-    expect(readdirSync(join(path, "..")).sort()).toEqual(["bunraku.db"]);
+    expect(readdirSync(join(path, "..")).sort()).toEqual(["bunzai.db"]);
     const again = track(openStageDatabase(path, [one]));
     expect(again.db.query("SELECT x FROM t").all()).toEqual([{ x: 7 }]);
   });

@@ -1,5 +1,5 @@
 /**
- * Plain-text and regex keyword matching. Ported from RoleCall's triggers/keyword.ts, with RE2 replaced by Bunraku's ReDoS vet (src/core/regex/validate.ts vetPattern) plus
+ * Plain-text and regex keyword matching. Ported from RoleCall's triggers/keyword.ts, with RE2 replaced by Bunzai's ReDoS vet (src/core/regex/validate.ts vetPattern) plus
  * native RegExp, the way src/core/lore/match-keys.ts compiles untrusted regex keys - no new
  * dependency, no invented regex engine. A key the vet refuses (or that fails to compile) never
  * matches, fail closed.

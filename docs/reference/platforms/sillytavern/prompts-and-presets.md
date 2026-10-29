@@ -62,7 +62,7 @@ such as character-name handling, continuation postfix or prefill, system-message
 reasoning requests, function calling, and provider-dependent system-role use.
 
 The visible list is an assembly plan. Removing, disabling, or reordering one entry changes the request even
-if every prose block stays identical. Bunraku should preserve ordered prompt blocks and their roles rather
+if every prose block stays identical. Bunzai should preserve ordered prompt blocks and their roles rather
 than flattening a Chat Completion preset into a single string.
 
 ## Preset and interoperability boundaries
@@ -71,7 +71,7 @@ SillyTavern content commonly divides among sampler presets, Context Templates, I
 prompts, Prompt Manager configurations, Quick Reply presets, and extension-specific settings. Similar UI
 grouping does not make them one file format.
 
-Bunraku's canonical preset models sampler settings, prompt blocks, and groups where adapters provide a
+Bunzai's canonical preset models sampler settings, prompt blocks, and groups where adapters provide a
 semantic mapping. Platform-only ordering or provider controls may remain in escrow for same-format export.
 When converting to another platform, report unsupported roles, triggers, template sequences, and extension
 settings instead of presenting a partially flattened prompt as lossless.

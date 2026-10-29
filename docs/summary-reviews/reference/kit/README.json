@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/kit",
   "sourcePath": "docs/reference/kit/README.md",
-  "sourceHash": "sha256:c9d9ed0c26d58530a6930ac8ba58b1fdc68b2c6791f534375010cea386ce854e",
-  "semanticSummaryHash": "sha256:44f1f4b6ada6606b3ec7310561206e4bb78913f4c2bdb36c8e05cc8bbcb7a1e4",
+  "sourceHash": "sha256:b1cb9c9a01798968048729d6ea4d6c27d9e355d5fea9a7314c94897e3709ed04",
+  "semanticSummaryHash": "sha256:d7d564c3d70f21b0ab17a284e1d171c42ed608bb4feca9685622f1c99824e367",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:54.960Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:50.106Z"
 }

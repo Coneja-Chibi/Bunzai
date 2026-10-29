@@ -94,14 +94,14 @@ export function OpsPane({ onInsert }: { onInsert: (token: string) => void }): JS
 
       {/*
         A platform with no column is a platform we have not finished modelling, and saying so is the
-        difference between a gap in Bunraku and a gap in the engine. A RisuAI column reading "none"
+        difference between a gap in Bunzai and a gap in the engine. A RisuAI column reading "none"
         down every row would assert it cannot do randomness, conditionals or text shaping - all of
         which it plainly can. Left out, and named.
       */}
       {OPERATION_ABSENT.unmapped.length > 0 ? (
         <p className={styles.quiet}>
           {`${OPERATION_ABSENT.unmapped.map((l) => MACRO_DIALECT_LABELS[l]).join(", ")} has no `}
-          {"column here yet. Its macro list is complete in the bible, but Bunraku has not yet "}
+          {"column here yet. Its macro list is complete in the bible, but Bunzai has not yet "}
           {"mapped which of these operations each of its macros performs - so a column would show "}
           {"our gap as its gap. That mapping is read from the engine, one macro at a time."}
         </p>

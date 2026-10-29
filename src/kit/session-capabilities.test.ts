@@ -20,7 +20,7 @@ import { createCapabilityFindTool } from "./tools/capability-find";
 import { createChangeApplyTool } from "./tools/change-apply";
 import { createChangeDiscardTool } from "./tools/change-discard";
 
-const root = mkdtempSync(join(tmpdir(), "bunraku-kit-capability-"));
+const root = mkdtempSync(join(tmpdir(), "bunzai-kit-capability-"));
 afterAll(() => rmSync(root, { recursive: true, force: true }));
 
 test("a provider discovers one typed edit, previews it, applies once, and observes verified content", async () => {

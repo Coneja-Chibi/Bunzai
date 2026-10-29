@@ -26,4 +26,4 @@ related: [guide/platforms/marinara, reference/formats/marinara]
 ## Authority
 
 Pin `Pasta-Devs/Marinara-Engine` `b7545a63e7e264a1cd9eeea1a5490d50c08ddb29`, retrieved 2026-07-26, AGPL-3.0.
-Bunraku adapters: [Marinara format](../../formats/marinara.md). Do not copy SillyTavern macros onto Marinara.
+Bunzai adapters: [Marinara format](../../formats/marinara.md). Do not copy SillyTavern macros onto Marinara.

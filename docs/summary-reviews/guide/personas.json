@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/personas",
   "sourcePath": "docs/guide/personas.md",
-  "sourceHash": "sha256:03adca0026c2ad1bd7eae1368ee91a5c902df5b7a8052aa6ded77e0bcce3fd8b",
-  "semanticSummaryHash": "sha256:bb2d69eaf23fbe02786e71b7ba15800bc50abbf3e874873a1af32779e10acb67",
+  "sourceHash": "sha256:784399e6f2f386538972097506636cab4540c7c62d7949e416f6d9477b5f3cb1",
+  "semanticSummaryHash": "sha256:a0d6c0dba2e22cfd19703e3b0539df791f3e35953c1c8236a1f733885a1c3ffb",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:45.241Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:35.798Z"
 }

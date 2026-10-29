@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/cli",
   "sourcePath": "docs/reference/cli.md",
-  "sourceHash": "sha256:283f17e8964a77b4ab03b02d723b4391147bca68f36d81600232daf226ee5035",
-  "summary": "CLI reference for bunraku over the same canonical engine and format adapters as Studio. src/cli.ts dispatches, cli-validation enforces the exhaustive canonical runtime schema, and cli-io owns conversion I/O policy. Invocation works through source, package bin, or compiled output; bun run dev starts the primary Studio loopback listener. Commands cover convert, inspect, validate, label, formats, ui, export, version, help, no arguments, and unknown input. convert guards paths, detects and converts every same-kind adapter pair, checks container agreement, enforces its serialize report and optional strict-loss contract, then publishes atomically. inspect prints reachable kind-specific fields for character, lorebook, persona, regex, and preset; an internal media-pack formatter exists but no live format adapter can reach it. validate rejects unrecognized input, adapter failures, and invalid canonical output. ui blocks on the primary loopback server while remote listeners remain separately configured. export opens an existing library, never makes one, refuses a password-locked library and any destination that is not empty or sits inside the studio, and writes the plain folder layout the import reads. JSON and positional inconsistencies are named explicitly; export/derived usage errors exit2 and refusals use stderr. Derived stats/clear now expose existing-library cache maintenance without touching canonical data.",
+  "sourceHash": "sha256:bc7544bc227bbc49510205e3a98d511a3a71620c03144a5460b5e6e591fc9ffa",
+  "summary": "CLI reference for bunzai over the same canonical engine and format adapters as Studio. src/cli.ts dispatches, cli-validation enforces the exhaustive canonical runtime schema, and cli-io owns conversion I/O policy. Invocation works through source, package bin, or compiled output; bun run dev starts the primary Studio loopback listener. Commands cover convert, inspect, validate, label, formats, ui, export, version, help, no arguments, and unknown input. convert guards paths, detects and converts every same-kind adapter pair, checks container agreement, enforces its serialize report and optional strict-loss contract, then publishes atomically. inspect prints reachable kind-specific fields for character, lorebook, persona, regex, and preset; an internal media-pack formatter exists but no live format adapter can reach it. validate rejects unrecognized input, adapter failures, and invalid canonical output. ui blocks on the primary loopback server while remote listeners remain separately configured. export opens an existing library, never makes one, refuses a password-locked library and any destination that is not empty or sits inside the studio, and writes the plain folder layout the import reads. JSON and positional inconsistencies are named explicitly; export/derived usage errors exit2 and refusals use stderr. Derived stats/clear now expose existing-library cache maintenance without touching canonical data.",
   "topics": [
     "cli.ts cli-io policy",
     "convert checked atomic publish",
@@ -19,8 +19,8 @@
       "slug": "invocation",
       "title": "Invocation",
       "level": 2,
-      "sourceHash": "sha256:7d8a79b438e03f8d441af853330c6f5f58afcb1b04c2070c3602751392c8a44a",
-      "summary": "In the repo run bun run src cli.ts command args or package script bun run bunraku command args. package.json bin maps the bunraku command straight to src cli.ts so an installed or linked package exposes it directly. bun run build cli compiles a standalone binary to dist bunraku via bun build compile src cli.ts. bun run dev is bunraku ui 8321.",
+      "sourceHash": "sha256:d4dd10c0804352b3d74ca00afebc4861bd8f74ae8f2f2726b251f9bfcebe2fbe",
+      "summary": "In the repo run bun run src cli.ts command args or package script bun run bunzai command args. package.json bin maps the bunzai command straight to src cli.ts so an installed or linked package exposes it directly. bun run build cli compiles a standalone binary to dist bunzai via bun build compile src cli.ts. bun run dev is bunzai ui 8321.",
       "topics": [
         "bun run cli.ts",
         "package bin map",
@@ -34,7 +34,7 @@
       "slug": "commands",
       "title": "Commands",
       "level": 2,
-      "sourceHash": "sha256:9db1628e5b163b39771644ba983e9faa33b6291fed572ff6ac2da1a1b0247c47",
+      "sourceHash": "sha256:ac86678333dfec16ad4a0401f501cb2bcef744e9ea53b3f0ea2f216c4e080a26",
       "summary": "Commands convert, inspect, validate, label and formats use the canonical engine and format adapters. UI starts the loopback Studio; export writes an existing unlocked library as a plain folder. Derived stats/clear inspect or remove rebuildable caches. Version/help print banners, no arguments means help, and unknown input exits1.",
       "topics": [
         "convert inspect validate",
@@ -50,7 +50,7 @@
       "slug": "global-flags",
       "title": "Global flags",
       "level": 2,
-      "sourceHash": "sha256:8df8c8ee6bd7b5078402be7506947abc975a66eb52663ec1ba9f3a5fb4831bf0",
+      "sourceHash": "sha256:3a8f21bddaeff7afbdddede2baf93dc8ae2bb6c134f4420b88fd1c068057816a",
       "summary": "Standalone version/help flags select those commands. JSON applies to version, formats, validate, convert and derived stats; inspect, label, UI, help and derived clear remain human-readable. Convert alone accepts to for a forced adapter, yes/y for output replacement without replacing input, and strict for refusal on dropped paths.",
       "topics": [
         "version help standalone",
@@ -62,10 +62,10 @@
       "shortSource": true
     },
     {
-      "slug": "bunraku-derived---stats--clear",
-      "title": "`bunraku derived --stats|--clear`",
+      "slug": "bunzai-derived---stats--clear",
+      "title": "`bunzai derived --stats|--clear`",
       "level": 2,
-      "sourceHash": "sha256:227ac7c84b9dfae51af5f57557b229b19f8e006f75ea51795359b9da4234d29e",
+      "sourceHash": "sha256:6a260292d7da74a54eed6f34cb63beb2a12dd4bd048e0cec5b61d70dcbd6cf3d",
       "summary": "Derived stats and clear open an existing unlocked encrypted library without session-copy, Trash-purge or summary-rebuild maintenance. Stats reports process cache hits/misses, persisted rows, estimated bytes and mean derivation cost per family; json emits the array. Clear removes rebuildable persistent and process caches only. Missing or locked libraries fail without creating one.",
       "topics": [
         "derived stats clear",
@@ -76,10 +76,10 @@
       "shortSource": true
     },
     {
-      "slug": "bunraku-convert-in-out",
-      "title": "`bunraku convert <in> <out>`",
+      "slug": "bunzai-convert-in-out",
+      "title": "`bunzai convert <in> <out>`",
       "level": 2,
-      "sourceHash": "sha256:184f80f469ed363c1cdac90300fdc94922b37aed451ca3075dde245b521da95e",
+      "sourceHash": "sha256:645fe825301b60a80951c17899eee59fc9fd7f15d325dfee11dbf5258c819517",
       "summary": "Flags may appear anywhere after convert; parseConvertFlags scans the tail for yes y strict and to value leaving exactly two positionals; duplicates bad to unknown flags or wrong positional count exit 1 with usage. Before a byte is written, guardConvertOutput refuses same-file out as in and requires yes when out exists; registry detect fails listing known ids when unrecognized; resolveTarget prefers to format or extension via targetsForExtension and never guesses ambiguous matches; convertFile imports and exports with bundled lorebook extraction and re-embedding; assertContainerAgreement checks the adapter extension and payload shape; the command requires a serialize report; strict then refuses reported drops or undeclared coverage; publishAtomic writes a temp sibling, fsyncs, and renames while leaving the prior destination on failure. Only success honors json with ok, adapter and path fields, payload counts, and report details; undeclared coverage uses unknown with a null dropped count. Every failure prints plain text. Plain reports name confirmed drops, warnings, and unknown loss.",
       "topics": [
         "parseConvertFlags anywhere",
@@ -92,10 +92,10 @@
       "children": []
     },
     {
-      "slug": "bunraku-inspect-file",
-      "title": "`bunraku inspect <file>`",
+      "slug": "bunzai-inspect-file",
+      "title": "`bunzai inspect <file>`",
       "level": 2,
-      "sourceHash": "sha256:4d5aa4d62f0aafa9c896e137c79731166044aed107211b12db438ac0911b105b",
+      "sourceHash": "sha256:1f87d3312a71682b8f2ed82a5dcd002d907fae2b6867f3335e1de013d53e4eaa",
       "summary": "Detects the adapter, converts to canonical, validates the exhaustive runtime schema and matching adapter kind, then prints format id, adapter label, entity kind, and kind fields. Character prints greeting and tags; lorebook entries and budget; persona content and sections; regex rules; preset prompts, groups, and choices. The formatter contains a media-pack branch, but no live format adapter imports packs, so the CLI cannot currently reach it. Output is always human-readable. File is args1, so a preceding flag becomes the path.",
       "topics": [
         "kind field dump",
@@ -107,10 +107,10 @@
       "shortSource": true
     },
     {
-      "slug": "bunraku-validate-file",
-      "title": "`bunraku validate <file>`",
+      "slug": "bunzai-validate-file",
+      "title": "`bunzai validate <file>`",
       "level": 2,
-      "sourceHash": "sha256:425e7f82f72a12c0f28185d09e4fc3632515c812933254d85a844cc91e148c6e",
+      "sourceHash": "sha256:cb18e623dbf30309039b91eadc8678559eb99e901c0c24a2e64ccc9bf432f3a0",
       "summary": "Detects an adapter, converts through toCanonical, parses the result through the exhaustive canonical runtime schema, and requires the parsed kind to match the adapter contract in cli-validation before pass or fail. Unrecognized input, adapter errors, invalid canonical output, and kind mismatches are INVALID; otherwise OK prints format kind name. Exit is 0 or 1. Path is the first non-validate non-json arg. json shapes cover success, unrecognized failure, and recognized failure with format plus error.",
       "topics": [
         "OK vs INVALID",
@@ -122,10 +122,10 @@
       "shortSource": true
     },
     {
-      "slug": "bunraku-label-file",
-      "title": "`bunraku label <file>`",
+      "slug": "bunzai-label-file",
+      "title": "`bunzai label <file>`",
       "level": 2,
-      "sourceHash": "sha256:33f5efd8b713128ebee034e4a3a0f90d8ff09671245ea4d236b21addaddc704d",
+      "sourceHash": "sha256:0e9a1a8f528281c5ee2ba98449023e2f924fc6e9ff084798c06e4c9f1752d233",
       "summary": "Guesses a card spec and likely origin app without fully parsing into the canonical model via labelCard sniffContainer in character provenance. Source is best available: detected adapter escrowed raw else JSON parse of decoded text else undefined so label can still report unknown none on unrecognized files. Prints format as card spec chara_card_v3 v2 v1 agnai backyard or unknown not an adapter id; container png charx json or unknown; origin likely authoring app plus confidence or unknown; signals every fingerprint or none. Does not honor json. file is args1 same positional caveat as inspect.",
       "topics": [
         "provenance without full parse",
@@ -136,10 +136,10 @@
       "children": []
     },
     {
-      "slug": "bunraku-formats",
-      "title": "`bunraku formats`",
+      "slug": "bunzai-formats",
+      "title": "`bunzai formats`",
       "level": 2,
-      "sourceHash": "sha256:4dd818868b2550ccae0a414946bb7c034ff67c959cb549aff90bc31c35ff0ecd",
+      "sourceHash": "sha256:7c4edc13068ebcfb9dfbe07df5939366c0f16e7812febc1b13b359865b585734",
       "summary": "Loads every adapter the loader discovers under formats star index and lists each id kind label and output extensions. Plain text also prints the doc path for the generated coverage matrix docs FORMAT-SUPPORT.md regenerated with bun run matrix and a reminder that a new format is a folder drop-in copy of formats template. json shape is schema 1 with adapters array of id kind label outputExtensions.",
       "topics": [
         "loadFormats list",
@@ -151,11 +151,11 @@
       "shortSource": true
     },
     {
-      "slug": "bunraku-ui-port-studiodir",
-      "title": "`bunraku ui [port] [studioDir]`",
+      "slug": "bunzai-ui-port-studiodir",
+      "title": "`bunzai ui [port] [studioDir]`",
       "level": 2,
-      "sourceHash": "sha256:dcc76a04c3390da8ce9a8c824b9523b02789af6dfac02a552174e35f8f2254ae",
-      "summary": "Starts Studio's primary loopback server through startUi and blocks until interrupt. Optional remote listeners remain a separate Studio configuration path. port is Number args1 or 8321; missing, non-numeric, or 0 values fall back. studioDir is args2, defaulting to the user's Documents/Bunraku Studio folder, and requires a port argument first because it is the third token. The command does not honor json.",
+      "sourceHash": "sha256:f0ca121ae036404b7455f9d44d727089f4992f04e2d5003499cd8c8758931d43",
+      "summary": "Starts Studio's primary loopback server through startUi and blocks until interrupt. Optional remote listeners remain a separate Studio configuration path. port is Number args1 or 8321; missing, non-numeric, or 0 values fall back. studioDir is args2, defaulting to the user's Documents/Bunzai Studio folder, and requires a port argument first because it is the third token. The command does not honor json.",
       "topics": [
         "loopback Studio forever",
         "port default 8321",
@@ -166,10 +166,10 @@
       "shortSource": true
     },
     {
-      "slug": "bunraku-export-folder-studiodir",
-      "title": "`bunraku export <folder> [studioDir]`",
+      "slug": "bunzai-export-folder-studiodir",
+      "title": "`bunzai export <folder> [studioDir]`",
       "level": 2,
-      "sourceHash": "sha256:388370467f2d837b90e9e65dd778e877ba3920668b0671cfe5d456f554b411b6",
+      "sourceHash": "sha256:c03a060e1ccd3c3ef6eb12bf4ccf4a8ada107f8c40f2321713393a41a2195438",
       "summary": "Writes the studio's encrypted library out as a plain studio folder through cli-export.ts and exportLibraryToFolder in folder-export.ts: every live piece as kind/id.json and settings, collections, engines, and graveyard documents at the top, the layout the folder import reads. Trash and earlier versions stay in the library. It opens an existing library and never makes one, exiting 1 when there is no library.db. A password-locked library is refused. The destination must be new or empty and outside the studio folder, built beside it and renamed into place when complete. Output warns the folder is not encrypted and lists damaged pieces and collection entries naming deleted pieces left out; the app open empties old Trash first. A missing folder argument prints usage and exits 2; json is not honored.",
       "topics": [
         "plain folder layout",
@@ -183,11 +183,11 @@
       "children": []
     },
     {
-      "slug": "bunraku-version",
-      "title": "`bunraku version`",
+      "slug": "bunzai-version",
+      "title": "`bunzai version`",
       "level": 2,
-      "sourceHash": "sha256:5924f3ef5452546f2ab2282f421b2c4bcd0d19571237aa9f0dd539ccb752f9e1",
-      "summary": "bunraku version v and version flag forms are equivalent; the short and long version flags are checked before any other command match ahead of no-arguments and help fallback. Plain form prints just the version string. json shape is version string and schema 1.",
+      "sourceHash": "sha256:c44ebd6eec15ff2701c7b0caf8e41af82c1cec78ec53525ee9696d6eef58fc8f",
+      "summary": "bunzai version v and version flag forms are equivalent; the short and long version flags are checked before any other command match ahead of no-arguments and help fallback. Plain form prints just the version string. json shape is version string and schema 1.",
       "topics": [
         "version v flags first",
         "plain version string",
@@ -197,10 +197,10 @@
       "shortSource": true
     },
     {
-      "slug": "bunraku-help",
-      "title": "`bunraku help`",
+      "slug": "bunzai-help",
+      "title": "`bunzai help`",
       "level": 2,
-      "sourceHash": "sha256:3c90ff551f6ce04afa458bb131a6c318925f6a26f79f5d0f39fd60d81648acee",
+      "sourceHash": "sha256:2180da6133d4ddb04e8a8c009038632e137953ce6658abe50d504666d955f5b4",
       "summary": "help h help flag and bare no-arguments all print the same built-in HELP banner: usage line command table flag list one example block and a status line naming schema version and format-matrix doc path. No arguments falls through to the same branch as help. Does not honor json.",
       "topics": [
         "HELP banner shared",
@@ -229,7 +229,7 @@
       "slug": "source-of-truth",
       "title": "Source of truth",
       "level": 2,
-      "sourceHash": "sha256:0071455557dd999934466b4b091a4fa741339291977390667cf730268008b5e3",
+      "sourceHash": "sha256:ae01c887c0b9a5d91f4bd077af8714ff987c36a39f511877d075fefe70e30a3e",
       "summary": "Command dispatch and HELP live in cli.ts; runtime validation and kind agreement in cli-validation.ts; conversion parsing, guards, and atomic publish in cli-io.ts. Registry detection and extension resolution use core/registry.ts. Schema, discovery, and bundle conversion use canonical.ts, loader.ts, and convert.ts. Provenance labeling uses entities/character/provenance.ts, UI startup uses ui/server.ts, and package.json defines invocation surfaces.",
       "topics": [
         "cli.ts cli-validation.ts cli-io.ts",

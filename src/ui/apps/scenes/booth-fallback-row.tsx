@@ -1,7 +1,7 @@
 /**
  * The Fallback Model control under the Booth's Narrator Model (RoleCall's FallbackModelControl.tsx, rendered at
  * QuickPlayPanel.tsx:1903): what answers when the scene's model fails. RoleCall's three modes are two here, Off
- * (the default: fail visibly) and Custom (a model you pick), because Bunraku has no helper model or house default
+ * (the default: fail visibly) and Custom (a model you pick), because Bunzai has no helper model or house default
  * for Auto to fall back to. The choice is the per-user pref `scenes.fallbackModel` (fallback-model.ts); picking a
  * model is what saves Custom, so a Custom with no model yet behaves as Off.
  */

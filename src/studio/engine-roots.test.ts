@@ -27,7 +27,7 @@ import { tempDir } from "./test-temp-dir";
 let dir = "";
 
 beforeEach(async () => {
-  dir = await tempDir("bunraku-roots-");
+  dir = await tempDir("bunzai-roots-");
 });
 
 afterEach(async () => {

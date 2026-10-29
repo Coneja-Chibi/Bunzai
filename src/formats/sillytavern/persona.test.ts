@@ -80,7 +80,7 @@ describe("round trip", () => {
   });
 });
 
-/** Redacted copies of three real ST descriptors: no depth + in-chat, no title, and connections (no Bunraku field). */
+/** Redacted copies of three real ST descriptors: no depth + in-chat, no title, and connections (no Bunzai field). */
 const real = () => ({
   personas: {
     "user-default.png": "Chi",

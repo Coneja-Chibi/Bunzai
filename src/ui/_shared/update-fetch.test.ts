@@ -17,7 +17,7 @@ test("applies the bounded request settings and allows the cached ETag", async ()
   expect(observed?.signal).toBeInstanceOf(AbortSignal);
   expect(observed?.headers).toEqual({
     accept: "application/vnd.github+json",
-    "user-agent": "bunraku-update-check",
+    "user-agent": "bunzai-update-check",
     "if-none-match": "etag-1",
   });
 });

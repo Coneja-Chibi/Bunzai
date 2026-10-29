@@ -10,13 +10,13 @@
 <script src="../theme.js">document.querySelector(".sh .branch").style.cursor = "pointer";
 document.querySelector(".sh .branch").addEventListener("click", function () { window.wfShow && window.wfShow("takes"); });
 </script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
- * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunraku. Every size below was
+ * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunzai. Every size below was
  * read off the running page on 2026-09-24 (computed styles at 1920x945 and 390x844) or from the
  * component source (WingRail, WingItem, WingShell, FoldoutTabs, GreetingSelector,
- * composer-shell-styles). Colors are Bunraku tokens:
+ * composer-shell-styles). Colors are Bunzai tokens:
  *   RC zinc-300 / zinc-400 / zinc-500 / zinc-600  ->  --stage-soft / --stage-text-dim / --stage-mute / --stage-line
  *   RC black/55 bubble, white/8 edge              ->  color-mix of --stage-black and --stage-card
  *   RC user accent (violet)                       ->  --accent
@@ -485,7 +485,7 @@ body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-
 
 <div class="wf" id="wf" style="display:none"></div>
 <div class="wf-chip"><span>Delete</span><button data-o-show="delmenu">Menu</button><button data-o-show="dela">A: RC dialog</button><button data-o-show="dela2">A: from here</button><button data-o-show="undo">A: undo toast</button><button data-o-show="delb1">B: stub</button><button data-o-show="delb2">B: from here</button><span>Takes</span><button data-o-show="takes">Takes menu</button><button data-o-show="more">More menu</button><button data-o-show="forka">A: fork modal</button><button data-o-show="forkb">B: instant take</button><button data-o-show="cuttake">Delete take</button><button data-theme-switch>Theme</button><a href="../index.html">All</a></div>
-<div class="wf-note"><b>All RoleCall's own parts:</b> EditableMessage's delete dropdown, DeleteConfirmDialog ("The Cutting Room"), MessageActionOverflow's menu, BranchIndicator's Scene Takes and its "Delete this take" dialog, ForkSceneModal, sonner toasts. <b>Deleting messages. A:</b> RC's dialogs word for word; Bunraku would add an Undo toast. <b>B (recommended):</b> no dialog; the message folds to a stub in place, restorable for 3 days. <b>Takes. A:</b> RC's fork modal; Bunraku can only fill the name and the includes list (RC's world-state and chat-settings choices need systems Bunraku does not have yet). <b>B (recommended):</b> the take starts at once, with Rename in the toast. Deleting a take goes to the Trash instead of RC's permanent delete. RC's full branching-tree page is left out.</div>
+<div class="wf-note"><b>All RoleCall's own parts:</b> EditableMessage's delete dropdown, DeleteConfirmDialog ("The Cutting Room"), MessageActionOverflow's menu, BranchIndicator's Scene Takes and its "Delete this take" dialog, ForkSceneModal, sonner toasts. <b>Deleting messages. A:</b> RC's dialogs word for word; Bunzai would add an Undo toast. <b>B (recommended):</b> no dialog; the message folds to a stub in place, restorable for 3 days. <b>Takes. A:</b> RC's fork modal; Bunzai can only fill the name and the includes list (RC's world-state and chat-settings choices need systems Bunzai does not have yet). <b>B (recommended):</b> the take starts at once, with Rename in the toast. Deleting a take goes to the Trash instead of RC's permanent delete. RC's full branching-tree page is left out.</div>
 
 <script>
 (function () {

@@ -8,7 +8,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { aesOpen, aesSeal } from "../../kit/keystore/aes";
 import { WrongSecretError, type PasswordLock, type PasswordWrap } from "./crypto";
 
-/** Not a setting Bunraku writes: the real lock rejects it as damaged. */
+/** Not a setting Bunzai writes: the real lock rejects it as damaged. */
 const FAST = { name: "argon2id", m: 0, t: 0, p: 0 } as const;
 
 const kek = (password: string, salt: string) => createHash("sha256").update(salt).update(password.normalize("NFKC")).digest();

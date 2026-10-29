@@ -55,6 +55,6 @@ Values are **starting defaults** for new chats; agents change them during play.
 Agents: Character Tracker updates character RPG and persona RPG attributes; Persona Stats agent updates
 status bars. Without agents, defaults stay fixed. HUD shows enabled stats as gradient bars.
 
-## Bunraku
+## Bunzai
 
 Compatible card exports drop sprites/galleries/colors/stats.

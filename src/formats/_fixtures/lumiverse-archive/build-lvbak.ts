@@ -444,7 +444,7 @@ export function buildFutureSchemaLvbak(): Uint8Array {
 
 /**
  * Encrypted secrets plus a vector store. Both are skipped: the AES key lives only in the user's
- * separate ticket, and nothing in Bunraku consumes Float32 vectors.
+ * separate ticket, and nothing in Bunzai consumes Float32 vectors.
  */
 export function buildSecretsAndVectorsLvbak(): Uint8Array {
   const tables = standardTables();

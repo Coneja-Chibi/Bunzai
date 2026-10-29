@@ -20,7 +20,7 @@ beforeEach(() => { installed.reinstall(); const html = document.documentElement;
 const inputs = [...(await themeInventory()), ...(await exampleThemeInventory())];
 const previews = Object.fromEntries(await Promise.all(inputs.map(async (i) => {
   const id = (i.manifest as { id: string }).id;
-  return [id, await inspectThemePackage(i, id.startsWith("bunraku.") ? undefined : id)] as const;
+  return [id, await inspectThemePackage(i, id.startsWith("bunzai.") ? undefined : id)] as const;
 })));
 const active = (id = "paper") => ({
   themeId: id, packageId: id, digest: "a".repeat(64), grantedScopes: deriveThemeScopes({ assets: previews[id]!.assets.length, fonts: 0, styles: false, slots: 0 }),
@@ -33,7 +33,7 @@ const prop = (name: string): string => rootEl().style.getPropertyValue(name);
 
 test("no cache is read; absent or invalid settings take the default theme and a saved choice always wins", () => {
   expect(initialTheme()).toBe(DEFAULT_STUDIO_THEME);
-  expect(initialTheme("bunraku.theme.encore")).toBe("bunraku.theme.encore");
+  expect(initialTheme("bunzai.theme.encore")).toBe("bunzai.theme.encore");
   for (const saved of ["theater", "paper", "stage"] as const) expect(initialTheme(saved)).toBe(saved);
   expect(initialTheme("invalid")).toBe(DEFAULT_STUDIO_THEME);
   expect(localStorage.getItem("vaude.theme")).toBeNull();
@@ -44,13 +44,13 @@ test("the status label follows the verified appearance rather than the old setti
   expect(effectiveThemeLabel({ themeId: "paper", name: "Paper" })).toBe("Paper");
   expect(effectiveThemeLabel({ themeId: "stage", name: "GirliePop" })).toBe("GirliePop");
   expect(effectiveThemeLabel({ themeId: "theater", name: "Theater" })).toBe("Theater");
-  expect(effectiveThemeLabel({ themeId: "bunraku.theme.neon-pop", name: "Neon Pop Deluxe" })).toBe("Neon Pop Deluxe");
-  expect(effectiveThemeLabel({ themeId: "bunraku.theme.encore" })).toBe("Encore");
-  expect(effectiveThemeLabel({ themeId: "bunraku.theme.neon-pop" })).toBe("Neon Pop");
+  expect(effectiveThemeLabel({ themeId: "bunzai.theme.neon-pop", name: "Neon Pop Deluxe" })).toBe("Neon Pop Deluxe");
+  expect(effectiveThemeLabel({ themeId: "bunzai.theme.encore" })).toBe("Encore");
+  expect(effectiveThemeLabel({ themeId: "bunzai.theme.neon-pop" })).toBe("Neon Pop");
 });
 
 test("the renderer accepts bounded package IDs and refuses a tampered appearance or remote asset URLs", () => {
-  expect(readEffectiveTheme(active("bunraku.theme.encore"))?.themeId).toBe("bunraku.theme.encore");
+  expect(readEffectiveTheme(active("bunzai.theme.encore"))?.themeId).toBe("bunzai.theme.encore");
   expect(readEffectiveTheme({ ...active(), name: "Paper" })?.name).toBe("Paper");
   expect(readEffectiveTheme({ ...active(), name: "x".repeat(81) })).toBeNull();
   expect(readEffectiveTheme({ ...CORE_THEME_APPEARANCE, name: "Paper" })).toBeNull();
@@ -97,20 +97,20 @@ test("painting writes the validated palette, shape and surface picks, and the co
   expect(surfaceVariant("shell.nav")).toBe("core");
 });
 
-test("the chrome sizing paints as html[data-chrome] and the UI font role as --bk-font-ui; core and the other bundled themes stay bunraku", () => {
+test("the chrome sizing paints as html[data-chrome] and the UI font role as --bk-font-ui; core and the other bundled themes stay bunzai", () => {
   paintTheme(readEffectiveTheme(active(DEFAULT_STUDIO_THEME))!);
   expect(rootEl().dataset.chrome).toBe("rolecall");
   expect(prop("--bk-font-ui")).toBe("system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif");
   expect(prop("--bk-font-body")).toBe(prop("--bk-font-ui"));
   expect(prop("--bk-font-mono")).toStartWith("ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas");
   expect(prop("--bk-font-display")).toBe('"Cinzel", serif');
-  for (const id of ["paper", "stage", "theater", "bunraku.theme.encore"]) {
+  for (const id of ["paper", "stage", "theater", "bunzai.theme.encore"]) {
     paintTheme(readEffectiveTheme(active(id))!);
-    expect(rootEl().dataset.chrome, id).toBe("bunraku");
+    expect(rootEl().dataset.chrome, id).toBe("bunzai");
     expect(prop("--bk-font-ui"), id).toBe(prop("--bk-font-display")); // --font-big used to resolve to the display face, so it still does
   }
   paintTheme(CORE_THEME_APPEARANCE);
-  expect(rootEl().dataset.chrome).toBe("bunraku");
+  expect(rootEl().dataset.chrome).toBe("bunzai");
 });
 
 test("the Settings accent follows into the brand and action roles of a theme that follows the user, and never into a locked one", () => {

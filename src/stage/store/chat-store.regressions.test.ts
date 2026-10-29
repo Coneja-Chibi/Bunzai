@@ -1,6 +1,6 @@
 /**
  * Regression: an ORDER BY on a timestamp alone with no tiebreaker makes a listing's order for tied
- * rows unstable (it could reshuffle between calls or across pages). Bunraku's listChats already
+ * rows unstable (it could reshuffle between calls or across pages). Bunzai's listChats already
  * orders by `created_at, rowid` (src/stage/store/sqlite/chat-store.ts), so ties break on insertion
  * order.
  */

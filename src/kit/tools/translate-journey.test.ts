@@ -18,7 +18,7 @@ import type { KitBridge, KitEntity } from "../bridge";
 import exportPiece from "./export";
 import macroLookup from "./macro-lookup";
 
-const root = await mkdtemp(join(tmpdir(), "bunraku-journey-"));
+const root = await mkdtemp(join(tmpdir(), "bunzai-journey-"));
 afterAll(async () => {
   await rm(root, { recursive: true, force: true });
 });

@@ -7,7 +7,7 @@ import { StudioStore } from "./store";
 import { tempDirSync } from "./test-temp-dir";
 
 test("a regex set reads the same body through the store's body read as through a full read", async () => {
-  const store = new StudioStore(tempDirSync("bunraku-body-reader-"));
+  const store = new StudioStore(tempDirSync("bunzai-body-reader-"));
   const body = { ...emptyRegexSetBody("Tidy"), rules: [{ id: "r1", label: "r1", find: "storms", flags: "g", replace: "weather", phases: ["display"], enabled: true, sortOrder: 0 }] } as unknown as RegexSetBody;
   const saved = await store.save({ schemaVersion: CANONICAL_SCHEMA_VERSION, kind: "regex", id: "tidy", body });
   const read = bodyReader<RegexSetBody>(store, "regex");

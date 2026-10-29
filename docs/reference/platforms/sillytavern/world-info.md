@@ -78,13 +78,13 @@ its active timed effect. Branches inherit parent state, while swiping or deletin
 can remove effects.
 
 Automation ID can connect an activated entry to a Quick Reply or STscript procedure. That relationship
-causes executable platform behavior and is not ordinary lorebook prose. Bunraku may preserve the identifier
+causes executable platform behavior and is not ordinary lorebook prose. Bunzai may preserve the identifier
 as sealed metadata, but it must not run the linked script.
 
 ## Interoperability rules
 
 The portable character-book schema and SillyTavern's standalone World Info file use related but different
-wire shapes. SillyTavern-specific settings may live in extension fields. Bunraku maps supported semantics
+wire shapes. SillyTavern-specific settings may live in extension fields. Bunzai maps supported semantics
 into canonical lorebook entries and escrows the complete original for same-format restoration.
 
 Cross-format targets may lack recursion controls, inclusion groups, timed effects, vector markers, outlets,

@@ -40,7 +40,7 @@ export function studioRows(env: RowEnv): RowDef[] {
   const decks = knownDecks();
   const pref = (key: string, fallback: string, valid: readonly string[]): string => { const v = env.ctx.prefs.get(key); return typeof v === "string" && valid.includes(v) ? v : fallback; };
   return [
-    { id: "homeApp", label: "Home", description: "The room Bunraku opens in when you start it.", control: "select", options: apps.map((m) => ({ value: m.id, label: m.title.replace(/^The /, "") })),
+    { id: "homeApp", label: "Home", description: "The room Bunzai opens in when you start it.", control: "select", options: apps.map((m) => ({ value: m.id, label: m.title.replace(/^The /, "") })),
       read: () => pref(SETTING_KEYS.homeApp, apps[0]?.id ?? "", apps.map((m) => m.id)), write: (e, v) => setPref(e, SETTING_KEYS.homeApp, v) } satisfies ChoiceDef,
     { id: "firstDeck", label: "Library opens on", description: "The deck you see first when you visit the shelves.", control: "select", options: decks.map((d) => ({ value: d.kind, label: d.plural })),
       read: () => pref(SETTING_KEYS.firstDeck, "character", decks.map((d) => d.kind)), write: (e, v) => setPref(e, SETTING_KEYS.firstDeck, v) } satisfies ChoiceDef,

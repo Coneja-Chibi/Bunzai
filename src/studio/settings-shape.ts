@@ -52,7 +52,7 @@ export const DEFAULT_THEME_NAME: string = defaultThemeManifest.name;
 /** The bundled ids, in the order the shell toggle cycles them; imported packages are selected in Settings. */
 export const STUDIO_THEMES = [DEFAULT_STUDIO_THEME, "theater", "paper", "stage"] as const;
 export type BuiltinStudioTheme = (typeof STUDIO_THEMES)[number];
-export type StudioTheme = BuiltinStudioTheme | `bunraku.theme.${string}`;
+export type StudioTheme = BuiltinStudioTheme | `bunzai.theme.${string}`;
 export const isStudioTheme = (value: unknown): value is StudioTheme =>
   (STUDIO_THEMES as readonly unknown[]).includes(value) || isThemePackageId(value);
 export const nextStudioTheme = (theme: StudioTheme): StudioTheme =>
@@ -61,7 +61,7 @@ export const nextStudioTheme = (theme: StudioTheme): StudioTheme =>
 export interface StudioSettings {
   /** false until the first-run wizard's OPEN VAUDE */
   setupComplete: boolean;
-  /** Built-in IDs stay stable; imported themes use their validated bunraku.theme.<slug> package ID. */
+  /** Built-in IDs stay stable; imported themes use their validated bunzai.theme.<slug> package ID. */
   theme?: StudioTheme;
   /** canonical kind the library opens on ("character", "lorebook", ...) */
   firstDeck?: string;

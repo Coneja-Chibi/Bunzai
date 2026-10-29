@@ -11,7 +11,7 @@ const rule = (overrides: Partial<RegexRule> = {}): RegexRule =>
   makeRegexRule({ find: "a", replace: "aa", ...overrides });
 
 // A rule that duplicates its own match text, reapplied to a message on every render, could grow
-// the stored message without limit. Bunraku's engine refuses a rule outright once it would match
+// the stored message without limit. Bunzai's engine refuses a rule outright once it would match
 // more times than the configured cap, leaving the text exactly as it was instead of partially or
 // fully applying it.
 test("a rule matching past the configured cap is refused, text stays unchanged", () => {

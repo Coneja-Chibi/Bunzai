@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "FORMAT-SUPPORT",
   "sourcePath": "docs/FORMAT-SUPPORT.md",
-  "sourceHash": "sha256:6a41a4b12d4b720f444425870a2bae876dd19d23e833d6a6ef7cbe5e0195e845",
-  "semanticSummaryHash": "sha256:8d06b619402edf6226188b465a3f023c67242d2f757bae458d6b01f8ecde3697",
+  "sourceHash": "sha256:207075ce161d92d9c2168c7d8219594865b42f514c66c7f8f56f5176d3488c67",
+  "semanticSummaryHash": "sha256:02e53b7ca7d9aa2a32c3d8d528fbe9a2f497801d44c3b1615160db8c9dbaaee9",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Skills (0) placeholder section exists after Trackers and before Prompt formats, matching KIND_IDS order; skills-0 summary (91 words) and the page-summary sentence (tools, dice, formulas, trackers, skills, drawings have no format) are accurate; other counts unchanged; sidecar fresh.",
-  "reviewedAt": "2026-10-29T09:52:28.390Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:06.867Z"
 }

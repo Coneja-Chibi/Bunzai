@@ -7,7 +7,7 @@
  *   --baseline : rewrite the baseline to the tree's current pairs (run after a merge so fixed copies drop out).
  *
  * Escape: a `clone-ok: <reason>` comment inside the function or rule.
- * Fingerprints are cached by file size and mtime in node_modules/.cache/bunraku-clones.json.
+ * Fingerprints are cached by file size and mtime in node_modules/.cache/bunzai-clones.json.
  * Run: bun run scripts/hooks/clones.ts --scan|--staged|--baseline
  */
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
@@ -15,7 +15,7 @@ import { execFileSync } from "node:child_process";
 import { cssClones, cssRulesOf, fnClones, functionsOf, pairId, type Clone, type CssPrint, type FnPrint } from "./clones-core";
 
 const BASELINE = "scripts/hooks/clones-baseline.json";
-const CACHE = "node_modules/.cache/bunraku-clones.json";
+const CACHE = "node_modules/.cache/bunzai-clones.json";
 const mode = process.argv.includes("--scan") ? "scan" : process.argv.includes("--baseline") ? "baseline" : "staged";
 
 const isCode = (f: string): boolean => /^src\/.*\.tsx?$/.test(f) && !/\.test\.tsx?$|\/fake-|\.d\.ts$|generated/.test(f);

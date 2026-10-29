@@ -1,6 +1,6 @@
 /**
  * Regression: {{random}} must not be limited to a numeric min/max pair that throws away
- * non-numeric picks. Bunraku's {{random}} branches into list-pick ("text mode") for 3+ options or
+ * non-numeric picks. Bunzai's {{random}} branches into list-pick ("text mode") for 3+ options or
  * any non-numeric option (isTextMode in ./random.ts), so this file proves that branch actually
  * returns one of the given strings through the public processMacros() boundary, not just a
  * stringified number.

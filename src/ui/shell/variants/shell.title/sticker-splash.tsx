@@ -19,10 +19,10 @@ export default function StickerSplashTitle({ state, pieces }: { state: TitleStat
     ["browse", "Browse stories", "Find another scene", "lucide:film", "var(--bk-role-ok)", browseStories],
   ];
   return (
-    <section ref={sheetRef} tabIndex={-1} data-part="shell.title" aria-label="Bunraku title screen" className={`${styles.stage}${closing ? ` ${styles.closing}` : ""}`}>
+    <section ref={sheetRef} tabIndex={-1} data-part="shell.title" aria-label="Bunzai title screen" className={`${styles.stage}${closing ? ` ${styles.closing}` : ""}`}>
       <div className={styles.page}>
         <header className={styles.head}>
-          <h1 className={styles.word}>Bunraku</h1>
+          <h1 className={styles.word}>Bunzai</h1>
           <p className={styles.tag}>Every story deserves a stage.</p>
           <div className={styles.go}>
             <Button variant="primary" data-title-action="enter" disabled={closing} onClick={enter}>Enter the theater</Button>

@@ -1,6 +1,6 @@
 /**
  * Settings > Spotify: RoleCall keeps the connect step in Settings too (SpotifySection.tsx: paste your own Spotify app's Client ID, then
- * sign in). Bunraku has no server of its own, so the sign-in comes back to this app on the loopback address (`http://127.0.0.1:<port>`),
+ * sign in). Bunzai has no server of its own, so the sign-in comes back to this app on the loopback address (`http://127.0.0.1:<port>`),
  * the one kind of http redirect Spotify allows. There is no shared key and no client secret: the Client ID is the person's own, and the
  * refresh token it earns is kept only in this computer's key vault, never in a preference, a log, an export or what a model sees.
  * The Stage wing's Spotify tab and mini player come from the Spotify Prop (the Props wing), which is how it is turned off and on again.
@@ -74,7 +74,7 @@ function SpotifySection({ ctx }: { ctx: AppContext }): JSX.Element {
 
       <SettingsRow
         label="Client ID"
-        hint="Make an app at developer.spotify.com/dashboard and paste its Client ID (32 letters and digits). It is yours alone; Bunraku has no shared key. The sign-in is kept in this computer's key vault."
+        hint="Make an app at developer.spotify.com/dashboard and paste its Client ID (32 letters and digits). It is yours alone; Bunzai has no shared key. The sign-in is kept in this computer's key vault."
       >
         <input
           className={styles.snippet}
@@ -88,7 +88,7 @@ function SpotifySection({ ctx }: { ctx: AppContext }): JSX.Element {
 
       <SettingsRow
         label="Redirect address"
-        hint="Add this to your Spotify app's Redirect URIs, exactly. Spotify allows a plain http address only for 127.0.0.1, and lets that address use any port, so it still works when Bunraku starts on another one."
+        hint="Add this to your Spotify app's Redirect URIs, exactly. Spotify allows a plain http address only for 127.0.0.1, and lets that address use any port, so it still works when Bunzai starts on another one."
       >
         <code className={styles.snippet}>{status?.registerUri ?? "http://127.0.0.1/spotify/callback"}</code>
       </SettingsRow>
@@ -97,7 +97,7 @@ function SpotifySection({ ctx }: { ctx: AppContext }): JSX.Element {
         label="Account"
         hint={connected
           ? "Disconnect forgets the sign-in on this computer. To take the app's access away at Spotify too, remove it at spotify.com/account/apps."
-          : "Connect opens Spotify's sign-in in your browser. Bunraku sees only the playback state and the controls, never your password."}
+          : "Connect opens Spotify's sign-in in your browser. Bunzai sees only the playback state and the controls, never your password."}
       >
         {connected
           ? <div className={styles.add}><Button variant="danger" disabled={busy} onClick={() => { void run(async () => { await send("/api/spotify/disconnect", {}); await load(); }); }}>Disconnect</Button></div>

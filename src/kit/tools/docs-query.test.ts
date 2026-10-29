@@ -1,9 +1,9 @@
 /**
- * Contract tests for Kit's bounded read-only Bunraku documentation tool.
+ * Contract tests for Kit's bounded read-only Bunzai documentation tool.
  */
 import { describe, expect, test } from "bun:test";
 import type { KitBridge } from "../bridge";
-import type { BunrakuDocs } from "../docs/repository";
+import type { BunzaiDocs } from "../docs/repository";
 import { createDocsQueryTool } from "./docs-query";
 
 const bridge = {
@@ -118,7 +118,7 @@ const docs = {
       }],
     };
   },
-} satisfies BunrakuDocs;
+} satisfies BunzaiDocs;
 
 const tool = createDocsQueryTool();
 const ctx = { bridge, docs };

@@ -5,7 +5,7 @@
  * loading, dialogs, and the shell's one context-menu system. Every feature the plain list had stays:
  * Select and bulk delete, search, the time/order filters, rename, cut to the Trash with the Cutting
  * Room dialog, the cut list with Restore, the Trash button, the load-error state, and the empty
- * state. No tabs: Bunraku has no group scenes.
+ * state. No tabs: Bunzai has no group scenes.
  */
 import { useCallback, useEffect, useState, type CSSProperties, type JSX } from "react";
 import { ThemeSlot } from "../../_shared/theme-slot";

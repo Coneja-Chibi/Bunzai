@@ -1,5 +1,5 @@
 /**
- * Store edge round-trip against a throwaway BUNRAKU_HOME, mirroring vault.test.ts: write/read is
+ * Store edge round-trip against a throwaway BUNZAI_HOME, mirroring vault.test.ts: write/read is
  * byte-faithful, the list tolerates a corrupt file, remove is idempotent, export lands where it says,
  * and the parse boundary denies a malformed session whole rather than silently dropping wire history.
  */
@@ -13,7 +13,7 @@ import { appendTurn, buildTurn, emptySession, renameSession, type Session } from
 import { createSessionStore, parseSession, sessionsDir, type SessionStore } from "./store";
 
 const HOME = join(tmpdir(), `kit-sessions-test-${randomUUID()}`);
-// Built in beforeAll, AFTER BUNRAKU_HOME is set, so the default dir resolves to the temp home.
+// Built in beforeAll, AFTER BUNZAI_HOME is set, so the default dir resolves to the temp home.
 let store: SessionStore;
 
 const msg = (content: string, role: ModelMessage["role"] = "user"): ModelMessage => ({ role, content });
@@ -25,12 +25,12 @@ const sample = (id: string, updatedAt: number): Session => {
 };
 
 beforeAll(() => {
-  process.env.BUNRAKU_HOME = HOME;
+  process.env.BUNZAI_HOME = HOME;
   store = createSessionStore();
 });
 
 afterAll(async () => {
-  delete process.env.BUNRAKU_HOME;
+  delete process.env.BUNZAI_HOME;
   await rm(HOME, { recursive: true, force: true });
 });
 

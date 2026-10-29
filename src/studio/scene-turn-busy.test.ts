@@ -26,8 +26,8 @@ afterEach(() => {
 
 /** A turn on a real file whose second connection takes the write lock the moment the turn has opened its checkpoint, and frees it after `holdMs`. */
 async function lockedTurn(holdMs: number) {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-turn-busy-"));
-  const path = join(dir, "bunraku.db");
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-turn-busy-"));
+  const path = join(dir, "bunzai.db");
   const database = openStageDatabase(path, MIGRATIONS);
   const keys = subkeys(newDataKey());
   const chats = sqliteChatStore(database, cellCipher(() => keys));

@@ -21,8 +21,8 @@ describe("lore capabilities", () => {
     }
   });
 
-  test("full is the Bunraku card and shows all first-class keys including specials", () => {
-    expect(LORE_WRITE_FOR_LABELS.full.toLowerCase()).toContain("bunraku");
+  test("full is the Bunzai card and shows all first-class keys including specials", () => {
+    expect(LORE_WRITE_FOR_LABELS.full.toLowerCase()).toContain("bunzai");
     const m = loreFieldVisibility("full");
     for (const vis of Object.values(m)) expect(vis).not.toBe("hide");
     expect(fieldVisible("full", "displayIndex")).toBe(true);

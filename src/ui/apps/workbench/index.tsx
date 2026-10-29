@@ -16,7 +16,7 @@ import { EditorKeyOwner } from "./editor-key-owner";
 import { useCallback, useContext, useEffect, useState, useSyncExternalStore } from "react";
 import { ThemeSlot } from "../../_shared/theme-slot";
 import type { CSSProperties, JSX, ReactNode } from "react";
-import type { AppContext, StudioEntitySummary, BunrakuApp } from "../../app-contract";
+import type { AppContext, StudioEntitySummary, BunzaiApp } from "../../app-contract";
 import { deckMeta, pieceColor } from "../../_shared/decks";
 import { useAccentVars } from "../../_shared/use-scoped-accents";
 import { toErrorMessage } from "../../_shared/error-message";
@@ -344,7 +344,7 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
   );
 }
 
-const app: BunrakuApp = {
+const app: BunzaiApp = {
   OverlayWidgets,
   manifest: {
     id: "workbench",

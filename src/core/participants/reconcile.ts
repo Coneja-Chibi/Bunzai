@@ -1,7 +1,7 @@
 /**
  * RECONCILE RECENT SCENE (RoleCall `lib/chat-participants/reconcile.ts`, `app/api/chat/[chatId]/participants/reconcile/route.ts`): the
  * one-off model check that proposes newly introduced named actors from selected recent messages. RoleCall asks for a forced tool call
- * and writes what comes back; Bunraku asks for one JSON answer (at most one repair), validates every candidate with RoleCall's
+ * and writes what comes back; Bunzai asks for one JSON answer (at most one repair), validates every candidate with RoleCall's
  * automatic-candidate rules (`lib/character-mind/participant-candidate.ts`), drops names already on the roster by RoleCall's duplicate
  * ladder (`lib/character-mind/resolve-participant.ts`), and only proposes: nothing is stored until the person confirms. Pure.
  */

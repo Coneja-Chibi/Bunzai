@@ -1,5 +1,5 @@
 /*
- * Bunraku design system: sizing tokens, contract v1. Pixels only for ornament (meter and pip
+ * Bunzai design system: sizing tokens, contract v1. Pixels only for ornament (meter and pip
  * geometry); everything a person reads or hits is in rem.
  *
  * Container breakpoints (CSS cannot read a variable inside @container, so these are constants;

@@ -18,7 +18,7 @@ afterEach(cleanupChatRouteRigs);
 
 // Sealing the vault spawns the OS keystore (about a second, cold).
 setDefaultTimeout(30_000);
-const HOME = join(tmpdir(), `bunraku-turn-routes-${randomUUID()}`);
+const HOME = join(tmpdir(), `bunzai-turn-routes-${randomUUID()}`);
 const UNLOCK = { passphrase: "turn-routes-test" };
 let server: ReturnType<typeof Bun.serve>;
 const asked: { model: string; messages: { role: string; content: string }[] }[] = [];
@@ -26,7 +26,7 @@ let localId = "";
 let subId = "";
 
 beforeAll(async () => {
-  process.env.BUNRAKU_HOME = HOME;
+  process.env.BUNZAI_HOME = HOME;
   // A chat-completions server that streams "It might." in two pieces, then usage.
   server = Bun.serve({
     port: 0,
@@ -50,7 +50,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   server.stop(true);
-  delete process.env.BUNRAKU_HOME;
+  delete process.env.BUNZAI_HOME;
   await rm(HOME, { recursive: true, force: true });
 });
 

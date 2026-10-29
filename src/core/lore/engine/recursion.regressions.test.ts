@@ -1,6 +1,6 @@
 /**
  * Regression: unbounded keyword-chaining recursion across lorebook entries needs a built-in stop
- * condition. Bunraku's recursion engine carries a hard MAX_RECURSION_DEPTH (see ./recursion.ts),
+ * condition. Bunzai's recursion engine carries a hard MAX_RECURSION_DEPTH (see ./recursion.ts),
  * so this proves a mutually triggering pair of entries (A's content contains B's keyword and vice
  * versa) terminates quickly instead of looping, and that each entry only lands in the result once.
  */

@@ -1,7 +1,7 @@
 /**
  * Which MCP servers this machine connects to - the file, its shape, and nothing else.
  *
- * HOME-KEYED, BESIDE THE VAULT. `~/.bunraku/mcp.json`, not the studio folder, for the same reason
+ * HOME-KEYED, BESIDE THE VAULT. `~/.bunzai/mcp.json`, not the studio folder, for the same reason
  * the provider vault lives there: a server entry names a COMMAND THIS MACHINE EXECUTES, which is a
  * fact about the machine, not about any one studio - and a studio folder can be shared, synced, or
  * handed to somebody else, none of which should carry "run this program" along with it.

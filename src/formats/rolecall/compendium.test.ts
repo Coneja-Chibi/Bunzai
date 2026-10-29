@@ -1,5 +1,5 @@
 /**
- * The RoleCall compendium export (`compendium-v1.0.0`, RoleCall's `.compendium.json`): what Bunraku streams out, that Bunraku reads
+ * The RoleCall compendium export (`compendium-v1.0.0`, RoleCall's `.compendium.json`): what Bunzai streams out, that Bunzai reads
  * it back whole, that RoleCall's own file survives a pass through canonical untouched, and that the older lorebook codec never
  * claims it.
  */
@@ -49,7 +49,7 @@ describe("exporting a compendium", () => {
 });
 
 describe("reading it back", () => {
-  test("a Bunraku export read by Bunraku gives the same book", async () => {
+  test("a Bunzai export read by Bunzai gives the same book", async () => {
     const original = book();
     const { text: file } = await text(compendiumChunks(entity(original)));
     expect(compendium.detect({ text: file })).toBe(1);

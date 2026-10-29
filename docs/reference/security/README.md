@@ -2,7 +2,7 @@
 id: reference/security/README
 title: Security threat model and defense layers
 audience: dev
-summary: The assets bunraku protects, the untrusted inputs it faces, and each defense layer with its honest tested or scaffolded status.
+summary: The assets bunzai protects, the untrusted inputs it faces, and each defense layer with its honest tested or scaffolded status.
 tags: [security, threat-model, sandbox, redos, sanitization, byok, loopback]
 related:
   - reference/architecture
@@ -12,7 +12,7 @@ related:
 
 # Security
 
-bunraku ingests untrusted files (character cards with embedded scripts, PNG and ZIP payloads, regex rules,
+bunzai ingests untrusted files (character cards with embedded scripts, PNG and ZIP payloads, regex rules,
 Risu Lua) and holds the user's provider API keys. Security is a first-class story, so this page states
 each defense and its honest status: what is enforced and covered by a code-layer suite, versus what is
 scaffolded but not yet measured. Overclaiming in a security document is a defect worse than a gap. Where
@@ -51,7 +51,7 @@ server evaluates nothing: scripts in entities are data, nothing is ever evaluate
 (the header comment of `src/ui/server.ts`).
 
 Cross-format conversion is contained-loss by design. Only the canonical body crosses; one app's private
-junk, including any executable payload, is deliberately not copied into another app's file. bunraku never
+junk, including any executable payload, is deliberately not copied into another app's file. bunzai never
 blind-copies one app's fields or executable payloads into another
 (`docs/reference/architecture.md`). The adapter contract makes a cross-kind call unrepresentable,
 so a lorebook can never be handed to a character writer (`docs/reference/architecture.md`).
@@ -119,7 +119,7 @@ Status: the pure policy has a suite at `src/ui/_shared/render-policy.test.ts`; t
 
 ### 5. The Lua sandbox and its resource budgets
 
-Lua is the one untrusted input bunraku executes, and it runs only when the user opens the Risu Test Bench,
+Lua is the one untrusted input bunzai executes, and it runs only when the user opens the Risu Test Bench,
 never automatically on import (`docs/decisions/ADR-009-sandbox-origin.md`).
 
 **Capability by absence.** The wasmoon (PUC-Lua 5.4) engine opens no standard libraries by default and
@@ -239,7 +239,7 @@ decryption; recovery must be repaired before the vault is described as fully fai
 - The regex per-rule timeout does not interrupt a single catastrophic native `RegExp` match. The
   pre-compile refusal is the actual defense (`src/core/regex/validate.ts`).
 - The provider vault does not yet have a complete malformed-envelope recovery path, and the release
-  workflow ships `bunraku-kit-*` binaries with that gap still open.
+  workflow ships `bunzai-kit-*` binaries with that gap still open.
 - The portable vault backend does not yet have a settings-driven passphrase setup and unlock flow.
 - Provider egress checks the initial configured host but does not revalidate runtime redirects.
 - Where the sandbox listener cannot bind, the same-origin fallback is degraded and not isolated.

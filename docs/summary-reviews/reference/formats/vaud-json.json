@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/formats/vaud-json",
   "sourcePath": "docs/reference/formats/vaud-json.md",
-  "sourceHash": "sha256:390cbe4de7c9d1d27dd92a03dbd578979533513c4faaaf814b1151d22f74c3c0",
-  "semanticSummaryHash": "sha256:8bb9c95e368e188db4c3b63686f38a644bbe28d4d3a3d6bd6a4d53ecdfb528db",
+  "sourceHash": "sha256:54f8441789b589b364edbd9bb90f481ee93853319df8ad9c71230972434d4c38",
+  "semanticSummaryHash": "sha256:f401db99f859a9298aff7e9440004434167b08d0e45d0d61f370738cc53c857e",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:54.737Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:49.697Z"
 }

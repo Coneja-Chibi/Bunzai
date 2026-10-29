@@ -7,11 +7,11 @@ describe("desktop port override", () => {
     expect(desktopPortOverride(undefined)).toBeNull();
     expect(desktopPortOverride("8351")).toBe(8351);
     for (const invalid of ["", " 8351", "8351 ", "+8351", "-1", "8351x", "0", "1023", "65536", "８３５１"]) {
-      expect(() => desktopPortOverride(invalid)).toThrow("BUNRAKU_PORT");
+      expect(() => desktopPortOverride(invalid)).toThrow("BUNZAI_PORT");
     }
   });
 
-  test("an override refuses an existing Bunraku and never starts or attaches to it", async () => {
+  test("an override refuses an existing Bunzai and never starts or attaches to it", async () => {
     let started = false;
     const claim = claimDesktopPort(8351, () => {
       started = true;
@@ -52,7 +52,7 @@ describe("desktop port override", () => {
     expect(result).toMatchObject({ ours: true, server: { url: "http://127.0.0.1:8322" } });
   });
 
-  test("default mode reuses a detected Bunraku after its bind fails", async () => {
+  test("default mode reuses a detected Bunzai after its bind fails", async () => {
     const attempted: number[] = [];
     const result = await claimDesktopPort(null, (port) => {
       attempted.push(port);

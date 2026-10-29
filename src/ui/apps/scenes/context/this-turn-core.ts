@@ -1,6 +1,6 @@
 /**
  * This turn's pure rules (RoleCall `lib/ai/model-call-inspector/this-turn.ts`, rc-parity 08): which calls a reply's stored trace records, what they
- * total, how its request reads, and the pager between replies. Bunraku has no model-call ledger, so the calls are exactly what the turn stored: the
+ * total, how its request reads, and the pager between replies. Bunzai has no model-call ledger, so the calls are exactly what the turn stored: the
  * Compendium's recall when it asked a model, and the reply itself. Tokens are the provider's report (Exact) or the turn's own estimate (Estimated),
  * never a recount; a block's size is the assembler's own count.
  */

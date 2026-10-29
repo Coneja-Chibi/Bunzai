@@ -1,5 +1,5 @@
 /**
- * Priority/sortOrder eviction and two-stage budgeting (Bunraku change 3, - do NOT
+ * Priority/sortOrder eviction and two-stage budgeting (Bunzai change 3, - do NOT
  * copy RoleCall's selection/priority.ts here). Within a position, entries place in `sortOrder`
  * order. When the budget is short, entries are cut by `priority`, lowest first; ties break by
  * `sortOrder`, last first. Survivors are re-sorted back into `sortOrder`. `ignoreBudget` entries

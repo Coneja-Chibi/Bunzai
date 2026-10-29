@@ -79,7 +79,7 @@ export function inspectBytes(bytes: Uint8Array, filename: string): InspectResult
   } catch (error) {
     // A file over a size or count budget is not a damaged file; say which it is.
     if (isArchiveLimitError(error)) {
-      return { ok: false, error: error.plain ? error.message : `This ${friendlyFormat(adapter.id)} file is larger or more complex than Bunraku can safely read.` };
+      return { ok: false, error: error.plain ? error.message : `This ${friendlyFormat(adapter.id)} file is larger or more complex than Bunzai can safely read.` };
     }
     return {
       ok: false,

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/concepts/safe-rendering",
   "sourcePath": "docs/reference/concepts/safe-rendering.md",
-  "sourceHash": "sha256:d48e5d5fc333058c26d92983947c1da8e7260e1ec162841892d867401ddb4ebe",
-  "semanticSummaryHash": "sha256:aa7dae0df991f6d012c11f8b6f414bf1a2423aff5bb48259813a37093030003b",
+  "sourceHash": "sha256:1ec866d5eda1a68ad0d404dd9e3615ddfe1513906246c0e1dfca3fb1cec1b810",
+  "semanticSummaryHash": "sha256:4c1b0172026440c5884a79b5cdc80249d32c3c47a09726daa650461613f4fdae",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Page and summary href rules (single-slash paths, # anchors, http/https/mailto, trimmed and stripped) match isSafeHref and stripBlanks.",
-  "reviewedAt": "2026-10-09T16:16:58.125Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:08.591Z"
 }

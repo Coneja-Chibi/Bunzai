@@ -49,7 +49,7 @@ export async function addChat(rig: Rig, title: string, messages = 2): Promise<st
 }
 
 export async function makeRig(opts: { words?: boolean; password?: string; vault?: DeviceVault; snapshots?: Partial<SnapshotStoreOptions>; dir?: string } = {}): Promise<Rig> {
-  const dir = opts.dir ?? mkdtempSync(join(tmpdir(), "bunraku-snap-"));
+  const dir = opts.dir ?? mkdtempSync(join(tmpdir(), "bunzai-snap-"));
   const path = join(dir, "library.db");
   const vault = opts.vault ?? fakeComputer();
   const d = openStageDatabase(path, MIGRATIONS);

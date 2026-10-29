@@ -22,7 +22,7 @@ describe("relink", () => {
   test("media points at the site's media folder, everything else at GitHub", () => {
     expect(relink("../media/shot-library.png", from)).toBe("../media/shot-library.png");
     expect(relink("../reference/ui.md#scenes", from)).toBe(
-      "https://github.com/Coneja-Chibi/Bunraku/blob/Mainstage/docs/reference/ui.md#scenes",
+      "https://github.com/Coneja-Chibi/Bunzai/blob/Mainstage/docs/reference/ui.md#scenes",
     );
   });
   test("absolute links and in-page anchors are left alone", () => {

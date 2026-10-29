@@ -1,7 +1,7 @@
 /**
  * On-demand editing tools (RoleCall's FinalCutToolsCard.tsx): a model, a temperature and a reply limit for each of the Correction Tools'
  * Rewrite, Expand, Reduce and Correction, saved with the scene. A tool with nothing set uses the scene's model; "Reset to scene defaults"
- * clears it. RoleCall also lists Custom, the inline free-form rewrite of the message editor, which Bunraku has not built, so it is not
+ * clears it. RoleCall also lists Custom, the inline free-form rewrite of the message editor, which Bunzai has not built, so it is not
  * listed (a row with nothing behind it would be a dead control).
  */
 import type { JSX } from "react";

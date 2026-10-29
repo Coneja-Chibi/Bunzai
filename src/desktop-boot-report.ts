@@ -2,7 +2,7 @@
  * Boot-failure reporting for the packaged desktop app - the surface that makes a failed launch SAY
  * something.
  *
- * WHY THIS EXISTS. Bunraku.exe is compiled with `--windows-hide-console`, which does NOT produce a
+ * WHY THIS EXISTS. Bunzai.exe is compiled with `--windows-hide-console`, which does NOT produce a
  * GUI-subsystem binary: the shipped exe is subsystem 3 (console) and Bun hides the console window at
  * startup instead. Verified by reading the PE header of a real build. So Windows allocates a console on
  * every launch and something hides it, which means a crash during boot prints a perfectly good stack
@@ -114,7 +114,7 @@ export function writeBootLog(kind: string, err: unknown, path = bootLogPath()): 
 
 /** The line that tells someone how to get the full text when the dialog is all they have. */
 const terminalHint =
-  "To see the full error text, open PowerShell in the folder holding Bunraku.exe and run:  .\\Bunraku.exe";
+  "To see the full error text, open PowerShell in the folder holding Bunzai.exe and run:  .\\Bunzai.exe";
 
 /**
  * The studio never came up. Report through every channel available, then let the caller exit non-zero.
@@ -123,12 +123,12 @@ const terminalHint =
 export function reportBootFailure(err: unknown, notify: Notifier = nativeNotifier): void {
   // stderr first and unconditionally: this is the channel that works when the app is launched FROM a
   // terminal, which is the one situation where the console does not disappear.
-  console.error("Bunraku could not start:", describe(err));
+  console.error("Bunzai could not start:", describe(err));
   const path = writeBootLog("boot failure", err);
   const detail = toErrorMessage(err);
   notify(
-    "Bunraku could not start",
-    `Bunraku ${APP_VERSION} stopped while starting up.\n\n` +
+    "Bunzai could not start",
+    `Bunzai ${APP_VERSION} stopped while starting up.\n\n` +
       `${detail}\n\n` +
       (path ? `A full report was saved to:\n${path}\n\n` : "The report could not be written to disk.\n\n") +
       terminalHint,
@@ -156,8 +156,8 @@ export function reportWindowFailure(
   err: unknown,
   openUrl: (url: string) => void = openInBrowser,
 ): void {
-  console.error("Bunraku: the app window could not open:", describe(err));
-  console.error(`Bunraku is still running, without its window. Opening it in your browser: ${url}`);
+  console.error("Bunzai: the app window could not open:", describe(err));
+  console.error(`Bunzai is still running, without its window. Opening it in your browser: ${url}`);
   console.error(
     "To get the app window back, install Microsoft's WebView2 runtime: " +
       "https://developer.microsoft.com/microsoft-edge/webview2/",

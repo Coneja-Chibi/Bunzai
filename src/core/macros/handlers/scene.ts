@@ -5,7 +5,7 @@
  * the registration mechanism, `console.log` debug lines dropped (dead in a data-only handler, no
  * host to log to), and the two deviations below.
  *
- * `chatStartTime`/`lastActivityTime` are epoch ms numbers on Bunraku's `MacroContext` (ADR-012: no
+ * `chatStartTime`/`lastActivityTime` are epoch ms numbers on Bunzai's `MacroContext` (ADR-012: no
  * ambient clock, no `Date` objects riding the context), so `chatStartMacro` converts with
  * `new Date(context.chatStartTime)`, a pure wrap of a caller-supplied value, not the banned ambient
  * `new Date()`.

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/extending/new-kind",
   "sourcePath": "docs/reference/extending/new-kind.md",
-  "sourceHash": "sha256:7187a08982dbad4c7e9330900be699f90bc0daefd2d9d94109f3e7e513abe9dc",
-  "semanticSummaryHash": "sha256:3dbe1b469bb4977a3aeff74664177186f4443cd949a8ec2ade234fd8ce5c1855",
+  "sourceHash": "sha256:15f5404ae70fbdb9e14a16aa51e7917f6c29417536f1712484c184c77beb7f2a",
+  "semanticSummaryHash": "sha256:aed0426246c7f137a461c3a940b8c8cd7a2b03166cf273218749f7b23b433a86",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "promptingList added to the kind.ts fields and the steps summary matches kind-descriptor.ts (promptingList?: PromptingList), tracker and tool kind.ts, and piece-links.ts reading it. Bands ok.",
-  "reviewedAt": "2026-10-28T06:50:12.876Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:46.309Z"
 }

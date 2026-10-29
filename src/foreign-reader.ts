@@ -45,7 +45,7 @@ export async function readForeignFile(
     /**
      * NOTHING RECOGNISED IT: try the readings that repair a shape rather than a format.
      *
-     * A real studio had seven files behind "not in a format Bunraku recognises" and five held a
+     * A real studio had seven files behind "not in a format Bunzai recognises" and five held a
      * preset - four encoded as JSON twice over, one inside an export envelope. The bytes were fine;
      * the container was not. See repair-json.ts.
      *

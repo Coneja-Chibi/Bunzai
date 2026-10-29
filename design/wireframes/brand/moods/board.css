@@ -1,5 +1,5 @@
 /*
- * Shared frame for the six Bunraku identity mood boards. Only the board layout lives here; each board
+ * Shared frame for the six Bunzai identity mood boards. Only the board layout lives here; each board
  * owns its look through the custom properties it sets plus its own hero and pieces. Square corners
  * everywhere, dark everywhere.
  */

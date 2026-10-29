@@ -45,10 +45,10 @@ export interface LvbakImportReport {
 }
 
 export const ENCRYPTED_SECRETS_WARNING =
-  "Encrypted API keys were not imported. The key lives only in your separate Lumiverse ticket file, and Bunraku never asks for it.";
+  "Encrypted API keys were not imported. The key lives only in your separate Lumiverse ticket file, and Bunzai never asks for it.";
 
 export const VECTORS_WARNING =
-  "Vector index data was skipped. Nothing in Bunraku reads Lumiverse vectors.";
+  "Vector index data was skipped. Nothing in Bunzai reads Lumiverse vectors.";
 
 export function createLvbakReport(): LvbakImportReport {
   return {

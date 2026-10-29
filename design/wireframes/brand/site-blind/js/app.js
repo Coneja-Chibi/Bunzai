@@ -1,10 +1,10 @@
-/* Bunraku site prototype: router, views, live releases, OS detection, search.
+/* Bunzai site prototype: router, views, live releases, OS detection, search.
  * Static only (GitHub Pages). Hash routes so deep links work without a server.
  */
 (function () {
   "use strict";
 
-  const B = window.BUNRAKU;
+  const B = window.BUNZAI;
   const app = document.getElementById("app");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -87,7 +87,7 @@
   /* ================================================================ */
   const API = "https://api.github.com/repos/" + B.repo + "/releases?per_page=30";
   const RELEASES_PAGE = "https://github.com/" + B.repo + "/releases";
-  const CACHE_KEY = "bunraku.releases.v1";
+  const CACHE_KEY = "bunzai.releases.v1";
   const CACHE_MS = 10 * 60 * 1000;
 
   const releases = { state: "loading", list: [], reason: "" };
@@ -231,7 +231,7 @@
       '<a class="btn btn--rose' + (size === "lg" ? " btn--lg" : "") + '" href="' + esc(href) + '"' +
       (asset && !/^#/.test(href) ? " download" : "") + ">" + label + ' <span aria-hidden="true">&darr;</span></a>' +
       '<p class="dl-meta" aria-live="polite">' + meta + "</p>" +
-      (fam === "mobile" ? '<p class="dl-meta">Bunraku runs on computers. Open this page on Windows, Mac, or Linux to download.</p>' : "") +
+      (fam === "mobile" ? '<p class="dl-meta">Bunzai runs on computers. Open this page on Windows, Mac, or Linux to download.</p>' : "") +
       "</div>"
     );
   }
@@ -310,7 +310,7 @@
       '<div class="promise__copy">' +
       '<p class="eyebrow">House rules</p>' +
       '<h2 class="marquee marquee--md">Yours, <em>privately</em></h2>' +
-      '<p class="lede">Bunraku is an app on your computer, not a website you log into. There is no account to make.</p>' +
+      '<p class="lede">Bunzai is an app on your computer, not a website you log into. There is no account to make.</p>' +
       "</div>" +
       '<div class="knockout" role="list">' +
       '<p role="listitem">+ Free, and the code is open for anyone to read.</p>' +
@@ -341,9 +341,9 @@
     const rel = latest();
     const no = rel ? "No. " + esc(rel.version) : "No. 0.1";
     return (
-      '<div class="ticket-wrap"><figure class="ticket" aria-label="Bunraku admit-one ticket">' +
+      '<div class="ticket-wrap"><figure class="ticket" aria-label="Bunzai admit-one ticket">' +
       '<div class="ticket__main">' +
-      '<span class="ticket__top"><span>Bunraku</span><span class="ticket__no">' + no + "</span></span>" +
+      '<span class="ticket__top"><span>Bunzai</span><span class="ticket__no">' + no + "</span></span>" +
       '<span class="ticket__admit">Admit<br>One</span>' +
       '<span class="ticket__line">Your seat is on your own computer.</span>' +
       '<span class="ticket__fine">Row B · Seat 12 · No late seating required</span>' +
@@ -595,7 +595,7 @@
   function viewHelp(query) {
     const q = query || "";
     return (
-      hero("Guides and help", "How can we <em>help</em>?", "Short guides for every part of Bunraku.", "cyan") +
+      hero("Guides and help", "How can we <em>help</em>?", "Short guides for every part of Bunzai.", "cyan") +
       '<form class="search" role="search" id="help-search" onsubmit="return false">' +
       '<label class="field-label" for="help-q">Search the guides</label>' +
       '<div class="search__row"><input id="help-q" type="search" autocomplete="off" placeholder="Try: import, lorebook, swipe, Windows warning" value="' + esc(q) + '">' +
@@ -701,14 +701,14 @@
         '<div class="dl-ticket">' +
         '<div class="dl-ticket__main">' +
         '<p class="dl-ticket__eyebrow">' + (known ? (os.forced ? "Showing" : "We think you are on") + " " + OS_NAMES[fam] : fam === "mobile" ? "You are on a phone or tablet" : "We could not tell your system") + "</p>" +
-        '<h2 class="dl-ticket__title">' + (known ? "Bunraku for " + OS_NAMES[fam] : "Pick your system below") + "</h2>" +
+        '<h2 class="dl-ticket__title">' + (known ? "Bunzai for " + OS_NAMES[fam] : "Pick your system below") + "</h2>" +
         '<p class="dl-ticket__facts"><span>Version ' + esc(rel.version) + "</span><span>" + fmtDate(rel.date) + "</span>" + (asset ? "<span>" + fmtSize(asset.size) + "</span><span>" + esc(asset.kind) + "</span>" : "") + "</p>" +
         (asset
           ? '<a class="btn btn--rose btn--lg" href="' + esc(asset.url) + '" download>Download for ' + OS_NAMES[fam] + ' <span aria-hidden="true">&darr;</span></a>'
           : known
             ? '<p>This release has no ' + OS_NAMES[fam] + ' build yet. <a href="' + esc(rel.url) + '" rel="noopener">See the release on GitHub</a>.</p>'
             : fam === "mobile"
-              ? "<p>Bunraku is a desktop app. Open this page on your Windows, Mac, or Linux computer to download it. Or <a href=\"#/try\">try the Studio in a browser</a>.</p>"
+              ? "<p>Bunzai is a desktop app. Open this page on your Windows, Mac, or Linux computer to download it. Or <a href=\"#/try\">try the Studio in a browser</a>.</p>"
               : "") +
         (fam === "mac" && asset ? '<p class="dl-ticket__hint">' + (os.arch ? "Picked for your " + (os.arch === "x64" ? "Intel" : "Apple silicon") + " Mac." : "Picked for Apple silicon (M1 and newer). Older Intel Mac? Use the Intel download below.") + "</p>" : "") +
         "</div>" +
@@ -732,18 +732,18 @@
       : "";
 
     return (
-      hero("Download", "Get <em>Bunraku</em>", "Free, open source, and yours to keep.", "rose") +
+      hero("Download", "Get <em>Bunzai</em>", "Free, open source, and yours to keep.", "rose") +
       '<p class="source-line">' + sourceNote() + (releases.state === "sample" ? ' <a href="' + RELEASES_PAGE + '" rel="noopener">Open the releases page on GitHub</a>' : "") + "</p>" +
       main +
       table +
       '<section class="notes-grid">' +
       '<div class="note" id="windows-warning"><p class="note__k">Windows</p><h3>"Windows protected your PC"</h3>' +
-      "<p>Bunraku is new and not signed yet, so Windows may say it does not recognize the app. That warning is about the app being new, not about anything wrong with it.</p>" +
+      "<p>Bunzai is new and not signed yet, so Windows may say it does not recognize the app. That warning is about the app being new, not about anything wrong with it.</p>" +
       "<p>Choose <b>More info</b>, then <b>Run anyway</b>. You only need to do this once.</p></div>" +
       '<div class="note"><p class="note__k">First launch</p><h3>It finds its own seat</h3>' +
-      "<p>The first time you open Bunraku, it adds itself to your Start menu, so you can open it like any other app from then on.</p></div>" +
+      "<p>The first time you open Bunzai, it adds itself to your Start menu, so you can open it like any other app from then on.</p></div>" +
       '<div class="note"><p class="note__k">What you need</p><h3>Your own AI key</h3>' +
-      '<p>Bunraku uses a key from the AI service you choose. <a href="#/help/first-scene/key">How to add it</a>.</p></div>' +
+      '<p>Bunzai uses a key from the AI service you choose. <a href="#/help/first-scene/key">How to add it</a>.</p></div>' +
       "</section>" +
       '<p class="alt-link center"><a href="#/news">See what changed in each version</a> · <a href="#/try">Try the Studio in your browser first</a></p>'
     );
@@ -786,7 +786,7 @@
       hero("Try it", "The Studio, in your <em>browser</em>", "Make and edit things right here, with nothing to install.", "violet") +
       '<section class="try">' +
       '<div class="try__panel">' +
-      '<p class="lede">The Studio is the making side of Bunraku, running in your browser. Build a character, write a lorebook, or tune a preset and see how it all works.</p>' +
+      '<p class="lede">The Studio is the making side of Bunzai, running in your browser. Build a character, write a lorebook, or tune a preset and see how it all works.</p>' +
       '<div class="try__cols">' +
       '<div><p class="field-label">In the browser</p><div class="knockout knockout--sm"><p>+ Edit characters, lorebooks, and presets.</p><p>+ Macros with live preview.</p><p>+ Nothing to install.</p></div></div>' +
       '<div><p class="field-label">Needs the app</p><div class="knockout knockout--sm knockout--rose"><p>- Chatting with characters.</p><p>- Keeping your work after the tab closes.</p></div></div>' +
@@ -807,7 +807,7 @@
   /* ================================================================ */
   /* Router                                                           */
   /* ================================================================ */
-  const TITLES = { "": "Bunraku", tour: "Feature tour", help: "Guides and help", download: "Download", news: "What's new", try: "Try it" };
+  const TITLES = { "": "Bunzai", tour: "Feature tour", help: "Guides and help", download: "Download", news: "What's new", try: "Try it" };
 
   function parse() {
     const raw = location.hash.replace(/^#\/?/, "");
@@ -824,16 +824,16 @@
     const [a, b, c] = parts;
     let html, after, title;
     switch (a || "") {
-      case "": html = viewHome(); after = bindDemo; title = "Bunraku · AI roleplay on your own computer"; break;
-      case "tour": html = b ? viewFeature(b) : viewTour(); title = b && byId(B.features, b) ? byId(B.features, b).title.join(" ") + " · Bunraku" : "Feature tour · Bunraku"; break;
+      case "": html = viewHome(); after = bindDemo; title = "Bunzai · AI roleplay on your own computer"; break;
+      case "tour": html = b ? viewFeature(b) : viewTour(); title = b && byId(B.features, b) ? byId(B.features, b).title.join(" ") + " · Bunzai" : "Feature tour · Bunzai"; break;
       case "help":
-        if (b) { html = viewGuide(b, c); title = (byId(B.guides, b) || { title: "Help" }).title + " · Bunraku"; }
-        else { html = viewHelp(q); after = bindHelp; title = "Guides and help · Bunraku"; }
+        if (b) { html = viewGuide(b, c); title = (byId(B.guides, b) || { title: "Help" }).title + " · Bunzai"; }
+        else { html = viewHelp(q); after = bindHelp; title = "Guides and help · Bunzai"; }
         break;
-      case "download": html = viewDownload(); title = "Download · Bunraku"; break;
-      case "news": html = viewNews(); title = "What's new · Bunraku"; break;
-      case "try": html = viewTry(); title = "Try it · Bunraku"; break;
-      default: html = viewNotFound(); title = "Not found · Bunraku";
+      case "download": html = viewDownload(); title = "Download · Bunzai"; break;
+      case "news": html = viewNews(); title = "What's new · Bunzai"; break;
+      case "try": html = viewTry(); title = "Try it · Bunzai"; break;
+      default: html = viewNotFound(); title = "Not found · Bunzai";
     }
     app.innerHTML = html;
     document.title = title;

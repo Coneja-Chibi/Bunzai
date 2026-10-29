@@ -12,7 +12,7 @@ import { escapeRegex } from "../../../src/core/regex/escape";
 
 const rig = await makeRig("clicks", process.env.AUDIT_URL ?? "http://127.0.0.1:8331");
 
-const BLOCK = /really |quit bunraku|restart bunraku|open bunraku|github|releases|view release/i;
+const BLOCK = /really |quit bunzai|restart bunzai|open bunzai|github|releases|view release/i;
 
 interface Clickable {
   index: number;

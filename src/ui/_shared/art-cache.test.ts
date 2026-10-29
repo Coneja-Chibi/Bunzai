@@ -317,7 +317,7 @@ describe("attachArtCacheLockListener", () => {
     };
     attachArtCacheLockListener(fakeTarget as unknown as typeof window, cache);
     expect(listeners).toHaveLength(1);
-    expect(listeners[0]?.[0]).toBe("bunraku:library-locked");
+    expect(listeners[0]?.[0]).toBe("bunzai:library-locked");
 
     listeners[0]?.[1]();
     await flush();

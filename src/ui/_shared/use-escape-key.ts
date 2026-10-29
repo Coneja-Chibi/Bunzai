@@ -37,7 +37,7 @@ interface EscapeDocument {
  * bundles, each with its own copy of this file, and two arbiters would each claim the press (the first one
  * prevents it, the second then sees it as spent), so the newest consumer never heard it.
  */
-const SLOT = Symbol.for("bunraku.escape-arbiter");
+const SLOT = Symbol.for("bunzai.escape-arbiter");
 const slot = (doc: Document): { [SLOT]?: EscapeDocument } => doc as unknown as { [SLOT]?: EscapeDocument };
 
 function above(left: EscapeOwner, right: EscapeOwner): boolean {

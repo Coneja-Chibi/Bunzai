@@ -9,7 +9,7 @@ related: [reference/architecture, reference/entities/character, guide/platforms/
 
 # SillyTavern format
 
-SillyTavern is the de-facto standard ecosystem for local AI roleplay. bunraku reads and writes its Character
+SillyTavern is the de-facto standard ecosystem for local AI roleplay. bunzai reads and writes its Character
 Card V1, V2, and V3 cards and its standalone world info (worldbook) files. The card is carried either as a
 `.json` file or embedded in a `.png` via base64 text chunks. The character codec writes `.json` by
 default and `.png` when an export asks for one. V3 PNGs carry the full V3 JSON in `ccv3` and a
@@ -262,7 +262,7 @@ unknown fields attached when entries are reordered (`lorebook.test.ts`).
   it maps to the scalar `worldName`, not `knowledgeRefs` (`tavern-fields.ts:111,142`). An embedded book is
   `data.character_book` and is handled by the bundle layer.
 - `displayIndex` is a distinct axis. In a real card `order` can be uniform (100) while `displayIndex` runs
-  `0..3`, so bunraku never fabricates `displayIndex` from `sortOrder` on a cross-format write; a book that
+  `0..3`, so bunzai never fabricates `displayIndex` from `sortOrder` on a cross-format write; a book that
   authored none omits it (`lorebook.ts:189,215-217`).
 - Regex codec (`sillytavern-regex`). Reads the bare `RegexScriptData[]` array (Marinara's Essentials packs)
   or a card's `extensions.regex_scripts`, scoring `0.9` for the file and `0.85` for the card block; a full
@@ -277,7 +277,7 @@ unknown fields attached when entries are reordered (`lorebook.test.ts`).
   persona back so every other persona's parsed fields remain unchanged (`persona.ts:9-14,110-160`).
   When two personas in the backup share a display name, `body.name` becomes `Name (avatar stem)` so the
   shelf can tell them apart; the sealed backup keeps ST's own names and export writes a name back only when
-  the user changed it. ST's `connections` (persona-to-character links) have no Bunraku field and ride in
+  the user changed it. ST's `connections` (persona-to-character links) have no Bunzai field and ride in
   escrow. A backup carries no avatar images: those live in ST's `User Avatars` folder and are attached to
   the saved persona through the editor's own upload-then-patch path.
 
@@ -285,7 +285,7 @@ unknown fields attached when entries are reordered (`lorebook.test.ts`).
   codec also reads four more ST file shapes. A KoboldAI (`temp`, `rep_pen`, `typical`), TextGen (`temp` plus
   `typical_p`, `freq_pen`, ...) or NovelAI (`order` plus `tail_free_sampling`) sampler set becomes a preset flagged
   `samplerSet`; its temperature, top p/k/a, min p and repetition penalty (NovelAI: the window only) and, where the file
-  has them, the TextGen frequency/presence penalties, `genamt` (as `maxTokens`) and window land on `samplers`. Everything Bunraku never sends
+  has them, the TextGen frequency/presence penalties, `genamt` (as `maxTokens`) and window land on `samplers`. Everything Bunzai never sends
   (typical, tfs, mirostat, DRY, sampler order, grammar) stays sealed in the raw twin, and so do NovelAI's repetition
   penalty terms, which are on NovelAI's own scale. A system prompt (`{ name, content, post_history? }`, or the
   `sysprompt` a TextGen file bundles) and a reasoning template (`{ name, prefix, suffix, separator }`) become presets

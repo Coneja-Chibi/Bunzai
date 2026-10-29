@@ -3,7 +3,7 @@
  * QuickPlayPanel Narrator Model picker, :1709-1904): a 40px tile with the model's display name and its provider and window, over a dropdown
  * capped at 16rem with the Provider filter, a search, and each connection's models under a sticky head, 32px tile and name first. The list is the AI wing's own
  * (use-scene-models.ts). What a pick does is the caller's: the scene's model, or the fallback. RoleCall's billing badges ("Not In Your Plan", "In-house") have no
- * Bunraku counterpart; a connection scenes cannot use shows "Setup Required" and its reason, and cannot be picked. RoleCall's second filter, Model type, needs a
+ * Bunzai counterpart; a connection scenes cannot use shows "Setup Required" and its reason, and cannot be picked. RoleCall's second filter, Model type, needs a
  * family per model that Kit's lists do not carry, so it is not drawn. RoleCall anchors the dropdown to the bottom of its whole section (under the Fallback control);
  * here it opens under the button it belongs to.
  */

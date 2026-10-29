@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/README",
   "sourcePath": "docs/reference/entities/README.md",
-  "sourceHash": "sha256:6595bd0cde23ca8557c4db59f29ccf497d11716b21e2d5585a9947f55e753566",
-  "semanticSummaryHash": "sha256:21d4b531187074f24d87743d6b482d97419e3753e698981ad1adfc7f8fb0dcf3",
+  "sourceHash": "sha256:3164c0aa2f1c7dbbf2887e8b53c8eb20f5e4d5b02ad87b069e4ea9fca4642bab",
+  "semanticSummaryHash": "sha256:e472df8a89da40b6441f5a3d1298a438195daf1712b6bd686f2cf77bdab3539e",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Tracker row and kind lists match KIND_IDS and tracker.md; non-short sections in band.",
-  "reviewedAt": "2026-10-27T21:14:18.536Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:43.665Z"
 }

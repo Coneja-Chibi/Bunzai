@@ -16,9 +16,9 @@ import {
 
 describe("requests", () => {
   test("initialize carries the protocol version and who is asking", () => {
-    const parsed = JSON.parse(initializeRequest(1, "bunraku", "1.2.3")) as Record<string, unknown>;
+    const parsed = JSON.parse(initializeRequest(1, "bunzai", "1.2.3")) as Record<string, unknown>;
     expect(parsed["method"]).toBe("initialize");
-    expect(parsed["params"]).toMatchObject({ clientInfo: { name: "bunraku", version: "1.2.3" } });
+    expect(parsed["params"]).toMatchObject({ clientInfo: { name: "bunzai", version: "1.2.3" } });
   });
 
   test("the initialized notification has no id, because it must never be answered", () => {

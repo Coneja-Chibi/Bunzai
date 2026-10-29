@@ -16,7 +16,7 @@ export const figures = {
       fig: "fig·01",
       title: "one wire, two names",
       caption:
-        "A Chub card is a SillyTavern-shaped Character Card v2/v3 with an extensions.chub block riding inside it. Bunraku reads that block on the Library, edits it as its own set of cards on the Workbench, and on the Press an export back to Chub or SillyTavern keeps it whole. An export to a different app carries the shared character and leaves the Chub block behind.",
+        "A Chub card is a SillyTavern-shaped Character Card v2/v3 with an extensions.chub block riding inside it. Bunzai reads that block on the Library, edits it as its own set of cards on the Workbench, and on the Press an export back to Chub or SillyTavern keeps it whole. An export to a different app carries the shared character and leaves the Chub block behind.",
       steps: [
         { label: "Drop on the Library", sub: ".png or .json card", color: "teal" },
         { label: "Read as SillyTavern", sub: "extensions.chub kept whole", color: "sage" },

@@ -116,7 +116,7 @@ export async function stageAssetStream(body: ReadableStream<Uint8Array> | null, 
     stillLive(uploadGeneration, controller.signal);
     if (!(await isUnlocked())) throw new AssetStageError(423, "the library is locked");
     stillLive(uploadGeneration, controller.signal);
-    upload.dir = await mkdtemp(join(tmpdir(), "bunraku-asset-staged-"));
+    upload.dir = await mkdtemp(join(tmpdir(), "bunzai-asset-staged-"));
     const file = join(upload.dir, "sealed.bin");
     stillLive(uploadGeneration, controller.signal);
     const sealed = hashSink(await sealedFileSink(file, KEY));

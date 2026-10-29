@@ -13,7 +13,7 @@ import type {
 import type { KitBridge } from "../bridge";
 import type { GraveyardFile } from "../../studio/graveyard-shape";
 import type { ChangeSession } from "../changes/session";
-import type { BunrakuDocs } from "../docs/repository";
+import type { BunzaiDocs } from "../docs/repository";
 import type { ResultStore } from "../results/store";
 import type { StudioExports } from "../../studio/exports";
 import type { Grant } from "./_shared/grants";
@@ -23,8 +23,8 @@ export interface ToolContext {
   bridge: KitBridge;
   /** Session-local preview drafts; present in the live Kit dispatch context. */
   changes?: ChangeSession;
-  /** Read-only access to the catalog-contained Bunraku documentation corpus. */
-  docs?: BunrakuDocs;
+  /** Read-only access to the catalog-contained Bunzai documentation corpus. */
+  docs?: BunzaiDocs;
   /** Bounded, opaque session-local storage for oversized tool observations. */
   results?: ResultStore;
   /** Write access to the studio's exports folder. Separate from the bridge because an export is a
@@ -104,7 +104,7 @@ export interface DraftReview {
    * What the warnings actually SAY.
    *
    * The projection carried only a count, so a draft could warn that applying an edit to a file
-   * read through an adapter saves a Bunraku copy beside it, and the person confirming would see
+   * read through an adapter saves a Bunzai copy beside it, and the person confirming would see
    * "1 warning" and no words. A warning nobody can read is decoration on a decision.
    */
   warnings?: readonly string[];

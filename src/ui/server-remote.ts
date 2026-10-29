@@ -39,7 +39,7 @@ const LAN_PORT = 8790;
  * inside a standalone Bun executable it points at the virtual filesystem, so the old single-candidate
  * version resolved to `B:\sidecar\sidecar.exe` and could never hit. Every packaged studio therefore
  * failed to start remote access no matter what was installed beside it. `process.execPath` is the real
- * exe on disk, so the packaged lookup is a sibling `sidecar/` folder next to Bunraku.exe.
+ * exe on disk, so the packaged lookup is a sibling `sidecar/` folder next to Bunzai.exe.
  *
  * Returns null rather than a hopeful path: the caller renders "unavailable" up front instead of
  * offering a control that spawns a guess and translates the OS error afterwards.
@@ -329,7 +329,7 @@ export function setupRemoteAccess(deps: {
   const lan = createLanManager({
     makeAppHandler: () => makeHandler({ remote, lanApproved: true }),
     port: LAN_PORT,
-    certDir: `${studioDir}/.bunraku-lan`,
+    certDir: `${studioDir}/.bunzai-lan`,
     now: () => Date.now(),
   });
 

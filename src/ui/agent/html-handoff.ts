@@ -22,7 +22,7 @@
 import { webStorage } from "../_shared/web-storage";
 
 /** Where the handoff waits between the two apps. */
-const KEY = "bunraku.html-view.doc";
+const KEY = "bunzai.html-view.doc";
 
 /**
  * What is waiting: a document written into a reply, or a piece already on disk.
@@ -38,7 +38,7 @@ export type HtmlHandoff =
   | { readonly at: "piece"; readonly id: string };
 
 /** The one event name both sides use. A typo here fails silently, so it lives in one place. */
-export const OPEN_HTML_EVENT = "bunraku:open-html";
+export const OPEN_HTML_EVENT = "bunzai:open-html";
 
 /** The app that draws it. Named here so the transcript never hardcodes an app id of its own. */
 export const HTML_VIEW_APP = "html-view";

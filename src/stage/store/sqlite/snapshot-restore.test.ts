@@ -409,7 +409,7 @@ test("a snapshot with a table missing, or a file that is no database, gets a pla
   writeFileSync(junk, "this is not a database file at all, just words, long enough to look like a header ".repeat(40));
   for (const act of [() => r.snapshots.preview("manual-1790000000000"), () => r.snapshots.restore("manual-1790000000000")]) {
     const error = await fail(act());
-    expect(error!.message).toContain("not a Bunraku snapshot");
+    expect(error!.message).toContain("not a Bunzai snapshot");
     expect(error!.message).not.toMatch(/SQLITE|not a database/i);
   }
   expect(await titles(r)).toEqual(["Alpha", "Beta"]);

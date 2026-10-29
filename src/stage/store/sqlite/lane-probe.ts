@@ -20,7 +20,7 @@ import { openStageDatabase } from "./database";
 import { MIGRATIONS } from "./migrations";
 import { runOnLane, startLaneWorker } from "../../worker-lane";
 
-const dir = mkdtempSync(join(tmpdir(), "bunraku-lane-probe-"));
+const dir = mkdtempSync(join(tmpdir(), "bunzai-lane-probe-"));
 let failed = false;
 try {
   const d = openStageDatabase(join(dir, "probe.db"), MIGRATIONS);

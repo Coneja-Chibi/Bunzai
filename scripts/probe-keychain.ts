@@ -21,7 +21,7 @@ if (!tool) {
   process.exit(0);
 }
 
-const home = mkdtempSync(join(tmpdir(), "bunraku-keychain-probe-"));
+const home = mkdtempSync(join(tmpdir(), "bunzai-keychain-probe-"));
 const failures: string[] = [];
 const check = async (name: string, fn: () => Promise<string>) => {
   try {
@@ -35,8 +35,8 @@ const check = async (name: string, fn: () => Promise<string>) => {
 /** Removes both items (the key and its marker), so the probe starts and ends with a clean store. */
 const forget = async () => {
   for (const account of ["vault-key", "vault-key-made"]) {
-    if (process.platform === "darwin") await spawnRunner("security", ["delete-generic-password", "-s", "bunraku-kit", "-a", account]);
-    else await spawnRunner("secret-tool", ["clear", "service", "bunraku-kit", "account", account]);
+    if (process.platform === "darwin") await spawnRunner("security", ["delete-generic-password", "-s", "bunzai-kit", "-a", account]);
+    else await spawnRunner("secret-tool", ["clear", "service", "bunzai-kit", "account", account]);
   }
 };
 

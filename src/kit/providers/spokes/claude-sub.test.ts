@@ -12,7 +12,7 @@ import { serverCommand } from "./claude-sub";
 describe("serverCommand", () => {
   test("runs this program again with the mcp subcommand", () => {
     // Never a path to a source file: a compiled binary has none, and pointing at one would fail
-    // silently for anyone who installed Bunraku instead of cloning it.
+    // silently for anyone who installed Bunzai instead of cloning it.
     const { command, args } = serverCommand();
     expect(command).toBe(process.execPath);
     expect(args).toContain("mcp");
@@ -23,7 +23,7 @@ describe("serverCommand", () => {
 
   test("under a runtime it names the CLI entry, and that entry exists", async () => {
     const { args } = serverCommand();
-    if (basename(process.execPath).toLowerCase().startsWith("bunraku")) {
+    if (basename(process.execPath).toLowerCase().startsWith("bunzai")) {
       expect(args).toEqual(["mcp", "--read-only"]);
       return;
     }

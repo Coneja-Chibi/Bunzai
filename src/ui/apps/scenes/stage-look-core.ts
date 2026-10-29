@@ -23,7 +23,7 @@ export type AutoScroll = (typeof AUTO_SCROLLS)[number];
 export const EDGE_STYLES = ["single", "segmented"] as const;
 export type EdgeStyle = (typeof EDGE_STYLES)[number];
 
-/** RoleCall's message-fonts.ts:31-40, each with the face Bunraku bundles (src/ui/theme/fonts). "default" is the theme's own font. */
+/** RoleCall's message-fonts.ts:31-40, each with the face Bunzai bundles (src/ui/theme/fonts). "default" is the theme's own font. */
 export const LOOK_FONTS = [
   { id: "default", label: "Sans (Default)", stack: undefined },
   { id: "dyslexic", label: "OpenDyslexic", stack: '"OpenDyslexic", sans-serif', note: "Dyslexia-friendly" },

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/platforms/lumiverse",
   "sourcePath": "docs/guide/platforms/lumiverse.md",
-  "sourceHash": "sha256:691192a66df37244785acf30ab4cf0b7e79fdaf3c88731ea6b296a082049e3b2",
-  "semanticSummaryHash": "sha256:b81acd2a50d1cb0d6327baa3b878f524a25e2d2cdea23ed70e9ef9d59dcaa103",
+  "sourceHash": "sha256:27d98742e90454fe028c9135da0c05d7724da77fa619750a496eeb11974443f6",
+  "semanticSummaryHash": "sha256:7dd3268a9f8b07e4e76794600638447cec001b62160669b964dbb81ec2fdfc6b",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:46.184Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:37.742Z"
 }

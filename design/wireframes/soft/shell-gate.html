@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="tokens-soft.css">
 <link rel="stylesheet" href="soft-parts.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
  * shell-gate: what the window shows before the Studio (src/ui/shell/library-gate.tsx). Content and
@@ -138,7 +138,7 @@ checked  character/the-lighthouse-keeper.json
 checked  lorebook/harbor-town.json
 carrying preset/moonlit.json</pre>
     <div class="cues-count">214 / 412 pieces carried in</div>
-    <p class="subtle">Closing Bunraku now is safe: nothing is kept half done, and it starts over next time.</p>
+    <p class="subtle">Closing Bunzai now is safe: nothing is kept half done, and it starts over next time.</p>
   </div>
 </div>
 
@@ -191,7 +191,7 @@ carrying preset/moonlit.json</pre>
       <p style="margin:6px 0 0;color:var(--stage-danger-text);font-size:.9rem">The library could not open: the studio server did not answer. Your studio folder was not changed.</p>
     </div>
     <button class="s-btn">Try again &rarr;</button>
-    <p class="subtle">If this keeps happening, close Bunraku and open it again.</p>
+    <p class="subtle">If this keeps happening, close Bunzai and open it again.</p>
   </div>
 </div>
 
@@ -217,7 +217,7 @@ carrying preset/moonlit.json</pre>
     "door-notthis": "hasPassword=false AND hasWords=false: a library set up on another computer. No password field, no lines, no CTA - just the refusal, exactly as library-gate.tsx returns it.",
     loadin: "gateScreen() phase opening/loading-in. The proof block is a live-updating <pre>, last line \"carrying\" while done<total.",
     "loadin-noroom": "status.noRoom=true. Matches the CODE exactly: one StageNote (warn) + \"Try again\" (label flips to \"Restarting\" and disables while a retry POST runs). The old encryption wireframe's second button (\"Open the folder as it is\") is NOT in the shipped component and is intentionally left out here.",
-    allaboard: "phase unlocked, status.copied set, load-in not yet seen this session (sessionStorage key bunraku.library.loadInSeen).",
+    allaboard: "phase unlocked, status.copied set, load-in not yet seen this session (sessionStorage key bunzai.library.loadInSeen).",
     "allaboard-renamed": "Same screen when copied.renamed.length > 0: an ordered list, one line per keep-both rename.",
     failed: "phase failed (server down/restarting/500). Reason is whatever statusOnError() or the server supplied; \"the studio server did not answer\" is the code's own fallback text.",
   };

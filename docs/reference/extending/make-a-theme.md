@@ -2,7 +2,7 @@
 id: reference/extending/make-a-theme
 title: Make a theme
 audience: dev
-summary: How to author a Bunraku theme package, a manifest that picks host-built layout variants for 30 surfaces and sets a checked palette, fonts, frame shape, motion and accent behavior, and can go further with one checked stylesheet, its own fonts and images, and content in named slots, with a copy-paste starter.
+summary: How to author a Bunzai theme package, a manifest that picks host-built layout variants for 30 surfaces and sets a checked palette, fonts, frame shape, motion and accent behavior, and can go further with one checked stylesheet, its own fonts and images, and content in named slots, with a copy-paste starter.
 tags: [extending, theme, appearance, palette, surfaces, contrast, styles, fonts, slots, parts]
 related: [reference/architecture, reference/ui, reference/extending/add-a-format]
 ---
@@ -10,7 +10,7 @@ related: [reference/architecture, reference/ui, reference/extending/add-a-format
 # Make a theme
 
 A theme is a folder of data and, if it wants more power, one checked stylesheet. It never ships TSX,
-JavaScript or HTML into the page. Bunraku builds every layout variant itself; a theme **selects** variants
+JavaScript or HTML into the page. Bunzai builds every layout variant itself; a theme **selects** variants
 and **sets** checked values. A theme that carries code, an external URL, a raw color word in its
 descriptor or a radius is rejected when it is inspected, not when it is drawn. The stylesheet, fonts,
 images and slots described under [Going further](#going-further) are checked the same way, and none of
@@ -40,7 +40,7 @@ built-in manifest under a new id paints the same root attributes, custom propert
 ## What a package is
 
 ```
-bunraku.theme.mine/
+bunzai.theme.mine/
   manifest.json     the descriptor below
   LICENSE.txt       optional, shown before approval
   assets/*           optional images the manifest names: inert SVG, PNG or WebP
@@ -51,7 +51,7 @@ bunraku.theme.mine/
 The Appearance section of Settings imports it as one JSON envelope,
 `{"manifest": {...}, "assets": {"assets/name.svg": "<svg ...>", "assets/art.png": "<base64>", "styles.css": "..."}, "licenseText": "..."}`.
 SVG and CSS travel as text and PNG, WebP and woff2 as canonical base64. The host-baked
-Encore example (`src/extensions/examples/bunraku.theme.encore/`) can be downloaded in that shape. The
+Encore example (`src/extensions/examples/bunzai.theme.encore/`) can be downloaded in that shape. The
 bundled themes live under `src/extensions/themes/`; folder discovery is the only list, so a new folder is
 a new theme.
 
@@ -61,7 +61,7 @@ a new theme.
 
 | Field | Value |
 | --- | --- |
-| `id` | `bunraku.theme.<name>`, 2 to 59 characters of `a-z 0-9 . -` after the prefix |
+| `id` | `bunzai.theme.<name>`, 2 to 59 characters of `a-z 0-9 . -` after the prefix |
 | `version`, `name` | semantic version, display name (80 characters at most) |
 | `requests` | the permission scopes, which must equal the scopes the manifest derives (see below) |
 | `appearance.surfaces` | `{ "<surface id>": "<variant id>" }`; any subset of the 30 surfaces |
@@ -149,12 +149,12 @@ the failing pairs:
 - `type.display` is one of `archivo`, `cinzel`, `fraunces`, `atkinson`, `fredoka` (a rounded face);
   `type.ui` (labels, tabs, buttons and the text of a scene's wings) is any of those, `inter` or `system-ui` (the platform sans);
   `type.body` one of `archivo`, `atkinson`, `fraunces`, `inter` or `system-ui`; `type.mono` is `plex-mono`, `courier-prime`
-  (a typewriter face), `jetbrains-mono` or `system-mono` (the platform monospace). These are the fonts Bunraku ships; to add a face of your own, use `fonts`
+  (a typewriter face), `jetbrains-mono` or `system-mono` (the platform monospace). These are the fonts Bunzai ships; to add a face of your own, use `fonts`
   and `styles` (see [Going further](#going-further)). `type.scale` of 1 or 2 enlarges body text by 6 or 12 percent, and body text
   never goes below 16px.
 - `shape.frame` is `rule`, `double`, `bracket`, `slab` or `stamp`; `shape.frameWidth` is 1, 2 or 3 pixels;
   `shape.density` is `dense`, `comfortable`, `roomy` or `airy` and scales the spacing; `shape.motion` is
-  `none`, `calm`, `snappy` or `bouncy`. `shape.chrome` is `bunraku` (square corners, the 12px text floor) or `rolecall` (RoleCall's corner radii, small-label sizes,
+  `none`, `calm`, `snappy` or `bouncy`. `shape.chrome` is `bunzai` (square corners, the 12px text floor) or `rolecall` (RoleCall's corner radii, small-label sizes,
   zinc steps and wing colors, painted dark); there is no other radius field, and the frame style may vary but the radius may not. Reduced motion always wins over `shape.motion`.
 - `accent.follows: "user"` maps the accent color picked in Settings onto the `brand` role, and its neighbours
   28 degrees either side on the colour wheel onto the `action` and `select` roles, with the deep and text tones
@@ -198,7 +198,7 @@ marks. Change the id, the name and the values, keep `requests` equal to the deri
 ```json
 {
   "schemaVersion": 2,
-  "id": "bunraku.theme.starter",
+  "id": "bunzai.theme.starter",
   "version": "1.0.0",
   "name": "Starter",
   "requests": [
@@ -314,7 +314,7 @@ marks. Change the id, the name and the values, keep `requests` equal to the deri
       "frameWidth": 2,
       "density": "dense",
       "motion": "snappy",
-      "chrome": "bunraku"
+      "chrome": "bunzai"
     },
     "accent": {
       "follows": "user"
@@ -329,7 +329,7 @@ marks. Change the id, the name and the values, keep `requests` equal to the deri
 
 The descriptor above is tier zero: it picks and sets. Four optional fields go further, each through the same
 install, approval, update and revoke path, and each adds one scope that the installer shows in plain words.
-[Encore](../../../src/extensions/examples/bunraku.theme.encore/README.md) uses all of them and its README walks
+[Encore](../../../src/extensions/examples/bunzai.theme.encore/README.md) uses all of them and its README walks
 through each one.
 
 ### Parts: stable names to aim at
@@ -368,7 +368,7 @@ re-lay-out and animate anything outside the protected layer.
 The file is tokenized and checked as a whole; one bad token refuses the package. It may not contain:
 
 - `@import`, or any `url()` that is not `url(asset:<id>)` naming a file in the package;
-- `@font-face` whose `src` is not one package font, or that redefines a family Bunraku ships (Archivo, Cinzel, Fraunces, Atkinson Hyperlegible, IBM Plex Mono, Fredoka, Courier Prime, Inter, Lexend, OpenDyslexic, Crimson Pro, Playfair Display, JetBrains Mono);
+- `@font-face` whose `src` is not one package font, or that redefines a family Bunzai ships (Archivo, Cinzel, Fraunces, Atkinson Hyperlegible, IBM Plex Mono, Fredoka, Courier Prime, Inter, Lexend, OpenDyslexic, Crimson Pro, Playfair Display, JetBrains Mono);
 - rules nested inside rules, `attr()`, `image-set()`, `expression()`, `behavior` or `-moz-binding`;
 - `@keyframes` that reuse a host animation name;
 - `--host-*` properties, or any selector, attribute value or string that names the protected layer.
@@ -383,13 +383,13 @@ lightness to stay readable on your palette, and they are unset when a piece has 
 `var(--bk-character-accent, var(--bk-role-brand))` to fall back. Protected surfaces never see them.
 
 Your rules load last and are unlayered, so they override the host's normal rules at equal specificity. They
-do not match the protected layer: Bunraku adds a zero-specificity `:where(:not(.host-protected, .host-protected *))`
+do not match the protected layer: Bunzai adds a zero-specificity `:where(:not(.host-protected, .host-protected *))`
 to the subject of every selector, and the protected root redeclares the theme tokens in a higher cascade layer
 with `!important`. While a protected prompt is on screen, a watchdog checks that it is visible, sized, in place and
-clickable. If your styles cover it, Bunraku drops the styles and slots at once, keeps the prompt up, and revokes
+clickable. If your styles cover it, Bunzai drops the styles and slots at once, keeps the prompt up, and revokes
 the theme with a `broken` audit record; enabling it again needs fresh approval. A mod is hardened against, not
 isolated from, the protected layer: it can still restyle ancestors, and the watchdog catches the visible cases.
-`bunraku ui --safe-themes` (or `BUNRAKU_SAFE_THEMES=1`) resolves every theme to core for one launch.
+`bunzai ui --safe-themes` (or `BUNZAI_SAFE_THEMES=1`) resolves every theme to core for one launch.
 
 ### Fonts
 
@@ -401,12 +401,12 @@ Silkscreen under the SIL Open Font License. Keep body text on a readable face.
 ### Images
 
 `assets` takes SVG, PNG and WebP (`appearance.assets`). Reference one from CSS as `url(asset:<id>)`, from a
-slot item by id, or from `marks` as before. Every file is served by Bunraku from its own digest URL; a page
+slot item by id, or from `marks` as before. Every file is served by Bunzai from its own digest URL; a page
 never loads an image from anywhere else.
 
 ### Slots: content in named places
 
-`slots` places static content where the host reserved room (`ui.slots`). An item is data, drawn by Bunraku:
+`slots` places static content where the host reserved room (`ui.slots`). An item is data, drawn by Bunzai:
 
 - `{ "kind": "image", "asset": "<image id>", "alt": "..." }`
 - `{ "kind": "text", "text": "...", "class": "mod-<name>" }`, at most 280 characters,
@@ -457,4 +457,4 @@ appearance.
 
 1. Import the envelope in Settings, Appearance, and read the review. An appearance error names the field or the failing contrast pair; a bad envelope, id or asset path reports only that the package is invalid.
 2. Compare your surface picks with the matrix printed by `bun test src/extensions/theme-difference.test.ts`.
-3. Open every screen in your theme. Variants that Bunraku has not built yet show the current rendering.
+3. Open every screen in your theme. Variants that Bunzai has not built yet show the current rendering.

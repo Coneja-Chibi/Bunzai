@@ -1,6 +1,6 @@
 /**
  * The lore engine orchestrator: RoleCall's engine.ts process(), restructured as
- * a pure function over canonical books plus Bunraku's four changes (derived timers, seeded rng,
+ * a pure function over canonical books plus Bunzai's four changes (derived timers, seeded rng,
  * sortOrder/priority budgeting, positions returned not placed). Order, faithfully kept from
  * RoleCall: gather (enabled + character filter) -> direct match (sticky, cooldown, constant,
  * delay-until-recursion skip, delay, keyword/special/emotion triggers) -> recursion -> inclusion

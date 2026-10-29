@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/formats/agnai",
   "sourcePath": "docs/reference/formats/agnai.md",
-  "sourceHash": "sha256:70022381f5c288cc092bbf0f455a370dbc1c7f4e28bb27faad706d3119da4f78",
-  "semanticSummaryHash": "sha256:e0edfa8172d822e38058627e28a4977020878c14540e69e0c03deb7f56843851",
+  "sourceHash": "sha256:e5a6c2f744d5431798920bd9b4c79a3b9fa4086bc069274c6bdcc940b532104d",
+  "semanticSummaryHash": "sha256:f92529c6a81edd2ae78501eb95bab09d237679f04e90f674dca98f97d1a52b0e",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Verified the page edits and affected summaries against src/convert.ts: readPieces (card extractLorebook/extractCharacterBook, preset extractRegex, linking) and emitPieces/emitBundle/convertFile/withUnattached exist and behave as described. No stale inspectBundle/inspectPresetBundle/emitPresetBundle left in docs/reference or summaries; no function or file named that the page lacks.",
-  "reviewedAt": "2026-10-27T04:20:53.316Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:46.758Z"
 }

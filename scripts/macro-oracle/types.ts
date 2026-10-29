@@ -12,7 +12,7 @@
  * These fixtures are captured out-of-band by `extract.ts`, which runs each engine's own registration
  * code in its own checkout. Nothing here evaluates a macro and nothing here ships: this is dev
  * tooling that produces data. It therefore does not depend on ADR-012, which governs whether
- * Bunraku may host a macro evaluator at all. Do not read this harness as that ADR being assumed.
+ * Bunzai may host a macro evaluator at all. Do not read this harness as that ADR being assumed.
  */
 
 /** One macro as its own engine defines it. */

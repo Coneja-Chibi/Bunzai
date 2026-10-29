@@ -49,7 +49,7 @@ nullish fallback, conditional assignment, equality, inequality, and numeric comp
 are evaluated lazily.
 
 Macro expansion can therefore mutate chat or global state. A field containing `{{setvar...}}` is not
-passive prose even though it is stored as text. Bunraku keeps macros sealed during conversion and never
+passive prose even though it is stored as text. Bunzai keeps macros sealed during conversion and never
 evaluates them while importing, inspecting, summarizing, or exporting a piece.
 
 ## Common value families
@@ -78,7 +78,7 @@ early character fields, or Author's Note. Character-to-persona conversion may ne
 Scripts add pipe and variable contexts that ordinary prompt fields do not have.
 
 A target platform may share brace syntax while assigning different names, arguments, truthiness, or
-evaluation phases. Bunraku must not translate macros through superficial string replacement. Same-format
+evaluation phases. Bunzai must not translate macros through superficial string replacement. Same-format
 round trips preserve exact text; cross-format conversion should retain portable literal prose, report
 unsupported macro behavior, and avoid executing either source or target syntax.
 

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:eb4eba8d3b1056093d38311bd10c2566d05690f980fd4830fb83a4ac5886c187",
-  "semanticSummaryHash": "sha256:f95fb9020df3e4ed349e11d3b830027f0835c2c6bfd91c622bc2e2111c4ed8aa",
+  "sourceHash": "sha256:c67c960de2283741d97c7aa19698827dcbb4ac164fd594632977e0c7d83ceedc",
+  "semanticSummaryHash": "sha256:ca431c59c02accaf7b0935435b80547255007c927aadbcf323b57e359cb6fb10",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Skills in the + Marker menu and the Feature node lines are right: MarkerMenu builds its slots from MARKER_LABELS plus FEATURE_MARKER_SLOTS and PipelineLayer draws a Feature node per FEATURE_MARKER_SLOTS entry, so Skills appears in both, named by markerSlotName ('Skills'). nodes-view summary needs no change; sidecar fresh.",
-  "reviewedAt": "2026-10-29T09:52:28.247Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:09.729Z"
 }

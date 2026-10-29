@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/sillytavern/macro-reference",
   "sourcePath": "docs/reference/platforms/sillytavern/macro-reference.md",
-  "sourceHash": "sha256:1ae66a0de77b5f55ebf42eb236acc686c9b91532005420f2475d31b92df1e8b3",
-  "summary": "Complete pinned catalog of every macro named in SillyTavern's official macro manual rather than a family-level sample. Authority and limits distinguishes the static documented set from extension-provided runtime registrations and field-specific availability. The catalog then enumerates participant, card, persona, message, swipe, clock, variable, random, model-state, prompt-template, Instruct, reasoning, image-generation, whitespace, input, banned-word, and World Info outlet macros with signatures, values, mutation behavior, and scope qualifications. Structural `if`, `else`, comment, block, and flag behavior routes to the operator reference. Runtime discovery requires `/? macros` or autocomplete for one live installation while using this page for pinned documented semantics. It warns that a known name is not proof of universal field support and that state-changing expressions remain sealed in Bunraku during import, inspection, conversion, and export.",
+  "sourceHash": "sha256:c209e8a4ba066ca23405b4114d455cae4d201f474f71ae33248e283f0f87bea0",
+  "summary": "Complete pinned catalog of every macro named in SillyTavern's official macro manual rather than a family-level sample. Authority and limits distinguishes the static documented set from extension-provided runtime registrations and field-specific availability. The catalog then enumerates participant, card, persona, message, swipe, clock, variable, random, model-state, prompt-template, Instruct, reasoning, image-generation, whitespace, input, banned-word, and World Info outlet macros with signatures, values, mutation behavior, and scope qualifications. Structural `if`, `else`, comment, block, and flag behavior routes to the operator reference. Runtime discovery requires `/? macros` or autocomplete for one live installation while using this page for pinned documented semantics. It warns that a known name is not proof of universal field support and that state-changing expressions remain sealed in Bunzai during import, inspection, conversion, and export.",
   "topics": [
     "complete documented macro catalog",
     "macro signatures and values",
@@ -19,8 +19,8 @@
       "slug": "catalog-authority-and-limits",
       "title": "Catalog authority and limits",
       "level": 2,
-      "sourceHash": "sha256:c433dca507e8744538265c87e496a25c04d9557403266f58e7048e5aae7ef1e9",
-      "summary": "Catalog authority and limits defines completeness against the pinned official macro page, not against every future extension or local installation. SillyTavern's runtime registry can add names, while `/? macros` and autocomplete expose the live set and arguments. The tables use recommended modern signatures and qualify scope, return value, or mutation. Because fields are processed at different stages, catalog membership does not guarantee resolution everywhere. Bunraku treats state-changing or otherwise executable macro text as sealed and does not evaluate it during content operations.",
+      "sourceHash": "sha256:06f63eb987857ca45b13bf7c01d953bc86feadcfcc9efaef699cc7c2f04926eb",
+      "summary": "Catalog authority and limits defines completeness against the pinned official macro page, not against every future extension or local installation. SillyTavern's runtime registry can add names, while `/? macros` and autocomplete expose the live set and arguments. The tables use recommended modern signatures and qualify scope, return value, or mutation. Because fields are processed at different stages, catalog membership does not guarantee resolution everywhere. Bunzai treats state-changing or otherwise executable macro text as sealed and does not evaluate it during content operations.",
       "topics": [
         "pinned catalog authority",
         "runtime extensibility",

@@ -209,7 +209,7 @@ function UpdatesSection({ ctx }: { ctx: AppContext }): JSX.Element {
     const poll = async (): Promise<void> => {
       if (Date.now() - started > 60000) {
         setSwitching(null);
-        setSwitchError("Bunraku did not come back on its own. Start it again from your shortcut.");
+        setSwitchError("Bunzai did not come back on its own. Start it again from your shortcut.");
         return;
       }
       try {
@@ -235,7 +235,7 @@ function UpdatesSection({ ctx }: { ctx: AppContext }): JSX.Element {
         if (s.phase === "working") setSwitching(s.message || "Working...");
         else if (s.phase === "restarting") {
           clearInterval(id);
-          setSwitching("Restarting Bunraku...");
+          setSwitching("Restarting Bunzai...");
           reconnectAndReload();
         } else if (s.phase === "manual") {
           // packaged: the build was downloaded + verified; the app does NOT restart itself
@@ -301,7 +301,7 @@ function UpdatesSection({ ctx }: { ctx: AppContext }): JSX.Element {
           <div className={styles.cardTitle}>Could not load the release history</div>
           <div className={styles.cardBody}>GitHub could not be reached. Nothing else is affected.</div>
           <div className={styles.actions}>
-            <Button size="sm" onClick={() => requestExternal(RELEASES_PAGE, "Bunraku releases")}>
+            <Button size="sm" onClick={() => requestExternal(RELEASES_PAGE, "Bunzai releases")}>
               Open releases on GitHub
             </Button>
           </div>
@@ -322,7 +322,7 @@ function UpdatesSection({ ctx }: { ctx: AppContext }): JSX.Element {
               )}
             </div>
             <div className={styles.actions}>
-              <Button size="sm" onClick={() => requestExternal(RELEASES_PAGE, "Bunraku releases")}>
+              <Button size="sm" onClick={() => requestExternal(RELEASES_PAGE, "Bunzai releases")}>
                 Open releases on GitHub
               </Button>
             </div>

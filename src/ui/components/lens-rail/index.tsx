@@ -17,13 +17,13 @@ export interface LensRailProps {
   onOffTarget(m: OffTarget): void;
 }
 
-/** One-line sideways-scrolling lens chips; Bunraku (full card) first, off-target mode at the tail. */
+/** One-line sideways-scrolling lens chips; Bunzai (full card) first, off-target mode at the tail. */
 export function LensRail({ platforms, selected, onToggle, onClear, offTarget, onOffTarget }: LensRailProps): JSX.Element {
   return (
     <div className={styles.rail}>
       <div className={styles.scroll} role="group" aria-label="Writing for platform">
         <Chip pressed={selected.length === 0} onClick={onClear}>
-          Bunraku
+          Bunzai
         </Chip>
         {platforms.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (p) => (
           <Chip key={p.id} pressed={selected.includes(p.id)} onClick={() => onToggle(p.id)}>

@@ -1,6 +1,6 @@
-# bunraku documentation
+# bunzai documentation
 
-This is the reference documentation for **bunraku**, the Vaudeville Studios converter for AI-roleplay
+This is the reference documentation for **bunzai**, the Vaudeville Studios converter for AI-roleplay
 content. It is **docs-as-code**: it lives in the repo, is versioned with the code, and is kept true by
 being updated in the same change that adds or alters a feature. If a doc and the code disagree, the code
 is right and the doc is a bug; file it as one.
@@ -21,7 +21,7 @@ is right and the doc is a bug; file it as one.
 | Doc | What it covers |
 | --- | --- |
 | [architecture.md](architecture.md) | The engine: canonical model, escrow, the adapter contract, entity kinds, the registry, folders-as-schema, bundles, the CLI. Start here. |
-| [glossary.md](glossary.md) | Words that mean something particular in Bunraku, their traps, and the folder that owns each; points to the generated code map for single files. |
+| [glossary.md](glossary.md) | Words that mean something particular in Bunzai, their traps, and the folder that owns each; points to the generated code map for single files. |
 | [entities/character.md](entities/character.md) | The canonical character superset: every `CharacterBody` field, what it means, which formats produce it. |
 | [entities/lorebook.md](entities/lorebook.md) | The canonical lorebook superset: every entry and book field, and the fields that ride escrow instead of a canonical slot. |
 | [concepts/character-book.md](concepts/character-book.md) | The embedded CCv2/v3 `character_book` dialect and how a card's lorebook is extracted and re-embedded. |

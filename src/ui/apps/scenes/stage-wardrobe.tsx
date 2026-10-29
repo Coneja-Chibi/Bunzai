@@ -1,5 +1,5 @@
 /**
- * The Stage wing's Wardrobe tab (RoleCall's WardrobeWingPanel, an Understudies beta there; Bunraku has no tiers). Every theme-shaped display
+ * The Stage wing's Wardrobe tab (RoleCall's WardrobeWingPanel, an Understudies beta there; Bunzai has no tiers). Every theme-shaped display
  * rule the scene's regex sets carry (core/regex/wardrobe.ts) hung on a rack. An outfit paired with a roster option of the preset's choice
  * group goes in or out of rotation by writing that choice answer (the preset's own engine picks who takes the stage); a single-rule
  * standalone dress is worn or hung by switching its set on or off for the scene; components are counted, never controlled. Nothing here

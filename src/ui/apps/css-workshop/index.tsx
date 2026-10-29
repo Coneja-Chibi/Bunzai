@@ -4,14 +4,14 @@
  * Plan: docs/CSS-WORKSHOP-PLAN.md · Wireframes: design/vs-css-workshop*.html
  */
 import { OverlayWidgets } from "./overlay";
-import type { BunrakuApp } from "../../app-contract";
+import type { BunzaiApp } from "../../app-contract";
 import { CssWorkshopRoom } from "./room";
 import { icSvg } from "../../_shared/ic-svg";
 
 /** palette mark (flat stroke; house grammar) */
 const MARK_SVG = icSvg("lucide:palette", 18);
 
-const app: BunrakuApp = {
+const app: BunzaiApp = {
   OverlayWidgets,
   manifest: {
     id: "css-workshop",

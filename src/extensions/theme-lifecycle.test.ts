@@ -32,7 +32,7 @@ describe("theme lifecycle", () => {
     const store = memoryStateStore();
     const themes = await createThemeLifecycle(store, []);
     expect(await denied(themes.install("", "sha256", "approve"))).toBe(true);
-    expect(await themes.effective("bunraku.theme.encore")).toMatchObject({ themeId: null, appearance: null, fallbackReason: "not-installed" });
+    expect(await themes.effective("bunzai.theme.encore")).toMatchObject({ themeId: null, appearance: null, fallbackReason: "not-installed" });
     expect(await store.read("themeExtensions")).toBeNull();
   });
 
@@ -41,17 +41,17 @@ describe("theme lifecycle", () => {
     const first = await themes.inspect(imported());
     const installed = await themes.install(first.challenge, first.preview.digest, "approve");
     expect("enabled" in installed && installed.enabled).toBe(true);
-    expect((await themes.effective("bunraku.theme.encore")).packageId).toBe("bunraku.theme.encore");
+    expect((await themes.effective("bunzai.theme.encore")).packageId).toBe("bunzai.theme.encore");
     const changed = await themes.inspect(wider());
-    expect((await themes.effective("bunraku.theme.encore")).digest).toBe(first.preview.digest);
+    expect((await themes.effective("bunzai.theme.encore")).digest).toBe(first.preview.digest);
     expect(await denied(themes.install(changed.challenge, first.preview.digest, "approve"))).toBe(true);
     const approved = await themes.inspect(wider());
     await themes.install(approved.challenge, approved.preview.digest, "approve");
-    expect((await themes.effective("bunraku.theme.encore")).digest).toBe(approved.preview.digest);
-    expect((await themes.list()).find((item) => item.id === "bunraku.theme.encore")?.grantedScopes).toContain("appearance.assets");
-    await themes.revoke("bunraku.theme.encore");
-    expect(await themes.effective("bunraku.theme.encore")).toMatchObject({ appearance: null, fallbackReason: "revoked" });
-    expect(await denied(themes.enable("bunraku.theme.encore"))).toBe(true);
+    expect((await themes.effective("bunzai.theme.encore")).digest).toBe(approved.preview.digest);
+    expect((await themes.list()).find((item) => item.id === "bunzai.theme.encore")?.grantedScopes).toContain("appearance.assets");
+    await themes.revoke("bunzai.theme.encore");
+    expect(await themes.effective("bunzai.theme.encore")).toMatchObject({ appearance: null, fallbackReason: "revoked" });
+    expect(await denied(themes.enable("bunzai.theme.encore"))).toBe(true);
   });
 
   test("a challenged immutable snapshot is installed, and concurrent changes do not lose revocation", async () => {
@@ -63,7 +63,7 @@ describe("theme lifecycle", () => {
     const install = themes.install(pending.challenge, pending.preview.digest, "approve");
     const revoke = themes.revoke("theater");
     await Promise.all([install, revoke]);
-    expect((await themes.list()).find((entry) => entry.id === "bunraku.theme.encore")?.name).toBe("Encore");
+    expect((await themes.list()).find((entry) => entry.id === "bunzai.theme.encore")?.name).toBe("Encore");
     expect(await themes.effective("theater")).toMatchObject({ appearance: null, fallbackReason: "revoked" });
   });
 
@@ -119,10 +119,10 @@ describe("theme lifecycle", () => {
     expect((await themes.list())[0]).toMatchObject({ id: "theater", difference: 1, swatch: expect.arrayContaining([expect.stringMatching(/^#[0-9a-f]{6}$/)]) });
     expect((await themes.list())[0]!.swatch).toHaveLength(7);
     const twin = clone(builtin);
-    twin.manifest.id = "bunraku.theme.twin";
+    twin.manifest.id = "bunzai.theme.twin";
     const review = await themes.inspect(twin);
     const installed = await themes.install(review.challenge, review.preview.digest, "approve");
-    expect(installed).toMatchObject({ id: "bunraku.theme.twin", difference: 0 });
+    expect(installed).toMatchObject({ id: "bunzai.theme.twin", difference: 0 });
     expect((await themes.list()).find((entry) => entry.id === "theater")?.difference).toBe(0);
   });
 
@@ -142,7 +142,7 @@ describe("theme catalog survives a bad stored row", () => {
     const review = await first.inspect(imported());
     await first.install(review.challenge, review.preview.digest, "approve");
     const doc = JSON.parse((await store.read("themeExtensions"))!);
-    mutateDoc(doc.entries["bunraku.theme.encore"]);
+    mutateDoc(doc.entries["bunzai.theme.encore"]);
     await store.write("themeExtensions", JSON.stringify(doc));
     return { store, themes: await createThemeLifecycle(store, [builtin]) };
   };
@@ -151,22 +151,22 @@ describe("theme catalog survives a bad stored row", () => {
     const { store, themes } = await withBrokenRow();
     const items = await themes.list();
     expect(items.find((i) => i.id === "theater")).toMatchObject({ enabled: true, builtIn: true });
-    const bad = items.find((i) => i.id === "bunraku.theme.encore")!;
+    const bad = items.find((i) => i.id === "bunzai.theme.encore")!;
     expect(bad).toMatchObject({ enabled: false, grantedScopes: [], difference: 0, swatch: [], builtIn: false, name: "Encore" });
     expect(bad.invalid!.length).toBeGreaterThan(0);
     expect(bad.invalid!.length).toBeLessThanOrEqual(200);
-    expect(JSON.parse((await store.read("themeExtensions"))!).entries["bunraku.theme.encore"].enabled).toBe(true);
-    expect(await themes.effective("bunraku.theme.encore")).toMatchObject({ themeId: null, fallbackReason: "invalid-state" });
-    await themes.remove("bunraku.theme.encore");
+    expect(JSON.parse((await store.read("themeExtensions"))!).entries["bunzai.theme.encore"].enabled).toBe(true);
+    expect(await themes.effective("bunzai.theme.encore")).toMatchObject({ themeId: null, fallbackReason: "invalid-state" });
+    await themes.remove("bunzai.theme.encore");
     expect((await themes.list()).map((i) => i.id)).toEqual(["theater"]);
   });
 
   test("a digest mismatch and a scope mismatch are flagged and agree with effective()", async () => {
     for (const tamper of [(row: any) => { row.digest = "sha256:stale"; }, (row: any) => { row.scopes = ["appearance.assets"]; }]) {
       const { themes } = await withBrokenRow(tamper);
-      expect((await themes.list()).find((i) => i.id === "bunraku.theme.encore")).toMatchObject({ enabled: false, grantedScopes: [] });
-      expect((await themes.list()).find((i) => i.id === "bunraku.theme.encore")!.invalid).toBeString();
-      expect((await themes.effective("bunraku.theme.encore")).fallbackReason).toBe("invalid-state");
+      expect((await themes.list()).find((i) => i.id === "bunzai.theme.encore")).toMatchObject({ enabled: false, grantedScopes: [] });
+      expect((await themes.list()).find((i) => i.id === "bunzai.theme.encore")!.invalid).toBeString();
+      expect((await themes.effective("bunzai.theme.encore")).fallbackReason).toBe("invalid-state");
     }
   });
 

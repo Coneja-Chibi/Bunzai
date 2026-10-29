@@ -27,7 +27,7 @@ const hasLumiExpressionSurface = (original: Record<string, unknown>): boolean =>
 
 /**
  * @param original entity.original
- * @param targets editor lens platform ids (empty = full card / Bunraku)
+ * @param targets editor lens platform ids (empty = full card / Bunzai)
  */
 export function mediaCapabilities(args: {
   original: Record<string, unknown>;

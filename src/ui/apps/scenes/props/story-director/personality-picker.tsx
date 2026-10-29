@@ -1,7 +1,7 @@
 /**
  * The personality picker (RoleCall's DMPersonalitySelector.tsx): the chosen narrator as a card (a 72px initial tile, the name, the title chip, the tagline in quotes, the description, and the
  * improv, agency and info control chips) that opens a list of all ten, each with its description, Philosophy, Favorite Story Arcs, Emotional Focus and style chips. RoleCall draws each
- * personality in its own hex color and a portrait; Bunraku's personalities carry no color, so each takes a theme role. The portraits are RoleCall's own (docs/media/dm-personalities/,
+ * personality in its own hex color and a portrait; Bunzai's personalities carry no color, so each takes a theme role. The portraits are RoleCall's own (docs/media/dm-personalities/,
  * served by docAssetUrl); the Architect and the Oracle have none in RoleCall either, and a tile whose picture is missing shows the initial, RoleCall's own fallback.
  */
 import { useState, type CSSProperties, type JSX } from "react";

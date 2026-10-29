@@ -46,7 +46,7 @@ function callWorker<T>(
     return Promise.resolve({
       ok: false,
       reason: "error",
-      error: "Regex execution needs the installed Bunraku app so it can run on an isolated sandbox origin.",
+      error: "Regex execution needs the installed Bunzai app so it can run on an isolated sandbox origin.",
     });
   }
   const runId = ++runSequence;

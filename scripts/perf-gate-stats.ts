@@ -19,7 +19,7 @@ import { measure } from "./perf-measure";
 
 const BUDGET_MS = 100;
 const MESSAGES = 20_000;
-const dir = mkdtempSync(join(tmpdir(), "bunraku-perf-stats-"));
+const dir = mkdtempSync(join(tmpdir(), "bunzai-perf-stats-"));
 let result: { freezeMs: number; totalMs: number } | undefined;
 let counted = { messages: 0, scenes: 0 };
 let slices = 0;

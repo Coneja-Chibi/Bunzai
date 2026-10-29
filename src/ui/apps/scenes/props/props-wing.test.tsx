@@ -171,9 +171,9 @@ describe("PropsWing: empty state and tab meta", () => {
 
 describe("PropsWing: browser Studio", () => {
   test("shows the same failed-load message the temporary browser Studio's 501 sends", async () => {
-    getImpl = async () => { throw new ApiHttpError(501, "This control needs the installed Bunraku app and is unavailable in the temporary browser studio."); };
+    getImpl = async () => { throw new ApiHttpError(501, "This control needs the installed Bunzai app and is unavailable in the temporary browser studio."); };
     const flushSync = await mountHarness(makeCtx(), [fakeProp("a")]);
-    expect(bodyText()).toContain("This control needs the installed Bunraku app");
+    expect(bodyText()).toContain("This control needs the installed Bunzai app");
     unmount(flushSync);
   });
 });

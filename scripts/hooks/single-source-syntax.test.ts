@@ -92,7 +92,7 @@ test("syntax: updated private ciphertext staging retains only its exact write pr
     } else if (path.endsWith("server-staging.ts")) {
       expect(appDataWriteOutsideHome(path, source.replace("writeFile(path, sealed", "writeFile(path, text"))).toContain("writeAtomicReplace");
       expect(appDataWriteOutsideHome(path, source.replace("aesSeal(STAGING_KEY", "unsealed(STAGING_KEY"))).toContain("writeAtomicReplace");
-      expect(appDataWriteOutsideHome(path, source.replace("bunraku-import-staged-", "persistent-"))).toContain("writeAtomicReplace");
+      expect(appDataWriteOutsideHome(path, source.replace("bunzai-import-staged-", "persistent-"))).toContain("writeAtomicReplace");
     } else {
       const refused = (changed: string): void => expect(appDataWriteOutsideHome(path, changed)).toContain("writeAtomicReplace");
       // A plaintext write where the sealed one was, a second handle write, and every other way in.
@@ -124,10 +124,10 @@ test("syntax: the upload file sink and the sealed sink keep their reviewed calle
   expect(callers("fileSink")).toEqual(["src/ui/server-security.ts"]);
   expect(callers("streamBodyToFile")).toEqual(["src/ui/server-engine.ts", "src/ui/server-security.ts"]);
   const staging = readFileSync("src/ui/server-asset-staging.ts", "utf8");
-  expect(staging).toContain('mkdtemp(join(tmpdir(), "bunraku-asset-staged-"))');
+  expect(staging).toContain('mkdtemp(join(tmpdir(), "bunzai-asset-staged-"))');
   expect(staging).toContain("sealedFileSink(file, KEY)");
   expect(staging).toContain("const KEY = randomBytes(32);");
-  expect(readFileSync("src/ui/server-engine.ts", "utf8")).toContain('mkdtemp(join(tmpdir(), "bunraku-lvbak-upload-"))');
+  expect(readFileSync("src/ui/server-engine.ts", "utf8")).toContain('mkdtemp(join(tmpdir(), "bunzai-lvbak-upload-"))');
   // Staging no longer writes itself: any write import there is a new, unreviewed writer.
   expect(appDataWriteOutsideHome("src/ui/server-asset-staging.ts", staging)).toBeNull();
   for (const planted of [

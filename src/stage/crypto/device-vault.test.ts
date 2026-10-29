@@ -2,7 +2,7 @@
  * The keyring's device vault over the real key vault on this machine: whatever backend the vault
  * picks here, a sealed data key opens again; the lock is read from the sealed copy itself; and the
  * computer id stays put through a vault failure, while a new copy on a folder from another computer
- * gets a fresh one. Runs in a temporary BUNRAKU_HOME, never the person's real one.
+ * gets a fresh one. Runs in a temporary BUNZAI_HOME, never the person's real one.
  */
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -12,14 +12,14 @@ import { activeBackendId } from "../../kit/keystore/keystore";
 import { keystoreDeviceVault } from "./device-vault";
 
 let home = "";
-const saved = process.env["BUNRAKU_HOME"];
+const saved = process.env["BUNZAI_HOME"];
 beforeAll(() => {
-  home = mkdtempSync(join(tmpdir(), "bunraku-devicevault-"));
-  process.env["BUNRAKU_HOME"] = home;
+  home = mkdtempSync(join(tmpdir(), "bunzai-devicevault-"));
+  process.env["BUNZAI_HOME"] = home;
 });
 afterAll(() => {
-  if (saved === undefined) delete process.env["BUNRAKU_HOME"];
-  else process.env["BUNRAKU_HOME"] = saved;
+  if (saved === undefined) delete process.env["BUNZAI_HOME"];
+  else process.env["BUNZAI_HOME"] = saved;
   rmSync(home, { recursive: true, force: true });
 });
 
@@ -38,7 +38,7 @@ test("the lock is the one recorded on the copy, and a key-file copy is weak", as
   expect(await keystoreDeviceVault.strongerThan(sealed)).toBe(false);
 }, 30_000);
 
-const idFile = () => join(home, ".bunraku", "computer-id");
+const idFile = () => join(home, ".bunzai", "computer-id");
 /** A check no vault here can open: sealed on another computer, or a vault failing right now. */
 const unopenable = { v: 1, backend: "not-on-this-computer", payload: "c29tZW9uZSBlbHNl" };
 

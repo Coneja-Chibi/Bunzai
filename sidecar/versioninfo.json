@@ -19,13 +19,13 @@
     "FileSubType": "00"
   },
   "StringFileInfo": {
-    "CompanyName": "Bunraku",
-    "FileDescription": "Bunraku private remote-access link (Tailscale)",
+    "CompanyName": "Bunzai",
+    "FileDescription": "Bunzai private remote-access link (Tailscale)",
     "FileVersion": "0.4.0.0",
     "InternalName": "sidecar.exe",
-    "LegalCopyright": "Copyright Bunraku",
+    "LegalCopyright": "Copyright Bunzai",
     "OriginalFilename": "sidecar.exe",
-    "ProductName": "Bunraku Remote Access",
+    "ProductName": "Bunzai Remote Access",
     "ProductVersion": "0.4.0.0"
   },
   "VarFileInfo": {
@@ -34,5 +34,5 @@
       "CharsetID": "04B0"
     }
   },
-  "IconPath": "bunraku.ico"
+  "IconPath": "bunzai.ico"
 }

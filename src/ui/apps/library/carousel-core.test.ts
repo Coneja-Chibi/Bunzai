@@ -179,9 +179,9 @@ describe("sectionView", () => {
 
 describe("promptFormatWords", () => {
   test("says what the format holds and that nothing applies it yet, with no dash", () => {
-    expect(promptFormatWords(["instruct", "context"])).toBe("Instruct and context. Used by text-completion connections, which Bunraku does not have yet.");
+    expect(promptFormatWords(["instruct", "context"])).toBe("Instruct and context. Used by text-completion connections, which Bunzai does not have yet.");
     expect(promptFormatWords(["context"])).toStartWith("Context. Used by");
-    expect(promptFormatWords(undefined)).toBe("Used by text-completion connections, which Bunraku does not have yet.");
+    expect(promptFormatWords(undefined)).toBe("Used by text-completion connections, which Bunzai does not have yet.");
     expect(promptFormatWords(["instruct"])).not.toMatch(/\u2014/);
   });
 });

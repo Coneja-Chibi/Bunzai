@@ -27,7 +27,7 @@ test("every declared kind renders a section; empty kinds say (none yet)", () => 
   expect(md).toContain("`marinara-preset`");
   expect(md).toContain("## Packs (0)");
   expect(md).toContain("(none yet)");
-  expect(md).toContain("bun run bunraku convert");
-  expect(md).toContain("`bunraku label`");
+  expect(md).toContain("bun run bunzai convert");
+  expect(md).toContain("`bunzai label`");
   expect(md).not.toContain("bun run vaud");
 });

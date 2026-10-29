@@ -37,7 +37,7 @@ const corpus = JSON.parse(readFileSync(join(import.meta.dir, "../../../tools/rc-
 /** Entry id to the reason this engine deliberately differs from RoleCall on it. */
 const DEVIATIONS: Record<string, string> = {};
 
-/** Parse trees without Bunraku's source spans, which RoleCall's parser does not carry. */
+/** Parse trees without Bunzai's source spans, which RoleCall's parser does not carry. */
 const withoutSpans = (value: unknown): unknown =>
   Array.isArray(value)
     ? value.map(withoutSpans)

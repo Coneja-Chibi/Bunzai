@@ -1,5 +1,5 @@
 /**
- * The stage dossier: RoleCall's encryption-flow grammar for Bunraku's own screens (the approved
+ * The stage dossier: RoleCall's encryption-flow grammar for Bunzai's own screens (the approved
  * in-between wireframes in design/wireframes/encryption/in-between/). The Security settings and the
  * stage door are built from these pieces: a dossier with an act label and a marquee, a stage
  * direction, the lines box, the cue grid for typing words back, and the warning and error plates.

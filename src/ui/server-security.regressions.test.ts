@@ -1,7 +1,7 @@
 /**
  * Regression tests for the UI server's Host/Origin gate: an auth handler that trusts
  * X-Forwarded-Proto/Host to rewrite its own callback URLs lets a client-controlled header spoof
- * it. Bunraku's gate must decide Origin/Host purely from its own boot-time expected values and the
+ * it. Bunzai's gate must decide Origin/Host purely from its own boot-time expected values and the
  * real Origin header, never from a forwardable one.
  */
 import { describe, expect, test } from "bun:test";
@@ -74,7 +74,7 @@ describe("B14: all three /api gates refuse the same cross-site GET", () => {
   });
 
   test("checkRemoteApiRequest refuses", async () => {
-    expect(checkRemoteApiRequest(crossSiteGet({ "x-bunraku-sidecar-secret": "s" }), sec, "s")?.status).toBe(403);
+    expect(checkRemoteApiRequest(crossSiteGet({ "x-bunzai-sidecar-secret": "s" }), sec, "s")?.status).toBe(403);
   });
 
   test("checkLanApiRequest refuses", async () => {
@@ -114,7 +114,7 @@ describe("same-site GETs from a foreign loopback port are refused", () => {
     expect(checkApiRequest(get(foreign), sec)?.status).toBe(403);
     expect(checkApiRequest(get({ "sec-fetch-site": "same-site" }), sec)?.status).toBe(403);
     expect(checkLanApiRequest(get(foreign), sec)?.status).toBe(403);
-    expect(checkRemoteApiRequest(get({ ...foreign, "x-bunraku-sidecar-secret": "s" }), sec, "s")?.status).toBe(403);
+    expect(checkRemoteApiRequest(get({ ...foreign, "x-bunzai-sidecar-secret": "s" }), sec, "s")?.status).toBe(403);
   });
 
   test("the sandbox origin gets no exception: it never calls /api (ADR-009)", () => {
@@ -141,7 +141,7 @@ describe("same-site GETs from a foreign loopback port are refused", () => {
     const head = (site: string) => new Request("http://127.0.0.1:8321/api/x", { method: "HEAD", headers: { host: "127.0.0.1:8321", "sec-fetch-site": site } });
     expect(checkApiRequest(head("same-site"), sec)?.status).toBe(403);
     expect(checkApiRequest(head("same-origin"), sec)).toBeNull();
-    expect(checkRemoteApiRequest(new Request("http://127.0.0.1:8321/api/x", { headers: { "x-bunraku-sidecar-secret": "s", "sec-fetch-site": "Same-Site" } }), sec, "s")?.status).toBe(403);
+    expect(checkRemoteApiRequest(new Request("http://127.0.0.1:8321/api/x", { headers: { "x-bunzai-sidecar-secret": "s", "sec-fetch-site": "Same-Site" } }), sec, "s")?.status).toBe(403);
   });
 
   test("the LAN gate keeps header-less browsers: plain-http LAN pages never send Sec-Fetch-Site", () => {

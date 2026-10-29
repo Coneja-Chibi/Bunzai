@@ -41,7 +41,7 @@ const sectionNodes = (section: HelpSection, key: string): ReactNode[] => {
 export function HelpScreen({
   commands,
   onClose,
-  studioName = "Bunraku Studio",
+  studioName = "Bunzai Studio",
 }: {
   commands: readonly HelpCommand[];
   onClose: () => void;

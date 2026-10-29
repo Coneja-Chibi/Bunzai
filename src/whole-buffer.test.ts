@@ -49,7 +49,7 @@ const ALLOWED: Record<string, Entry> = {
   "src/ui/server-docs.ts": { count: 1, ceiling: 1, reason: "one shipped docs page" },
   "src/ui/sandbox-host.ts": { count: 2, ceiling: 8, reason: "bundled sandbox script output as text; not user data" },
   // Whole-file reads from disk.
-  "src/cli.ts": { count: 2, ceiling: "unbounded", reason: "bunraku convert reads the whole input with no size check (row 28)" },
+  "src/cli.ts": { count: 2, ceiling: "unbounded", reason: "bunzai convert reads the whole input with no size check (row 28)" },
   "src/kit/tools/folder-import.ts": { count: 2, ceiling: 64, reason: "Kit folder import, size checked against 64 MiB first (row 28)" },
   "src/kit/tools/folder-search.ts": { count: 1, ceiling: "unbounded", reason: "folder_search read: whole file as text before clipping (row 27)" },
   "src/studio/fs-backend.ts": { count: 1, ceiling: "unverified", reason: "a folder piece file read whole as one string (row 16)" },

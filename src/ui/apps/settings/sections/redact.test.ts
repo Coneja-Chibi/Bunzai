@@ -5,7 +5,7 @@ import { mask } from "./redact";
 test("mask replaces letters and digits but keeps separators", () => {
   expect(mask("NA5-VH3-CK2")).toBe("•••-•••-•••");
   expect(mask("https://10.0.0.207:8790")).toBe("•••••://••.•.•.•••:••••");
-  expect(mask("bunraku-studio.tail07fed6.ts.net")).toBe(
+  expect(mask("bunzai-studio.tail07fed6.ts.net")).toBe(
     "•••••••-••••••.••••••••••.••.•••",
   );
 });

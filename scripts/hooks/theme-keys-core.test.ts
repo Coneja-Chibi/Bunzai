@@ -11,7 +11,7 @@ describe("themeKeyHits", () => {
       'html[data-theme^="encore"] .d {}',
       'const css = `[data-theme="girliepop"] .e{}`;',
       'const css = "html[data-theme=\\"theater\\"] .f{}";',
-      'html[data-theme="bunraku.theme.encore"] .g {}',
+      'html[data-theme="bunzai.theme.encore"] .g {}',
       'html[data-theme="greenroom"] .h {}',
     ]) expect(themeKeyHits(line)).toHaveLength(1);
   });
@@ -22,14 +22,14 @@ describe("themeKeyHits", () => {
       "if (appearance.themeId === 'stage') return label;",
       'const flavor = "theater" === id ? 1 : 2;',
       'case "paper": return 1;',
-      'if (id == "bunraku.theme.encore") {}',
+      'if (id == "bunzai.theme.encore") {}',
       'const rc = theme === "greenroom";',
     ]) expect(themeKeyHits(line)).toHaveLength(1);
   });
 
   test("allows defaults, third-party ids and opted-out comparisons", () => {
     expect(themeKeyHits('const theme = next.theme ?? "theater";')).toEqual([]);
-    expect(themeKeyHits('if (id === "bunraku.theme.neon-pop") {}')).toEqual([]);
+    expect(themeKeyHits('if (id === "bunzai.theme.neon-pop") {}')).toEqual([]);
     expect(themeKeyHits('const kind = "paper-cut";')).toEqual([]);
     expect(themeKeyHits(['// theme-key-ok: bundled set only', 'const a = id === "paper";'].join(String.fromCharCode(10)))).toEqual([]);
   });

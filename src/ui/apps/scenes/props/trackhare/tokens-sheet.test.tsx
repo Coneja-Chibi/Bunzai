@@ -156,7 +156,7 @@ describe("exports", () => {
     await new Promise((r) => setTimeout(r, 0)); // triggerDownload awaits blob.text()
 
     expect(downloadCalls).toHaveLength(1);
-    expect(downloadCalls[0]!.filename).toBe("bunraku-reply-14.json");
+    expect(downloadCalls[0]!.filename).toBe("bunzai-reply-14.json");
     expect(JSON.parse(downloadCalls[0]!.text)).toEqual(trace());
     unmount();
   });
@@ -169,7 +169,7 @@ describe("exports", () => {
     await new Promise((r) => setTimeout(r, 0)); // triggerDownload awaits blob.text()
 
     expect(downloadCalls).toHaveLength(1);
-    expect(downloadCalls[0]!.filename).toBe("bunraku-reply-14.txt");
+    expect(downloadCalls[0]!.filename).toBe("bunzai-reply-14.txt");
     expect(downloadCalls[0]!.text).toContain("[system] Main Prompt\nWrite in a literary register.");
     unmount();
   });

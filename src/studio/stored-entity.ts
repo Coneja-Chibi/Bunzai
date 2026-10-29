@@ -17,7 +17,7 @@ type AnyEntity = ParsedCanonicalEntity;
  * TOLERATE ON READ, STAY STRICT ON WRITE. This runs only here, at the read-from-disk boundary, and
  * deliberately NOT inside parseCanonicalEntity: that function is also called on the WRITE path by
  * the converters and the capability preview, where a codec emitting the wrong shape is a bug in
- * Bunraku and must still fail. Loosening it there would hide our own defects to be kind to a file.
+ * Bunzai and must still fail. Loosening it there would hide our own defects to be kind to a file.
  *
  * Every rule here answers real data found on disk. A file that only ever loaded on an older build
  * is still the user's work, and refusing it outright is what turned four perfectly readable regex

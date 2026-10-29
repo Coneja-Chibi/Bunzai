@@ -1,9 +1,9 @@
 # Encore theme example
 
-Encore is Bunraku's teaching package for presentation themes, and it uses every power a theme has. It is
+Encore is Bunzai's teaching package for presentation themes, and it uses every power a theme has. It is
 the game one: a bottom HUD bar and a pause-menu hub, visual-novel message boxes, corner-bracket frames,
 segmented meters and dense spacing on deep navy with saturated jewel roles. On top of the picks it adds its
-own stylesheet, a bundled pixel font, two PNG images and content in four slots. Bunraku still renders every
+own stylesheet, a bundled pixel font, two PNG images and content in four slots. Bunzai still renders every
 control and calls its existing handlers.
 
 The full author guide is
@@ -46,7 +46,7 @@ aims at a stable `data-part`:
 7. a blinking prompt glyph on the message box (`scene.composer`).
 
 The file only uses `url(asset:<id>)` for package files, no `@import`, and never names the protected layer,
-or the whole package is refused. Bunraku loads it last, so it can override the host's normal rules, and
+or the whole package is refused. Bunzai loads it last, so it can override the host's normal rules, and
 adds a scope so that no rule can match the lock screen, the Kit Gate or the theme manager.
 
 ### 3. Fonts
@@ -58,7 +58,7 @@ readable face. Its license is in `LICENSE.txt`.
 ### 4. Images
 
 `assets` lists the two PNGs next to the two SVG marks. `starfield.png` is used from CSS as
-`url(asset:starfield)`; `crest.png` is placed by slots. Bunraku serves each file from its own digest URL.
+`url(asset:starfield)`; `crest.png` is placed by slots. Bunzai serves each file from its own digest URL.
 
 ### 5. Slots
 

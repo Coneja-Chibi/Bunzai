@@ -34,9 +34,9 @@ const portraitRef = (read: StoredEntity | null): string | undefined =>
 
 /** An on-disk database: VACUUM (`rebuild()`) only means something on a real file. */
 const onDisk = () => {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-blobs-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-blobs-"));
   dirs.push(dir);
-  const d = openStageDatabase(join(dir, "bunraku.db"), MIGRATIONS);
+  const d = openStageDatabase(join(dir, "bunzai.db"), MIGRATIONS);
   open.push(d);
   return d;
 };

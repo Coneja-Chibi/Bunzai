@@ -374,7 +374,7 @@ export function buildExportHonesty(args: {
     // Format does not claim behavior
     lines.push({
       kind: "drop",
-      text: `${args.targetFriendly} does not carry Bunraku behavior scripts. Trigger rules, regex, virtual script, and backdrop HTML will not travel.`,
+      text: `${args.targetFriendly} does not carry Bunzai behavior scripts. Trigger rules, regex, virtual script, and backdrop HTML will not travel.`,
     });
     if (f.hasPackage) {
       lines.push({

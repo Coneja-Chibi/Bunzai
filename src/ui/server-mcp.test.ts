@@ -30,20 +30,20 @@ let savedHome: string | undefined;
 let savedMcp: string | undefined;
 
 beforeAll(async () => {
-  savedHome = process.env["BUNRAKU_HOME"];
-  savedMcp = process.env["BUNRAKU_MCP"];
-  home = await mkdtemp(join(tmpdir(), "bunraku-mcp-routes-"));
-  process.env["BUNRAKU_HOME"] = home;
-  process.env["BUNRAKU_MCP"] = "on";
+  savedHome = process.env["BUNZAI_HOME"];
+  savedMcp = process.env["BUNZAI_MCP"];
+  home = await mkdtemp(join(tmpdir(), "bunzai-mcp-routes-"));
+  process.env["BUNZAI_HOME"] = home;
+  process.env["BUNZAI_MCP"] = "on";
 });
 
 afterAll(async () => {
   resetAgentSession();
   stopAllMcp();
-  if (savedHome === undefined) delete process.env["BUNRAKU_HOME"];
-  else process.env["BUNRAKU_HOME"] = savedHome;
-  if (savedMcp === undefined) delete process.env["BUNRAKU_MCP"];
-  else process.env["BUNRAKU_MCP"] = savedMcp;
+  if (savedHome === undefined) delete process.env["BUNZAI_HOME"];
+  else process.env["BUNZAI_HOME"] = savedHome;
+  if (savedMcp === undefined) delete process.env["BUNZAI_MCP"];
+  else process.env["BUNZAI_MCP"] = savedMcp;
   await rm(home, { recursive: true, force: true });
 });
 

@@ -1,6 +1,6 @@
 /**
  * The Stage Gallery's pure half. RoleCall's Gallery lists the pictures in a chat's messages (ImageGalleryPanel.tsx);
- * Bunraku messages carry none, so the scene's pictures are its cast's art (the frozen portrait, the card's extra art and
+ * Bunzai messages carry none, so the scene's pictures are its cast's art (the frozen portrait, the card's extra art and
  * background, the persona's portrait) and the pictures of one pack. Only art the library holds is listed: an uploaded ref
  * or inline image or video data, never a link, so nothing is hotlinked. The count counts pictures (RoleCall's tab chip
  * counts messages, right-wing-groups.ts:111).

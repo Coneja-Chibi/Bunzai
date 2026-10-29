@@ -161,39 +161,39 @@ describe("appDataWriteOutsideHome", () => {
 
   test("retains only the exact reviewed temporary and verified staging callsites", () => {
     const reviewed: [string, string][] = [
-      ["src/core/preset/render/scratch.ts", 'const dir = await mkdtemp(join(tmpdir(), "bunraku-macro-lab-")); const preset = join(dir, `scratch.${req.engine}.json`); await writeFile(preset, scratchWireFile(req.engine, req.text), "utf8");'],
-      ["src/ui/server-staging.ts", 'const dir = await mkdtemp(join(tmpdir(), "bunraku-import-staged-")); const sealed = JSON.stringify(aesSeal(STAGING_KEY, text, `${token}:${key}`)); const path = join(dir, `${key}.sealed`); await writeFile(path, sealed, { mode: 0o600 });'],
+      ["src/core/preset/render/scratch.ts", 'const dir = await mkdtemp(join(tmpdir(), "bunzai-macro-lab-")); const preset = join(dir, `scratch.${req.engine}.json`); await writeFile(preset, scratchWireFile(req.engine, req.text), "utf8");'],
+      ["src/ui/server-staging.ts", 'const dir = await mkdtemp(join(tmpdir(), "bunzai-import-staged-")); const sealed = JSON.stringify(aesSeal(STAGING_KEY, text, `${token}:${key}`)); const path = join(dir, `${key}.sealed`); await writeFile(path, sealed, { mode: 0o600 });'],
       ["src/kit/tools/preset-verify-export.ts", 'const dir = await mkdtemp(join(tmpdir(), "hoplight-verify-")); const path = join(dir, "preset.json"); await writeFile(path, text, "utf8");'],
-      ["src/formats/_fixtures/lumiverse-archive/materialize.ts", 'const root = await mkdtemp(join(tmpdir(), "bunraku-lvbak-")); if (unsafeName(name)) throw new Error("unsafe"); const target = join(root, name); await writeFile(target, data);'],
-      ["src/kit/providers/claude-cli.ts", 'const dir = await mkdtemp(join(tmpdir(), "bunraku-mcp-")); const path = join(dir, "config.json"); await writeFile(path, JSON.stringify({ mcpServers: {} }), { mode: 0o600, flag: "wx" });'],
-      ["src/ui/switch/packaged-engine.ts", 'const stageDir = join(exeDir, ".bunraku-update"); if (!expected || got !== expected) throw new Error(); const staged = join(stageDir, assetName); await writeFile(staged, bytes);'],
+      ["src/formats/_fixtures/lumiverse-archive/materialize.ts", 'const root = await mkdtemp(join(tmpdir(), "bunzai-lvbak-")); if (unsafeName(name)) throw new Error("unsafe"); const target = join(root, name); await writeFile(target, data);'],
+      ["src/kit/providers/claude-cli.ts", 'const dir = await mkdtemp(join(tmpdir(), "bunzai-mcp-")); const path = join(dir, "config.json"); await writeFile(path, JSON.stringify({ mcpServers: {} }), { mode: 0o600, flag: "wx" });'],
+      ["src/ui/switch/packaged-engine.ts", 'const stageDir = join(exeDir, ".bunzai-update"); if (!expected || got !== expected) throw new Error(); const staged = join(stageDir, assetName); await writeFile(staged, bytes);'],
     ];
     for (const [path, source] of reviewed) {
       expect(appDataWriteOutsideHome(path, `import { writeFile } from "node:fs/promises"; ${source}`, new Set())).toBeNull();
     }
     expect(appDataWriteOutsideHome(
       "src/core/preset/render/scratch.ts",
-      'import { writeFile } from "node:fs/promises"; const dir = await mkdtemp(join(tmpdir(), "bunraku-macro-lab-")); const preset = join(dir, `scratch.${req.engine}.json`); await writeFile(preset, scratchWireFile(req.engine, req.text), "utf8"); await writeFile(other, text);',
+      'import { writeFile } from "node:fs/promises"; const dir = await mkdtemp(join(tmpdir(), "bunzai-macro-lab-")); const preset = join(dir, `scratch.${req.engine}.json`); await writeFile(preset, scratchWireFile(req.engine, req.text), "utf8"); await writeFile(other, text);',
       new Set(),
     )).toContain("writeAtomicReplace");
     expect(appDataWriteOutsideHome(
       "src/core/preset/render/scratch.ts",
-      'import { writeFile } from "node:fs/promises"; import { writeFileSync } from "node:fs"; const dir = await mkdtemp(join(tmpdir(), "bunraku-macro-lab-")); const preset = join(dir, `scratch.${req.engine}.json`); await writeFile(preset, scratchWireFile(req.engine, req.text), "utf8"); writeFileSync(other, text);',
+      'import { writeFile } from "node:fs/promises"; import { writeFileSync } from "node:fs"; const dir = await mkdtemp(join(tmpdir(), "bunzai-macro-lab-")); const preset = join(dir, `scratch.${req.engine}.json`); await writeFile(preset, scratchWireFile(req.engine, req.text), "utf8"); writeFileSync(other, text);',
       new Set(),
     )).toContain("writeAtomicReplace");
     expect(appDataWriteOutsideHome(
       "src/core/preset/render/scratch.ts",
-      'import { writeFile, writeFile as save } from "node:fs/promises"; const dir = await mkdtemp(join(tmpdir(), "bunraku-macro-lab-")); const preset = join(dir, `scratch.${req.engine}.json`); await writeFile(preset, scratchWireFile(req.engine, req.text), "utf8"); await save(appData, data);',
+      'import { writeFile, writeFile as save } from "node:fs/promises"; const dir = await mkdtemp(join(tmpdir(), "bunzai-macro-lab-")); const preset = join(dir, `scratch.${req.engine}.json`); await writeFile(preset, scratchWireFile(req.engine, req.text), "utf8"); await save(appData, data);',
       new Set(),
     )).toContain("writeAtomicReplace");
     expect(appDataWriteOutsideHome(
       "src/kit/providers/claude-cli.ts",
-      'import { writeFile } from "node:fs/promises"; const dir = await mkdtemp(join(tmpdir(), "bunraku-mcp-")); const path = join(dir, "config.json"); await writeFile(path, JSON.stringify({ mcpServers: {} }), { mode: 0o600 });',
+      'import { writeFile } from "node:fs/promises"; const dir = await mkdtemp(join(tmpdir(), "bunzai-mcp-")); const path = join(dir, "config.json"); await writeFile(path, JSON.stringify({ mcpServers: {} }), { mode: 0o600 });',
       new Set(),
     )).toContain("writeAtomicReplace");
     expect(appDataWriteOutsideHome(
       "src/ui/switch/packaged-engine.ts",
-      'import { writeFile } from "node:fs/promises"; const stageDir = join(exeDir, ".bunraku-update"); const staged = join(stageDir, assetName); if (!expected || got !== expected) throw new Error(); await writeFile(staged, bytes);',
+      'import { writeFile } from "node:fs/promises"; const stageDir = join(exeDir, ".bunzai-update"); const staged = join(stageDir, assetName); if (!expected || got !== expected) throw new Error(); await writeFile(staged, bytes);',
       new Set(),
     )).toContain("writeAtomicReplace");
   });

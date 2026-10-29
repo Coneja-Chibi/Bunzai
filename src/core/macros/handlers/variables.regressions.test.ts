@@ -2,7 +2,7 @@
  * Regression: getvar/setvar's key argument needs its own `.trim()`, because a parser that leaves
  * whitespace inside a `::`-separated argument would let `{{setvar::name::World}}` and
  * `{{getvar:: name}}` (stray space before the key) store and read under two different keys and
- * silently return empty. Bunraku's own arg splitter (lexSplitArgRanges in ../parse.ts) is
+ * silently return empty. Bunzai's own arg splitter (lexSplitArgRanges in ../parse.ts) is
  * documented as leaving each argument "untrimmed" by design, so this is a real class of bug to
  * guard against here, not something the parser already rules out by construction.
  */

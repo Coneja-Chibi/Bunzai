@@ -59,7 +59,7 @@ export const MARKER_LABELS: Record<string, string> = {
 };
 
 /**
- * Bunraku's feature markers: a feature's content splices in where the preset's marker for it stands, and a preset
+ * Bunzai's feature markers: a feature's content splices in where the preset's marker for it stands, and a preset
  * without one keeps the feature's own spot (core/assembly/feature-slots.ts). The block id is the slot, as SillyTavern's
  * own markers are, so the marker survives a SillyTavern export and import when its id is the slot (the import reads the slot from the id).
  */

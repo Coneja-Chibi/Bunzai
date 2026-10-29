@@ -1,16 +1,16 @@
-/* Bunraku site: authored content. Plain data, rendered by app.js.
+/* Bunzai site: authored content. Plain data, rendered by app.js.
  * Copy rules: warm, short, plain. No em dashes, no emoji.
  * Inline markup allowed in body strings: <b>, <i class="aside">, <a href="#/...">, <kbd>.
  */
-window.BUNRAKU = window.BUNRAKU || {};
+window.BUNZAI = window.BUNZAI || {};
 
-BUNRAKU.repo = "Coneja-Chibi/Bunraku";
-BUNRAKU.studioUrl = "studio/"; // Browser Studio lives beside the site on GitHub Pages.
+BUNZAI.repo = "Coneja-Chibi/Bunzai";
+BUNZAI.studioUrl = "studio/"; // Browser Studio lives beside the site on GitHub Pages.
 
 /* ------------------------------------------------------------------ */
 /* Features (tour)                                                     */
 /* ------------------------------------------------------------------ */
-BUNRAKU.features = [
+BUNZAI.features = [
   {
     slug: "scenes",
     num: "I",
@@ -75,7 +75,7 @@ BUNRAKU.features = [
     title: ["The", "Press"],
     line: "Send your work out in the format another app understands.",
     intro:
-      "The Press turns anything in your Library into a file another app can open. Bunraku can export to 11 other apps' formats.",
+      "The Press turns anything in your Library into a file another app can open. Bunzai can export to 11 other apps' formats.",
     mock: "press",
     items: [
       { t: "Export to 11 formats", b: "Pick a character, lorebook, or preset, pick where it is going, and the Press makes the file." },
@@ -106,7 +106,7 @@ BUNRAKU.features = [
 /* ------------------------------------------------------------------ */
 /* Guides (help center)                                               */
 /* ------------------------------------------------------------------ */
-BUNRAKU.guides = [
+BUNZAI.guides = [
   {
     slug: "first-scene",
     title: "Your first scene",
@@ -115,10 +115,10 @@ BUNRAKU.guides = [
     sections: [
       {
         id: "install",
-        h: "Get Bunraku",
+        h: "Get Bunzai",
         body: [
-          "Download Bunraku for your computer from the <a href=\"#/download\">Download page</a>. It works on Windows, Mac, and Linux, and it is free.",
-          "Open the file you downloaded. On Windows, the first time you open it, Bunraku adds itself to your Start menu so you can find it again later.",
+          "Download Bunzai for your computer from the <a href=\"#/download\">Download page</a>. It works on Windows, Mac, and Linux, and it is free.",
+          "Open the file you downloaded. On Windows, the first time you open it, Bunzai adds itself to your Start menu so you can find it again later.",
           "Windows may show a blue box that says it does not recognize the app. That is normal for new apps. <a href=\"#/help/something-wrong/windows-warning\">Here is what to do.</a>",
         ],
       },
@@ -126,8 +126,8 @@ BUNRAKU.guides = [
         id: "key",
         h: "Add your AI key",
         body: [
-          "Bunraku does not come with its own AI. You bring a key from the AI service you like, and Bunraku uses it to write your character's replies.",
-          "Paste your key when Bunraku asks for it. It is stored encrypted on your computer along with the rest of your Library.",
+          "Bunzai does not come with its own AI. You bring a key from the AI service you like, and Bunzai uses it to write your character's replies.",
+          "Paste your key when Bunzai asks for it. It is stored encrypted on your computer along with the rest of your Library.",
         ],
       },
       {
@@ -257,7 +257,7 @@ BUNRAKU.guides = [
         h: "Stopping a reply",
         body: [
           "Press Stop while a reply is being written and it halts right there. What was written so far stays, and you can edit it or keep going.",
-          "If Bunraku closes unexpectedly while a reply is being written, that reply comes back the next time you open the scene.",
+          "If Bunzai closes unexpectedly while a reply is being written, that reply comes back the next time you open the scene.",
         ],
       },
       {
@@ -338,7 +338,7 @@ BUNRAKU.guides = [
         id: "move",
         h: "Moving to a new computer",
         body: [
-          "Install Bunraku on the new computer, then import the files you exported. They come back into your Library as they were.",
+          "Install Bunzai on the new computer, then import the files you exported. They come back into your Library as they were.",
           "You will need to add your AI key again on the new computer.",
         ],
       },
@@ -354,7 +354,7 @@ BUNRAKU.guides = [
         id: "windows-warning",
         h: "Windows says it does not recognize the app",
         body: [
-          "New apps that are not yet signed show a blue box that says Windows protected your PC. Bunraku is free and open source, and you can read every line of it on GitHub.",
+          "New apps that are not yet signed show a blue box that says Windows protected your PC. Bunzai is free and open source, and you can read every line of it on GitHub.",
           "To open it anyway, choose <b>More info</b>, then <b>Run anyway</b>. You only need to do this once.",
         ],
       },
@@ -363,7 +363,7 @@ BUNRAKU.guides = [
         h: "The character is not replying",
         body: [
           "Check that your AI key is added and still active with your AI service. Most of the time, a missing or expired key is the reason.",
-          "If a reply stopped halfway, press Retry. If Bunraku closed while writing, the reply comes back when you reopen the scene.",
+          "If a reply stopped halfway, press Retry. If Bunzai closed while writing, the reply comes back when you reopen the scene.",
         ],
       },
       {
@@ -377,7 +377,7 @@ BUNRAKU.guides = [
         id: "report",
         h: "Tell us about it",
         body: [
-          "If something still is not working, open an issue on <a href=\"https://github.com/Coneja-Chibi/Bunraku/issues\" rel=\"noopener\">GitHub</a>. Say what you were doing, what you expected, and what happened instead. A screenshot helps a lot.",
+          "If something still is not working, open an issue on <a href=\"https://github.com/Coneja-Chibi/Bunzai/issues\" rel=\"noopener\">GitHub</a>. Say what you were doing, what you expected, and what happened instead. A screenshot helps a lot.",
         ],
       },
     ],
@@ -387,16 +387,16 @@ BUNRAKU.guides = [
 /* ------------------------------------------------------------------ */
 /* Sample releases (used when GitHub cannot be reached)               */
 /* ------------------------------------------------------------------ */
-BUNRAKU.sampleReleases = function () {
+BUNZAI.sampleReleases = function () {
   const day = 86400000;
   const now = Date.now();
-  const page = "https://github.com/Coneja-Chibi/Bunraku/releases";
+  const page = "https://github.com/Coneja-Chibi/Bunzai/releases";
   const assets = (v) => [
-    { name: "Bunraku-" + v + "-windows-x64.exe", size: 81788928, url: page },
-    { name: "Bunraku-" + v + "-mac-arm64.dmg", size: 86507520, url: page },
-    { name: "Bunraku-" + v + "-mac-x64.dmg", size: 88080384, url: page },
-    { name: "Bunraku-" + v + "-linux-x86_64.AppImage", size: 84934656, url: page },
-    { name: "Bunraku-" + v + "-linux-amd64.deb", size: 80740352, url: page },
+    { name: "Bunzai-" + v + "-windows-x64.exe", size: 81788928, url: page },
+    { name: "Bunzai-" + v + "-mac-arm64.dmg", size: 86507520, url: page },
+    { name: "Bunzai-" + v + "-mac-x64.dmg", size: 88080384, url: page },
+    { name: "Bunzai-" + v + "-linux-x86_64.AppImage", size: 84934656, url: page },
+    { name: "Bunzai-" + v + "-linux-amd64.deb", size: 80740352, url: page },
   ];
   return [
     {

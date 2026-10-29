@@ -2,7 +2,7 @@
  * What every model pass shares (RoleCall's PassCommonChrome, OutputModeToggle, FailureMode and the sliders,
  * PostProductionPanel.tsx:1578-1750, 2377-2440): its model (a Kit connection and model, or the scene's), temperature, the cross-message
  * context, whether thinking is cut from its input, how it answers, and what a failure does. RoleCall's "apply your AI-output regex scripts
- * to input" is not here: Bunraku's regex has no such placement, so there is nothing for it to do.
+ * to input" is not here: Bunzai's regex has no such placement, so there is nothing for it to do.
  */
 import type { JSX } from "react";
 import { Button, Card } from "../../../components/button";

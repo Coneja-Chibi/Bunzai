@@ -95,7 +95,7 @@ describe("Generation shell", () => {
     expect(host.querySelector('[data-param="temperature"] .gn-key')?.textContent).toBe("temperature");
     expect(host.querySelectorAll(".gn-foot")[0]?.textContent).toBe("From preset");
     expect(host.querySelectorAll(".gn-foot")[2]?.textContent).toContain("Not set");
-    expect(text()).toContain("Two kinds of thinking in Bunraku.");
+    expect(text()).toContain("Two kinds of thinking in Bunzai.");
     unmount(flushSync);
   });
 
@@ -261,7 +261,7 @@ describe("Thinking in Replies", () => {
   test("a model that refuses an assistant prefill gets RoleCall's warning with its two ways out; others do not", async () => {
     let flushSync = await mountTab(withPrompting({ prefill: "<think>" }, "claude-opus-4-6"));
     expect(text()).toContain("Claude 4.6+ cannot continue an assistant prefill.");
-    expect(text()).toContain("Bunraku will ignore any chat or preset Start Reply With text for this model.");
+    expect(text()).toContain("Bunzai will ignore any chat or preset Start Reply With text for this model.");
     flushSync(() => button("Send as user message").click());
     await settle(flushSync, 5);
     expect(patches.at(-1)).toEqual({ prefillRole: "user" });

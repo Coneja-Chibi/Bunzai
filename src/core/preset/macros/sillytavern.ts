@@ -1,6 +1,6 @@
 /**
  * SillyTavern's macro reference. TOKENS + SYNTAX are facts; the descriptions here are written fresh
- * (ST is AGPL-3.0 and Bunraku is AGPL-3.0-or-later, but the clean-room doctrine says do not lift
+ * (ST is AGPL-3.0 and Bunzai is AGPL-3.0-or-later, but the clean-room doctrine says do not lift
  * their prose). Group names are editorial; every TOKEN below is one SillyTavern really has.
  *
  * SCOPE, AND A CORRECTION WORTH KEEPING. This catalog was first transcribed from the LEGACY macro

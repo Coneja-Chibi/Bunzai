@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/security/untrusted-content",
   "sourcePath": "docs/reference/security/untrusted-content.md",
-  "sourceHash": "sha256:b35da0efe61721625835e923344afabf863445976747a74c6f01be993e3b29f5",
-  "semanticSummaryHash": "sha256:aed623af81fb38462139aa7771b825b146d0e4504d178253477d972917d67c82",
+  "sourceHash": "sha256:2cbd8d4a91dfa484ef884fb0a161ca2b9f220addcbd6462b187b4224ba34baf8",
+  "semanticSummaryHash": "sha256:5298879721e89a580745ec4e2f96120efccf6c8b559e9967b8a132221916977d",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:48:02.634Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:00.201Z"
 }

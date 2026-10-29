@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/security",
   "sourcePath": "docs/guide/security.md",
-  "sourceHash": "sha256:2bb35c9dde382215a1a7370e66a21d939ba9328714b4518091e42ac11c181b12",
-  "semanticSummaryHash": "sha256:bc5cd541e900028f7770e213619216a2c66c711ef925412b47cbba608270a565",
+  "sourceHash": "sha256:e39bbb56cbcc194e70e5be97779d5500356f743b1cbe13ccb9ece70aa1673d02",
+  "semanticSummaryHash": "sha256:4363c0d625c6a84374a1cbbf9423582d9daac85755fd5fde21725a9c03d52f63",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Owner approved 2026-09-24: encryption screens, password and recovery words, library gate",
-  "reviewedAt": "2026-09-24T04:27:59.616Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:40.399Z"
 }

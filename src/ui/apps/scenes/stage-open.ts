@@ -3,7 +3,7 @@
  * Spotify tab (StandardLayout.tsx:2423-2442). A Prop's Stage piece only gets `{ ctx, chat }`, so it sends this window event and the
  * scene page (which owns the open wing) and the Stage wing (which owns the active tab) answer it.
  */
-export const STAGE_OPEN_EVENT = "bunraku:stage-open";
+export const STAGE_OPEN_EVENT = "bunzai:stage-open";
 export interface StageOpenDetail { tab: "music" | "spotify" }
 
 export function openStageTab(tab: StageOpenDetail["tab"]): void {

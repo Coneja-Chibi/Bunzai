@@ -107,8 +107,8 @@ export function HelperMissingCard({ detail, h }: { detail?: string; h: HelperCon
       </div>
       <div className={styles.cardBody}>
         {offered
-          ? "The private-mesh link needs one extra piece that is not bundled with the app, to keep the download small. Bunraku can fetch it for you now, once."
-          : (detail ?? "This copy of Bunraku was built without the Tailscale helper.")}
+          ? "The private-mesh link needs one extra piece that is not bundled with the app, to keep the download small. Bunzai can fetch it for you now, once."
+          : (detail ?? "This copy of Bunzai was built without the Tailscale helper.")}
       </div>
       {offered && (
         <div className={styles.actions}>
@@ -127,7 +127,7 @@ export function HelperMissingCard({ detail, h }: { detail?: string; h: HelperCon
       <div className={styles.subtle}>
         {offered ? (
           <>
-            It is downloaded from Bunraku's own releases and checked against a fingerprint built into this
+            It is downloaded from Bunzai's own releases and checked against a fingerprint built into this
             copy; a file that does not match is thrown away rather than used. You can skip this entirely and
             use <b>LAN mode</b> below, which needs no download.
           </>

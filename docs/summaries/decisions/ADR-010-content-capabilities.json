@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "decisions/ADR-010-content-capabilities",
   "sourcePath": "docs/decisions/ADR-010-content-capabilities.md",
-  "sourceHash": "sha256:8562f81107a0a7c932f2427ac713d7f291b17a2ba1e8ac3bb28327ce59cffea1",
+  "sourceHash": "sha256:7504ed95e85fbd741d49120ca04f1407f69e265558e4e0d55a17ab99a52b8a9f",
   "summary": "Accepted ADR dated 2026-07-25 for shared semantic content capabilities. Context: Kit will eventually need more than one hundred content-editing operations; advertising every schema on every model request wastes context and hurts tool selection; implementing the same mutation separately in Kit and Workbench would allow drift. Filesystem is already the registry for formats and UI extensions, so content edits need the same drop-in property while canonical validation and escrow preservation remain mandatory. Decision: pure semantic operations live under src/entities kind capabilities; platform-specific operations may live under src/formats platform capabilities; one immutable catalog validates stable dotted IDs and supports deterministic metadata search; Kit keeps a complete runtime registry but exposes only direct tools and up to five successfully discovered deferred capabilities to the model; browser uses a generated import seam from the same folders never a second hand-maintained catalog; a capability produces a validated preview and never writes; Kit composes previews into a session-local draft while apply stale-revision checks persistence and verification are separate runtime responsibilities; Web UI imports the same pure operations and keeps presentation-only state locally. Consequences: add operations via drop-in and proof; small task-relevant tool sets; shared mutation meaning; capability IDs become compatibility-sensitive once shipped; live apply rejects stale drafts and reports only verified post-save receipts as applied.",
   "topics": [
     "content capabilities drop-in",
@@ -19,8 +19,8 @@
       "slug": "context",
       "title": "Context",
       "level": 2,
-      "sourceHash": "sha256:9a0e8bcfe21efd072401b4d9f2ab0a57e01f52b6824f2803515d55ca0755f337",
-      "summary": "Kit will eventually need more than one hundred content-editing operations. Advertising every schema on every model request wastes context and makes tool selection less reliable. Implementing the same mutation separately in Kit and the Workbench would also allow their behavior to drift. The filesystem is already Bunraku's registry for formats and UI extensions. Content edits need the same drop-in property, while canonical validation and escrow preservation remain mandatory.",
+      "sourceHash": "sha256:94d7075624369209e830d3dd2bfd6ccc35bfe7363efab7faa7dccd4136863789",
+      "summary": "Kit will eventually need more than one hundred content-editing operations. Advertising every schema on every model request wastes context and makes tool selection less reliable. Implementing the same mutation separately in Kit and the Workbench would also allow their behavior to drift. The filesystem is already Bunzai's registry for formats and UI extensions. Content edits need the same drop-in property, while canonical validation and escrow preservation remain mandatory.",
       "topics": [
         "hundred plus operations",
         "context waste tool selection",

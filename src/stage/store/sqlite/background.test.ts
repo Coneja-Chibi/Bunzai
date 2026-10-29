@@ -27,7 +27,7 @@ afterEach(() => {
 });
 
 test("a write made during a background rebuild waits without freezing the app, then lands", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-lane-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-lane-"));
   dirs.push(dir);
   const d = openStageDatabase(join(dir, "b.db"), MIGRATIONS);
   open.push(d);
@@ -84,7 +84,7 @@ test("a write made during a background rebuild waits without freezing the app, t
 });
 
 test("a rebuild that cannot run is a failed job with a reason, never a silent success", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-lane-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-lane-"));
   dirs.push(dir);
   const d = openStageDatabase(join(dir, "b.db"), MIGRATIONS, { freeSpace: () => 0 });
   open.push(d);

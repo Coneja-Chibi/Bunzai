@@ -17,7 +17,7 @@ export const figures = {
       fig: "fig·01",
       title: "ten platforms, four kinds of piece",
       caption:
-        "Every column is a deck in the Library. \"No\" means that platform never shipped a file of that shape, not that Bunraku is missing an adapter. Marinara's character cards are SillyTavern-shaped underneath, so they read \"No\" here and go through the SillyTavern page instead.",
+        "Every column is a deck in the Library. \"No\" means that platform never shipped a file of that shape, not that Bunzai is missing an adapter. Marinara's character cards are SillyTavern-shaped underneath, so they read \"No\" here and go through the SillyTavern page instead.",
       cols: ["Characters", "Lorebooks", "Personas", "Regex sets"],
       rows: [
         { label: "Agnai", cells: ["Yes", "Yes", "No", "No"] },

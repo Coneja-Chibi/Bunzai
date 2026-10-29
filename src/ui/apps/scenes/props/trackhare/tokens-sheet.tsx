@@ -88,7 +88,7 @@ export function TokensSheet({ trace, model, onClose }: { trace: SceneTrace; mode
     });
   };
 
-  const baseName = `bunraku-reply-${trace.reply.number}`;
+  const baseName = `bunzai-reply-${trace.reply.number}`;
   const rawText = rawRequestText(trace);
   const exportJson = (): void => {
     const { blob, filename } = exportBlob({ suggestedExtension: "json", text: traceJsonText(trace) }, baseName);

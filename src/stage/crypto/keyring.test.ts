@@ -75,7 +75,7 @@ describe("setup", () => {
   });
 
   test("two setups at once on one file: exactly one wins, and the loser holds no key", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "bunraku-ring-"));
+    const dir = mkdtempSync(join(tmpdir(), "bunzai-ring-"));
     dirs.push(dir);
     const path = join(dir, "b.db");
     const [a, b] = [db(path), db(path)];
@@ -289,7 +289,7 @@ describe("computers", () => {
 
 describe("key changes at the same time (R1)", () => {
   const onFile = () => {
-    const dir = mkdtempSync(join(tmpdir(), "bunraku-race-"));
+    const dir = mkdtempSync(join(tmpdir(), "bunzai-race-"));
     dirs.push(dir);
     return join(dir, "b.db");
   };

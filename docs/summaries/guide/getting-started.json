@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "guide/getting-started",
   "sourcePath": "docs/guide/getting-started.md",
-  "sourceHash": "sha256:9a42438ab6f0c294ad8900c8bfba390e67a7a2e870cccd857cd8a1ac845607cc",
-  "summary": "Getting started covers release or source installation, the one-time first-run wizard, everyday Dock rooms, specialist catalog apps, and the Library's import and blank-character paths. Release builds are the shortest install; source use requires Bun 1.3+, clone, install, and bun run dev for the primary loopback server at 127.0.0.1:8321. Optional remote listeners stay off until enabled. The studio folder defaults to Documents/Bunraku Studio or a custom bunraku ui path. Wizard asks theme, one or more kinds to make, publish targets, and a palette or custom accent; Skip all uses defaults. Settings retains theme, the first selected kind as the initial Library deck, publish targets, and accent rather than the complete ordered make selection. Dock rooms are Workbench, Library, and Press with Settings pinned below; Docs and CSS Workshop are catalog tools. Import receipts write only checked pieces, while Start fresh creates, saves, and opens a blank character.",
+  "sourceHash": "sha256:98c6cec2ace6a8e11c589a876cae160b3efe0933e892740ec075429a9b37e22b",
+  "summary": "Getting started covers release or source installation, the one-time first-run wizard, everyday Dock rooms, specialist catalog apps, and the Library's import and blank-character paths. Release builds are the shortest install; source use requires Bun 1.3+, clone, install, and bun run dev for the primary loopback server at 127.0.0.1:8321. Optional remote listeners stay off until enabled. The studio folder defaults to Documents/Bunzai Studio or a custom bunzai ui path. Wizard asks theme, one or more kinds to make, publish targets, and a palette or custom accent; Skip all uses defaults. Settings retains theme, the first selected kind as the initial Library deck, publish targets, and accent rather than the complete ordered make selection. Dock rooms are Workbench, Library, and Press with Settings pinned below; Docs and CSS Workshop are catalog tools. Import receipts write only checked pieces, while Start fresh creates, saves, and opens a blank character.",
   "topics": [
     "release or Bun source install",
     "first-run wizard four questions",
@@ -18,8 +18,8 @@
       "slug": "the-short-version",
       "title": "The short version",
       "level": 2,
-      "sourceHash": "sha256:de4eb77df87ea10a4a9e0d4f5f429c4e06f9a4b82a168f3f9ddec2ac6979d413",
-      "summary": "Download a platform build from GitHub Releases, or install Bun 1.3+, clone Bunraku, and run bun install for source use. Open the app or use bun run dev for the primary loopback address at 127.0.0.1:8321. Studio JSON defaults under Documents/Bunraku Studio or a custom path. Complete or skip the wizard, then import through the Library door or create a blank character through Start fresh.",
+      "sourceHash": "sha256:7b293dffee9ed2710e21e95b75c3b576acc26a6c98013e98b405a0b8c33c1659",
+      "summary": "Download a platform build from GitHub Releases, or install Bun 1.3+, clone Bunzai, and run bun install for source use. Open the app or use bun run dev for the primary loopback address at 127.0.0.1:8321. Studio JSON defaults under Documents/Bunzai Studio or a custom path. Complete or skip the wizard, then import through the Library door or create a blank character through Start fresh.",
       "topics": [
         "release or Bun install",
         "bun run dev",
@@ -33,7 +33,7 @@
       "slug": "the-first-run-wizard",
       "title": "The first-run wizard",
       "level": 2,
-      "sourceHash": "sha256:dc66f208105821f7cf1defce74fc291dc04ae149b3fb7c9412d4ac6bd02226ab",
+      "sourceHash": "sha256:25c6c8b08860bd5ca9337144fd26fc29bdfac614130f064d3001524fa3f056b6",
       "summary": "Wizard appears once when the Studio finds no completed setup; after finish or skip it never returns on its own. Four questions: light or dark, default Dark; one or more kinds to make, where the first pick controls the first Library deck and an empty choice falls back to Characters; publish targets as a multi-select populated from known formats, with Not sure as default; and a house-palette or custom accent, default Rose. Skip all fills remaining defaults and jumps to the You're set recap. Theme, the initial Library deck, publish targets, and accent remain editable afterward; the complete ordered kind selection is not a Settings field.",
       "topics": [
         "wizard once only",
@@ -64,7 +64,7 @@
       "slug": "bringing-in-your-first-file",
       "title": "Bringing in your first file",
       "level": 2,
-      "sourceHash": "sha256:17898adc712b5efab9b0d646e187f6609b4c4599b2c47a9b83281091d498f8e7",
+      "sourceHash": "sha256:bd2eb5da02842c6cce967fff613bcc3009846fa0561bd2539b87baa1120a3320",
       "summary": "Empty studio primary door accepts drop or click file picker; after pieces exist drop anywhere on Library for the same flow. Files are read before write. Headings are Pick what to keep when all clean or Here is what we read when some fail. Readable files show receipt with name, kind, and default-checked checkbox; unreadable files show a plain reason without a checkbox. Add more files appends the batch, Import N writes only checked pieces, and Not now writes nothing. The second empty-studio door creates and saves a blank character, then opens it in the Workbench.",
       "topics": [
         "empty studio door",
@@ -79,13 +79,13 @@
       "slug": "tips",
       "title": "Tips",
       "level": 2,
-      "sourceHash": "sha256:2cc029fec71030837e9c97165687b25773602916c93bd694af03f3b8b2c63341",
-      "summary": "Release builds are the shortest installation path; Bun 1.3+ is required only for a source checkout. Skip all fills defaults, and retained setup choices remain editable. The first selected make kind chooses the initial Library deck; later the Library remembers the last open deck. Attached character lorebooks arrive in one bundle receipt. An unreadable receipt means safe parsing failed because the file may be unsupported, malformed, or damaged; bunraku formats lists adapters. bunraku ui port path selects another studio folder.",
+      "sourceHash": "sha256:30da886c689a3e7f111e38e7b68a5d2538aaffa882e48d43bb2316dfa5eaa831",
+      "summary": "Release builds are the shortest installation path; Bun 1.3+ is required only for a source checkout. Skip all fills defaults, and retained setup choices remain editable. The first selected make kind chooses the initial Library deck; later the Library remembers the last open deck. Attached character lorebooks arrive in one bundle receipt. An unreadable receipt means safe parsing failed because the file may be unsupported, malformed, or damaged; bunzai formats lists adapters. bunzai ui port path selects another studio folder.",
       "topics": [
         "release build or Bun source",
         "Skip all fine",
         "remember last deck",
-        "bunraku formats",
+        "bunzai formats",
         "custom studio path"
       ],
       "children": [],

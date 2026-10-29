@@ -2,14 +2,14 @@
 id: reference/security/archives
 title: Safe archive handling: .charx and .byaf
 audience: dev
-summary: How bunraku bounds a .charx or .byaf ZIP before and after inflation to resist a zip bomb, and where entry names are (and are not yet) checked for path traversal before they can become a filesystem write or a re-exported archive path.
+summary: How bunzai bounds a .charx or .byaf ZIP before and after inflation to resist a zip bomb, and where entry names are (and are not yet) checked for path traversal before they can become a filesystem write or a re-exported archive path.
 tags: [security, archive, zip, zip-bomb, path-traversal, charx, byaf, fflate]
 related: [reference/formats/risu, reference/formats/backyard, reference/formats/lumiverse, reference/security/script-sandbox, reference/architecture]
 ---
 
 # Safe archive handling: .charx and .byaf
 
-Both `.charx` (RisuAI) and `.byaf` (Backyard) are ZIP archives, and bunraku treats the bytes inside them as
+Both `.charx` (RisuAI) and `.byaf` (Backyard) are ZIP archives, and bunzai treats the bytes inside them as
 untrusted until parsed. This page covers two properties of that handling, and they are proven to different
 degrees:
 
@@ -183,10 +183,10 @@ case.
 
 Neither of these ever becomes a real filesystem write in this codebase, for the same reason ingestion does
 not: the result is bytes handed back from `fromCanonical`, not a set of files extracted to disk. The
-residual risk is downstream: the `.byaf` or `.charx` bunraku re-exports can carry a ZIP entry whose name still
+residual risk is downstream: the `.byaf` or `.charx` bunzai re-exports can carry a ZIP entry whose name still
 contains `..`, and a *different*, less careful tool that later unzips that exported archive by joining
 entry names onto a real path could be the one that turns it into a traversal write. That is a real gap
-against the goal of never re-emitting a traversal-shaped name, not a same-process exploit against bunraku
+against the goal of never re-emitting a traversal-shaped name, not a same-process exploit against bunzai
 itself. Call it what it is: verified as unguarded, and untested, not "safe by design" the way the greeting-id
 path is.
 

@@ -29,9 +29,9 @@ const card = (id: string) =>
   ({ schemaVersion: CANONICAL_SCHEMA_VERSION, kind: "character", id, body: { identity: { name: id }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {} } }) as never;
 
 async function rig() {
-  const base = mkdtempSync(join(tmpdir(), "bunraku-care-routes-"));
+  const base = mkdtempSync(join(tmpdir(), "bunzai-care-routes-"));
   dirs.push(base);
-  const dir = join(base, "Bunraku Studio");
+  const dir = join(base, "Bunzai Studio");
   const library = createLibrary(dir, { vault: fakeComputer(), sessionsDir: join(base, "sessions"), keyring: { passwords: fastPasswords() } });
   handles.push(library);
   await library.open();
@@ -171,7 +171,7 @@ test("export writes the library to a folder beside the studio, takes no path fro
   expect(res.status).toBe(200);
   const out = await r.json<{ folder: string; pieces: number }>(res);
   expect(out.pieces).toBe(1);
-  expect(out.folder.startsWith(join(dirname(r.dir), "Bunraku exports"))).toBe(true);
+  expect(out.folder.startsWith(join(dirname(r.dir), "Bunzai exports"))).toBe(true);
   expect(existsSync(join(out.folder, "character", "vera.json"))).toBe(true);
-  expect(existsSync(join(r.dir, "Bunraku exports"))).toBe(false);
+  expect(existsSync(join(r.dir, "Bunzai exports"))).toBe(false);
 });

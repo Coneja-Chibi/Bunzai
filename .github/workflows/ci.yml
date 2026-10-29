@@ -39,10 +39,10 @@ jobs:
         run: bunx playwright install chromium
       - name: Produce bounded 10k S21 evidence
         shell: pwsh
-        run: bun run scale:timed -- --release-evidence --profile low-end --n 10000 --artifact "$env:RUNNER_TEMP\s21-release-evidence.json" --packaged-cli "$PWD\dist\bunraku-cli-windows-x64.exe" --packaged-desktop "$PWD\dist\Bunraku.exe"
+        run: bun run scale:timed -- --release-evidence --profile low-end --n 10000 --artifact "$env:RUNNER_TEMP\s21-release-evidence.json" --packaged-cli "$PWD\dist\bunzai-cli-windows-x64.exe" --packaged-desktop "$PWD\dist\Bunzai.exe"
       - name: Consume evidence against exact build artifacts
         shell: pwsh
-        run: bun run scale:release-evidence -- "$env:RUNNER_TEMP\s21-release-evidence.json" --packaged-cli "$PWD\dist\bunraku-cli-windows-x64.exe" --packaged-desktop "$PWD\dist\Bunraku.exe"
+        run: bun run scale:release-evidence -- "$env:RUNNER_TEMP\s21-release-evidence.json" --packaged-cli "$PWD\dist\bunzai-cli-windows-x64.exe" --packaged-desktop "$PWD\dist\Bunzai.exe"
       - uses: actions/upload-artifact@v4
         with:
           name: s21-evidence-${{ github.sha }}
@@ -128,10 +128,10 @@ jobs:
       - name: Prepare a keychain (macOS)
         if: runner.os == 'macOS'
         run: |
-          security create-keychain -p ci bunraku-ci.keychain
-          security default-keychain -s bunraku-ci.keychain
-          security unlock-keychain -p ci bunraku-ci.keychain
-          security set-keychain-settings bunraku-ci.keychain
+          security create-keychain -p ci bunzai-ci.keychain
+          security default-keychain -s bunzai-ci.keychain
+          security unlock-keychain -p ci bunzai-ci.keychain
+          security set-keychain-settings bunzai-ci.keychain
       - name: Probe (macOS)
         if: runner.os == 'macOS'
         run: bun scripts/probe-keychain.ts

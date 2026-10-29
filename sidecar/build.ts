@@ -1,5 +1,5 @@
 /**
- * Build the Bunraku remote-access sidecar.
+ * Build the Bunzai remote-access sidecar.
  *
  *   bun sidecar/build.ts                      -> this machine's own platform, as `sidecar[.exe]`
  *   bun sidecar/build.ts --target=windows-x64 -> a named release asset, `sidecar-windows-x64.exe`
@@ -10,7 +10,7 @@
  *                    spawns it. GUI subsystem = no console is ever allocated; the parent-provided
  *                    stdin/stdout pipes still work (they are handles, independent of the console).
  *   resource.syso  : picked up automatically by `go build`; carries the icon + version metadata so the
- *                    Windows "unknown publisher" prompt shows "Bunraku Remote Access", not "sidecar".
+ *                    Windows "unknown publisher" prompt shows "Bunzai Remote Access", not "sidecar".
  * TS_NO_LOGS_NO_SUPPORT disables tsnet telemetry.
  *
  * CROSS-COMPILING. --target sets GOOS/GOARCH with CGO_ENABLED=0, which is what makes one runner able to

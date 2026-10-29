@@ -171,9 +171,9 @@ const PROFILE_EMPHASIS: Record<LoreWriteForProfile, Partial<Record<LoreFieldKey,
 };
 
 /** Platform tab labels (character lens precedent: ONE platform per lens, never smushed).
- * Full is the Bunraku tab, not a platform name. */
+ * Full is the Bunzai tab, not a platform name. */
 export const LORE_WRITE_FOR_LABELS: Record<LoreWriteForProfile, string> = {
-  full: "Bunraku",
+  full: "Bunzai",
   rolecall: "RoleCall",
   sillytavern: "SillyTavern",
   chub: "Chub",

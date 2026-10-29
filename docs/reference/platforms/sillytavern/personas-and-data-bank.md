@@ -45,7 +45,7 @@ enabled and then require a selection.
 
 Persona backup carries names, descriptions, and character connections, but the official documentation
 states that images and chat connections are not included. Backups contain internal links and are not
-designed as portable public persona packages. Bunraku's SillyTavern persona adapter currently imports one
+designed as portable public persona packages. Bunzai's SillyTavern persona adapter currently imports one
 selected persona from a backup while preserving the whole backup in escrow for same-format export.
 
 ## Data Bank documents and scopes
@@ -71,9 +71,9 @@ requires recalculation. Chunk size, overlap, score threshold, query-message coun
 change what is retrieved and how much prompt space it consumes.
 
 The vectors are generated indexes, not the authored document. SillyTavern stores them separately from the
-source attachment. Bunraku should preserve source documents and authored retrieval settings where
+source attachment. Bunzai should preserve source documents and authored retrieval settings where
 supported, but should not treat cached vectors as portable semantic content.
 
-Data Bank is not currently a dedicated Bunraku canonical entity. Kit can explain its behavior and avoid
+Data Bank is not currently a dedicated Bunzai canonical entity. Kit can explain its behavior and avoid
 false card-portability claims, but must not claim that importing a character also imports its Data Bank.
 Future support should model documents, scope, and generated indexes separately.

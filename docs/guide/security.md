@@ -9,7 +9,7 @@ related: [guide/getting-started, guide/importing, guide/regex, reference/archite
 
 # Security and privacy
 
-Bunraku runs on your machine and nowhere else. It also opens files other people made: character cards with embedded scripts, PNGs and zips, regex sets you downloaded from a stranger. Those are the two facts this page is about. Your work stays yours, and an untrusted file stays inert until you deliberately decide otherwise.
+Bunzai runs on your machine and nowhere else. It also opens files other people made: character cards with embedded scripts, PNGs and zips, regex sets you downloaded from a stranger. Those are the two facts this page is about. Your work stays yours, and an untrusted file stays inert until you deliberately decide otherwise.
 
 This is a security page, so it errs toward honesty over comfort. Where a protection is real, it says so and points at what backs it. Where a protection is partial, it says that too.
 
@@ -19,14 +19,14 @@ This is a security page, so it errs toward honesty over comfort. Where a protect
   local-only address, and prints it (`127.0.0.1:8321` by default). A remote listener exists only when
   you explicitly enable Remote access and complete its separate approval flow.
 - **There are no accounts.** No sign-in, no cloud, nothing to breach somewhere else.
-- **There is no telemetry or background content upload.** Bunraku does not operate an inference
+- **There is no telemetry or background content upload.** Bunzai does not operate an inference
   proxy or analytics service.
-- **Your pieces are encrypted on disk.** Everything you import or edit lives in one encrypted file, `library.db`, in your studio folder (`~/Documents/Bunraku Studio` unless you point it elsewhere). This computer opens it by itself, so there is nothing to type, unless you set a password in Settings, Security: then the stage door asks for it each time Bunraku opens, and after 15 idle minutes if you choose. To read your pieces as files or keep a copy elsewhere, export them.
-- **Your recovery words are the way back in.** Settings, Security gives you twelve words, shown once and typed back to confirm you have them. They open the library on any computer and rescue a forgotten password. Bunraku keeps no copy it can show you again, so print them or write them down. A password needs the words first, and Security asks you to rehearse them now and then.
+- **Your pieces are encrypted on disk.** Everything you import or edit lives in one encrypted file, `library.db`, in your studio folder (`~/Documents/Bunzai Studio` unless you point it elsewhere). This computer opens it by itself, so there is nothing to type, unless you set a password in Settings, Security: then the stage door asks for it each time Bunzai opens, and after 15 idle minutes if you choose. To read your pieces as files or keep a copy elsewhere, export them.
+- **Your recovery words are the way back in.** Settings, Security gives you twelve words, shown once and typed back to confirm you have them. They open the library on any computer and rescue a forgotten password. Bunzai keeps no copy it can show you again, so print them or write them down. A password needs the words first, and Security asks you to rehearse them now and then.
 
 Honest limits. The key that opens the library stays with your user account, held by the system's own protection: Windows, the macOS Keychain, or a Linux keyring. Without one of those, it is kept in a file in your home folder instead, which protects a copied library file but not a whole stolen disk. Either way, without a password, anyone who can use this computer as you can open the library, because this computer opens it by itself. With a password, nobody opens it without the password or your recovery words, including you: lose both and the library is gone. Setting a password also clears every computer's own key from the library file; until that cleanup finishes, Settings, Security says so.
 
-Bunraku does make deliberate network calls at specific user-facing boundaries:
+Bunzai does make deliberate network calls at specific user-facing boundaries:
 
 - Kit sends model context to the provider endpoint you configured when you submit a provider-backed
   turn.
@@ -34,9 +34,9 @@ Bunraku does make deliberate network calls at specific user-facing boundaries:
   switch.
 - Remote access uses the listener and tunnel you explicitly enable.
 - The private-mesh link needs a helper program that is not bundled with the app. If you press
-  **Download the extra piece**, Bunraku fetches it from its own GitHub releases and checks it against
+  **Download the extra piece**, Bunzai fetches it from its own GitHub releases and checks it against
   a fingerprint built into your copy before writing anything to disk. A file that does not match is
-  thrown away, not quarantined. This is the only download Bunraku turns into a program it runs, it
+  thrown away, not quarantined. This is the only download Bunzai turns into a program it runs, it
   never happens on its own, and LAN mode needs no download at all.
 
 Importing, editing, converting, and deterministic analysis do not require a provider and make no
@@ -72,7 +72,7 @@ Untrusted input does not get to exhaust your machine on the way in.
 
 ## Converting never copies one app's code into another
 
-When you convert a card from one app's format to another, Bunraku carries across the portable content and nothing else. Each app's private extras, its extension blocks, its trigger scripts, its bespoke layout, stay behind. They are kept safe in an escrow copy attached to your piece, so a same-format round-trip loses nothing, but they are never blind-copied into a different app's file.
+When you convert a card from one app's format to another, Bunzai carries across the portable content and nothing else. Each app's private extras, its extension blocks, its trigger scripts, its bespoke layout, stay behind. They are kept safe in an escrow copy attached to your piece, so a same-format round-trip loses nothing, but they are never blind-copied into a different app's file.
 
 This is on purpose. It is why a conversion cannot smuggle one app's executable payload into another app's card. What crosses is the shared, readable core; what does not cross is reported to you.
 
@@ -90,7 +90,7 @@ Provider-backed Kit is optional and bring-your-own-key.
   privacy ledger.
 - Provider requests validate the configured host before every network hop. Redirects to another host,
   HTTPS downgrades, and redirect chains beyond five hops are refused before the next request.
-- There is no Bunraku inference service, account, or proxy between you and the configured provider.
+- There is no Bunzai inference service, account, or proxy between you and the configured provider.
 
 The Studio also mints a fresh session token each time it launches, uses it to gate mutations, and
 never saves it to disk.

@@ -49,7 +49,7 @@ afterEach(() => {
 });
 
 test("scheduleFsWatch polls once after a real write, and not on a fixed beat with nothing changed", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-kit-watch-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-kit-watch-"));
   dirs.push(dir);
   let polls = 0;
   const unschedule = scheduleFsWatch(dir)(async () => { polls += 1; }, 100_000); // a beat too slow to fire on its own within this test
@@ -65,7 +65,7 @@ test("scheduleFsWatch polls once after a real write, and not on a fixed beat wit
 
 test("scheduleFsWatch falls back to the plain interval when the recursive watch is refused", async () => {
   // A path that cannot be watched (does not exist): the real fs.watch call throws synchronously.
-  const missing = join(tmpdir(), "bunraku-kit-watch-missing", String(Date.now()));
+  const missing = join(tmpdir(), "bunzai-kit-watch-missing", String(Date.now()));
   let polls = 0;
   const unschedule = scheduleFsWatch(missing)(async () => { polls += 1; }, 20);
   await Bun.sleep(60);
@@ -92,7 +92,7 @@ const card = (id: string): string =>
  * fake ContentStore cannot possibly reproduce a SQLite side effect it has no code path for.
  */
 test("scheduleFsWatch settles: bridge.list() reading a real opened library never retriggers the watch itself", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-kit-watch-bridge-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-kit-watch-bridge-"));
   dirs.push(dir);
   mkdirSync(join(dir, "character"), { recursive: true });
   writeFileSync(join(dir, "character", "vera.json"), card("vera"));

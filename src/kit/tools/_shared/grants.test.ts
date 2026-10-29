@@ -104,7 +104,7 @@ describe("platform comparison", () => {
 });
 
 describe("checkGrantReal: a link cannot carry a path out", () => {
-  const scratchDir = async (): Promise<string> => mkdtemp(join(tmpdir(), "bunraku-link-"));
+  const scratchDir = async (): Promise<string> => mkdtemp(join(tmpdir(), "bunzai-link-"));
 
   test("a symlink pointing outside the granted root is refused, and says where it goes", async () => {
     // Proven on a stock Windows profile before this existed: C:\Users\me\Videos is a junction to

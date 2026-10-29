@@ -8,13 +8,13 @@
 <link rel="stylesheet" href="port.css">
 <link rel="stylesheet" href="rc-parts.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
- * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunraku. Every size below was
+ * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunzai. Every size below was
  * read off the running page on 2026-09-24 (computed styles at 1920x945 and 390x844) or from the
  * component source (WingRail, WingItem, WingShell, FoldoutTabs, GreetingSelector,
- * composer-shell-styles). Colors are Bunraku tokens:
+ * composer-shell-styles). Colors are Bunzai tokens:
  *   RC zinc-300 / zinc-400 / zinc-500 / zinc-600  ->  --stage-soft / --stage-text-dim / --stage-mute / --stage-line
  *   RC black/55 bubble, white/8 edge              ->  color-mix of --stage-black and --stage-card
  *   RC user accent (violet)                       ->  --accent
@@ -289,7 +289,7 @@ body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-
 .cap .send.ready { background: var(--accent); color: var(--stage-black); }
 .cap.off { opacity: .55; }
 .cap .hint { flex: none; align-self: center; font-family: var(--font-big); font-size: 12px; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-/* Bunraku's addition: a reply cut off by a crash, kept, in RC's amber-notice shape (ForkSceneModal) */
+/* Bunzai's addition: a reply cut off by a crash, kept, in RC's amber-notice shape (ForkSceneModal) */
 .cutoff { display: flex; align-items: center; gap: 12px; margin-top: 10px; padding: 8px 12px; border-left: 4px solid var(--stage-warn); background: color-mix(in srgb, var(--stage-warn) 10%, transparent);
   font: 14px/1.5rem var(--font-big); color: var(--stage-card); }
 .cutoff svg { width: 14px; height: 14px; color: var(--stage-warn); flex: none; }
@@ -477,7 +477,7 @@ body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-
                 <button class="del" title="Delete"><svg><use href="#i-trash"/></svg></button>
               </div>
             </div>
-            <div class="cutoff" data-only="resumed"><svg><use href="#i-alert"/></svg><span class="grow">Cut off when Bunraku closed. <small>What arrived is kept.</small></span><button>Regenerate</button></div>
+            <div class="cutoff" data-only="resumed"><svg><use href="#i-alert"/></svg><span class="grow">Cut off when Bunzai closed. <small>What arrived is kept.</small></span><button>Regenerate</button></div>
             <div class="meta" data-only="stopped resumed">
               <span class="mdl">claude-opus-5-5 &middot; 2.9s</span>
               <span class="swc"><button class="off" title="No previous version"><svg><use href="#i-left"/></svg></button><span class="ct"><span class="n">1</span><span class="sl">/</span><span class="t">1</span></span><button title="Regenerate"><svg><use href="#i-rotate"/></svg></button></span>
@@ -487,7 +487,7 @@ body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-
       </div>
 
       <!-- RC's failure card: the draft is shown, not saved -->
-      <!-- Bunraku: the take changed while the reply was written (another window, or an edit). The reply is kept, waiting. -->
+      <!-- Bunzai: the take changed while the reply was written (another window, or an edit). The reply is kept, waiting. -->
       <div class="fail held" data-only="conflict">
         <div class="top">
           <span class="ic warn"><svg width="20" height="20"><use href="#i-alert"/></svg></span>
@@ -541,10 +541,10 @@ body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-
 <div class="wf-chip" id="wf">
   <span>Send</span><button data-s="ready">Typed</button><button data-s="sending">Starting</button><button data-s="streaming">Streaming</button><button data-s="stopped">Stopped</button><button data-s="error">Failed</button><button data-s="conflict">Scene changed</button>
   <span>Swipe</span><button data-s="regen">Regenerating</button><button data-s="newswipe">New version</button><button data-s="browse">Browsing</button>
-  <span>Bunraku</span><button data-s="resumed">Reopened after a crash</button><button data-s="noconn">No connection</button>
+  <span>Bunzai</span><button data-s="resumed">Reopened after a crash</button><button data-s="noconn">No connection</button>
   <button data-theme-switch>Theme</button><a href="../index.html">All</a>
 </div>
-<div class="wf-note"><b>RoleCall's own parts, word for word:</b> the capsule's send and red stop, the "Starting..." chip, the accent glow on a bubble being written, the failure card, and ImmersiveMessage's meta row with the SwipeCounter (model and time, then back, count, and Regenerate or next). Enter sends, Shift+Enter is a new line, and the arrow keys swipe the last reply. <b>Scene changed</b> (added 2026-09-28): if something lands in the take while a reply is written, the reply is kept on hold on RC's failure-card frame in amber, to add at the end or discard. While a reply runs, regenerate and swipe wait (greyed), as in RC. <b>Stop</b> keeps what arrived as the reply, RC's rule; with nothing arrived it saves nothing. <b>Failed</b> is RC's card: the draft shows but is not saved; Retry asks again for the same message. <b>Bunraku's two additions:</b> a reply cut off by a crash comes back kept, with an amber line and Regenerate (RC's server kept writing; a closed app cannot), and a scene with no connection says so in the capsule and points at the AI wing, whose picker needs its own wireframe. <b>Left for later steps:</b> Continue (2d, with presets) and RC's side-by-side version compare. Hover a message to see its meta row.</div>
+<div class="wf-note"><b>RoleCall's own parts, word for word:</b> the capsule's send and red stop, the "Starting..." chip, the accent glow on a bubble being written, the failure card, and ImmersiveMessage's meta row with the SwipeCounter (model and time, then back, count, and Regenerate or next). Enter sends, Shift+Enter is a new line, and the arrow keys swipe the last reply. <b>Scene changed</b> (added 2026-09-28): if something lands in the take while a reply is written, the reply is kept on hold on RC's failure-card frame in amber, to add at the end or discard. While a reply runs, regenerate and swipe wait (greyed), as in RC. <b>Stop</b> keeps what arrived as the reply, RC's rule; with nothing arrived it saves nothing. <b>Failed</b> is RC's card: the draft shows but is not saved; Retry asks again for the same message. <b>Bunzai's two additions:</b> a reply cut off by a crash comes back kept, with an amber line and Regenerate (RC's server kept writing; a closed app cannot), and a scene with no connection says so in the capsule and points at the AI wing, whose picker needs its own wireframe. <b>Left for later steps:</b> Continue (2d, with presets) and RC's side-by-side version compare. Hover a message to see its meta row.</div>
 
 <script>
 (function () {

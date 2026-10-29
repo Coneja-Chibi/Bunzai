@@ -65,7 +65,7 @@ const rowFor = async (res: Response | null, id: string): Promise<RootRow> =>
 /**
  * The engine roots are read from the process environment, so a test that clears them must put back
  * exactly what it found - including "it was not set at all", which is not the same as "". A suite
- * that leaks BUNRAKU_ST_ROOT="" would silently retire the live render tests for everything after it.
+ * that leaks BUNZAI_ST_ROOT="" would silently retire the live render tests for everything after it.
  */
 const ENV_KEYS = Object.values(RENDER_ENGINES).map((e) => e.rootVar);
 let saved: Record<string, string | undefined> = {};
@@ -73,7 +73,7 @@ let saved: Record<string, string | undefined> = {};
 beforeEach(async () => {
   saved = Object.fromEntries(ENV_KEYS.map((k) => [k, process.env[k]]));
   clearRunningEngines();
-  studioDir = await mkdtemp(join(tmpdir(), "bunraku-engines-"));
+  studioDir = await mkdtemp(join(tmpdir(), "bunzai-engines-"));
 });
 
 afterEach(async () => {
@@ -166,7 +166,7 @@ describe("the resolve route", () => {
     expect(res!.status).toBe(422);
     const body = (await res!.json()) as { error: string };
     // The remedy names the variable to set, because "not available" alone is not actionable.
-    expect(body.error).toContain("BUNRAKU_ST_ROOT");
+    expect(body.error).toContain("BUNZAI_ST_ROOT");
   });
 
   it("reports no engines when this machine has none", async () => {

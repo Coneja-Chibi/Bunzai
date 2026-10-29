@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/quickreply",
   "sourcePath": "docs/reference/entities/quickreply.md",
-  "sourceHash": "sha256:424d68d21f61b4114abe2843765dc40a7b524a87286e345840b728e2a48f10bc",
-  "semanticSummaryHash": "sha256:802934b53c137a46abe74c880e5c25a0b42f0c381841d4b7c9f28aef95867c2e",
+  "sourceHash": "sha256:e95369a8c94dee37dcdba86bd16ce0caee3872f4ee18404e8a8177a8504bf78c",
+  "semanticSummaryHash": "sha256:50237880d4343cd7980dcd7f750794709bce31ad108af1429e8e382d03aad489",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Fields and import-and-export now stay within the page; kind.ts, editor and create-tool paths exist. Author check OK.",
-  "reviewedAt": "2026-10-27T02:06:12.581Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:45.261Z"
 }

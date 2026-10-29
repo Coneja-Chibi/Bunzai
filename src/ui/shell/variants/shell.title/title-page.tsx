@@ -17,10 +17,10 @@ export default function TitlePageTitle({ state, pieces }: { state: TitleState; p
     ["import", "Import a piece", "iv", importPiece], ["browse", "Browse stories", "v", browseStories],
   ];
   return (
-    <section ref={sheetRef} tabIndex={-1} data-part="shell.title" aria-label="Bunraku title screen" className={`${styles.stage}${closing ? ` ${styles.closing}` : ""}`}>
+    <section ref={sheetRef} tabIndex={-1} data-part="shell.title" aria-label="Bunzai title screen" className={`${styles.stage}${closing ? ` ${styles.closing}` : ""}`}>
       <article className={styles.leaf}>
         <p className={styles.runner}>A story engine</p>
-        <h1 className={styles.title}>Bunraku</h1>
+        <h1 className={styles.title}>Bunzai</h1>
         <p className={styles.tag}>Every story deserves a stage.</p>
         <p className={styles.fleuron} aria-hidden="true">* * *</p>
         <nav aria-label="Contents">

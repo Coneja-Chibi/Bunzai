@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "guide/platforms/lumiverse",
   "sourcePath": "docs/guide/platforms/lumiverse.md",
-  "sourceHash": "sha256:691192a66df37244785acf30ab4cf0b7e79fdaf3c88731ea6b296a082049e3b2",
-  "summary": "Lumiverse cards ride SillyTavern-shaped JSON or PNG plus Lumiverse-only expression images alternate faces text persona and regex export. What Bunraku reads: character .png or .json, .charx archive with expressions alternate faces and baked regex, persona .json dump, and standalone regex .json; detect by Lumiverse-only keys not filename. What comes across cleanly keeps the original and lifts core fields talkativeness linked world embedded worldbook portrait resolved expression images and alternate text or faces as variants; unresolved image refs stay plain text never guessed. What changes when you convert to another app: same-app JSON keeps fields unchanged and .charx may re-path files inside the archive; cross-app drops variants regex TTS LoRA databank ids layout while core and worldbook cross as far as target holds. Editing on the Workbench uses portrait variant strip Manage Sprites and Lumiverse-tagged extras with world-book ids read-only for later lore editor work. Exporting back out keeps container JSON or charx by default and refuses JSON when archive files would strand. Common questions cover round-trip paths expressions variants scripts and persona dump.",
+  "sourceHash": "sha256:27d98742e90454fe028c9135da0c05d7724da77fa619750a496eeb11974443f6",
+  "summary": "Lumiverse cards ride SillyTavern-shaped JSON or PNG plus Lumiverse-only expression images alternate faces text persona and regex export. What Bunzai reads: character .png or .json, .charx archive with expressions alternate faces and baked regex, persona .json dump, and standalone regex .json; detect by Lumiverse-only keys not filename. What comes across cleanly keeps the original and lifts core fields talkativeness linked world embedded worldbook portrait resolved expression images and alternate text or faces as variants; unresolved image refs stay plain text never guessed. What changes when you convert to another app: same-app JSON keeps fields unchanged and .charx may re-path files inside the archive; cross-app drops variants regex TTS LoRA databank ids layout while core and worldbook cross as far as target holds. Editing on the Workbench uses portrait variant strip Manage Sprites and Lumiverse-tagged extras with world-book ids read-only for later lore editor work. Exporting back out keeps container JSON or charx by default and refuses JSON when archive files would strand. Common questions cover round-trip paths expressions variants scripts and persona dump.",
   "topics": [
     "Lumiverse ST-shaped cards",
     "charx archive expressions",
@@ -15,11 +15,11 @@
   ],
   "sections": [
     {
-      "slug": "what-bunraku-reads",
-      "title": "What Bunraku reads",
+      "slug": "what-bunzai-reads",
+      "title": "What Bunzai reads",
       "level": 2,
-      "sourceHash": "sha256:55d8398acb2ae5f46bb39201c83629f0b94ac1d7bf1da48aa0494da5d027865b",
-      "summary": "Bunraku reads four Lumiverse outputs. Character cards as .png or .json like SillyTavern. A Lumiverse archive as .charx packing the card expression images alternate faces and any regex scripts as separate files inside rather than inline. A persona as a .json dump of one account persona with name title description and pronouns. A set of regex scripts as standalone .json separate from any card. Drop on the Library for a plain-words receipt. It tells Lumiverse from plain SillyTavern by Lumiverse-only keys inside data not by filename so renaming does not confuse. Full walkthrough lives in the importing guide.",
+      "sourceHash": "sha256:e6b2c5ae7988010fa74c2b6248848a32bbccf837dcb5ac550a026291411a40ee",
+      "summary": "Bunzai reads four Lumiverse outputs. Character cards as .png or .json like SillyTavern. A Lumiverse archive as .charx packing the card expression images alternate faces and any regex scripts as separate files inside rather than inline. A persona as a .json dump of one account persona with name title description and pronouns. A set of regex scripts as standalone .json separate from any card. Drop on the Library for a plain-words receipt. It tells Lumiverse from plain SillyTavern by Lumiverse-only keys inside data not by filename so renaming does not confuse. Full walkthrough lives in the importing guide.",
       "topics": [
         "png json character",
         "charx archive",
@@ -33,8 +33,8 @@
       "slug": "what-comes-across-cleanly",
       "title": "What comes across cleanly",
       "level": 2,
-      "sourceHash": "sha256:a35ec085b9bb72bd41403a986a3b9f3f3f71aee1381388bca663c732544eb725",
-      "summary": "Importing loses nothing. Bunraku keeps a complete original card and for an archive every file inside then lifts name description personality scenario greetings examples system post-history creator notes tags talkativeness linked world name embedded worldbook portrait art and expression images the archive carried plus alternate description personality scenario or face as variants. An expression image becomes editable art only when bytes are found embedded or in the same archive; a missing file reference stays plain text and Bunraku never guesses. Card picture is the piece portrait. Listed fields ready to edit; the rest held safely in the background.",
+      "sourceHash": "sha256:3aa8bac18f7aceae5d6aa0adccf11fc1e7fa9d2e54f6e0009ae949a47675e4a3",
+      "summary": "Importing loses nothing. Bunzai keeps a complete original card and for an archive every file inside then lifts name description personality scenario greetings examples system post-history creator notes tags talkativeness linked world name embedded worldbook portrait art and expression images the archive carried plus alternate description personality scenario or face as variants. An expression image becomes editable art only when bytes are found embedded or in the same archive; a missing file reference stays plain text and Bunzai never guesses. Card picture is the piece portrait. Listed fields ready to edit; the rest held safely in the background.",
       "topics": [
         "core fields worldbook",
         "expressions when resolved",
@@ -48,8 +48,8 @@
       "slug": "what-changes-when-you-convert-to-another-app",
       "title": "What changes when you convert to another app",
       "level": 2,
-      "sourceHash": "sha256:8a8570a311022743778868cc8a5b93035b2960ca422b34566294c96e673d0f1b",
-      "summary": "Same-app JSON round-trip returns every field unchanged because Bunraku kept the original and only rewrote changed fields. A .charx round-trip keeps every image alternate face and script though paths inside the archive may be regenerated; Lumiverse reads its manifest so the card still opens. Plain JSON has no layout to shift so it comes back closer to original. Converting to another app drops Lumiverse private extras: alternate faces and text variants for now since no other write target reads variants yet; regex baked into archive; TTS voice LoRA hint attached world-book and databank ids alternate character name internal ids layout. Core character worldbook and resolved images come across as far as the target holds. Another app means SillyTavern Agnai Backyard RoleCall Risu. The drop is deliberate never blind-copy private scripts or settings.",
+      "sourceHash": "sha256:1d8b9b320f2495c93582704703f08c150e29a8c128615eae708b0569c2061c32",
+      "summary": "Same-app JSON round-trip returns every field unchanged because Bunzai kept the original and only rewrote changed fields. A .charx round-trip keeps every image alternate face and script though paths inside the archive may be regenerated; Lumiverse reads its manifest so the card still opens. Plain JSON has no layout to shift so it comes back closer to original. Converting to another app drops Lumiverse private extras: alternate faces and text variants for now since no other write target reads variants yet; regex baked into archive; TTS voice LoRA hint attached world-book and databank ids alternate character name internal ids layout. Core character worldbook and resolved images come across as far as the target holds. Another app means SillyTavern Agnai Backyard RoleCall Risu. The drop is deliberate never blind-copy private scripts or settings.",
       "topics": [
         "JSON vs charx round-trip",
         "archive path refile",
@@ -63,7 +63,7 @@
       "slug": "editing-on-the-workbench",
       "title": "Editing on the Workbench",
       "level": 2,
-      "sourceHash": "sha256:3252fe7c8753444701c27974a6f506d366f60252912322ed7504a49548a417e0",
+      "sourceHash": "sha256:517923d2bf6bfe058646f8210825afd15f8bee6b7b2b6a7bc3ea0a7f72c13b47",
       "summary": "Send a piece to the Workbench as a tab and edit core character fields like any card. The portrait card carries a variant strip with Base plus one tile per alternate version; click a tile to edit that variant text or art or add with plus. Manage Sprites opens the pack editor when expression images exist. Lumiverse-tagged fields sit alongside: alternate character name image-gen LoRA TTS voice attached world-book and databank ids read-only full lore editor is later work and a catch-all. Save writes the whole card so untouched parts stay.",
       "topics": [
         "variant strip tiles",
@@ -78,7 +78,7 @@
       "slug": "exporting-back-out",
       "title": "Exporting back out",
       "level": 2,
-      "sourceHash": "sha256:c8f5c66bbd445bbb3e23fd4456c12e324ce615414bee3029d6d0e8a88fc1537b",
+      "sourceHash": "sha256:3b16f219bf1ccccc0f22b2895ed6eb9a7052b5dc55a84e226bd72b8c918dcd8b",
       "summary": "Stage for the Press; each run exports staged pieces to one target. Export to Lumiverse keeps the container the card came in: .json stays .json and archive returns as .charx with edited images faces and scripts packed back. You can ask for the other container. Asking .json after an archive import refuses rather than silently drop stranded files; that check can still trip after removing fields that pointed at them. Plain .txt or .md is available for JSON output not for .charx. Other app targets apply the drop story.",
       "topics": [
         "keep container default",
@@ -93,8 +93,8 @@
       "slug": "common-questions",
       "title": "Common questions",
       "level": 2,
-      "sourceHash": "sha256:8898706599d305d64783963b9739413b0d73361e0a98e38aa7b47636d4a8107b",
-      "summary": "Will the card come back exactly as it was? Yes on export to Lumiverse unedited: plain JSON fields unchanged; archive keeps image and script bytes though internal paths may regenerate which Lumiverse does not mind. Imported archive returns .charx by default; ask for .json and Bunraku refuses rather than drop archive-only files. Picture and resolved expression images come across as portrait and editable art. Alternate faces and text fold into variants on the portrait card and fold back on Lumiverse export. Regex baked into archive stay with the card and do not copy cross-app; standalone regex is its own piece. Persona .json dumps import name title description pronouns with everything else on the twin for round-trip.",
+      "sourceHash": "sha256:7bc8bb864c8d82eb12ddd7e4fd3401741f879c5ba05c150ab8d19de1903f5e35",
+      "summary": "Will the card come back exactly as it was? Yes on export to Lumiverse unedited: plain JSON fields unchanged; archive keeps image and script bytes though internal paths may regenerate which Lumiverse does not mind. Imported archive returns .charx by default; ask for .json and Bunzai refuses rather than drop archive-only files. Picture and resolved expression images come across as portrait and editable art. Alternate faces and text fold into variants on the portrait card and fold back on Lumiverse export. Regex baked into archive stay with the card and do not copy cross-app; standalone regex is its own piece. Persona .json dumps import name title description pronouns with everything else on the twin for round-trip.",
       "topics": [
         "JSON vs archive exact",
         "refuse stranding",

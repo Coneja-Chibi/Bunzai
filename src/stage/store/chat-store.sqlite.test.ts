@@ -29,9 +29,9 @@ describe("SQLite ChatStore on a real file", () => {
   });
 
   test("a chat with a second take, an edit and a fork survives close and reopen, and close leaves one file that can be removed", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "bunraku-chat-"));
+    const dir = mkdtempSync(join(tmpdir(), "bunzai-chat-"));
     dirs.push(dir);
-    const path = join(dir, "bunraku.db");
+    const path = join(dir, "bunzai.db");
     const cipher = testCipher();
     const first = openStageDatabase(path, MIGRATIONS);
     const written = sqliteChatStore(first, cipher);
@@ -42,7 +42,7 @@ describe("SQLite ChatStore on a real file", () => {
     await written.editSwipe(a!.id, a!.swipes[0]!.id, "one, edited");
     await written.fork(chat.activeBranchId, a!.id, { name: "side" });
     first.close();
-    expect(readdirSync(dir)).toEqual(["bunraku.db"]);
+    expect(readdirSync(dir)).toEqual(["bunzai.db"]);
 
     const second = openStageDatabase(path, MIGRATIONS);
     try {
@@ -59,9 +59,9 @@ describe("SQLite ChatStore on a real file", () => {
   });
 
   test("a second connection reads what the first committed while it is still open (WAL)", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "bunraku-chat-"));
+    const dir = mkdtempSync(join(tmpdir(), "bunzai-chat-"));
     dirs.push(dir);
-    const path = join(dir, "bunraku.db");
+    const path = join(dir, "bunzai.db");
     const cipher = testCipher();
     const writer = openStageDatabase(path, MIGRATIONS);
     const reader = openStageDatabase(path, MIGRATIONS);

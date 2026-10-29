@@ -140,7 +140,7 @@ describe("state.* macros", () => {
     expect(processMacros("{{state.get::session:callsign}}", context).text).toBe("SCORIA");
   });
 
-  // RoleCall's default {{state.show}} format is YAML via the js-yaml package, not yet a Bunraku
+  // RoleCall's default {{state.show}} format is YAML via the js-yaml package, not yet a Bunzai
   // dependency (see state.ts's header). Both branches render JSON here instead, so only the
   // ::json-parity half of RoleCall's test is ported as a real assertion.
   test("state.show::json pretty-prints objects as JSON", () => {

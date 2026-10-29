@@ -1,4 +1,4 @@
-/** Serve the generated Pages artifact locally under the same /Bunraku/ project prefix. */
+/** Serve the generated Pages artifact locally under the same /Bunzai/ project prefix. */
 import { fileURLToPath } from "node:url";
 import { resolvePagesPreviewPath } from "./pages-preview-path";
 
@@ -17,4 +17,4 @@ Bun.serve({
   },
 });
 
-console.log(`Pages preview: http://127.0.0.1:${port}/Bunraku/`);
+console.log(`Pages preview: http://127.0.0.1:${port}/Bunzai/`);

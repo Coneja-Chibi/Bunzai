@@ -69,7 +69,7 @@ describe("what comes back is read, not trusted", () => {
      * renderer `options: undefined` and take the transcript down with it.
      */
     sessionStorage.setItem(
-      "bunraku.agent.transcript",
+      "bunzai.agent.transcript",
       JSON.stringify([{ role: "tool", text: "ask_choice: ?", choices: { question: "q", options: "nope" } }]),
     );
     const back = loadTranscript();
@@ -79,7 +79,7 @@ describe("what comes back is read, not trusted", () => {
 
   test("a line with no role or no text is not a line", () => {
     sessionStorage.setItem(
-      "bunraku.agent.transcript",
+      "bunzai.agent.transcript",
       JSON.stringify([{ role: "wizard", text: "hi" }, { role: "user" }, { role: "user", text: "ok" }]),
     );
     expect(loadTranscript()).toEqual([{ role: "user", text: "ok" }]);
@@ -87,9 +87,9 @@ describe("what comes back is read, not trusted", () => {
 
   test("nothing stored, or nonsense stored, is an empty conversation and never a throw", () => {
     expect(loadTranscript()).toEqual([]);
-    sessionStorage.setItem("bunraku.agent.transcript", "{not json");
+    sessionStorage.setItem("bunzai.agent.transcript", "{not json");
     expect(loadTranscript()).toEqual([]);
-    sessionStorage.setItem("bunraku.agent.transcript", JSON.stringify({ lines: [] }));
+    sessionStorage.setItem("bunzai.agent.transcript", JSON.stringify({ lines: [] }));
     expect(loadTranscript()).toEqual([]);
   });
 

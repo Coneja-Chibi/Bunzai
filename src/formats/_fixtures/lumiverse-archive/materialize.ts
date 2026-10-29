@@ -22,7 +22,7 @@ const unsafeName = (name: string): boolean =>
  * zero-length files, because the format treats them as meaningful.
  */
 export async function materializeLvbak(bytes: Uint8Array): Promise<string> {
-  const root = await mkdtemp(join(tmpdir(), "bunraku-lvbak-"));
+  const root = await mkdtemp(join(tmpdir(), "bunzai-lvbak-"));
   const files = unzipSync(bytes);
   for (const [name, data] of Object.entries(files)) {
     if (unsafeName(name)) throw new Error(`materializeLvbak: unsafe entry name ${name}`);

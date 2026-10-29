@@ -102,7 +102,7 @@ const folderImport: HarnessTool<z.infer<typeof input>> = {
     if (!adapter) {
       return refuse(
         "folder_import: unrecognised",
-        `Bunraku does not recognise ${basename(check.path)} as a character, preset, lorebook, persona or regex set.`,
+        `Bunzai does not recognise ${basename(check.path)} as a character, preset, lorebook, persona or regex set.`,
       );
     }
 

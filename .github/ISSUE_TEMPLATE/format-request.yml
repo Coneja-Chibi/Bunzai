@@ -1,5 +1,5 @@
 name: Platform / format request
-description: A platform or file format Bunraku should speak
+description: A platform or file format Bunzai should speak
 title: "[format] "
 labels: ["format-request"]
 body:

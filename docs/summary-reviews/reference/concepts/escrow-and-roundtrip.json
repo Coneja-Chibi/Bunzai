@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/concepts/escrow-and-roundtrip",
   "sourcePath": "docs/reference/concepts/escrow-and-roundtrip.md",
-  "sourceHash": "sha256:2d4f5bd6f8786cd9c7ec3cb9349059399885c81ccb7bfb218c68f687b0761955",
-  "semanticSummaryHash": "sha256:530ea51f57b3dcc277ab72bd3bc75580e610740710c748b1c339752badca059c",
+  "sourceHash": "sha256:2eeada86471b64837669313fc362df5895afa4cfabd15074b2136f2c5a1eee76",
+  "semanticSummaryHash": "sha256:19e9c23bfcb298bac9494cc83a604010f293612b32aca1616e06e891b348f9c2",
   "verdict": "APPROVE",
-  "reviewer": "gpt-6.1-sol:/root/implementation_review",
-  "notes": "Markdown and sidecar distinguish parsed twins, field overlay, format-specific byte tiers and regenerated PNG chunks. Corrected same-format heading/slug agrees with Markdown. Cross-format residue stays in its source escrow key. Source-only review.",
-  "reviewedAt": "2026-10-02T01:04:44.411Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:43.158Z"
 }

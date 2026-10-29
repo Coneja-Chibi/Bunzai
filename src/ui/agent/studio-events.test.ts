@@ -71,7 +71,7 @@ describe("studioEvents: the lock/unlock push", () => {
   afterEach(() => { for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true }); });
 
   const dir = (): string => {
-    const d = mkdtempSync(join(tmpdir(), "bunraku-studio-events-"));
+    const d = mkdtempSync(join(tmpdir(), "bunzai-studio-events-"));
     dirs.push(d);
     return d;
   };

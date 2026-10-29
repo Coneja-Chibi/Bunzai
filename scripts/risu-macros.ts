@@ -7,7 +7,7 @@
  * 143 chances to invent a macro. Every other catalog here was transcribed by hand from prose sources because those
  * engines publish no machine-readable list; Risu does, so it gets read rather than retyped.
  *
- * WHY THE OUTPUT IS COMMITTED. Bunraku ships the macro reference to people who have no RisuAI
+ * WHY THE OUTPUT IS COMMITTED. Bunzai ships the macro reference to people who have no RisuAI
  * checkout - that is the whole point of a library. So this runs once, by somebody who has the
  * source, and its output is a normal file in the repo. The script stays so the next person can
  * regenerate against a newer RisuAI and diff it.
@@ -32,7 +32,7 @@ const fail = (msg: string): never => {
   process.exit(1);
 };
 
-const root = resolve(arg("risu-root") ?? process.env["BUNRAKU_RISU_ROOT"] ?? "");
+const root = resolve(arg("risu-root") ?? process.env["BUNZAI_RISU_ROOT"] ?? "");
 if (!root || !existsSync(join(root, DOC_PATH))) {
   fail(`no RisuAI checkout at "${root}": ${DOC_PATH} is missing. Pass --risu-root=<path>.`);
 }

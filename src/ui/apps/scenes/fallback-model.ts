@@ -2,7 +2,7 @@
  * RoleCall's Fallback Model setting (FallbackModelControl.tsx): which model answers when the scene's own
  * model fails. A per-user studio pref (RoleCall keeps it per account, not per chat). The Booth's Narrator
  * Model row writes it (booth-fallback-row.tsx); use-scene-turn.ts sends it with each turn and scene-turn.ts
- * honours it. Bunraku has no helper model or house default, so RoleCall's Auto mode has no meaning here;
+ * honours it. Bunzai has no helper model or house default, so RoleCall's Auto mode has no meaning here;
  * the stored choices are off (fail visibly, the default) and a custom connection.
  */
 import type { ChatConnection } from "../../../stage/contracts/chat-store";

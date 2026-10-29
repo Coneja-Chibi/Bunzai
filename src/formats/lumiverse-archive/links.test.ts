@@ -12,7 +12,7 @@ describe("createLinkMap", () => {
   test("a recorded entity resolves to the exact id and name it was recorded under", () => {
     const links = createLinkMap();
     const report = createLvbakReport();
-    links.record("world_books", WORLD_BOOK_ID, { id: "bunraku-book-1", name: "Test World Book Alpha" });
+    links.record("world_books", WORLD_BOOK_ID, { id: "bunzai-book-1", name: "Test World Book Alpha" });
 
     const found = links.resolve(
       "personas/lv-persona-000000000001(Test Persona Alpha)",
@@ -20,7 +20,7 @@ describe("createLinkMap", () => {
       WORLD_BOOK_ID,
       report,
     );
-    expect(found).toEqual({ id: "bunraku-book-1", name: "Test World Book Alpha" });
+    expect(found).toEqual({ id: "bunzai-book-1", name: "Test World Book Alpha" });
     expect(report.unresolvedLinks).toEqual([]);
   });
 
@@ -44,15 +44,15 @@ describe("createLinkMap", () => {
   test("the same Lumiverse id under two different tables never collides", () => {
     const links = createLinkMap();
     const report = createLvbakReport();
-    links.record("characters", "lv-shared-id", { id: "bunraku-char-1", name: "Character" });
-    links.record("presets", "lv-shared-id", { id: "bunraku-preset-1", name: "Preset" });
+    links.record("characters", "lv-shared-id", { id: "bunzai-char-1", name: "Character" });
+    links.record("presets", "lv-shared-id", { id: "bunzai-preset-1", name: "Preset" });
 
     expect(links.resolve("x", "characters", "lv-shared-id", report)).toEqual({
-      id: "bunraku-char-1",
+      id: "bunzai-char-1",
       name: "Character",
     });
     expect(links.resolve("x", "presets", "lv-shared-id", report)).toEqual({
-      id: "bunraku-preset-1",
+      id: "bunzai-preset-1",
       name: "Preset",
     });
   });

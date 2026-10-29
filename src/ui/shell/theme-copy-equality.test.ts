@@ -40,7 +40,7 @@ for (const input of inputs) {
   test(`${sourceId}: a copy under a new id paints an identical root`, async () => {
     const themes = await createThemeLifecycle(memoryStateStore(), [input]);
     const copy = clone(original);
-    const copyId = "bunraku.theme.copy-of-" + sourceId.replace(/^bunraku\.theme\./, "");
+    const copyId = "bunzai.theme.copy-of-" + sourceId.replace(/^bunzai\.theme\./, "");
     copy.manifest.id = copyId;
     copy.manifest.name = "Copy of " + original.manifest.name;
     const review = await themes.inspect(copy);

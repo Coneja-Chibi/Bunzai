@@ -24,9 +24,9 @@ import { webStorage } from "./web-storage";
 /** The app you were on when the page last reloaded. Written by the shell store's mountApp. */
 export const ACTIVE_APP_KEY = "vaude.session.activeApp";
 /** The agent window's conversation, kept so a reload does not lose what was said. */
-export const TRANSCRIPT_KEY = "bunraku.agent.transcript";
+export const TRANSCRIPT_KEY = "bunzai.agent.transcript";
 /** Where the floating agent overlay was dragged and how big it was left. */
-export const PANEL_KEY = "bunraku.agent.panel";
+export const PANEL_KEY = "bunzai.agent.panel";
 /**
  * Which saved session this tab's conversation is being written to.
  *
@@ -34,7 +34,7 @@ export const PANEL_KEY = "bunraku.agent.panel";
  * screen writing into the session behind the old one would braid two conversations into one file.
  * The file itself is untouched and stays resumable - reset means start fresh here, not delete.
  */
-export const AGENT_SESSION_KEY = "bunraku.agent.session";
+export const AGENT_SESSION_KEY = "bunzai.agent.session";
 /**
  * Messages typed during a turn and not sent yet.
  *
@@ -42,7 +42,7 @@ export const AGENT_SESSION_KEY = "bunraku.agent.session";
  * reloads itself whenever the source changes underneath it. Cleared with the transcript: a new
  * conversation must not inherit the last one's unsent thoughts.
  */
-export const QUEUE_KEY = "bunraku.agent.queue";
+export const QUEUE_KEY = "bunzai.agent.queue";
 
 /** The session id this tab is writing to, or "" when the next turn should open a new one. */
 export function readAgentSessionId(): string {

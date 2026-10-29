@@ -108,7 +108,7 @@ function diff(db: Database, table: string, keys: string[], where: string, change
   };
 }
 
-const NOT_A_SNAPSHOT = "this file is not a Bunraku snapshot, or it is damaged";
+const NOT_A_SNAPSHOT = "this file is not a Bunzai snapshot, or it is damaged";
 /** Attaches a snapshot as `snap`; a file that is no database is a plain refusal, not SQLite's own words. */
 function attachSnap(db: Database, file: string): void {
   try {
@@ -184,7 +184,7 @@ export function restoreSnapshot(livePath: string, snapshot: string, work: string
   } finally {
     probe.close(true);
   }
-  if (schema === "different") throw new Error("this snapshot was made by a different version of Bunraku and cannot be restored here");
+  if (schema === "different") throw new Error("this snapshot was made by a different version of Bunzai and cannot be restored here");
   if (schema === "older") {
     copyFileSync(snapshot, work);
     openStageDatabase(work, MIGRATIONS).close();

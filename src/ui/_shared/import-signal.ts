@@ -7,8 +7,8 @@
  * is consumed the moment it subscribes.
  */
 
-const EVENT = "bunraku:import-request";
-const SLOT = "__bunrakuImportRequest";
+const EVENT = "bunzai:import-request";
+const SLOT = "__bunzaiImportRequest";
 
 type Slot = { files: File[] | null } | null;
 

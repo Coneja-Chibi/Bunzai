@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/sillytavern/world-info",
   "sourcePath": "docs/reference/platforms/sillytavern/world-info.md",
-  "sourceHash": "sha256:a09be608d4494f4f2f7ff21d573c82af08c824ec308e7bd298c0511b429fa6aa",
+  "sourceHash": "sha256:f8c81b15dc09ee1c37c0dc2e2e363dc109f759e20e8cbd07c11d5e00688c1615",
   "summary": "Models SillyTavern World Info as conditional knowledge and prompt injection rather than a passive dictionary. Books, links, and entry identity distinguishes global, character, chat, embedded, and named-link scopes, organizational memos, content, enabled state, character filters, generation filters, and extra scan sources. Activation and selection covers constants, primary and secondary keywords, selective logic, probability, inclusion groups, group scoring, and vector similarity with remaining eligibility checks. Placement, order, and prompt budget separates insertion position, chat depth, order, outlets, scan depth, minimum activations, and context budget. Recursion, timing, and automation covers recursive activation controls, sticky, cooldown, delay, branch state, and executable Automation IDs. Interoperability rules distinguishes portable character books from standalone World Info dialects, requires canonical mapping plus original escrow, and demands explicit loss reporting when another platform lacks recursion, grouping, timing, vectors, outlets, trigger filters, or scan-source controls.",
   "topics": [
     "World Info book scopes",
@@ -67,8 +67,8 @@
       "slug": "recursion-timing-and-automation",
       "title": "Recursion, timing, and automation",
       "level": 2,
-      "sourceHash": "sha256:a07f2e1b004bcd37331f97bfa903467884cfbe21b34cefd44f9c57c1b82ba715",
-      "summary": "Recursion, timing, and automation explains entry chains activated by keywords inside other entry content. Per-entry controls may block recursive activation, stop further propagation, or delay eligibility to a recursion level, while Max Recursion Steps bounds passes and conflicts with Min Activations. Sticky, cooldown, and delay create message-counted chat-local state that branches inherit and edits clear. Automation IDs can execute matched Quick Reply or STscript behavior, so Bunraku treats those bindings as sealed executable metadata and never follows them during import.",
+      "sourceHash": "sha256:9c4b37e092486fca0908f1e7227afb130019eb7bba6878c10c8db2538f1faca8",
+      "summary": "Recursion, timing, and automation explains entry chains activated by keywords inside other entry content. Per-entry controls may block recursive activation, stop further propagation, or delay eligibility to a recursion level, while Max Recursion Steps bounds passes and conflicts with Min Activations. Sticky, cooldown, and delay create message-counted chat-local state that branches inherit and edits clear. Automation IDs can execute matched Quick Reply or STscript behavior, so Bunzai treats those bindings as sealed executable metadata and never follows them during import.",
       "topics": [
         "recursive entry chains",
         "recursion level controls",
@@ -83,8 +83,8 @@
       "slug": "interoperability-rules",
       "title": "Interoperability rules",
       "level": 2,
-      "sourceHash": "sha256:531d1ca1b40781b0e795e283b8d557b4c4c40173340b23048c80c1f1c3ea7ddf",
-      "summary": "Interoperability rules distinguishes the portable character-book schema from SillyTavern's richer standalone World Info wire dialect, including extension-carried settings. Bunraku maps represented behavior into canonical lorebook entries and retains the complete source for same-format restoration. A cross-format target may lack recursion, inclusion groups, timed effects, vectors, outlets, generation filters, or alternative scan sources. Conversion must report each unsupported behavior rather than flattening it silently, with the format adapter reference governing the exact supported field and enum map.",
+      "sourceHash": "sha256:a8fb29ea52af0207933a1d9d31c7ce6ff3320dd595e4e148c0cef99734de5f6a",
+      "summary": "Interoperability rules distinguishes the portable character-book schema from SillyTavern's richer standalone World Info wire dialect, including extension-carried settings. Bunzai maps represented behavior into canonical lorebook entries and retains the complete source for same-format restoration. A cross-format target may lack recursion, inclusion groups, timed effects, vectors, outlets, generation filters, or alternative scan sources. Conversion must report each unsupported behavior rather than flattening it silently, with the format adapter reference governing the exact supported field and enum map.",
       "topics": [
         "character book vs standalone",
         "extension-carried settings",

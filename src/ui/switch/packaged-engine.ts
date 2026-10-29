@@ -19,7 +19,7 @@ import { openPath } from "../server-security";
 import type { SwitchAction } from "./manager";
 
 const RELEASE_TAG_API = (tag: string): string =>
-  `https://api.github.com/repos/Coneja-Chibi/Bunraku/releases/tags/${tag}`;
+  `https://api.github.com/repos/Coneja-Chibi/Bunzai/releases/tags/${tag}`;
 const MAX_DOWNLOAD_BYTES = 250 * 1024 * 1024;
 const DOWNLOAD_TIMEOUT_MS = 5 * 60 * 1000;
 const MAX_REDIRECTS = 5;
@@ -37,7 +37,7 @@ interface Asset {
 async function fetchReleaseAssets(tag: string): Promise<Asset[]> {
   const res = await fetch(RELEASE_TAG_API(tag), {
     signal: AbortSignal.timeout(15000),
-    headers: { accept: "application/vnd.github+json", "user-agent": "bunraku-update-check" },
+    headers: { accept: "application/vnd.github+json", "user-agent": "bunzai-update-check" },
   });
   if (res.status !== 200) throw new Error(`switch: could not read release ${tag} (${res.status}).`);
   const body = (await res.json().catch(() => null)) as { assets?: unknown } | null;
@@ -107,12 +107,12 @@ export async function packagedSwitch(tag: string, deps: PackagedSwitchDeps): Pro
   const sums = assets.find((a) => a.name === "SHA256SUMS");
   if (!sums) throw new Error(`switch: ${tag} has no checksum file; refusing to install an unverified build.`);
 
-  const stageDir = join(exeDir, ".bunraku-update");
+  const stageDir = join(exeDir, ".bunzai-update");
   try {
     await mkdir(stageDir, { recursive: true });
     await access(stageDir);
   } catch {
-    throw new Error("switch: cannot write next to Bunraku (a protected folder); download the update manually.");
+    throw new Error("switch: cannot write next to Bunzai (a protected folder); download the update manually.");
   }
 
   onProgress(`Downloading ${tag}...`);
@@ -130,6 +130,6 @@ export async function packagedSwitch(tag: string, deps: PackagedSwitchDeps): Pro
   openPath(stageDir);
   return {
     kind: "manual",
-    message: `Downloaded and verified ${tag} into the opened folder. Close Bunraku and run the new ${assetName} to finish.`,
+    message: `Downloaded and verified ${tag} into the opened folder. Close Bunzai and run the new ${assetName} to finish.`,
   };
 }

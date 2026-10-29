@@ -44,7 +44,7 @@ describe("the slot list", () => {
   });
 
   test("the generator refuses a slot file that does not declare itself, or sits under another name", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "bunraku-slots-"));
+    const dir = mkdtempSync(join(tmpdir(), "bunzai-slots-"));
     try {
       writeFileSync(join(dir, "plain.ts"), "export default {};");
       await expect(findSlots(dir)).rejects.toThrow("must export default defineSlot");

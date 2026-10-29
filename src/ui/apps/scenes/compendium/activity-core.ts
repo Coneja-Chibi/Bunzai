@@ -18,7 +18,7 @@ export interface WriteLine { entryId: string; bookId: string; name: string; type
 
 export interface ActivityRow {
   id: string;
-  /** RoleCall's card labels: Remembered, Updated, Post-Gen; and the Bunraku ones: Reconciled, Undone. */
+  /** RoleCall's card labels: Remembered, Updated, Post-Gen; and the Bunzai ones: Reconciled, Undone. */
   label: string;
   phase: "PRE" | "LIVE" | "POST" | "HIST";
   model?: string;

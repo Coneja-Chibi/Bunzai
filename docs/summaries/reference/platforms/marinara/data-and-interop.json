@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/data-and-interop",
   "sourcePath": "docs/reference/platforms/marinara/data-and-interop.md",
-  "sourceHash": "sha256:0486253ee8503a2ebd476fc31d07abc55f3073f963cb780e3ab3dbef4d624820",
-  "summary": "Documents Marinara data layout backup restore and SillyTavern import at the pinned Engine docs. DATA_DIR layout lists storage plus asset folders and the encryption key file or ENCRYPTION_KEY env for API secrets. Backup versus profile contrasts Download Backup full zip restorable via Import Profile Export Profile Native restorable and Export Profile Compatible non-restorable. Restore scans then confirms irreversible import with identity match re-import updates media warnings and secrets stripped requiring re-entered keys and webhooks. SillyTavern single-file import covers Character Chat Preset Lorebook carriers and embedded book prompts. Folder wizard access requires loopback free path remote admin secret or IMPORT_ALLOWED_ROOTS. Folder wizard stages path scan seven categories built-in preset default unchecked tag and regex modes progress and results. Wizard handling rules are best-effort branch grouping group Roleplay import and source date preservation. What does not transfer enumerates global settings Quick Replies non-selected categories and failed items. Bunraku hub conversion is not this wizard.",
+  "sourceHash": "sha256:b8e57c43e74cec6d3cc3bad299bbb2a6a06e9f2a9346f102d7c1c5b066de0ecd",
+  "summary": "Documents Marinara data layout backup restore and SillyTavern import at the pinned Engine docs. DATA_DIR layout lists storage plus asset folders and the encryption key file or ENCRYPTION_KEY env for API secrets. Backup versus profile contrasts Download Backup full zip restorable via Import Profile Export Profile Native restorable and Export Profile Compatible non-restorable. Restore scans then confirms irreversible import with identity match re-import updates media warnings and secrets stripped requiring re-entered keys and webhooks. SillyTavern single-file import covers Character Chat Preset Lorebook carriers and embedded book prompts. Folder wizard access requires loopback free path remote admin secret or IMPORT_ALLOWED_ROOTS. Folder wizard stages path scan seven categories built-in preset default unchecked tag and regex modes progress and results. Wizard handling rules are best-effort branch grouping group Roleplay import and source date preservation. What does not transfer enumerates global settings Quick Replies non-selected categories and failed items. Bunzai hub conversion is not this wizard.",
   "topics": [
     "DATA_DIR and encryption key",
     "backup vs profile export",
@@ -11,7 +11,7 @@
     "ST single-file import",
     "folder wizard access stages",
     "non-transfer list",
-    "Bunraku not the wizard"
+    "Bunzai not the wizard"
   ],
   "sections": [
     {
@@ -135,13 +135,13 @@
       "shortSource": true
     },
     {
-      "slug": "bunraku",
-      "title": "Bunraku",
+      "slug": "bunzai",
+      "title": "Bunzai",
       "level": 2,
-      "sourceHash": "sha256:90fd401c4973352038dfe60370634ef0a6033109c753cca31d66264c795eefae",
-      "summary": "Bunraku hub-and-spoke conversion is not Marinara's folder-import wizard. Kit must not claim that Bunraku runs this ST bulk importer, restores Marinara profiles, or preserves DATA_DIR encryption keys without a dedicated implemented path and tests. The wizard's categories, access rules, and loss boundaries describe upstream Marinara behavior only.",
+      "sourceHash": "sha256:29b27f8a341c33366dcbfc553119ed5673e760b779de33a5ba989e8cba508e04",
+      "summary": "Bunzai hub-and-spoke conversion is not Marinara's folder-import wizard. Kit must not claim that Bunzai runs this ST bulk importer, restores Marinara profiles, or preserves DATA_DIR encryption keys without a dedicated implemented path and tests. The wizard's categories, access rules, and loss boundaries describe upstream Marinara behavior only.",
       "topics": [
-        "not Bunraku conversion",
+        "not Bunzai conversion",
         "no invented wizard parity",
         "DATA_DIR not studio"
       ],

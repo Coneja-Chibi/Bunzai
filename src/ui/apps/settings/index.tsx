@@ -11,7 +11,7 @@ import { Panel } from "../../components/panel";
 import { RoomHeader } from "../../components/room-header";
 import { ThemeSlot } from "../../_shared/theme-slot";
 import type { JSX } from "react";
-import type { AppContext, BunrakuApp } from "../../app-contract";
+import type { AppContext, BunzaiApp } from "../../app-contract";
 import { parseLaunchTarget } from "../../_shared/launch-target";
 import { Ic } from "../../_shared/ic";
 import { settingsSections } from "./sections/registry";
@@ -73,7 +73,7 @@ function SettingsRoom({ ctx }: { ctx: AppContext }): JSX.Element | null {
     <div className={styles.roomHost} data-part="settings.root">
     <style>{SETTINGS_VARIANTS_STYLE}</style>
     <div className={`${styles.room} scrollThin`} data-sx="room">
-      <RoomHeader data-part="settings.header" kicker="Bunraku · Preferences" title="Settings" lede="Every knob for the whole studio. There is no apply button: a change lands the moment you make it, unless its tab says when." />
+      <RoomHeader data-part="settings.header" kicker="Bunzai · Preferences" title="Settings" lede="Every knob for the whole studio. There is no apply button: a change lands the moment you make it, unless its tab says when." />
       <div className={styles.shell}>
         <Panel as="aside" deck="preset" className={styles.rail} data-part="settings.rail">
           <div className={styles.tabs} data-sx="tabs" data-part="settings.tabs">
@@ -96,7 +96,7 @@ function SettingsRoom({ ctx }: { ctx: AppContext }): JSX.Element | null {
   );
 }
 
-const app: BunrakuApp = {
+const app: BunzaiApp = {
   OverlayWidgets,
   manifest: {
     id: "settings",

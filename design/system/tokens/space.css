@@ -1,5 +1,5 @@
 /*
- * Bunraku design system: spacing tokens, contract v1. A 4px grid in rem. The number is the count of
+ * Bunzai design system: spacing tokens, contract v1. A 4px grid in rem. The number is the count of
  * 4px steps (space-4 = 16px), so the name says the size. Layout aliases name the common jobs.
  */
 :root {

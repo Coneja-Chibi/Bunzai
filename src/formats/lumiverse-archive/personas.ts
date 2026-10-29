@@ -11,7 +11,7 @@
  * (and therefore the codec's own `original["lumiverse-persona"]`) keeps the RAW Lumiverse id and the
  * RAW avatar path exactly as the row had them - that is what escrow is for. Only the canonical,
  * user-facing fields (`knowledgeRefs`, `presentation.imageUrl`) get rewritten to the resolved,
- * Bunraku-side values, or removed when resolution misses.
+ * Bunzai-side values, or removed when resolution misses.
  */
 import type { CanonicalPersona } from "../../entities/persona/schema";
 import type { ParsedCanonicalEntity } from "../../entities/runtime-schema";
@@ -65,7 +65,7 @@ export function personaRowToWire(read: TableRow): Record<string, unknown> {
  * The codec sets `body.knowledgeRefs = [rawLumiverseId]` whenever the row named a book (step 6 has
  * not happened yet at dispatch time, so it cannot do better). This resolves that raw id through the
  * link map and overwrites the reference with the actually-imported book's id, or drops it entirely
- * when the target was never imported: a dangling reference to an id that exists nowhere in Bunraku
+ * when the target was never imported: a dangling reference to an id that exists nowhere in Bunzai
  * would be strictly worse than no reference at all, and resolve() already recorded why.
  */
 function resolveKnowledgeRef(
@@ -84,7 +84,7 @@ function resolveKnowledgeRef(
 
 /**
  * The codec sets `presentation.imageUrl` to the RAW `avatar_path` string, which is meaningless
- * outside the archive (Bunraku has no `files/avatars/` tree to resolve it against later). This
+ * outside the archive (Bunzai has no `files/avatars/` tree to resolve it against later). This
  * overwrites it with the resolved data: URI, or clears it when the file is absent; `binaries`
  * already recorded the miss, so this only tidies the body.
  */
@@ -116,7 +116,7 @@ export interface ImportPersonasOptions {
 
 /**
  * Import every persona: dispatch the synthesized wire to the existing Lumiverse persona codec,
- * resolve its attached lorebook and avatar against what has actually landed in Bunraku, escrow the
+ * resolve its attached lorebook and avatar against what has actually landed in Bunzai, escrow the
  * raw twin, and record the persona under its Lumiverse id (spec step 6: a regex row can scope to a
  * persona's world in a later slice the same way).
  *

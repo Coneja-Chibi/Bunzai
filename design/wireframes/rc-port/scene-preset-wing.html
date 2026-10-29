@@ -8,13 +8,13 @@
 <link rel="stylesheet" href="port.css">
 <link rel="stylesheet" href="rc-parts.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
- * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunraku. Every size below was
+ * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunzai. Every size below was
  * read off the running page on 2026-09-24 (computed styles at 1920x945 and 390x844) or from the
  * component source (WingRail, WingItem, WingShell, FoldoutTabs, GreetingSelector,
- * composer-shell-styles). Colors are Bunraku tokens:
+ * composer-shell-styles). Colors are Bunzai tokens:
  *   RC zinc-300 / zinc-400 / zinc-500 / zinc-600  ->  --stage-soft / --stage-text-dim / --stage-mute / --stage-line
  *   RC black/55 bubble, white/8 edge              ->  color-mix of --stage-black and --stage-card
  *   RC user accent (violet)                       ->  --accent
@@ -528,7 +528,7 @@ body:has([data-s="editing"][style*="outline"]) .ta { border-color: var(--w); }
           </section>
         </div>
 
-        <!-- Picker: RoleCall's PresetPicker, library only (Bunraku has no Plotlight) -->
+        <!-- Picker: RoleCall's PresetPicker, library only (Bunzai has no Plotlight) -->
         <div class="picker" data-only="none gone">
           <div class="side-search"><svg><use href="#i-search"/></svg><span class="in">Search my library...</span></div>
           <div class="pk-hd">My Library <small>(4)</small></div>
@@ -547,7 +547,7 @@ body:has([data-s="editing"][style*="outline"]) .ta { border-color: var(--w); }
   <span>Preset wing</span><button data-s="ready">Loaded</button><button data-s="bar">Samplers open</button><button data-s="editing">Editing text</button><button data-s="search">Search</button><button data-s="none">No preset</button><button data-s="gone">Preset gone</button>
   <button data-theme-switch>Theme</button><a href="../index.html">All</a>
 </div>
-<div class="wf-note"><b>RoleCall's own Preset tab (PresetPanel), part for part:</b> the Edit Preset hero with switch and clear, the collapsible sampler bar (Temp, Top P, Top K, Response, Context, merging), then the split view: prompt list with category switches, counts, SYS/USR/AST badges and slot labels, a resize grip, and the editor on the right. <b>Owner's call (2026-09-28): the scene follows its library preset.</b> Switches and sampler values set here are this scene's own (a dot marks them, and each sampler resets to the preset's value); prompt text edits save to the preset in the library, like RoleCall. <b>What changes for Bunraku:</b> the picker lists your library only (no Plotlight); "Open in Workbench" jumps to the full editor for categories, templates, and import; RoleCall's per-chat diff bar ("Changes from original", "Save as new version") is left out because edits already land in the preset. <b>Context</b> may shrink below the model's window, never above it. <b>Left out:</b> RoleCall's Guides and Scene Note tabs, which come later; no empty tabs.</div>
+<div class="wf-note"><b>RoleCall's own Preset tab (PresetPanel), part for part:</b> the Edit Preset hero with switch and clear, the collapsible sampler bar (Temp, Top P, Top K, Response, Context, merging), then the split view: prompt list with category switches, counts, SYS/USR/AST badges and slot labels, a resize grip, and the editor on the right. <b>Owner's call (2026-09-28): the scene follows its library preset.</b> Switches and sampler values set here are this scene's own (a dot marks them, and each sampler resets to the preset's value); prompt text edits save to the preset in the library, like RoleCall. <b>What changes for Bunzai:</b> the picker lists your library only (no Plotlight); "Open in Workbench" jumps to the full editor for categories, templates, and import; RoleCall's per-chat diff bar ("Changes from original", "Save as new version") is left out because edits already land in the preset. <b>Context</b> may shrink below the model's window, never above it. <b>Left out:</b> RoleCall's Guides and Scene Note tabs, which come later; no empty tabs.</div>
 
 <script>
 (function () {

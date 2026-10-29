@@ -58,7 +58,7 @@ runtime.
 Root: `sillytavern.raw.data.extensions.chub` (**namespaced**; not bare extensions).
 
 - id (number), full_path (string) -> read-only hub identity
-- custom_css (string CSS) -> CssWorkshop (editable plain CSS; sealed preview only; NEVER apply in Bunraku chrome)
+- custom_css (string CSS) -> CssWorkshop (editable plain CSS; sealed preview only; NEVER apply in Bunzai chrome)
 - background_image (URL) -> url (editable)
 - expressions, alt_expressions -> **sprites milestone stub** (not asset-manager; twin kept). Often empty on download.
 - related_lorebooks [{id,path,version,commit_ref}] -> read-only / lore link-out later (refs only, no book bytes)
@@ -82,7 +82,7 @@ observed in exported cards; unverified keys are marked as such rather than guess
 
 Lumiverse lets you attach an image-gen LoRA to a character (the character editor has a LoRA tab). Dual storage (both real; only one rides the exportable card):
 
-| Layer | Where | Shape | Bunraku forge role |
+| Layer | Where | Shape | Bunzai forge role |
 | --- | --- | --- | --- |
 | **Runtime binding** (per-user) | App-level per-character setting | Runtime binding: `{ lora_name, weight_model, weight_clip, base_tags?, source_url?, bound_at }` | **NOT on the card.** Host-local; different users can bind different files for the same char. Do not invent a path under `original` for this alone. |
 | **Portable card mirror** | `character.extensions.lumiverse_image_gen_lora` | Portable reference v1: `{ version: 1, lora_filename, weight, base_tags?, source_url? }` | **ON the card.** Written when binding is set; cleared when unbound. Importers surface "this character expects X @ W" - **never auto-fetch `source_url`** (safetensors phishing risk). |
@@ -97,7 +97,7 @@ Card path for ST-shaped import: `original.sillytavern.raw.data.extensions.lumive
 - Runtime `weight_clip` is **not** mirrored into the portable object (portable only has one `weight`,
   filled from `weight_model`). Honesty if we ever edit portable alone.
 - ComfyUI/SwarmUI pipeline uses the **runtime** binding to patch LoraLoader / loraweights; that is
-  host app behavior, not a Bunraku card field.
+  host app behavior, not a Bunzai card field.
 
 - catch-all for remaining unknown extension keys (e.g. character_loras if some old dump used a different
   key - do not treat as the canonical LoRA path). Flag script-like opaque.

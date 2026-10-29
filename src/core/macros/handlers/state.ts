@@ -16,7 +16,7 @@
  * a long-standing alias of {{noop}}; use {{is_empty}}.)
  *
  * Deviation from RoleCall, named per the port's working method: RoleCall's {{state.show}} default
- * format is YAML via the `js-yaml` package. js-yaml is not a Bunraku dependency yet, and adding it
+ * format is YAML via the `js-yaml` package. js-yaml is not a Bunzai dependency yet, and adding it
  * is outside this change's file scope (package.json is not one of this group's files). Both the
  * default and ::json branches here render pretty JSON instead, RoleCall's own catch fallback for a
  * failed yaml.dump, so no new formatting logic is introduced. The one RoleCall test that pins YAML

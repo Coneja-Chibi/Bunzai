@@ -3,7 +3,7 @@
  * cards and five collapsible acts: The Message, The Type, The Stage (the Backdrop row and the accent), Motion & Signals, Chrome & Device.
  * Every setting is a per-user preference (stage-look-core.ts is the one source of defaults, the keys and what each paints); the page
  * re-renders on a change, and each control saves the moment it is touched, so there is no Saving state to show (RoleCall never showed
- * its own, F5). Controls RoleCall draws that Bunraku leaves to the theme or has no reader for are listed in docs/reference/ui.md.
+ * its own, F5). Controls RoleCall draws that Bunzai leaves to the theme or has no reader for are listed in docs/reference/ui.md.
  */
 import type { JSX } from "react";
 import { Ic } from "../../_shared/ic";

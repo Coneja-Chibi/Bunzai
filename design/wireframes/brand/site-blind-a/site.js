@@ -1,8 +1,8 @@
-/* Bunraku site prototype. Hash routing, live releases with sample fallback, OS detection, help search. */
+/* Bunzai site prototype. Hash routing, live releases with sample fallback, OS detection, help search. */
 (function () {
   "use strict";
 
-  var REPO = "Coneja-Chibi/Bunraku";
+  var REPO = "Coneja-Chibi/Bunzai";
   var API = "https://api.github.com/repos/" + REPO + "/releases";
   var RELEASES_PAGE = "https://github.com/" + REPO + "/releases";
   var REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -39,10 +39,10 @@
   function sampleAssets(v) {
     var base = "https://github.com/" + REPO + "/releases/download/v" + v + "/";
     return [
-      { name: "Bunraku_" + v + "_x64-setup.exe", size: 82208768, url: base + "Bunraku_" + v + "_x64-setup.exe" },
-      { name: "Bunraku_" + v + "_universal.dmg", size: 96574259, url: base + "Bunraku_" + v + "_universal.dmg" },
-      { name: "Bunraku_" + v + "_amd64.AppImage", size: 101502566, url: base + "Bunraku_" + v + "_amd64.AppImage" },
-      { name: "Bunraku_" + v + "_amd64.deb", size: 74763059, url: base + "Bunraku_" + v + "_amd64.deb" }
+      { name: "Bunzai_" + v + "_x64-setup.exe", size: 82208768, url: base + "Bunzai_" + v + "_x64-setup.exe" },
+      { name: "Bunzai_" + v + "_universal.dmg", size: 96574259, url: base + "Bunzai_" + v + "_universal.dmg" },
+      { name: "Bunzai_" + v + "_amd64.AppImage", size: 101502566, url: base + "Bunzai_" + v + "_amd64.AppImage" },
+      { name: "Bunzai_" + v + "_amd64.deb", size: 74763059, url: base + "Bunzai_" + v + "_amd64.deb" }
     ];
   }
   var SAMPLE = [
@@ -78,7 +78,7 @@
 
   function loadReleases() {
     var cached = null;
-    try { cached = JSON.parse(sessionStorage.getItem("bunraku-releases") || "null"); } catch (e) { cached = null; }
+    try { cached = JSON.parse(sessionStorage.getItem("bunzai-releases") || "null"); } catch (e) { cached = null; }
     if (cached && Array.isArray(cached) && cached.length) {
       releases = { list: cached, live: true };
       fillReleaseSlots();
@@ -94,7 +94,7 @@
         var list = data.map(parseRelease).filter(Boolean).sort(function (a, b) { return new Date(b.date) - new Date(a.date); });
         if (!list.length) throw new Error("no releases");
         releases = { list: list, live: true };
-        try { sessionStorage.setItem("bunraku-releases", JSON.stringify(list)); } catch (e) { /* storage off: fine */ }
+        try { sessionStorage.setItem("bunzai-releases", JSON.stringify(list)); } catch (e) { /* storage off: fine */ }
         fillReleaseSlots();
       })
       .catch(function () { /* keep sample data; the source note already says so */ })
@@ -137,7 +137,7 @@
     if (os === "mobile") {
       return '<div class="ticket"><a class="ticket-main" href="#/try"><span class="t-kicker">On a phone or tablet</span>' +
         '<span class="t-title">' + icon("i-browser") + 'Try the Studio instead</span></a>' +
-        '<div class="ticket-stub"><span>Bunraku runs on computers</span><b>' + v + '</b></div></div>' +
+        '<div class="ticket-stub"><span>Bunzai runs on computers</span><b>' + v + '</b></div></div>' +
         '<p class="ticket-alt">Send yourself the link for later, or <a href="#/download">see all downloads</a>.</p>';
     }
     var key = OS[os] ? os : "windows";
@@ -147,7 +147,7 @@
     var kicker = OS[os] ? "Free download" : "Free download, pick your system below";
     return '<div class="ticket"><a class="ticket-main" href="' + href + '">' +
       '<span class="t-kicker">' + esc(kicker) + '</span>' +
-      '<span class="t-title">' + icon(OS[key].icon) + 'Get Bunraku for ' + esc(OS[key].name) + '</span></a>' +
+      '<span class="t-title">' + icon(OS[key].icon) + 'Get Bunzai for ' + esc(OS[key].name) + '</span></a>' +
       '<div class="ticket-stub" aria-label="Release details"><b>' + v + '</b><span>' + d + '</span><span>' + size + '</span></div></div>' +
       '<p class="ticket-alt">Also for ' + ["windows", "mac", "linux"].filter(function (k) { return k !== key; })
         .map(function (k) { return '<a href="#/download">' + OS[k].name + '</a>'; }).join(" and ") +
@@ -226,7 +226,7 @@
       blurb: "Bring cards from other apps. Everything shows as portrait cards, stays searchable, and stays encrypted.",
       intro: "Your Library holds every character, lorebook and preset you own. It lives on your computer, locked up.",
       points: [
-        ["Imports from many apps", "Drop in cards from SillyTavern, RoleCall, Chub and more. Bunraku sorts out the format."],
+        ["Imports from many apps", "Drop in cards from SillyTavern, RoleCall, Chub and more. Bunzai sorts out the format."],
         ["Portrait cards", "Characters show as tall portrait cards, so your shelf looks like a cast list."],
         ["Search everything", "Find a character, a lorebook entry, or that one preset by name or by what is inside."],
         ["Encrypted on your machine", "Your library is stored encrypted. Nothing is uploaded anywhere."],
@@ -253,15 +253,15 @@
 
   var HELP = [
     { slug: "first-scene", title: "Your first scene", summary: "From a fresh install to your first reply in a few minutes.", sections: [
-      { h: "Before you start", p: ["You need Bunraku installed and a key from an AI provider. The key is what lets a character answer you. Bunraku keeps it on your computer, encrypted."] },
+      { h: "Before you start", p: ["You need Bunzai installed and a key from an AI provider. The key is what lets a character answer you. Bunzai keeps it on your computer, encrypted."] },
       { h: "Add your AI key", p: ["Open Settings, then Connections. Pick your provider, paste your key, and press Check. A green mark means it works."] },
       { h: "Pick a character", p: ["Go to your Library and choose a character. No characters yet? Import a card (see Importing cards) or make one in the Workbench."] },
       { h: "Start the scene", p: ["Press Start scene on the character card. Say hello. The character answers in a moment.", "If you do not like the reply, swipe for another one."] }
     ] },
     { slug: "importing-cards", title: "Importing cards", summary: "Bring characters in from SillyTavern, RoleCall, Chub and more.", sections: [
       { h: "What you can import", p: ["Character cards as PNG or JSON, lorebooks, and presets from SillyTavern, RoleCall, Chub and other apps."] },
-      { h: "How to import", p: ["Drag the file onto the Library, or press Import and pick one or many files. Bunraku reads the format for you."] },
-      { h: "If something looks off", p: ["Open the card in the Workbench. Anything Bunraku could not place is kept in the card's Extras, so nothing you brought in is thrown away."] }
+      { h: "How to import", p: ["Drag the file onto the Library, or press Import and pick one or many files. Bunzai reads the format for you."] },
+      { h: "If something looks off", p: ["Open the card in the Workbench. Anything Bunzai could not place is kept in the card's Extras, so nothing you brought in is thrown away."] }
     ] },
     { slug: "presets", title: "Presets and the Prompting wing", summary: "What presets do, and how to switch prompts per scene.", sections: [
       { h: "What a preset is", p: ["A preset is the set of instructions and settings sent to the AI with your chat. It shapes the voice, length and style of replies."] },
@@ -282,13 +282,13 @@
     ] },
     { slug: "backups", title: "Backups and moving computers", summary: "Keep a copy of everything, and move it to a new machine.", sections: [
       { h: "Making a backup", p: ["Open Settings, then Backups, and press Make a backup. You get one file that holds your whole Library, encrypted with your recovery phrase."] },
-      { h: "Your recovery phrase", p: ["When you first set up Bunraku you printed or wrote down a recovery phrase. You need it to open a backup. Keep it somewhere safe and offline."] },
-      { h: "Moving to a new computer", p: ["Install Bunraku on the new computer, choose Restore from backup, pick the file, and enter your recovery phrase."] }
+      { h: "Your recovery phrase", p: ["When you first set up Bunzai you printed or wrote down a recovery phrase. You need it to open a backup. Keep it somewhere safe and offline."] },
+      { h: "Moving to a new computer", p: ["Install Bunzai on the new computer, choose Restore from backup, pick the file, and enter your recovery phrase."] }
     ] },
     { slug: "something-wrong", title: "Something went wrong", summary: "Install warnings, errors, and what to try first.", sections: [
-      { h: "Windows says it does not recognize the app", p: ["Windows shows a blue box the first time you open some new apps. Bunraku is safe to run. Press More info, then Run anyway. You only need to do this once.", "After the first launch, Bunraku adds itself to the Start menu."] },
-      { h: "Mac says it cannot be opened", p: ["Right-click Bunraku in Applications, choose Open, then press Open again."] },
-      { h: "A reply stopped halfway", p: ["If Bunraku or your computer closed during a reply, the part that was written comes back when you reopen the scene. Press Retry for a fresh one."] },
+      { h: "Windows says it does not recognize the app", p: ["Windows shows a blue box the first time you open some new apps. Bunzai is safe to run. Press More info, then Run anyway. You only need to do this once.", "After the first launch, Bunzai adds itself to the Start menu."] },
+      { h: "Mac says it cannot be opened", p: ["Right-click Bunzai in Applications, choose Open, then press Open again."] },
+      { h: "A reply stopped halfway", p: ["If Bunzai or your computer closed during a reply, the part that was written comes back when you reopen the scene. Press Retry for a fresh one."] },
       { h: "My key does not work", p: ["Open Settings, then Connections, and press Check. If it fails, the message says why. Most often the key was copied with a missing letter, or the account needs credit."] },
       { h: "I deleted something", p: ["Look in the Trash. Things stay there for 3 days before they are gone for good."] }
     ] }
@@ -309,7 +309,7 @@
       '<section class="hero"><div class="wrap hero-grid"><div>' +
         '<span class="eyebrow">Free desktop app for Windows, Mac and Linux</span>' +
         '<h1>Your characters, your stories, <em>your computer.</em></h1>' +
-        '<p class="lede">Bunraku is a cozy home for AI roleplay. Bring your character cards, chat with them using your own AI key, and make new ones. Everything stays private on your machine.</p>' +
+        '<p class="lede">Bunzai is a cozy home for AI roleplay. Bring your character cards, chat with them using your own AI key, and make new ones. Everything stays private on your machine.</p>' +
         '<div data-slot="ticket"></div>' +
         '<div class="hero-meta"><a class="pill" href="#/whats-new"><span class="dot"></span>Latest: <span data-slot="version"></span></a><span data-slot="source"></span></div>' +
       '</div>' +
@@ -323,7 +323,7 @@
         '<div class="demo-foot">These replies are written ahead of time. In the app, your AI writes new ones.</div>' +
       '</div></div></section>' +
 
-      '<section class="band alt"><div class="wrap"><div class="section-head"><span class="eyebrow">What you do in Bunraku</span><h2>Three things, all in one place.</h2></div>' +
+      '<section class="band alt"><div class="wrap"><div class="section-head"><span class="eyebrow">What you do in Bunzai</span><h2>Three things, all in one place.</h2></div>' +
         '<div class="three">' +
           threeCard("01", "i-chat", "Play scenes", "Chat with any character. Swipe for another reply, branch into takes, stop a reply and keep it.", "#/features/scenes") +
           threeCard("02", "i-pen", "Make things", "Write characters, worlds and presets, and see exactly what the AI will read.", "#/features/workbench") +
@@ -332,7 +332,7 @@
 
       '<section class="band"><div class="wrap split"><div>' +
         '<span class="eyebrow">Private by default</span><h2>It all stays with you.</h2>' +
-        '<p class="lede">No account, no cloud. Bunraku keeps your library on your computer and talks only to the AI you choose.</p>' +
+        '<p class="lede">No account, no cloud. Bunzai keeps your library on your computer and talks only to the AI you choose.</p>' +
         '<p class="muted">Bring cards from</p><div class="apps-row"><span>SillyTavern</span><span>RoleCall</span><span>Chub</span><span>and more</span></div>' +
       '</div><ul class="checks">' +
         check("Encrypted on your machine", "Your characters, chats and keys are locked with encryption.") +
@@ -389,7 +389,7 @@
   }
 
   function featuresView() {
-    return pageHead("", "Feature tour", "Everything Bunraku does.", "Five parts, one app. Start anywhere.") +
+    return pageHead("", "Feature tour", "Everything Bunzai does.", "Five parts, one app. Start anywhere.") +
       '<div class="wrap feature-index">' + FEATURES.map(function (f, i) {
         return '<a class="card feature-row" href="#/features/' + f.slug + '"><span class="num">0' + (i + 1) + '</span>' +
           '<div><span class="eyebrow" style="margin:0">' + f.verb + '</span><h3>' + f.name + '</h3><p>' + f.blurb + '</p></div>' +
@@ -437,7 +437,7 @@
       }).join("") + '</div>' + mockFor(slug) + '</div>' +
       '<div class="pager">' +
         (prev ? '<a href="#/features/' + prev.slug + '">' + icon("i-left") + '<span><small>Previous</small>' + prev.name + '</span></a>' : '<a href="#/features">' + icon("i-left") + '<span><small>Back to</small>Feature tour</span></a>') +
-        (next ? '<a href="#/features/' + next.slug + '" style="text-align:right"><span><small>Next</small>' + next.name + '</span>' + icon("i-right") + '</a>' : '<a href="#/download" style="text-align:right"><span><small>Ready?</small>Download Bunraku</span>' + icon("i-right") + '</a>') +
+        (next ? '<a href="#/features/' + next.slug + '" style="text-align:right"><span><small>Next</small>' + next.name + '</span>' + icon("i-right") + '</a>' : '<a href="#/download" style="text-align:right"><span><small>Ready?</small>Download Bunzai</span>' + icon("i-right") + '</a>') +
       '</div></div>';
   }
 
@@ -522,14 +522,14 @@
     var input = $("#help-q");
     if (!input) return;
     var last = "";
-    try { last = sessionStorage.getItem("bunraku-help-q") || ""; } catch (e) { last = ""; }
+    try { last = sessionStorage.getItem("bunzai-help-q") || ""; } catch (e) { last = ""; }
     var q = (location.hash.split("?")[1] || "").match(/(?:^|&)q=([^&]*)/);
     if (q) last = decodeURIComponent(q[1].replace(/\+/g, " "));
     input.value = last;
     runSearch(last);
     input.addEventListener("input", function () {
       runSearch(input.value);
-      try { sessionStorage.setItem("bunraku-help-q", input.value); } catch (e) { /* ignore */ }
+      try { sessionStorage.setItem("bunzai-help-q", input.value); } catch (e) { /* ignore */ }
     });
   }
 
@@ -552,24 +552,24 @@
 
   function downloadView() {
     var os = detectOS();
-    var mobileNote = os === "mobile" ? '<div class="note"><b>You are on a phone or tablet</b><p>Bunraku is a computer app. Open this page on your computer to download, or <a href="#/try">try the Studio in your browser</a>.</p></div>' : "";
-    return pageHead("", "Download", "Get Bunraku.", "Free, for Windows, Mac and Linux. We picked your system for you.") +
+    var mobileNote = os === "mobile" ? '<div class="note"><b>You are on a phone or tablet</b><p>Bunzai is a computer app. Open this page on your computer to download, or <a href="#/try">try the Studio in your browser</a>.</p></div>' : "";
+    return pageHead("", "Download", "Get Bunzai.", "Free, for Windows, Mac and Linux. We picked your system for you.") +
       '<div class="wrap"><div class="dl-grid"><div>' + mobileNote + '<div data-slot="ticket"></div>' +
         '<dl class="facts" data-slot="facts"></dl><div class="source-note" data-slot="source"></div></div>' +
         '<div class="card"><h3>Other systems</h3><ul class="others" data-slot="others"></ul></div></div>' +
       '<div class="os-note">' +
         '<div class="card"><div class="icon-chip">' + icon("i-info") + '</div><h3>"Windows doesn\'t recognize this app"</h3>' +
-          '<p>The first time you open Bunraku, Windows may show a blue box. That is normal for new apps. It is safe to continue.</p>' +
+          '<p>The first time you open Bunzai, Windows may show a blue box. That is normal for new apps. It is safe to continue.</p>' +
           '<ol class="steps"><li><span>Press <b>More info</b>.</span></li><li><span>Press <b>Run anyway</b>.</span></li></ol></div>' +
         '<div class="card"><div class="icon-chip">' + icon("i-windows") + '</div><h3>Find it again later</h3>' +
-          '<p>On first launch, Bunraku adds itself to the Start menu. On a Mac, drag it into Applications. On Linux, the AppImage runs from wherever you save it.</p></div>' +
+          '<p>On first launch, Bunzai adds itself to the Start menu. On a Mac, drag it into Applications. On Linux, the AppImage runs from wherever you save it.</p></div>' +
         '<div class="card"><div class="icon-chip">' + icon("i-browser") + '</div><h3>Not ready to install?</h3>' +
           '<p>The Studio runs in your browser for making and editing. Chatting needs the app.</p><a class="go" href="#/try" style="font-weight:700">Try it ' + icon("i-arrow") + '</a></div>' +
       '</div></div>';
   }
 
   function whatsNewView() {
-    return pageHead("", "What's new", "Every release, newest first.", "Bunraku updates often. Here is what changed and when.", '<div class="source-note" data-slot="source"></div>') +
+    return pageHead("", "What's new", "Every release, newest first.", "Bunzai updates often. Here is what changed and when.", '<div class="source-note" data-slot="source"></div>') +
       '<div class="wrap"><ul class="releases" data-slot="releases"></ul></div>';
   }
 
@@ -585,14 +585,14 @@
       '</div><div class="limits"><h3>Good to know</h3><ul class="checks" style="margin-top:14px">' +
         '<li>' + icon("i-info") + '<div><b>Editing only</b><span>The browser Studio makes and edits things. It does not chat.</span></div></li>' +
         '<li>' + icon("i-info") + '<div><b>Kept only while the tab is open</b><span>Close the tab and your work is gone. Export anything you want to keep.</span></div></li>' +
-        '<li>' + icon("i-info") + '<div><b>Chatting needs the app</b><span>To play scenes, <a href="#/download">download Bunraku</a>. It is free.</span></div></li>' +
+        '<li>' + icon("i-info") + '<div><b>Chatting needs the app</b><span>To play scenes, <a href="#/download">download Bunzai</a>. It is free.</span></div></li>' +
       '</ul></div></div></div>';
   }
 
   function notFoundView() {
     return pageHead("", "Lost ticket", "We could not find that page.", "It may have moved. Try one of these instead.") +
       '<div class="wrap" style="padding-bottom:72px"><div class="links-grid">' +
-        linkCard("#/", "Home", "Start from the front door.") + linkCard("#/features", "Feature tour", "See what Bunraku does.") + linkCard("#/help", "Guides", "Search the help center.") +
+        linkCard("#/", "Home", "Start from the front door.") + linkCard("#/features", "Feature tour", "See what Bunzai does.") + linkCard("#/help", "Guides", "Search the help center.") +
       '</div></div>';
   }
 
@@ -606,7 +606,7 @@
 
   function render() {
     var r = parse(), s = r.segs, html = null, title = "", nav = "", after = null;
-    if (!s.length) { html = homeView(); title = "Bunraku: AI roleplay on your own computer"; after = initDemo; }
+    if (!s.length) { html = homeView(); title = "Bunzai: AI roleplay on your own computer"; after = initDemo; }
     else if (s[0] === "features" && !s[1]) { html = featuresView(); title = "Feature tour"; nav = "features"; }
     else if (s[0] === "features") { html = featureView(s[1]); title = s[1] ? s[1].charAt(0).toUpperCase() + s[1].slice(1) : ""; nav = "features"; }
     else if (s[0] === "help" && !s[1]) { html = helpView(); title = "Guides and help"; nav = "help"; after = initHelp; }
@@ -625,7 +625,7 @@
 
     var main = $("#main");
     main.innerHTML = html;
-    document.title = s.length ? title + " | Bunraku" : title;
+    document.title = s.length ? title + " | Bunzai" : title;
     $all(".nav a").forEach(function (a) {
       if (a.getAttribute("data-nav") === nav) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });

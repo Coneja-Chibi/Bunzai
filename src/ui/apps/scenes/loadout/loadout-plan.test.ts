@@ -110,7 +110,7 @@ test("a setting that already matches is unchanged and writes nothing, even with 
   expect(p.rows.every((r) => r.state === "unchanged")).toBe(true);
 });
 
-test("a row is listed for every panel of the loadout, in the loadout's order, with the Bunraku label", () => {
+test("a row is listed for every panel of the loadout, in the loadout's order, with the Bunzai label", () => {
   const p = plan({ guides: ["g"], preset: null, zebra: 1 });
   expect(p.rows.map((r) => r.panel)).toEqual(["guides", "preset", "zebra"]);
   expect(p.rows.map((r) => r.label)).toEqual(["Guides", "Preset and block switches", "zebra"]);

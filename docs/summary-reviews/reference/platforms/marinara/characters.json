@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/characters",
   "sourcePath": "docs/reference/platforms/marinara/characters.md",
-  "sourceHash": "sha256:7a7862a1be94fb1d3159bf64aa4f22703920e3c846db2910f4b8eebe05a46697",
-  "semanticSummaryHash": "sha256:44b34c67e2c98b78a457c48a795d7089c4cbeb0e6bec467dbe2c5d3714eae263",
+  "sourceHash": "sha256:52d4700d54d97a85b91ac048c477e55ae0802164a8d48b3b5b21b8eb9eabcc6d",
+  "semanticSummaryHash": "sha256:6eb973f35167fc22c4c2661a5c576439a0614f4f3722195f259490481c62392e",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:55.848Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:51.573Z"
 }

@@ -1,6 +1,6 @@
 /**
  * The Control Booth readout's average reply time. RoleCall shows a constant 1.2s there (QuickPlayPanel.tsx:773-777,
- * a TODO); Bunraku stores how long each version took (a swipe's generation.generationMs), so the average is
+ * a TODO); Bunzai stores how long each version took (a swipe's generation.generationMs), so the average is
  * the mean over the last replies actually timed. Nothing timed is null, shown as a dash. Pure.
  */
 import type { Message } from "../../../stage/contracts/chat-store";

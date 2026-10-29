@@ -1,6 +1,6 @@
 /**
  * Final Cut's small pure guards: protected blocks, the bounded word diff, the safety check and the refusal guard (RoleCall's
- * suspect-rewrite and protected-marker tests, ported; the diff is the one place Bunraku differs, and its test is the bound).
+ * suspect-rewrite and protected-marker tests, ported; the diff is the one place Bunzai differs, and its test is the bound).
  */
 import { describe, expect, test } from "bun:test";
 import { buildWordDiff } from "./diff";

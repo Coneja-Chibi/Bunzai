@@ -1,5 +1,5 @@
 /**
- * The render contract: what Bunraku asks a platform's own macro engine, and what it must answer.
+ * The render contract: what Bunzai asks a platform's own macro engine, and what it must answer.
  *
  * WHY THIS EXISTS. Every claim this repo makes about a converted preset is currently structural: the
  * translator reports what it rewrote, transfer-check reports what has no counterpart on the target. None

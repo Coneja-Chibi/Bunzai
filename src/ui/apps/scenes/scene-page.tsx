@@ -6,7 +6,7 @@
  * here, and the delete menu, and a restore line where a cut was; the composer; and the wings. Sending
  * asks the scene's connection for a reply (approved wireframe rc-port/scene-turn.html): Starting, the reply
  * streaming in, Stop, Regenerate and the SwipeCounter on the last reply, the arrow keys, RoleCall's failure card,
- * and Bunraku's cut-off line and "scene changed" card. With no connection the capsule points at the AI wing (model
+ * and Bunzai's cut-off line and "scene changed" card. With no connection the capsule points at the AI wing (model
  * picker); Prompting holds the preset, World the lorebooks, Props the registered Props switch (ChatStore rule 21),
  * and a prop that is on may draw on the stage itself. Seven surfaces take a theme's variant (scene.layout, .message,
  * .composer, .swipes, .wings, .hud, .reasoning): CSS in ./variants for all of them, markup only in the readout and the reasoning blocks.

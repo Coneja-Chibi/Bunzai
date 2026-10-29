@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/platforms/marinara",
   "sourcePath": "docs/guide/platforms/marinara.md",
-  "sourceHash": "sha256:610a99fbe0843bce70e28b2a090cdaaa85ae6ba7b62b941dd94dee0908fcdbcf",
-  "semanticSummaryHash": "sha256:778f87061a72afb6bbd0d39586c1188a67c134d1d41fcd606f8590b217fd2c82",
+  "sourceHash": "sha256:00a4a497ccbeff9f018e3b0f3ca170d9ca94a2f414d8de30eb7f6962ac96b5de",
+  "semanticSummaryHash": "sha256:bcfb5eed11b1face7e194a8674f725606cb0acf22d49cd7374411b748a9c20b6",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:46.396Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:38.143Z"
 }

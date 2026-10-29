@@ -19,7 +19,7 @@ export function createThemeService(state: StateStore, packaged?: PackagedAssets)
   if (current) return current;
   let pending: Promise<Lifecycle>;
   pending = Promise.all([themeInventory(packaged), exampleThemeInventory(packaged)])
-    .then(([builtins, examples]) => createThemeLifecycle(state, builtins, examples, { safeMode: process.env.BUNRAKU_SAFE_THEMES === "1" }))
+    .then(([builtins, examples]) => createThemeLifecycle(state, builtins, examples, { safeMode: process.env.BUNZAI_SAFE_THEMES === "1" }))
     .catch((error) => { if (lifecycles.get(state) === pending) lifecycles.delete(state); throw error; });
   lifecycles.set(state, pending);
   return pending;

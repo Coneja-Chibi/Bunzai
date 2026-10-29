@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/preset",
   "sourcePath": "docs/reference/entities/preset.md",
-  "sourceHash": "sha256:49a11652196356f6f0fdfd7d5b7bfa7a1d077607146e3ba5d8f07f221eb4a3d4",
-  "semanticSummaryHash": "sha256:757578aaa62944327d5559b39fad5a40c30baa2014aa2ea872b4d4c7c29f96c1",
+  "sourceHash": "sha256:e60b0ca035b3f5b13b9cba998cecaa380324550655c52d9ba3a73188d74d0950",
+  "semanticSummaryHash": "sha256:4b6591066789b5a25a0038f46afd3a6d8507bf5ef33571efa3e499c958ce07e7",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "skills added to the feature markers list and the markerSlot field-table row matches FEATURE_MARKER_SLOTS = trackers, linkedTrackers, storyboards, skills (build.ts) with a label in FEATURE_MARKER_LABELS; assemble.ts has the skills entry in the feature loop (fillSlot at the marker, else placeBlock after the others). The prompt-blocks-and-groups summary (167 words) names skills.",
-  "reviewedAt": "2026-10-29T09:52:28.090Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:44.609Z"
 }

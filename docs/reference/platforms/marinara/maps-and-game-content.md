@@ -124,6 +124,6 @@ next reply, then disarms. **Secret Plot** is off by default and maintains a hidd
 character arc, and completion; Regenerate replaces the arc after confirmation. Clearing agent runs or
 memory does not remove it, but removing Narrative Director deletes it irreversibly.
 
-## Bunraku
+## Bunzai
 
-No claim of full game-state conversion in Bunraku adapters.
+No claim of full game-state conversion in Bunzai adapters.

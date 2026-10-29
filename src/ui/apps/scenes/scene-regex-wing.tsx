@@ -1,5 +1,5 @@
 /**
- * The Final Cut wing's Regex tab: RoleCall's RegexPanel on Bunraku. The library's regex sets as a list in the person's saved order,
+ * The Final Cut wing's Regex tab: RoleCall's RegexPanel on Bunzai. The library's regex sets as a list in the person's saved order,
  * each with a drag handle, its name, its description and its rule count; opening one shows Use (switch it on for THIS scene),
  * Edit (the Workbench) and Delete. A scene's switched-on sets run in the order they were switched on (ChatStore rule 42); a drag
  * reorders the list and the selected sets with it, as RoleCall does. Delete moves the set to the library's trash.

@@ -25,7 +25,7 @@ afterEach(async () => {
   await Promise.all(dirs.splice(0).map(removeTempDir));
 });
 const root = () => {
-  const d = mkdtempSync(join(tmpdir(), "bunraku-library-snap-"));
+  const d = mkdtempSync(join(tmpdir(), "bunzai-library-snap-"));
   dirs.push(d);
   return d;
 };

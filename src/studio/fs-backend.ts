@@ -55,7 +55,7 @@ const nodeText = async (path: string): Promise<string | null> => {
 };
 
 async function withNodePathLock<T>(path: string, task: () => Promise<T>): Promise<T> {
-  const lockPath = `${path}.bunraku-lock`;
+  const lockPath = `${path}.bunzai-lock`;
   await mkdir(dirname(lockPath), { recursive: true });
   let handle: Awaited<ReturnType<typeof open>> | null = null;
   for (let attempt = 0; attempt < LOCK_ATTEMPTS; attempt += 1) {

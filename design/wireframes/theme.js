@@ -11,7 +11,7 @@
     root.setAttribute("data-theme", id);
   }
   var saved = null;
-  try { saved = localStorage.getItem("bunraku-wf-theme"); } catch (e) {}
+  try { saved = localStorage.getItem("bunzai-wf-theme"); } catch (e) {}
   apply(PALETTES[saved] ? saved : "paper");
   document.addEventListener("click", function (event) {
     var button = event.target.closest("[data-theme-switch]");
@@ -19,6 +19,6 @@
     var order = ["paper", "stage", "theater"];
     var next = order[(order.indexOf(root.getAttribute("data-theme")) + 1) % order.length];
     apply(next);
-    try { localStorage.setItem("bunraku-wf-theme", next); } catch (e) {}
+    try { localStorage.setItem("bunzai-wf-theme", next); } catch (e) {}
   });
 })();

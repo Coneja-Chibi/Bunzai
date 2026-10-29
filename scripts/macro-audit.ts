@@ -2,7 +2,7 @@
  * Compare a hand-written macro catalog against what the engine itself says it has.
  *
  * WHY AN AUDIT AND NOT A GENERATOR. Risu's catalog could be generated outright because RisuAI
- * publishes a machine-readable list and Bunraku had nothing to lose. These four are different: they
+ * publishes a machine-readable list and Bunzai had nothing to lose. These four are different: they
  * were transcribed by hand, they carry 56 hand-authored `op` annotations that drive every
  * cross-engine answer, and some entries record forms the registry does not (SillyTavern's registry
  * lists one spelling of `{{random}}`; the catalog records the comma form as well, and both are real).
@@ -43,7 +43,7 @@ const arg = (name: string): string | null => {
   return hit ? hit.slice(name.length + 3) : null;
 };
 
-const stRoot = arg("st-root") ?? process.env["BUNRAKU_ST_ROOT"] ?? "";
+const stRoot = arg("st-root") ?? process.env["BUNZAI_ST_ROOT"] ?? "";
 if (!stRoot) {
   console.error("macro-audit: pass --st-root=<a SillyTavern checkout>");
   process.exit(1);

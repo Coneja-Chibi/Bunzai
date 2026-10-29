@@ -41,7 +41,7 @@ const libraryTour: Tour = {
     {
       id: "import",
       title: "Bring cards in",
-      body: "Drop a card file anywhere on this page to import it, from SillyTavern, RoleCall, and the rest. Bunraku reads it and keeps the original whole.",
+      body: "Drop a card file anywhere on this page to import it, from SillyTavern, RoleCall, and the rest. Bunzai reads it and keeps the original whole.",
     },
     {
       id: "done",

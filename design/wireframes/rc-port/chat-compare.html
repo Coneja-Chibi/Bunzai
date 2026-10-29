@@ -23,8 +23,8 @@
 </style>
 </head>
 <body>
-  <h1>Scene page and Scenes: RoleCall, then the Bunraku port</h1>
-  <p class="lede">Left: the real RoleCall scene, captured live on a throwaway scene on 2026-09-24. Right: the port, same layout and measurements, recolored with Bunraku's tokens (accent rose, the character in its deck gold, you in persona teal). The port needs a Bunraku dock on the far left, so its stage is 67px narrower. Open chat.html directly to click through it.</p>
+  <h1>Scene page and Scenes: RoleCall, then the Bunzai port</h1>
+  <p class="lede">Left: the real RoleCall scene, captured live on a throwaway scene on 2026-09-24. Right: the port, same layout and measurements, recolored with Bunzai's tokens (accent rose, the character in its deck gold, you in persona teal). The port needs a Bunzai dock on the far left, so its stage is 67px narrower. Open chat.html directly to click through it.</p>
   <div id="rows"></div>
 <script>
   var ROWS = [
@@ -41,7 +41,7 @@
     var el = document.createElement("section");
     el.className = "row" + (phone ? " phone" : "");
     el.innerHTML = '<h2>' + label + '</h2><div class="pair"><div class="side"><small>RoleCall</small><img src="ref/' + key + '.png" alt="RoleCall ' + key + '"></div>' +
-      '<div class="side"><small>Bunraku port</small><div class="frame"><iframe loading="lazy" src="' + (src || ("chat.html?embed=1&state=" + (phone ? "conversation" : key))) + '" title="Port ' + key + '"></iframe></div></div></div>';
+      '<div class="side"><small>Bunzai port</small><div class="frame"><iframe loading="lazy" src="' + (src || ("chat.html?embed=1&state=" + (phone ? "conversation" : key))) + '" title="Port ' + key + '"></iframe></div></div></div>';
     host.appendChild(el);
   }
   ROWS.forEach(function (r) { row(r[0], r[1], false); });

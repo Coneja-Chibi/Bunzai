@@ -1,5 +1,5 @@
 /*
- * Bunraku design system: the HUD primitives, contract v1. Built only from tokens: no literal color,
+ * Bunzai design system: the HUD primitives, contract v1. Built only from tokens: no literal color,
  * font or spacing lives here (pixels appear only as hairlines and the cursor glyph). Every component
  * and screen composes these.
  *

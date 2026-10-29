@@ -40,9 +40,9 @@ export const fail = (msg) => {
 
 /** The install to read, checked for the one path that only exists inside a real checkout. */
 export function resolveRoot() {
-  const stRoot = resolve(arg("st-root") ?? process.env.BUNRAKU_ST_ROOT ?? "");
+  const stRoot = resolve(arg("st-root") ?? process.env.BUNZAI_ST_ROOT ?? "");
   if (!stRoot || !existsSync(stRoot)) {
-    fail("no SillyTavern install declared; set BUNRAKU_ST_ROOT or pass --st-root=<path>");
+    fail("no SillyTavern install declared; set BUNZAI_ST_ROOT or pass --st-root=<path>");
   }
   if (!existsSync(join(stRoot, "public", "scripts", "macros", "macro-system.js"))) {
     fail(`not a SillyTavern checkout: ${join(stRoot, "public", "scripts", "macros", "macro-system.js")} is missing`);
@@ -92,7 +92,7 @@ export function sweepStale(scriptsDir) {
     return; // not a checkout we can read; staging will fail with its own message
   }
   for (const name of entries) {
-    const pid = /^\.bunraku-[a-z]+-(\d+)$/.exec(name)?.[1];
+    const pid = /^\.bunzai-[a-z]+-(\d+)$/.exec(name)?.[1];
     if (!pid || Number(pid) === process.pid) continue;
     try {
       process.kill(Number(pid), 0);
@@ -118,7 +118,7 @@ export function sweepStale(scriptsDir) {
  */
 export function stageEngine(stRoot, tag = "stage") {
   const macrosDir = join(stRoot, "public", "scripts", "macros");
-  const stagedMacros = join(stRoot, "public", "scripts", `.bunraku-${tag}-${process.pid}`);
+  const stagedMacros = join(stRoot, "public", "scripts", `.bunzai-${tag}-${process.pid}`);
 
   let cleaned = false;
   const cleanup = () => {
@@ -132,7 +132,7 @@ export function stageEngine(stRoot, tag = "stage") {
    *
    * `process.on("exit")` alone was a leak. Killing is the NORMAL end of this process, not an edge
    * case: runner.ts calls child.kill() on every timeout, and the budgets are real - 45s for a
-   * scratch render, 180s for preset_verify - plus the host quitting Bunraku mid-render. What
+   * scratch render, 180s for preset_verify - plus the host quitting Bunzai mid-render. What
    * survived was not a stray temp folder but a full copy of SillyTavern's macro tree, with
    * rewritten imports, inside somebody else's real install under public/scripts/.
    *
@@ -265,7 +265,7 @@ export function installBrowserGlobals() {
     body: { append() {} },
     createTreeWalker: () => ({ nextNode: () => null }),
   };
-  globalThis.navigator ??= { userAgent: "bunraku-renderer" };
+  globalThis.navigator ??= { userAgent: "bunzai-renderer" };
   globalThis.localStorage ??= { getItem: () => null, setItem() {}, removeItem() {} };
 }
 

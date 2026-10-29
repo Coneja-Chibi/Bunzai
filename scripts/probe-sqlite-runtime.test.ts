@@ -77,7 +77,7 @@ describe("probeSqliteRuntime", () => {
   });
 
   test("leaves no database or write-ahead sidecar behind", () => {
-    const path = join(tmpdir(), `bunraku-probe-cleanup-${process.pid}-${Date.now()}.db`);
+    const path = join(tmpdir(), `bunzai-probe-cleanup-${process.pid}-${Date.now()}.db`);
     const result = probeSqliteRuntime(path);
     expect(result.ok).toBe(true);
 
@@ -86,7 +86,7 @@ describe("probeSqliteRuntime", () => {
   });
 
   test("a second run against the same path is not blocked by the first", () => {
-    const path = join(tmpdir(), `bunraku-probe-reuse-${process.pid}-${Date.now()}.db`);
+    const path = join(tmpdir(), `bunzai-probe-reuse-${process.pid}-${Date.now()}.db`);
     expect(probeSqliteRuntime(path).ok).toBe(true);
     expect(probeSqliteRuntime(path).ok).toBe(true);
     expect(existsSync(path)).toBe(false);

@@ -1,6 +1,6 @@
 /**
  * The engine's entry point: normalize, parse, evaluate, post-process (RoleCall's `processMacros`),
- * and report the render as top-level segments tied to the authored source (Bunraku's addition, for
+ * and report the render as top-level segments tied to the authored source (Bunzai's addition, for
  * the preset workbench's editable preview).
  */
 import { capped, evaluateNodes, newState, recordingMap, type EvalState } from "./evaluate";

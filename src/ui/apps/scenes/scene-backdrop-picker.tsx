@@ -3,7 +3,7 @@
  * scene with None first and a grid of the chosen pack's pictures, a pack choice when the library holds more than one,
  * a name filter, the overlay darkness (RoleCall's "Overlay Darkness", StageSettingsPanel.tsx:1411-1428), and Add
  * image. Picking one hangs it on the scene at once; None undoes it. Differs from RoleCall in one way: RoleCall's
- * choices are presets, a personal library and a URL, while a Bunraku scene picks from a Sprite pack.
+ * choices are presets, a personal library and a URL, while a Bunzai scene picks from a Sprite pack.
  */
 import { useEffect, useMemo, useRef, useState, type JSX } from "react";
 import type { AppContext, StudioEntitySummary } from "../../app-contract";

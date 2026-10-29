@@ -80,7 +80,7 @@ const exportPiece: HarnessTool<z.infer<typeof input>> = {
         summary: `export ${kind}/${id}: binary target`,
         output:
           `"${to}" emits a binary ${outcome.suggestedExtension} carrier, which Kit cannot write `
-          + "safely yet. Use the CLI for this one: bunraku convert <in> <out> --to "
+          + "safely yet. Use the CLI for this one: bunzai convert <in> <out> --to "
           + `${to}. Nothing was written.`,
         outcome: "failed",
       };

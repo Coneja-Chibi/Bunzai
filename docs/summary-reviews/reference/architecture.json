@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/architecture",
   "sourcePath": "docs/reference/architecture.md",
-  "sourceHash": "sha256:97f2dca56ef01f0911256d22432c55e3d1fe5b63cf62dd9052d6859fc91cac26",
-  "semanticSummaryHash": "sha256:c5c2afb5407bf7a1630ab6658bc597c59765c67ee3e62a5ea7778fbd5a4a299d",
+  "sourceHash": "sha256:9ffb72e840316f219cdc59848a4457246db11ed49a7f9c9356b11fc615c1a463",
+  "semanticSummaryHash": "sha256:34e7f890e452035100b55b7c887818710a3cce051e9040caf4be984609efdfbe",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Changed sentence matches code: kit/providers/scene.ts sceneTools = Boolean(spoke?.scene) && !NO_TOOLS.test(model), the spoke scene.tools flag is gone, local and custom included. The stage section summary (shortSource, 76 words) says nothing the change contradicts.",
-  "reviewedAt": "2026-10-28T18:41:46.644Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:41.235Z"
 }

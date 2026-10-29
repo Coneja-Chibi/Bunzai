@@ -3,7 +3,7 @@
  * again (or a second user action re-entering a save) while another save for the same piece is
  * already underway needs a watermark/generation guard to reject the stale one.
  *
- * Bunraku's preset editor (src/ui/apps/workbench/preset/preset-editor.tsx) and quick-reply editor
+ * Bunzai's preset editor (src/ui/apps/workbench/preset/preset-editor.tsx) and quick-reply editor
  * (src/ui/apps/workbench/quickreply/editor.tsx) both have the same real risk area: autosave (with
  * retries), a 409 conflict bar, and two conflict-resolution actions (discard mine / keep mine and
  * overwrite). The routine save path guards itself (`doSave`: `if (saving || !dirty) return true`),
@@ -73,7 +73,7 @@ describe("EditorConflict: the bar both preset-editor.tsx and quickreply/editor.t
     expect("disabled" in props).toBe(false);
   });
 
-  // BUNRAKU BUG: EditorConflict's "Keep mine, overwrite" button has no disabled/busy state, and
+  // BUNZAI BUG: EditorConflict's "Keep mine, overwrite" button has no disabled/busy state, and
   // keepMine() in both preset-editor.tsx and quickreply/editor.tsx has no `if (saving) return;`
   // guard at its own top (unlike doSave's `if (saving || !dirty) return true`) - so a second click
   // during the 2-30s overwrite window fires a second concurrent overwrite request with nothing

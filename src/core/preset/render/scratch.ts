@@ -31,7 +31,7 @@ import { toErrorMessage } from "../../../error-message";
  * nothing and reports a clean render of an empty prompt - a false pass, which is the one answer this
  * whole surface must never produce.
  */
-const SCRATCH_ID = "bunraku_scratch";
+const SCRATCH_ID = "bunzai_scratch";
 
 /**
  * The scratch text as a one-block preset in the engine's own wire format.
@@ -56,7 +56,7 @@ export function scratchWireFile(engine: RenderEngineId, text: string): string {
   // SillyTavern: prompts are a pool, prompt_order is the assembly list, and `enabled` there is
   // load-bearing - the adapter skips any entry without it.
   return JSON.stringify({
-    name: "bunraku-macro-lab",
+    name: "bunzai-macro-lab",
     prompts: [
       { identifier: SCRATCH_ID, name: "Scratch", role: "system", content: text },
     ],
@@ -90,7 +90,7 @@ const SCRATCH_TIMEOUT_MS = 45_000;
 export async function resolveScratch(req: ScratchRequest): Promise<RenderOutcome> {
   let dir: string;
   try {
-    dir = await mkdtemp(join(tmpdir(), "bunraku-macro-lab-"));
+    dir = await mkdtemp(join(tmpdir(), "bunzai-macro-lab-"));
   } catch (e) {
     return refuse(
       "spawn-failed",

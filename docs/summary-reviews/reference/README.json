@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/README",
   "sourcePath": "docs/reference/README.md",
-  "sourceHash": "sha256:1b3e83628ba441f9864a91acb2f6b5751189393f99278f3881713777afd08f57",
-  "semanticSummaryHash": "sha256:0120861e7c081ce22646bb20317ba38493ea025009f1b4b75c5ff72ccbc2a168",
+  "sourceHash": "sha256:7cb0c64d0afe50a29567ca45f33c3c0e468e19092bf19ad7eb9ccfc79f67e6b5",
+  "semanticSummaryHash": "sha256:c9f6b58f3028eb2893c8831ed832e63a4ddd1818302985606e39a378c24fe3e5",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "New map row for scene-state.md matches the page. Sidecar summaries make no claim the row contradicts.",
-  "reviewedAt": "2026-10-27T18:08:50.743Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:07.942Z"
 }

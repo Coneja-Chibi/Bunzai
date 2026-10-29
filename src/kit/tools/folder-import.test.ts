@@ -19,7 +19,7 @@ import folderImport from "./folder-import";
 const shelf = new Map<string, true>();
 
 const bridge: KitBridge = {
-  studioDir: join(tmpdir(), "bunraku-import-studio"),
+  studioDir: join(tmpdir(), "bunzai-import-studio"),
   async deckCounts() { return []; },
   async list() { return []; },
   async read(kind, id) { return shelf.has(`${kind}/${id}`) ? ({ kind, id } as never) : null; },
@@ -64,7 +64,7 @@ const ctx = (): ToolContext => ({
 
 beforeAll(async () => {
   await ensureFormats();
-  const root = await mkdtemp(join(tmpdir(), "bunraku-import-"));
+  const root = await mkdtemp(join(tmpdir(), "bunzai-import-"));
   shared = join(root, "shared");
   outside = join(root, "shared-elsewhere");
   await mkdir(shared);

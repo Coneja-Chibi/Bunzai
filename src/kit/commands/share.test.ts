@@ -15,7 +15,7 @@ import { discoverCommands } from "./discover";
 import share from "./share";
 import unshare from "./unshare";
 
-const scratch = () => mkdtemp(join(tmpdir(), "bunraku-share-cmd-"));
+const scratch = () => mkdtemp(join(tmpdir(), "bunzai-share-cmd-"));
 
 /** A context that records what was said, so a test can assert the words a person actually reads. */
 const context = (arg: string, folders?: ReturnType<typeof createGrantBook>) => {

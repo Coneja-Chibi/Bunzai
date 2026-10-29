@@ -108,16 +108,16 @@ describe("needsRefresh", () => {
 });
 
 describe("codexHeaders", () => {
-  test("names Bunraku, not the application this was modelled on", () => {
+  test("names Bunzai, not the application this was modelled on", () => {
     const headers = codexHeaders({ accessToken: "at" }, "0.146.0");
-    expect(headers["originator"]).toBe("bunraku");
-    expect(headers["User-Agent"]).toMatch(/^Bunraku\//);
+    expect(headers["originator"]).toBe("bunzai");
+    expect(headers["User-Agent"]).toMatch(/^Bunzai\//);
     expect(JSON.stringify(headers)).not.toMatch(/marinara/i);
   });
 
-  test("the version header is Codex's, not Bunraku's", () => {
+  test("the version header is Codex's, not Bunzai's", () => {
     // The service gates on this field and refuses a value it does not recognise, so sending
-    // Bunraku's own version here is a 400 on every call. Proven against the live endpoint.
+    // Bunzai's own version here is a 400 on every call. Proven against the live endpoint.
     const headers = codexHeaders({ accessToken: "at" }, "0.146.0");
     expect(headers["version"]).toBe("0.146.0");
     expect(headers["version"]).not.toBe(APP_VERSION);

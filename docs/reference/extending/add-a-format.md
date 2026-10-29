@@ -2,7 +2,7 @@
 id: reference/extending/add-a-format
 title: Add a format adapter
 audience: dev
-summary: How to add a new bunraku format adapter, copy the template folder, implement detect, toCanonical, and fromCanonical, declare coverage, and the loader picks it up with no core edits.
+summary: How to add a new bunzai format adapter, copy the template folder, implement detect, toCanonical, and fromCanonical, declare coverage, and the loader picks it up with no core edits.
 tags: [extending, format, adapter, contribution, folders-as-schema]
 related: [reference/architecture, reference/concepts/canonical-model, reference/entities/character, reference/formats/pygmalion]
 ---
@@ -36,7 +36,7 @@ interface AdapterBase {
   label: string;
   outputExtensions: string[];          // extensions this adapter writes, no dot
   detect(input: AdapterInput): number; // 0..1 confidence it can read this input
-  native?: boolean;                    // bunraku's own storage format; never a "publish to" platform
+  native?: boolean;                    // bunzai's own storage format; never a "publish to" platform
   generic?: boolean;                   // the plain reader of a family; UI shows "Default", not a platform
   coverage?: CoverageDecl;             // canonical body paths this wire actually carries, see below
   lens?: boolean;                      // false hides this format from the editor's platform strip
@@ -108,7 +108,7 @@ returns whichever it writes, plus `suggestedExtension`, normally one of the adap
 
 6. **Done. No core edits.** `loadFormats()` globs `src/formats/*/index.ts`, dynamically imports
    each match, and calls `register()` on whatever it default-exports, one adapter or an array of
-   them (`loader.ts:20-37`). Nothing outside the new folder changes. `bun run bunraku formats` lists
+   them (`loader.ts:20-37`). Nothing outside the new folder changes. `bun run bunzai formats` lists
    the new adapter immediately (`cli.ts:146-166`), and its own help text says the same thing this
    page does: "Drop a folder into src/formats/ to add one (copy src/formats/_template)."
    (`cli.ts:172-173`). `bun run matrix` regenerates [FORMAT-SUPPORT.md](../../FORMAT-SUPPORT.md)
@@ -194,5 +194,5 @@ there.
 | Smallest real worked example (one file, five fields) | `src/formats/pygmalion/index.ts`, `src/formats/pygmalion/coverage.ts` |
 | Test shape to copy | `src/formats/pygmalion/pygmalion.test.ts` |
 | Matrix generator (`bun run matrix`, `matrix:check`) | `scripts/format-matrix.ts` |
-| `bunraku formats` CLI command | `src/cli.ts` |
+| `bunzai formats` CLI command | `src/cli.ts` |
 | Whole-engine context (hub-and-spoke, escrow, detection) | `docs/reference/architecture.md` |

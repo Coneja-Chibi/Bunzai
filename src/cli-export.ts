@@ -1,5 +1,5 @@
 /**
- * `bunraku export <folder> [studio]`: the library written out as a plain studio folder
+ * `bunzai export <folder> [studio]`: the library written out as a plain studio folder
  * (src/studio/folder-export.ts). It opens the studio's existing library the way the app
  * does and never makes one: a studio with no library yet has nothing to export. Opening it is the
  * app's open, so the Trash is emptied of pieces past their window first. A locked library is
@@ -19,7 +19,7 @@ export async function runExport(
   options: import("./ui/library-root").OpenOptions = {},
 ): Promise<number> {
   if (!destination) {
-    console.error("  usage: bunraku export <folder> [studio]");
+    console.error("  usage: bunzai export <folder> [studio]");
     return 2;
   }
   if (!existsSync(join(studioDir, LIBRARY_FILE))) {

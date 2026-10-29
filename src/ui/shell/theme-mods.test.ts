@@ -13,7 +13,7 @@ beforeAll(() => { installed = installDom("<!doctype html><html><body></body></ht
 afterAll(async () => { removeMod(); await installed.teardown(); }); // removeMod stops the watcher timer a painted mod starts
 beforeEach(() => installed.reinstall());
 
-const ID = "bunraku.theme.modtest";
+const ID = "bunzai.theme.modtest";
 async function installed_(): Promise<Awaited<ReturnType<typeof createThemeLifecycle>>> {
   const themes = await createThemeLifecycle(memoryStateStore(), []);
   const { preview, challenge } = await themes.inspect(await modThemePackage());

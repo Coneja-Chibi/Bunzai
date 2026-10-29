@@ -1,7 +1,7 @@
 /** @jsxImportSource @opentui/react */
 /**
  * OpeningBanner: the statement-piece greeting, printed once at the top and scrolling away as you
- * chat. The real Bunraku illuminated-V mark (two crossed searchlight beams with white slits, ears
+ * chat. The real Bunzai illuminated-V mark (two crossed searchlight beams with white slits, ears
  * splayed up, tails crossed below) rasterized straight from hoplight-v.svg's polygons, BESIDE the
  * big "Kit" wordmark (also polygon-rasterized so it scales cleanly), the wordmark centered against
  * the mark's height. The whole lockup and welcome script sit as one centered stage block on roomy

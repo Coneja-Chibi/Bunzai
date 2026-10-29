@@ -269,7 +269,7 @@ async function shapeFiles(): Promise<string[]> {
 // 2026-10-04: two compatible edits to pinned files landed without a re-pin. (1) sqlite/*.ts import
 // DamagedDataError from stage/damaged-data-error instead of crypto/crypto (e4e480e5): an import path, no
 // table, column or encoding change. (2) studio/settings-shape.ts: the stored `theme` setting now also accepts
-// an imported theme's validated bunraku.theme.<slug> package id beside paper, stage and theater (0d833f26).
+// an imported theme's validated bunzai.theme.<slug> package id beside paper, stage and theater (0d833f26).
 // A build that predates it drops an id it does not know and falls back to its default, so no schema bump and
 // no SCHEMA_BUMPS entry.
 //
@@ -385,7 +385,7 @@ async function shapeFiles(): Promise<string[]> {
 // 2026-10-27 (later), the writing family: the Script Sheet becomes its own kind (src/entities/scriptsheet/, a new decoder:
 // name, content, description, samplers) and the preset body drops the `scriptSheet` field it briefly carried, so a
 // preset is stored exactly as before that field. A scene's preset choice gains its writing kind (`ChatPreset.kind`, rule
-// 19, required; Bunraku has no stored scenes to carry). No migration: there is no data to keep.
+// 19, required; Bunzai has no stored scenes to carry). No migration: there is no data to keep.
 // 2026-10-27 (later still), tools: a new kind (src/entities/tool/, a new decoder: name, description, typed fields with unique
 // choices, and one action: roll the dice a text field names, roll a linked dice piece by id, or record; no code) and a scene's
 // prompting gains `tools`, the library tools it links (ids, at most 20). ADDITIVE: every
@@ -402,7 +402,7 @@ async function shapeFiles(): Promise<string[]> {
 // src/core/scene-state/types.ts (new, pinned here) is the stored delta and state shape. The ChatStore contract drops `variables` and `changeVariables` for `sceneState`, `sceneStateBefore` and `recordDeltas`, and the
 // macro variables become the `vars` slot. ADDITIVE for the schema: no table or column an older build uses changes. ONE-WAY for the file: a build from before migration 43 refuses a database that has it (database.ts, "which this
 // version does not know"), as for any new migration. The variables themselves are not carried over: branch_variables stays in the schema, no longer read or written, and nothing is moved out of
-// it (Bunraku has no stored scenes to carry). No SCHEMA_BUMPS entry. The pin was recomputed.
+// it (Bunzai has no stored scenes to carry). No SCHEMA_BUMPS entry. The pin was recomputed.
 // 2026-10-27, trackers (section I of the scene-state plan, backend only): a new kind (src/entities/tracker/, a new decoder: name, description, a record or list layout, one to twelve typed fields with
 // an optional range and default that must fit, a note, an optional macro template; shape only, no code), and a scene's prompting gains `trackers`, the library trackers it links (ids, at most 20). Scene state gains
 // two slot FAMILIES, tracker-record:<pieceId> and tracker-list:<pieceId> (src/core/scene-state/slots/, new; types.ts, pinned here, only documents that a slot id may end in :*): the stored delta shape is unchanged,
@@ -441,7 +441,7 @@ async function shapeFiles(): Promise<string[]> {
 // context, auto, the new subs (the sub-feature switches, moved out of the module's data), and a Storyboard's profile as data (src/stage/contracts/chat-tracker-types.ts and src/stage/store/tracker-rules.ts, pinned here from now on, because
 // they decide what the cell may hold). The Director's update, undone and parked records leave the cell, and the Director snapshot loses trackerUpdates (director-rules.ts refuses it). A scene-state slot may declare shapeAt (a fields slot whose
 // fields differ in kind), and a keyed-list row must carry the key its path names (src/core/scene-state/types.ts and src/stage/store/scene-state-rules.ts, pinned). NO schema change and no migration: no table or column changes. A cell written before
-// this change is read as settings alone (its state, update, undone and parked keys are not read and the next change drops them); existing scenes' tracker state is NOT moved (Bunraku has no stored scenes to carry). ONE-WAY in the sense that an older
+// this change is read as settings alone (its state, update, undone and parked keys are not read and the next change drops them); existing scenes' tracker state is NOT moved (Bunzai has no stored scenes to carry). ONE-WAY in the sense that an older
 // build reads a new cell's settings but finds no state in it. The pin was recomputed.
 // 2026-10-28 (phase 3 review fixes): src/core/trackers/state.ts (pinned) gains the read-side repair of a module's stored state (repairOf: keep every field and row that fits, bring a broken cross-field rule inside, the stored values unchanged). No stored key or
 // shape changes: it decides only how a stored state is READ, so a state a cut left inconsistent no longer reads as the defaults. COMPATIBLE. The pin was recomputed.

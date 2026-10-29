@@ -1,5 +1,5 @@
 /*
- * Bunraku design system: setup.html ("setup.wizard"). The first-run wizard: theme, first-deck,
+ * Bunzai design system: setup.html ("setup.wizard"). The first-run wizard: theme, first-deck,
  * publish, accent, shortcuts (Windows only), and the closing recap. Prefix: su-. Tokens only.
  * Simplified: the real wizard forces the whole surface to the paper theme and live-flips it on the
  * theme step; here the page's own theme switcher controls every step instead, so every step can be

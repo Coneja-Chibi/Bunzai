@@ -40,21 +40,21 @@ import type { ProviderSpoke } from "../spoke";
 import { loadAgentSdk, makeClaudeCliChat, writeMcpConfig } from "../claude-cli";
 
 /** Kit's own guidance still leads; the CLI is told to be Kit rather than a coding agent. */
-const SYSTEM = "You are Kit, the Bunraku Studio agent. Use the bunraku tools for Studio facts and"
+const SYSTEM = "You are Kit, the Bunzai Studio agent. Use the bunzai tools for Studio facts and"
   + " changes. Answer the user directly and never claim a write succeeded without a receipt.";
 
 /**
- * How the tool server is started: `bunraku mcp`, this same program.
+ * How the tool server is started: `bunzai mcp`, this same program.
  *
  * A COMPILED BINARY HAS NO SOURCE FILES, which is what makes the subcommand necessary rather than
  * tidy. Pointing at src/mcp/main.ts worked from a checkout and would have failed silently for anyone
- * who installed Bunraku instead of cloning it: the server would not start, the bridge would be
+ * who installed Bunzai instead of cloning it: the server would not start, the bridge would be
  * absent, and the turn would quietly answer without tools. That failure looks like a model choosing
  * not to use them.
  *
  * Decided from the EXECUTABLE, not from whatever entry happened to start this process. A first
  * attempt keyed on `Bun.main` and broke the moment the process was started some other way, because
- * "the entry looks like source" is a guess and "the executable is the Bunraku binary" is a fact.
+ * "the entry looks like source" is a guess and "the executable is the Bunzai binary" is a fact.
  * When it is not our binary we are running under a runtime from source, and cli.ts is resolved from
  * this module rather than assumed.
  */
@@ -62,7 +62,7 @@ export function serverCommand(writes = false): { command: string; args: string[]
   /**
    * GATE MODE 1: pre-authorised at connect, decided here on the spawn.
    *
-   * The tool server is a GRANDCHILD - Kit spawns the CLI, the CLI spawns `bunraku mcp` - so Kit has
+   * The tool server is a GRANDCHILD - Kit spawns the CLI, the CLI spawns `bunzai mcp` - so Kit has
    * no channel to it and cannot answer a permission question mid-call. That is why this provider ran
    * read-only: not caution about writes, but the absence of anywhere to ask.
    *
@@ -75,7 +75,7 @@ export function serverCommand(writes = false): { command: string; args: string[]
    */
   const args = ["mcp", ...(writes ? [] : ["--read-only"])];
   const exe = basename(process.execPath).toLowerCase();
-  if (exe.startsWith("bunraku")) return { command: process.execPath, args };
+  if (exe.startsWith("bunzai")) return { command: process.execPath, args };
   const cli = fileURLToPath(new URL("../../../cli.ts", import.meta.url));
   return { command: process.execPath, args: [cli, ...args] };
 }
@@ -117,7 +117,7 @@ const claudeSub: ProviderSpoke = {
     const server = serverCommand(config.options?.writes === "on");
     // Handed to the SDK directly. There is no longer a temp config file naming an executable, so the
     // whole class of "somebody replaces that file between our write and the CLI's read" is gone.
-    const mcpServers = { bunraku: { command: server.command, args: server.args } };
+    const mcpServers = { bunzai: { command: server.command, args: server.args } };
     return makeClaudeCliChat(config.model || "sonnet", SYSTEM, { signal, mcpServers });
   },
   /**

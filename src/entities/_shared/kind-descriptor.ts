@@ -49,7 +49,7 @@ export interface KindDescriptor<Id extends string = string, Body = unknown> {
   /** The blank piece every "New ..." door saves, under `blankId` until the store makes the id unique. */
   blank?: () => Body & { name?: string };
   blankId?: string;
-  /** Lines `bunraku inspect` prints for one piece. */
+  /** Lines `bunzai inspect` prints for one piece. */
   describe(body: Body): string[];
   links?: readonly KindLink[];
   /** The Workbench editor this kind opens in; absent means it opens read-only. */

@@ -30,7 +30,7 @@ body:
   - type: textarea
     id: receipt
     attributes:
-      label: What did Bunraku say?
+      label: What did Bunzai say?
       description: The import receipt, export report, or error text, word for word if you can.
   - type: input
     id: format

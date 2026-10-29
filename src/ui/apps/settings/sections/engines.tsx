@@ -25,7 +25,7 @@ import { engineState, type EngineRow } from "./engines-core";
 import { Button } from "../../../components/button";
 import styles from "./engines.module.css";
 
-/** One row per engine Bunraku can drive: where its checkout is, and whether one answered. */
+/** One row per engine Bunzai can drive: where its checkout is, and whether one answered. */
 export function EngineRoots(): JSX.Element {
   const [rows, setRows] = useState<EngineRow[]>([]);
   const [draft, setDraft] = useState<Record<string, string>>({});

@@ -3,7 +3,7 @@
  * actually ships the sidecar.
  *
  * The second half exists because it did not. CI vetted and built the helper on every push, which read as
- * "the sidecar is covered", while the release workflow published Bunraku.exe and six other binaries and
+ * "the sidecar is covered", while the release workflow published Bunzai.exe and six other binaries and
  * no helper at all - so packaged remote access could never start, for anyone, and the only person who
  * never saw it was the developer with an untracked build product sitting in their own working tree.
  */

@@ -11,7 +11,7 @@ related: [reference/concepts/regex-engine, reference/concepts/regex-editor, refe
 
 A regex set rides in with an imported character card: the `find` pattern is untrusted, author-controlled
 text. JavaScript's `RegExp` engine runs synchronously and cannot be interrupted within its own thread, so
-a catastrophic-backtracking pattern like `(a+)+$` can hold that thread indefinitely. Bunraku now uses
+a catastrophic-backtracking pattern like `(a+)+$` can hold that thread indefinitely. Bunzai now uses
 two layers: the core engine screens patterns structurally before compilation, and every installed-Studio preview
 runs that engine in a disposable worker that is terminated at a 750 ms wall-clock deadline. The
 static GitHub Pages Studio keeps regex source editable but refuses previews because it cannot provide

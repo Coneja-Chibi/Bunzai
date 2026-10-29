@@ -32,7 +32,7 @@ const sectionFor = (doc: DocRecord): { group: "user" | "developer"; id: string; 
   if (path.startsWith("docs/reference/concepts/") || path.endsWith("reference/architecture.md")) {
     return { group: "developer", id: "architecture", label: "Architecture & Concepts" };
   }
-  if (path.startsWith("docs/reference/extending/")) return { group: "developer", id: "extending", label: "Extending Bunraku" };
+  if (path.startsWith("docs/reference/extending/")) return { group: "developer", id: "extending", label: "Extending Bunzai" };
   if (/docs\/reference\/(?:ui|cli|components)\.md$/.test(path)) {
     return { group: "developer", id: "application", label: "Application & API" };
   }
@@ -171,7 +171,7 @@ function rewriteDocLinks(markdown: string, current: DocRecord, docs: DocRecord[]
       const hash = anchor ? `#${anchor}` : "";
       return `[${label}](/docs/${encodeURIComponent(target.id)}${hash}${tail})`;
     }
-    const github = `https://github.com/Coneja-Chibi/Bunraku/blob/Mainstage/${resolved}`;
+    const github = `https://github.com/Coneja-Chibi/Bunzai/blob/Mainstage/${resolved}`;
     return `[${label}](${github}${anchor ? `#${anchor}` : ""}${tail})`;
   });
 }

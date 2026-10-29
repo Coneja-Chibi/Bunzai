@@ -15,7 +15,7 @@ import { apiReq } from "./server-test-rig";
 afterEach(cleanupChatRouteRigs);
 setDefaultTimeout(30_000);
 
-const HOME = join(tmpdir(), `bunraku-draft-routes-${randomUUID()}`);
+const HOME = join(tmpdir(), `bunzai-draft-routes-${randomUUID()}`);
 const UNLOCK = { passphrase: "draft-routes-test" };
 let server: ReturnType<typeof Bun.serve>;
 let answer: { status: number; content: string } = { status: 200, content: "I step into the rain." };
@@ -23,7 +23,7 @@ const asked: { model: string; temperature?: number; stream?: boolean; messages: 
 let localId = "";
 
 beforeAll(async () => {
-  process.env.BUNRAKU_HOME = HOME;
+  process.env.BUNZAI_HOME = HOME;
   server = Bun.serve({
     port: 0,
     async fetch(req) {
@@ -37,7 +37,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   server.stop(true);
-  delete process.env.BUNRAKU_HOME;
+  delete process.env.BUNZAI_HOME;
   await rm(HOME, { recursive: true, force: true });
 });
 

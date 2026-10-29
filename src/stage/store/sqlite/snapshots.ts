@@ -208,7 +208,7 @@ export function createSnapshotStore(opts: SnapshotStoreOptions) {
     const result = await onLane("snapshot preview", { kind: "inspect", path, snapshot: fileOf(info.id) });
     if (!result.ok) throw new SnapshotError(`the snapshot could not be read: ${plain(result.reason)}`);
     const inspection = result.data as Inspection;
-    if (inspection.schema === "different") throw new SnapshotError("this snapshot was made by a different version of Bunraku and cannot be restored here", "foreign");
+    if (inspection.schema === "different") throw new SnapshotError("this snapshot was made by a different version of Bunzai and cannot be restored here", "foreign");
     if (inspection.probes.length === 0) throw new SnapshotError("this snapshot has no sealed cell to prove it belongs to this library, so it cannot be checked and was not restored", "foreign");
     for (const p of inspection.probes) {
       try {

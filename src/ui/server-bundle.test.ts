@@ -82,7 +82,7 @@ describe("bundle inspect/export/save", () => {
     const headers = new Headers();
     headers.set("host", "127.0.0.1:8321");
     headers.set("origin", "http://127.0.0.1:8321");
-    headers.set("x-bunraku-token", sec.token);
+    headers.set("x-bunzai-token", sec.token);
     headers.set("content-type", "application/octet-stream");
     headers.set("x-filename", encodeURIComponent("[\u{1F48E}datacat] Sian rules.json"));
     const res = await handler(
@@ -116,7 +116,7 @@ describe("bundle inspect/export/save", () => {
     const headers = new Headers();
     headers.set("host", "127.0.0.1:8321");
     headers.set("origin", "http://127.0.0.1:8321");
-    headers.set("x-bunraku-token", sec.token);
+    headers.set("x-bunzai-token", sec.token);
     headers.set("content-type", "application/octet-stream");
     headers.set("x-filename", "aria.json");
     const res2 = await handler(
@@ -160,7 +160,7 @@ describe("bundle inspect/export/save", () => {
     const headers = new Headers();
     headers.set("host", "127.0.0.1:8321");
     headers.set("origin", "http://127.0.0.1:8321");
-    headers.set("x-bunraku-token", sec.token);
+    headers.set("x-bunzai-token", sec.token);
     headers.set("content-type", "application/octet-stream");
     headers.set("x-filename", "paramnesia-vi-rc.json");
     const inspected = await (
@@ -216,7 +216,7 @@ describe("bundle inspect/export/save", () => {
     const headers = new Headers();
     headers.set("host", "127.0.0.1:8321");
     headers.set("origin", "http://127.0.0.1:8321");
-    headers.set("x-bunraku-token", sec.token);
+    headers.set("x-bunzai-token", sec.token);
     headers.set("content-type", "application/octet-stream");
     headers.set("x-filename", "aria.json");
     const inspected = await (

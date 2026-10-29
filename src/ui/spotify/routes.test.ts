@@ -31,7 +31,7 @@ function setup(link: SpotifyLink = { clientId: CLIENT }) {
   const handler = createHandler(stub, settings, undefined, sec);
   const post = (path: string, body: unknown, token: string | null = sec.token): Promise<Response> => handler(new Request(`http://127.0.0.1:8321${path}`, {
     method: "POST",
-    headers: { host: "127.0.0.1:8321", origin: "http://127.0.0.1:8321", "content-type": "application/json", ...(token ? { "x-bunraku-token": token } : {}) },
+    headers: { host: "127.0.0.1:8321", origin: "http://127.0.0.1:8321", "content-type": "application/json", ...(token ? { "x-bunzai-token": token } : {}) },
     body: JSON.stringify(body),
   }));
   return { handler, sec, hosts, opened, saved: () => saved, post };
@@ -91,7 +91,7 @@ describe("the Spotify routes", () => {
   test("a remote or LAN device cannot reach Spotify, the sign-in, or the callback", async () => {
     const sec = filledSec();
     const remote = createHandler(stub, settings, undefined, sec, undefined, undefined, undefined, "sidecar-secret");
-    const headers = { host: "x.ts.net", "x-bunraku-sidecar-secret": "sidecar-secret" };
+    const headers = { host: "x.ts.net", "x-bunzai-sidecar-secret": "sidecar-secret" };
     expect((await remote(new Request("http://x.ts.net/api/spotify/status", { headers }))).status).toBe(403);
     expect((await remote(new Request("http://x.ts.net/spotify/callback?code=c&state=s", { headers }))).status).toBe(404);
   });

@@ -7,7 +7,7 @@ import { StudioWriteError, writeAtomicReplace } from "./atomic-file";
 import { withTempDir } from "./test-temp-dir";
 
 test("closes its temporary handle before unlinking it and preserves the write cause", async () => {
-  await withTempDir("bunraku-atomic-order-", async (dir) => {
+  await withTempDir("bunzai-atomic-order-", async (dir) => {
     const probe = await open(join(dir, "probe"), "w");
     const prototype = Object.getPrototypeOf(probe);
     await probe.close();

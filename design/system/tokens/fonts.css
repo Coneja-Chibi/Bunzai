@@ -1,5 +1,5 @@
 /*
- * Bunraku design system: the four house faces, served from the app's own font folder (OFL, offline,
+ * Bunzai design system: the four house faces, served from the app's own font folder (OFL, offline,
  * no remote fonts). Fraunces italic is deliberately not loaded (no cursive). Same files and ranges as src/ui/theme/tokens.css. IBM Plex Mono ships at 500
  * only, so any heavier mono weight is synthesized by the browser until a 700 file is added.
  */

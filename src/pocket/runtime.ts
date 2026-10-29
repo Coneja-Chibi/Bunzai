@@ -50,12 +50,12 @@ interface PocketData {
 }
 
 declare global {
-  var __BUNRAKU_POCKET_DATA__: PocketData | undefined;
-  var __BUNRAKU_POCKET_PORTRAIT__: ((kind: string, id: string) => string | null) | undefined;
+  var __BUNZAI_POCKET_DATA__: PocketData | undefined;
+  var __BUNZAI_POCKET_PORTRAIT__: ((kind: string, id: string) => string | null) | undefined;
 }
 
-const STUDIO_DIR = "/bunraku-tab";
-const unavailable = "This control needs the installed Bunraku app and is unavailable in the temporary browser studio.";
+const STUDIO_DIR = "/bunzai-tab";
+const unavailable = "This control needs the installed Bunzai app and is unavailable in the temporary browser studio.";
 const json = (value: unknown, status = 200): Response => Response.json(value, {
   status,
   headers: { "cache-control": "no-store", "x-content-type-options": "nosniff" },
@@ -183,7 +183,7 @@ export function installPocketRuntime(): () => void {
     for (const [ref, item] of staged) if (item.expires <= Date.now()) removeUpload(ref);
     scheduleUploadExpiry();
   };
-  const data = globalThis.__BUNRAKU_POCKET_DATA__;
+  const data = globalThis.__BUNZAI_POCKET_DATA__;
   if (!data) throw new Error("browser studio data is missing");
   const themes = createThemeLifecycle(state, Object.values(data.themePackages ?? {}), Object.values(data.exampleThemePackages ?? {}));
   let unsubscribeThemes = (): void => undefined;
@@ -450,6 +450,6 @@ export function installPocketRuntime(): () => void {
     window.dispatchEvent(new window.Event(LIBRARY_LOCKED_EVENT));
     globalThis.fetch = originalFetch;
     disableVolatileWebStorage();
-    delete globalThis.__BUNRAKU_POCKET_PORTRAIT__;
+    delete globalThis.__BUNZAI_POCKET_PORTRAIT__;
   };
 }

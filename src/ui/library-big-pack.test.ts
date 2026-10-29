@@ -38,9 +38,9 @@ type Item = { id: string; label: string; ref: string };
 type Light = { entity: { body: { name: string; pack: { items: Item[] } } }; revision: string };
 
 test("an 18 MB pack saves a rename, a reorder and an added picture, then duplicates and prints, through the cold-read worker", async () => {
-  const root = mkdtempSync(join(tmpdir(), "bunraku-big-pack-"));
+  const root = mkdtempSync(join(tmpdir(), "bunzai-big-pack-"));
   dirs.push(root);
-  const dir = join(root, "Bunraku Studio");
+  const dir = join(root, "Bunzai Studio");
   const library = await openLibrary(dir, { vault: fakeComputer(), skipOpenMaintenance: true, sessionsDir: join(root, "sessions") });
   opened.push(library);
   const store = new StudioStore(dir);
@@ -76,9 +76,9 @@ test("an 18 MB pack saves a rename, a reorder and an added picture, then duplica
 }, 120_000);
 
 test("a whole read of the 18 MB pack succeeds through the worker, and restoring an older version never opens it whole", async () => {
-  const root = mkdtempSync(join(tmpdir(), "bunraku-big-pack-read-"));
+  const root = mkdtempSync(join(tmpdir(), "bunzai-big-pack-read-"));
   dirs.push(root);
-  const dir = join(root, "Bunraku Studio");
+  const dir = join(root, "Bunzai Studio");
   const library = await openLibrary(dir, { vault: fakeComputer(), skipOpenMaintenance: true, sessionsDir: join(root, "sessions") });
   opened.push(library);
   const store = new StudioStore(dir);

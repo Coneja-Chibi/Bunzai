@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/troubleshooting",
   "sourcePath": "docs/guide/troubleshooting.md",
-  "sourceHash": "sha256:7da56aebe916a8b1d31055752129b18f605f40107b91dded52e082c6c013c623",
-  "semanticSummaryHash": "sha256:06acf2550b18b06b788988ce998d88b3172a04fb94f6b0aecb7e55375ee9d08d",
+  "sourceHash": "sha256:649089d83b8bbfc186cfd9187aefa8cf882c7b5e2a42b19e59c9f6827516de0b",
+  "semanticSummaryHash": "sha256:3de93ac7ea177fd52a09a1ce90595e16b0d0832d7b513cf6b0ebbe7aa935af6c",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:48.485Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:40.767Z"
 }

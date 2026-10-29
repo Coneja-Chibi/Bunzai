@@ -34,7 +34,7 @@ body { background: url(asset:backdrop) center / cover no-repeat; }
 
 /** A theme package that uses styles, a font, a PNG and a WebP, and fills two slots. `edit` changes the manifest or files before use. */
 export async function modThemePackage(edit?: (input: { manifest: Record<string, any>; assets: Record<string, unknown> }) => void): Promise<ThemePackageInput> {
-  const base = await fixtureThemePackage("bunraku.theme.modtest", "Mod test") as { manifest: Record<string, any>; assets: Record<string, unknown>; licenseText?: unknown };
+  const base = await fixtureThemePackage("bunzai.theme.modtest", "Mod test") as { manifest: Record<string, any>; assets: Record<string, unknown>; licenseText?: unknown };
   const m = base.manifest;
   m.assets.push({ id: "backdrop", path: "assets/backdrop.png", mediaType: "image/png" }, { id: "badge", path: "assets/badge.webp", mediaType: "image/webp" });
   base.assets["assets/backdrop.png"] = png();

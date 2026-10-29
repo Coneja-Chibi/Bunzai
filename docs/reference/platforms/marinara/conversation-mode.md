@@ -148,7 +148,7 @@ Early End/Resign confirms where documented, deletes game state, and records no w
 character command stops autonomous invitations but does not disable installed slash commands or the
 "let's play" phrase path. This state is distinct from Game Mode party, HUD, and save systems.
 
-## Bunraku
+## Bunzai
 
-Conversation Mode is a Marinara product surface. Bunraku does not host schedules, call media, or emoji
+Conversation Mode is a Marinara product surface. Bunzai does not host schedules, call media, or emoji
 libraries unless a future adapter exists.

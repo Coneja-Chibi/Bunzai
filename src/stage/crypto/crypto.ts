@@ -102,14 +102,14 @@ export interface PasswordWrap extends Wrapped {
 }
 
 /**
- * The settings come from the file, so only the exact ones Bunraku writes are accepted: any raised
+ * The settings come from the file, so only the exact ones Bunzai writes are accepted: any raised
  * cost could hang the unlock (the review measured 83 s at the old upper bound) and any lowered one
  * would make guessing cheap. A future stronger setting arrives with its own version.
  */
 function checkKdf(kdf: unknown): Kdf {
   const k = kdf as Partial<Kdf> | null;
   if (!k || k.name !== ARGON.name || k.m !== ARGON.m || k.t !== ARGON.t || k.p !== ARGON.p) {
-    throw new DamagedDataError("keyring.password", "its strength settings are not ones Bunraku writes");
+    throw new DamagedDataError("keyring.password", "its strength settings are not ones Bunzai writes");
   }
   return ARGON;
 }

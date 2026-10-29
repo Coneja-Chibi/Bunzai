@@ -1,7 +1,7 @@
 /**
  * The agent window's line to a model.
  *
- * ONE MODEL LAYER, KIT'S. Every provider Bunraku speaks to, the vault holding the keys, the egress
+ * ONE MODEL LAYER, KIT'S. Every provider Bunzai speaks to, the vault holding the keys, the egress
  * allowlist and the tool belt already exist in src/kit. This file reaches them; it does not rebuild
  * them. A second provider layer would mean two places to paste an API key, two egress ledgers, and
  * eventually two review Gates - and two Gates is the arrangement where a write escapes review.
@@ -228,7 +228,7 @@ export function redactSecrets(text: string): string {
  */
 export function systemPrompt(brief?: string): string {
   const lines = [
-    "You are the agent inside Bunraku, a desktop studio for character cards, presets and lorebooks.",
+    "You are the agent inside Bunzai, a desktop studio for character cards, presets and lorebooks.",
     "Answer about what the person is actually looking at. Be concrete and brief.",
     /**
      * THIS USED TO SAY THE OPPOSITE, AND IT WAS LEFT BEHIND.

@@ -2,21 +2,21 @@
  * Clears temporary files a crashed run left behind (the disk-write
  * list): uploaded archives, staged imports, preset scratch files, pasted images, and Kit's MCP
  * configs. Each is deleted when its job ends; this catches the ones a crash stranded. Only entries
- * older than a day are removed, so a second Bunraku running at the same time never loses the file
+ * older than a day are removed, so a second Bunzai running at the same time never loses the file
  * it is working on.
  */
 import { readdirSync, rmSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-/** Every temp name Bunraku makes, by prefix. A new temp write adds its prefix here. */
+/** Every temp name Bunzai makes, by prefix. A new temp write adds its prefix here. */
 export const TEMP_PREFIXES = [
-  "bunraku-lvbak-upload-",
-  "bunraku-lvbak-staged-",
-  "bunraku-import-staged-",
-  "bunraku-asset-staged-",
-  "bunraku-macro-lab-",
-  "bunraku-mcp-",
+  "bunzai-lvbak-upload-",
+  "bunzai-lvbak-staged-",
+  "bunzai-import-staged-",
+  "bunzai-asset-staged-",
+  "bunzai-macro-lab-",
+  "bunzai-mcp-",
   "kit-paste-",
   "hoplight-verify-",
 ] as const;

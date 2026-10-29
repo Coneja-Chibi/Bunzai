@@ -67,7 +67,7 @@ export function useShellMenus(): void {
       },
     ]);
 
-    const detachShellTarget = menus.attach(document.body, () => ({ type: "shell", label: "Bunraku." }));
+    const detachShellTarget = menus.attach(document.body, () => ({ type: "shell", label: "Bunzai." }));
 
     return () => {
       unregisterEntity();

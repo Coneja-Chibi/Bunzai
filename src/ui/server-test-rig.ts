@@ -29,7 +29,7 @@ export const apiReq = (
   headers.set("host", init.host ?? "127.0.0.1:8321");
   if (init.fetchSite) headers.set("sec-fetch-site", init.fetchSite);
   if (init.origin !== null) headers.set("origin", init.origin ?? "http://127.0.0.1:8321");
-  if (init.token !== null && init.token !== undefined) headers.set("x-bunraku-token", init.token);
+  if (init.token !== null && init.token !== undefined) headers.set("x-bunzai-token", init.token);
   if (init.contentType) headers.set("content-type", init.contentType);
   return new Request(`http://127.0.0.1:8321${path}`, {
     method: init.method ?? "GET",

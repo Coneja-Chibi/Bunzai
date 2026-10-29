@@ -43,9 +43,9 @@ describe("readMacros", () => {
   });
 
   it("names what the lens has no macro for, without swallowing it", () => {
-    const out = readMacros("{{char}} and {{bunraku_not_a_macro}}", "sillytavern");
+    const out = readMacros("{{char}} and {{bunzai_not_a_macro}}", "sillytavern");
     expect(out.tokens.map((t) => t.verdict)).toEqual(["known", "unknown"]);
-    expect(out.unknownNames).toEqual(["bunraku_not_a_macro"]);
+    expect(out.unknownNames).toEqual(["bunzai_not_a_macro"]);
   });
 
   /**
@@ -124,7 +124,7 @@ describe("travelFor", () => {
   });
 
   it("says so plainly when a token has nowhere to go on a lens", () => {
-    const rows = travelFor("{{bunraku_not_a_macro}}", "sillytavern");
+    const rows = travelFor("{{bunzai_not_a_macro}}", "sillytavern");
     // Whatever the verdict, every row must carry a reason a person can read.
     for (const row of rows) expect(row.why.length).toBeGreaterThan(0);
   });
@@ -191,11 +191,11 @@ describe("buildResolveAsk", () => {
 
 describe("LAB_LENSES", () => {
   /**
-   * The lab shows platforms, and "Bunraku" is not one. `full` is the canonical superset lens whose
+   * The lab shows platforms, and "Bunzai" is not one. `full` is the canonical superset lens whose
    * catalog IS RoleCall's, so offering it here meant a duplicate column under a name with no engine
    * behind it - and a verdict reading "in this engine's catalog" about an engine that does not exist.
    */
-  it("offers no Bunraku lens, because Bunraku runs no macros", () => {
+  it("offers no Bunzai lens, because Bunzai runs no macros", () => {
     expect(LAB_LENSES).not.toContain("full");
     expect(LAB_LENSES).toEqual(
       ["rolecall", "sillytavern", "sillytavern-new", "marinara", "lumiverse", "risu"],
@@ -315,7 +315,7 @@ describe("the Risu dialect in the lab", () => {
   });
 
   it("reads text like any other dialect", () => {
-    const out = readMacros("{{char}} and {{bunraku_not_a_macro}}", "risu");
+    const out = readMacros("{{char}} and {{bunzai_not_a_macro}}", "risu");
     expect(out.tokens.map((t) => t.verdict)).toEqual(["known", "unknown"]);
   });
 

@@ -3,9 +3,9 @@
   "docId": "reference/formats/novelai",
   "sourcePath": "docs/reference/formats/novelai.md",
   "sourceHash": "sha256:b7f92bdcfc26fa97b7a58d4006c92e6b8cf8658782b89968bbac6f70ee0e1946",
-  "semanticSummaryHash": "sha256:8371034451d1a1d42611b3c4f6577db6d60a73f6cd98552fbde04c02f99ec6a9",
+  "semanticSummaryHash": "sha256:01dfb5206bfe8d431a992a56a947ec5db0553f25b690d1e6a79ed0bb6a9ce5cc",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Re-checked the corrected claims/paths against source; sidecar fresh, scans clean.",
-  "reviewedAt": "2026-10-25T01:25:40.705Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:42.347Z"
 }

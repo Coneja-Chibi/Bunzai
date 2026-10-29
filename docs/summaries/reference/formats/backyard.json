@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/formats/backyard",
   "sourcePath": "docs/reference/formats/backyard.md",
-  "sourceHash": "sha256:de85d33c3e4d2175fcce4f82c167484dfd37daee32cc86ef37d3ebdd7a947c31",
+  "sourceHash": "sha256:d2ed670ab15d27241a4a8c64c818a0129a9793c7990a02686f2ab14975b316d2",
   "summary": "Developer reference for Backyard.ai Faraday adapters: two unrelated character shapes in one folder src/formats/backyard exporting backyard legacy flat JSON with aiName era writing .json and byaf ZIP archives with manifest character scenarios and images writing .byaf. Neither is a Tavern superset. Detection Legacy JSON scores 0.9 on Backyard-unique string keys aiName aiPersona aiDisplayName customDialogue, 0.55 weak persona-only fallback guarded against description and Agnai kind character, else 0. BYAF scores 1 only when bytes are ZIP PK with manifest characters and scenarios arrays and characters zero string, no weak tier. Field map Legacy uses firstStr alias lists and brace placeholder conversion on text fields; models two names display versus char shorthand nickname; leaves most CharacterBody unset beyond mapped slots. Field map BYAF maps archive via archiveToBody with verbatim text no brace conversion, multi-scenario alternate greetings with deterministic byaf path ids, media data URIs, and loreItems sampler transcript non-primary fields escrow only. Escrow and round-trip cover original.backyard with non-bijective toTavern toBackyard fieldOut unedited raw preserve, original.byaf full archive twin packByaf applyBody media and greeting path resolution refuse hostile ids, and from-scratch minimal shell. Quirks cover two-names fix, no version fabrication, lossy mature rating, one character per archive, titled versus untitled alt homes, BYAF detect no weak tier, creator tags bypass conversion. Source of truth lists adapter container scenario coverage sample files.",
   "topics": [
     "backyard legacy JSON",
@@ -124,7 +124,7 @@
       "slug": "quirks",
       "title": "Quirks",
       "level": 2,
-      "sourceHash": "sha256:28bfa4c752ce4da8aacb04eb36de02302955735a22c805517799bc247fe0fd2f",
+      "sourceHash": "sha256:8bf59d5ad6e1da0aef7c60bc30ca452e279ace2b69959f0d3b52fb1c79997f74",
       "summary": "Two names two keys: displayName name versus aiName nickname; earlier fold destroyed distinct aiName and was fixed with regression WB-1; BYAF applyBody same rule. No version fabrication at parse; export invents 1.0 only for from-scratch without twin. BYAF boolean isNSFW is lossy toward mature never produced on import; export only writes for exact explicit or all-ages else leaves twin; from-scratch defaults false unless explicit. One character per archive characters zero only per ahoylabs cap. Untitled alts fold into primary firstMessages; titled alts become secondary scenario files; retitle alone does not move homes. BYAF detect has no weak tier. creator and tags bypass placeholder conversion on legacy.",
       "topics": [
         "WB-1 two names fix",

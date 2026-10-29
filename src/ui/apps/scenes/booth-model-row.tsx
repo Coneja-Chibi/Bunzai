@@ -3,7 +3,7 @@
  * model that writes the scene, with a dropdown to change it. The list is the AI wing's own (use-scene-models.ts:
  * Kit's connections and their discovered models), grouped by connection with a Provider filter and a
  * search; a pick is the scene's pick (setSceneConnection, ChatStore rule 18). RoleCall's billing badges
- * ("Not In Your Plan", "In-house") have no Bunraku counterpart; a connection scenes cannot use shows
+ * ("Not In Your Plan", "In-house") have no Bunzai counterpart; a connection scenes cannot use shows
  * "Setup Required" and its reason, and cannot be picked.
  */
 import type { JSX } from "react";

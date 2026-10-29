@@ -1,5 +1,5 @@
 /**
- * Pure deterministic search and section extraction for Kit's Bunraku documentation tool.
+ * Pure deterministic search and section extraction for Kit's Bunzai documentation tool.
  */
 import type { DocRecord } from "../../docs/types";
 import { slugifyHeading } from "../../docs/summary-corpus";

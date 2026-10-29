@@ -5,7 +5,7 @@
  * (catalogue.ts). While a search is typed only the groups' matching cards show, flat, as in RoleCall
  * (which hides the callout and Thinking in Replies then). One scene preset writer (`own`) is shared by
  * every group and with the Prompting wing and the Control Booth: RoleCall keeps a second sampler store
- * for this panel (flaw F1, 02-control-booth.md); Bunraku does not. Reset clears the scene's Core
+ * for this panel (flaw F1, 02-control-booth.md); Bunzai does not. Reset clears the scene's Core
  * overrides, Reasoning Effort and each catalogue group; it never touches library preset text.
  */
 import { useMemo, useRef, useState, type JSX } from "react";

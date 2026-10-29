@@ -1,7 +1,7 @@
 /**
  * "Does this preset actually resolve?" answered by the target's own engine, not by us.
  *
- * Every other check Bunraku makes is structural: the translator reports what it rewrote, transfer
+ * Every other check Bunzai makes is structural: the translator reports what it rewrote, transfer
  * reports what has no counterpart. None of that is the same as SillyTavern assembling the file and
  * telling you what survived. A conversion can pass every check we own and still put a raw macro in
  * somebody's prompt, which is exactly the defect found in a hand-built preset that all of our own

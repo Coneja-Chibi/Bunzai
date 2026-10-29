@@ -1,5 +1,5 @@
 /**
- * Derived timer state (Bunraku change 1: timers are derived, never stored). Replaces RoleCall's
+ * Derived timer state (Bunzai change 1: timers are derived, never stored). Replaces RoleCall's
  * stateful RuntimeStateManager + per-trigger TriggerActivationState (runtime/state.ts, triggers/
  * special.ts) with a pure function over the caller-supplied fire history: a fresh fire starts
  * `sticky` turns of forced firing, then `cooldown` turns when the entry cannot fire (SillyTavern's
@@ -75,7 +75,7 @@ export function stickyRemaining(idx: TimersIndex, entryKey: string, sticky: numb
   return Math.max(0, sticky - messagesAgo + 1);
 }
 
-/** Bunraku's delay rule: blocked while the scene hasn't reached `delay` messages yet. */
+/** Bunzai's delay rule: blocked while the scene hasn't reached `delay` messages yet. */
 export function isDelayBlocked(delay: number, messageCount: number): boolean {
   return delay > 0 && messageCount < delay;
 }

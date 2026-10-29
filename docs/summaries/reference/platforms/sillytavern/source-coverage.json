@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/sillytavern/source-coverage",
   "sourcePath": "docs/reference/platforms/sillytavern/source-coverage.md",
-  "sourceHash": "sha256:9d03a8485544a63b8b185977e1c421652a2743f0d7efe4ba5d3858ec828d9875",
-  "summary": "Auditable path-by-path coverage map for all 92 Markdown files at SillyTavern-Docs commit 70e5e4d3c239253fca4692fe82e3936cb9c4b1b1, retrieved 2026-07-26 under AGPL-3.0. Twenty-one included authoring sources route character cards, tags, chat interchange, groups, personas, Data Bank, World Info, prompt assembly, CFG, reasoning, tokenizers, macros, regex, STscript, Quick Replies, and expression images to owning Bunraku references. Seventy-one individually named exclusions cover provider setup, installation, administration, ordinary navigation and settings, runtime-only extensions, contributor workflows, and repository metadata with a reason per path. Dynamic installation authorities remain live macro help, field autocomplete, extension slash commands, and expression classifiers; Bunraku never executes imported automation to discover them. Refresh requires pin comparison, destination updates, macro coverage tests, fresh semantic summaries, and independent review.",
+  "sourceHash": "sha256:a69d8cde9439b79a048bdc0f928e9535e7a7cacec1d9bbdb7fc4ea64bcf1f82a",
+  "summary": "Auditable path-by-path coverage map for all 92 Markdown files at SillyTavern-Docs commit 70e5e4d3c239253fca4692fe82e3936cb9c4b1b1, retrieved 2026-07-26 under AGPL-3.0. Twenty-one included authoring sources route character cards, tags, chat interchange, groups, personas, Data Bank, World Info, prompt assembly, CFG, reasoning, tokenizers, macros, regex, STscript, Quick Replies, and expression images to owning Bunzai references. Seventy-one individually named exclusions cover provider setup, installation, administration, ordinary navigation and settings, runtime-only extensions, contributor workflows, and repository metadata with a reason per path. Dynamic installation authorities remain live macro help, field autocomplete, extension slash commands, and expression classifiers; Bunzai never executes imported automation to discover them. Refresh requires pin comparison, destination updates, macro coverage tests, fresh semantic summaries, and independent review.",
   "topics": [
     "pinned SillyTavern-Docs commit",
     "included authoring pages",
@@ -18,7 +18,7 @@
       "title": "Pinned source",
       "level": 2,
       "sourceHash": "sha256:569e52b8258e3711ee74aee36ceb8ee25838f12ac12ee1e987caa77ea1de94ee",
-      "summary": "Pinned source identifies the exact upstream documentation snapshot: SillyTavern/SillyTavern-Docs at commit 70e5e4d3c239253fca4692fe82e3936cb9c4b1b1, retrieved 2026-07-26, licensed AGPL-3.0. Paths in the coverage tables are repository-relative to that tree so audits can open the same files the Bunraku authoring corpus claimed to evaluate. The pin is the authority for inclusion and exclusion decisions on this page; later docs commits require an explicit refresh rather than silent drift. License and commit together make provenance reproducible for Kit and human maintainers.",
+      "summary": "Pinned source identifies the exact upstream documentation snapshot: SillyTavern/SillyTavern-Docs at commit 70e5e4d3c239253fca4692fe82e3936cb9c4b1b1, retrieved 2026-07-26, licensed AGPL-3.0. Paths in the coverage tables are repository-relative to that tree so audits can open the same files the Bunzai authoring corpus claimed to evaluate. The pin is the authority for inclusion and exclusion decisions on this page; later docs commits require an explicit refresh rather than silent drift. License and commit together make provenance reproducible for Kit and human maintainers.",
       "topics": [
         "SillyTavern-Docs pin",
         "commit hash",
@@ -62,8 +62,8 @@
       "slug": "dynamic-boundaries",
       "title": "Dynamic boundaries",
       "level": 2,
-      "sourceHash": "sha256:202c633ff94d8d103472d2b21e1eab510d6b4372646c58364577346845ce2792",
-      "summary": "Dynamic boundaries states that live slash macros queries, field autocomplete, extension slash commands, and installed expression classifiers remain installation authorities outside the pinned markdown inventory. Bunraku never executes imported automation, STscript, or sealed scripts merely to discover what an installation can do. Capability claims must not be reverse-engineered by running untrusted content; they come from static documentation, adapters, and user-invoked sandboxed benches only.",
+      "sourceHash": "sha256:ce48a6dc575bf968944aeebb5425af906e322c792caea341425836e9210f6ff9",
+      "summary": "Dynamic boundaries states that live slash macros queries, field autocomplete, extension slash commands, and installed expression classifiers remain installation authorities outside the pinned markdown inventory. Bunzai never executes imported automation, STscript, or sealed scripts merely to discover what an installation can do. Capability claims must not be reverse-engineered by running untrusted content; they come from static documentation, adapters, and user-invoked sandboxed benches only.",
       "topics": [
         "live installation authorities",
         "macros autocomplete slash",

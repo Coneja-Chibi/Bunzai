@@ -26,7 +26,7 @@ test("damaged files render exact names, reasons, path, and recovery guidance", (
   expect(html).toContain("lorebook/misfiled.json");
   expect(html).toContain("holds a different kind of piece than this folder is for");
   expect(html).toContain("C:/Studio");
-  expect(html).toContain("Bunraku did not change them");
+  expect(html).toContain("Bunzai did not change them");
 });
 
 test("EVERY REASON HAS A SENTENCE, including the one that printed as `undefined`", () => {

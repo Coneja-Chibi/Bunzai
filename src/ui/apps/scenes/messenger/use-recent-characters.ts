@@ -1,6 +1,6 @@
 /**
  * The Messenger's scenes and RECENT CHARACTERS (RoleCall `useDiscordRecents.ts` + `lib/discord/recents.ts`): each character's newest scene, newest first (sorted here by updatedAt as recents.ts
- * does), at most 40 (recents.ts:62-69). Bunraku has no lighter source than the Scenes list and no scene-change event, and listScenes reads every chat, so the whole list is loaded once per
+ * does), at most 40 (recents.ts:62-69). Bunzai has no lighter source than the Scenes list and no scene-change event, and listScenes reads every chat, so the whole list is loaded once per
  * session and shared by every Messenger mount (opening another scene reuses it); the rail's recents and a character's own scene list are both derived from it, never read twice. It is read
  * again after RECENTS_TTL_MS, when the library locks, or when the person presses Try again. The characters a person left are filtered when the recents are derived, not in the cache, so Leave
  * shows at once.

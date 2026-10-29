@@ -2,7 +2,7 @@
 id: reference/platforms/sillytavern/source-coverage
 title: SillyTavern authoring source coverage
 audience: dev
-summary: Path-level coverage map from the pinned SillyTavern-Docs tree to Bunraku platform references, with individual inclusion verdicts and no wildcard exclusions for authoring material.
+summary: Path-level coverage map from the pinned SillyTavern-Docs tree to Bunzai platform references, with individual inclusion verdicts and no wildcard exclusions for authoring material.
 tags: [platform, sillytavern, provenance, coverage, maintenance]
 related: [reference/platforms/sillytavern/README, reference/platforms/sillytavern/macro-reference]
 ---
@@ -122,7 +122,7 @@ evaluated exclusions. Macro completeness remains the stronger catalog rule on th
 ## Dynamic boundaries
 
 Live `/? macros`, field autocomplete, extension slash commands, and installed expression classifiers are
-installation authorities. Bunraku never executes imported automation to discover capabilities.
+installation authorities. Bunzai never executes imported automation to discover capabilities.
 
 ## Refresh
 

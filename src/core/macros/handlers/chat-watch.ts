@@ -1,5 +1,5 @@
 /**
- * Bunraku's own read-only macros for formulas: how often the chat mentions a word, how long since it last did, which of several
+ * Bunzai's own read-only macros for formulas: how often the chat mentions a word, how long since it last did, which of several
  * words leads, and a seeded true/false chance. They read the run's messages and nothing else, and change nothing. A word or phrase
  * matches whole (not inside a longer word, accents included), ignoring case, with text and word in one Unicode form (NFC).
  *

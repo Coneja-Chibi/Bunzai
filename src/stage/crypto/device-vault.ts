@@ -23,7 +23,7 @@ import { writeAtomicReplace } from "../../studio/atomic-file";
 /** The one lock that is not held by the operating system: a key file beside the data. */
 const WEAK = "identity-file";
 
-const idPath = () => join(process.env["BUNRAKU_HOME"] ?? homedir(), ".bunraku", "computer-id");
+const idPath = () => join(process.env["BUNZAI_HOME"] ?? homedir(), ".bunzai", "computer-id");
 
 type IdFile = { id: string; check: Sealed };
 
@@ -43,7 +43,7 @@ function readIdFile(): IdFile | null {
 }
 
 type IdMemo = { raw: string; id: string };
-/** The last id verified against the id file it came from. Process-wide: BUNRAKU_HOME does not change mid-process. */
+/** The last id verified against the id file it came from. Process-wide: BUNZAI_HOME does not change mid-process. */
 let memo: IdMemo | null = null;
 
 /** The id file's exact contents (about 150 bytes, microseconds to read). Null when the file is gone. */

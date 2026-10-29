@@ -202,7 +202,7 @@ export function GatePrompt({
         {!rewritten && hidden > 0 ? <text fg={theme.quiet}>+ {String(hidden)} more changes</text> : null}
         {/*
           PRINTED, not tallied. A count is the one thing about a warning that does not help: a draft
-          can warn that applying an edit to a file read through an adapter saves a Bunraku copy
+          can warn that applying an edit to a file read through an adapter saves a Bunzai copy
           beside it, and "1 warning" tells nobody that.
         */}
         {review.warningCount > 0 ? (

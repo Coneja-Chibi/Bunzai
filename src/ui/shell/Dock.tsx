@@ -1,4 +1,4 @@
-/** RoleCall's persistent bottom-dock interaction, backed by Bunraku's discovered apps and host navigation. */
+/** RoleCall's persistent bottom-dock interaction, backed by Bunzai's discovered apps and host navigation. */
 import { useLayoutEffect, useMemo, useRef, type JSX, type KeyboardEvent } from "react";
 import type { AppManifestEntry } from "../app-contract";
 import { AppMark } from "../components/app-mark";

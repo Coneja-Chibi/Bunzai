@@ -45,7 +45,7 @@ import { createChangeDiscardTool } from "./tools/change-discard";
 import { createPresetCopyBlocksTool } from "./tools/preset-copy-blocks";
 import { createChangeQueryTool } from "./tools/change-query";
 import type { ContentCapability } from "../entities/capabilities";
-import { createBunrakuDocs } from "./docs/repository";
+import { createBunzaiDocs } from "./docs/repository";
 import { createResultStore } from "./results/store";
 import { createGrantBook, type GrantBook } from "./tools/_shared/grant-book";
 import { StudioExports } from "../studio/exports";
@@ -221,7 +221,7 @@ export async function createSession(
   const dispatch = makeDispatch(tools, {
     bridge,
     changes,
-    docs: createBunrakuDocs(),
+    docs: createBunzaiDocs(),
     results,
     // Bound to the same studio this session reads from, so an export always lands beside the
     // pieces it came from and never anywhere the caller chose.
@@ -298,7 +298,7 @@ export async function createSession(
         }
         const changeRows = railChangeRows(body, applied);
         /**
-         * EDITING A FOREIGN PIECE MAKES A BUNRAKU COPY, and that has to be said before it happens.
+         * EDITING A FOREIGN PIECE MAKES A BUNZAI COPY, and that has to be said before it happens.
          *
          * A raw SillyTavern export is read through its adapter and never written to: the id is a
          * slug, so applying writes the slug file while the original name stays exactly as it
@@ -323,7 +323,7 @@ export async function createSession(
         const foreignWarning = isForeign
           ? [
             "This file is read through the " + (summary?.sourceFormat ?? "source") + " adapter. "
-            + "Applying saves a Bunraku copy as \"" + copyId + "\"; the original file is left as it is.",
+            + "Applying saves a Bunzai copy as \"" + copyId + "\"; the original file is left as it is.",
           ]
           : [];
         // A note is a change even when no block moved, so it is counted before the empty check.

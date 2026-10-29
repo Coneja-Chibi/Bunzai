@@ -107,9 +107,9 @@ const exporting = new WeakSet<OpenedLibrary>();
 const stamp = (d: Date): string => d.toISOString().slice(0, 19).replace("T", " ").replace(/:/g, "-");
 
 /**
- * Writes the whole library as a plain folder (the CLI's own export core) into "Bunraku exports", a folder beside the
+ * Writes the whole library as a plain folder (the CLI's own export core) into "Bunzai exports", a folder beside the
  * studio folder: the exporter refuses a destination inside the studio, and the client names no path, so the target
- * is always `<parent of studio>/Bunraku exports/Library export <date time>`. One export at a time.
+ * is always `<parent of studio>/Bunzai exports/Library export <date time>`. One export at a time.
  */
 async function exportWholeLibrary(library: OpenedLibrary, studioDir: string): Promise<Response> {
   const stores = libraryFor(studioDir);
@@ -117,7 +117,7 @@ async function exportWholeLibrary(library: OpenedLibrary, studioDir: string): Pr
   if (exporting.has(library)) return err("an export is already running", 409);
   exporting.add(library);
   try {
-    const root = join(dirname(studioDir), "Bunraku exports");
+    const root = join(dirname(studioDir), "Bunzai exports");
     mkdirSync(root, { recursive: true });
     const r = await exportLibraryToFolder(join(root, `Library export ${stamp(new Date())}`), stores, { studioDir });
     return json({ ok: true, folder: r.folder, pieces: r.pieces, documents: r.documents, damaged: r.damaged.length, droppedFromCollections: r.droppedFromCollections });

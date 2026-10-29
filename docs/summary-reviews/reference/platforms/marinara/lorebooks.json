@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/lorebooks",
   "sourcePath": "docs/reference/platforms/marinara/lorebooks.md",
-  "sourceHash": "sha256:a761d54f2507ab9f92dfe5a7bb512a8f30b97dc1be7c659bda8a9db053113b18",
-  "semanticSummaryHash": "sha256:29f5a5d1559d7114fe4247559879135069c586e7ea79f3f1327c508e9216f60d",
+  "sourceHash": "sha256:86da72f035ce92c32817cd764803d72727939232c066b2d36e791c115c4e2eab",
+  "semanticSummaryHash": "sha256:1bd0c3e187dcceea8cd01c4dc9e80e1c07f59e76d743f9e7a4d76f06affff8fd",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:56.781Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:52.819Z"
 }

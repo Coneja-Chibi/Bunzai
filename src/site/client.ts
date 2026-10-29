@@ -9,7 +9,7 @@
 import { readReleasesList, type ReleaseInfo } from "../ui/_shared/version-history";
 import { newsHeadline, visibleChanges } from "./news";
 
-const REPO = "https://github.com/Coneja-Chibi/Bunraku";
+const REPO = "https://github.com/Coneja-Chibi/Bunzai";
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, text?: string, cls?: string): HTMLElementTagNameMap[K] => {
   const node = document.createElement(tag);
@@ -63,7 +63,7 @@ async function fillReleases(): Promise<void> {
   if (lists.length === 0 && versions.length === 0) return;
   let releases: ReleaseInfo[] = [];
   try {
-    const res = await fetch("https://api.github.com/repos/Coneja-Chibi/Bunraku/releases?per_page=20", {
+    const res = await fetch("https://api.github.com/repos/Coneja-Chibi/Bunzai/releases?per_page=20", {
       headers: { Accept: "application/vnd.github+json" },
     });
     if (res.ok) releases = readReleasesList(await res.json());

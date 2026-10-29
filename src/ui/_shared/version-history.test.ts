@@ -13,13 +13,13 @@ const FENCE = "```";
 // A real release body: install prose plus the fenced commit block.
 const REAL_BODY = [
   "## Install",
-  "| **Windows** | `Bunraku.exe` | Double-click it |",
-  "| **Linux** | `bunraku-linux-x64` | `chmod +x` it, run `./bunraku-linux-x64 ui` |",
+  "| **Windows** | `Bunzai.exe` | Double-click it |",
+  "| **Linux** | `bunzai-linux-x64` | `chmod +x` it, run `./bunzai-linux-x64 ui` |",
   "",
   "- **Windows warns once**: SmartScreen shows the unsigned warning, click Run anyway.",
-  "- The `bunraku-*` files are terminal tools; double-clicking one flashes a console and closes.",
+  "- The `bunzai-*` files are terminal tools; double-clicking one flashes a console and closes.",
   "",
-  "**Changes**: https://github.com/Coneja-Chibi/Bunraku/compare/v0.1.10...v0.1.11",
+  "**Changes**: https://github.com/Coneja-Chibi/Bunzai/compare/v0.1.10...v0.1.11",
   "",
   "## Commits",
   FENCE + "commits",
@@ -43,7 +43,7 @@ describe("parseCommitBlock", () => {
   });
 
   test("returns [] when there is no commits block (never guesses from prose)", () => {
-    const noBlock = "## Install\n- Double-click Bunraku.exe\n\n**Changes**: https://x/compare";
+    const noBlock = "## Install\n- Double-click Bunzai.exe\n\n**Changes**: https://x/compare";
     expect(parseCommitBlock(noBlock)).toEqual([]);
     expect(parseCommitBlock("")).toEqual([]);
   });
@@ -64,7 +64,7 @@ describe("headlineOf", () => {
 describe("readReleasesList", () => {
   const mk = (tag: string, extra: Record<string, unknown> = {}): Record<string, unknown> => ({
     tag_name: tag,
-    name: `Bunraku ${tag}`,
+    name: `Bunzai ${tag}`,
     published_at: "2026-07-24T00:00:00Z",
     html_url: `https://x/releases/${tag}`,
     body: "",
@@ -93,7 +93,7 @@ describe("readReleasesList", () => {
 describe("buildTimeline", () => {
   const rel = (v: string): ReleaseInfo => ({
     version: v,
-    name: `Bunraku ${v}`,
+    name: `Bunzai ${v}`,
     date: "",
     url: "",
     headline: "",

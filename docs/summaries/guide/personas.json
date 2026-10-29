@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "guide/personas",
   "sourcePath": "docs/guide/personas.md",
-  "sourceHash": "sha256:03adca0026c2ad1bd7eae1368ee91a5c902df5b7a8052aa6ded77e0bcce3fd8b",
-  "summary": "Create and manage personas covers building your side of the fiction, the identity a target app shows as user. Only name and text are required; tagline pronouns portrait colors linked lorebook and injection are optional. The short version is New persona on the Personas deck saves Untitled persona and opens Workbench; fill name tagline pronouns height age plus sections Appearance Body Personality Quirks History or flat Identity Text; Write for defaults Bunraku and can narrow the form without deleting; set Prompt Injection and Knowledge lorebook; Save; star as default and stage for Press to ship. What actually reaches the model treats Content as fallback: any filled section ignores Identity Text; Body folds into Appearance; Identity always leads; Brief never crosses; labeled colors compile as tags; Live Preview is the real compiler. Where it's injected, and what travels with it lists RoleCall or SillyTavern stops under Write for; platforms with no wire hide the card; foreign stops show dashed kept; Knowledge attaches lorebooks but export carries only the top reference as an id not entries, and staging a persona never pulls the book as a rider; default star is studio shelf only. Converting and exporting a persona has no editor Export button; stage and run Press as solo row; Agnai skips; SillyTavern backup keeps sealed siblings. Tips restate sections beat flat text, Brief shelf only, Write for hide not delete, first lorebook only, Press for files.",
+  "sourceHash": "sha256:784399e6f2f386538972097506636cab4540c7c62d7949e416f6d9477b5f3cb1",
+  "summary": "Create and manage personas covers building your side of the fiction, the identity a target app shows as user. Only name and text are required; tagline pronouns portrait colors linked lorebook and injection are optional. The short version is New persona on the Personas deck saves Untitled persona and opens Workbench; fill name tagline pronouns height age plus sections Appearance Body Personality Quirks History or flat Identity Text; Write for defaults Bunzai and can narrow the form without deleting; set Prompt Injection and Knowledge lorebook; Save; star as default and stage for Press to ship. What actually reaches the model treats Content as fallback: any filled section ignores Identity Text; Body folds into Appearance; Identity always leads; Brief never crosses; labeled colors compile as tags; Live Preview is the real compiler. Where it's injected, and what travels with it lists RoleCall or SillyTavern stops under Write for; platforms with no wire hide the card; foreign stops show dashed kept; Knowledge attaches lorebooks but export carries only the top reference as an id not entries, and staging a persona never pulls the book as a rider; default star is studio shelf only. Converting and exporting a persona has no editor Export button; stage and run Press as solo row; Agnai skips; SillyTavern backup keeps sealed siblings. Tips restate sections beat flat text, Brief shelf only, Write for hide not delete, first lorebook only, Press for files.",
   "topics": [
     "persona Workbench editor",
     "sections vs Identity Text",
@@ -18,8 +18,8 @@
       "slug": "the-short-version",
       "title": "The short version",
       "level": 2,
-      "sourceHash": "sha256:debe19195bdd818b12ca59759a9e77e03f7acddb8528f27308e3acaf85acabfc",
-      "summary": "On the Personas deck click New persona from the shelf tile or empty deck button; it saves immediately as Untitled persona and opens on the Workbench. Fill who you are with name tagline pronouns height and age, then write section fields Appearance Body Personality Quirks History or, if you have no use for sections, flat Identity Text. Narrow to one host if building for one: Write for in the header defaults to Bunraku the full card; pick a platform and the form drops to only what that wire carries without deleting. Set where it is injected and link a lorebook if needed in the right-hand Prompt Injection card and the Knowledge card on the left. Save with Ctrl+s or Save like any piece. Star it as default if you want the shelf to flag it, then stage for the Press when ready to ship as a file.",
+      "sourceHash": "sha256:77b8170fbd700f843533cca8000bdc95e9ba9ffccf74509b92339aa47f68db94",
+      "summary": "On the Personas deck click New persona from the shelf tile or empty deck button; it saves immediately as Untitled persona and opens on the Workbench. Fill who you are with name tagline pronouns height and age, then write section fields Appearance Body Personality Quirks History or, if you have no use for sections, flat Identity Text. Narrow to one host if building for one: Write for in the header defaults to Bunzai the full card; pick a platform and the form drops to only what that wire carries without deleting. Set where it is injected and link a lorebook if needed in the right-hand Prompt Injection card and the Knowledge card on the left. Save with Ctrl+s or Save like any piece. Star it as default if you want the shelf to flag it, then stage for the Press when ready to ship as a file.",
       "topics": [
         "New persona Workbench",
         "sections or Identity Text",
@@ -33,7 +33,7 @@
       "slug": "what-actually-reaches-the-model",
       "title": "What actually reaches the model",
       "level": 2,
-      "sourceHash": "sha256:27a501c10941e55f382f62ca13cb298cc09fb5f45d542ba595a14684e5d9c3b0",
+      "sourceHash": "sha256:69bcaf2a7727c62f34c39119b4a65dfb8ec80bfd8e2ab4bcc95cbea588714301",
       "summary": "Content is the fallback not a second copy. Fill even one section and the compiler ignores Identity Text entirely; it only wakes once every section is empty. Body has its own card for physical specifics but folds into the Appearance tag when compiled and never gets a tag of its own. Identity always leads: pronouns tagline height and age are not a section; they compile first ahead of whatever section order you set every time. Brief never crosses: it is the library-card blurb on the Personas shelf only and never enters the injected block; voice lines belong in a section or Identity Text. Full sections leave old Identity Text inert not deleted. Switch Write for to Agnai and sections traits palette and injection leave the form; switch back and everything remains. Labeled colors compile one tag per color from the label. Live Preview always shows this exact output as the real compiler not a mock.",
       "topics": [
         "sections beat Identity Text",
@@ -81,8 +81,8 @@
       "slug": "tips",
       "title": "Tips",
       "level": 2,
-      "sourceHash": "sha256:2e35c53f91e7889bb677418788d3d291bf923d0e332b3d5fcdce961eafc6ae78",
-      "summary": "Sections beat Identity Text the moment any one of them has text; clear every section if you want old flat text gone not just hidden. Brief lives on the shelf only; keep the one-line blurb there and put real voice in a section or Identity Text. A Write for pick only narrows what you see; nothing is deleted; click Bunraku to see the whole card again. Only the first linked lorebook crosses on export; reorder the Knowledge card if a different book should travel. There is no Export button on a persona own editor; stage it and run it through the Press when you want a file out.",
+      "sourceHash": "sha256:5ca33532fd8fcef5d05d0d14f63bf3915a00ab1159c1f9a62888269a501ca4d8",
+      "summary": "Sections beat Identity Text the moment any one of them has text; clear every section if you want old flat text gone not just hidden. Brief lives on the shelf only; keep the one-line blurb there and put real voice in a section or Identity Text. A Write for pick only narrows what you see; nothing is deleted; click Bunzai to see the whole card again. Only the first linked lorebook crosses on export; reorder the Knowledge card if a different book should travel. There is no Export button on a persona own editor; stage it and run it through the Press when you want a file out.",
       "topics": [
         "clear sections for flat",
         "Brief shelf only",

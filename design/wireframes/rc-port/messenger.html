@@ -8,7 +8,7 @@
 <script src="messenger-icons.js"></script>
 <style>
 /*
- * RoleCall's chat-appearance chooser and its "Messenger" layout, ported to Bunraku (plan 20).
+ * RoleCall's chat-appearance chooser and its "Messenger" layout, ported to Bunzai (plan 20).
  * Sources (RoleCall origin/Mainstage):
  *   components/scene/ChatAppearanceChooser.tsx + .module.css   the chooser page
  *   styles/neo-ui.css:7-10                                     --rc-neo-* (canvas, panel, ink, hard)
@@ -131,7 +131,7 @@ html.embed .wf-bar, html.embed .wf-note { display: none; }
 .portrait small { color: var(--msg-mute); font-size: 11px; }
 .mmenu, .mclose { display: none; }
 
-/* the existing Bunraku transcript + composer, positioned by the shell (discord.css:56-90) */
+/* the existing Bunzai transcript + composer, positioned by the shell (discord.css:56-90) */
 .chat { position: absolute; inset: var(--msg-head-h) var(--msg-portrait-w) 0 var(--msg-left); display: flex; flex-direction: column; background: var(--msg-chat); z-index: 40; }
 .chat[hidden] { display: none; }
 .tx { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 24px; font-size: 16px; color: var(--msg-text); }
@@ -217,7 +217,7 @@ html.embed .wf-bar, html.embed .wf-note { display: none; }
 <main class="view ch" data-view="chooser">
   <div class="ch-rays" aria-hidden="true"></div>
   <div class="ch-in">
-    <div class="ch-mast"><span class="title">Bunraku</span><span>YOUR SPACE / YOUR STORIES</span></div>
+    <div class="ch-mast"><span class="title">Bunzai</span><span>YOUR SPACE / YOUR STORIES</span></div>
     <header class="ch-intro">
       <div><p class="ch-eyebrow">A space for your stories</p><h1 class="title">Choose your<br><span>chat layout.</span></h1></div>
       <div><p class="sub">Same characters. Same stories. Your kind of stage.</p><p>Choose a layout for all your chats. You can change it anytime in Appearance.</p></div>
@@ -251,7 +251,7 @@ html.embed .wf-bar, html.embed .wf-note { display: none; }
       <div class="rail-list" id="rail"></div>
     </nav>
     <aside class="side" aria-label="Character conversations">
-      <div class="side-h"><span>Bunraku</span><button class="mclose" type="button" aria-label="Close character sidebar" data-nav="close"><span data-ic="chevron-left"></span></button></div>
+      <div class="side-h"><span>Bunzai</span><button class="mclose" type="button" aria-label="Close character sidebar" data-nav="close"><span data-ic="chevron-left"></span></button></div>
       <button class="browse" type="button" data-open="characters"><span data-ic="message-circle"></span>Browse Characters</button>
       <div class="dms"><h2>RECENT CHARACTERS</h2>
         <button class="dm" type="button" data-active="true"><span class="av">VE</span><span><strong>Vera Lindqvist</strong><small>The lighthouse keeper</small></span></button>
@@ -300,7 +300,7 @@ html.embed .wf-bar, html.embed .wf-note { display: none; }
 <aside class="wf-note" id="note"></aside>
 
 <script>
-// Rail = every Bunraku wing tab that exists, in RoleCall's order (programs.ts GROUPS, left wings then right), with RoleCall's titles.
+// Rail = every Bunzai wing tab that exists, in RoleCall's order (programs.ts GROUPS, left wings then right), with RoleCall's titles.
 const PROGRAMS = [
   ["characters", "Characters", "contact-round", "Cast wing: the character tab"],
   ["persona", "My Persona", "user-round", "Cast wing: the persona tab"],
@@ -321,8 +321,8 @@ const PROGRAMS = [
   ["ttrpg", "TTRPG", "dices", "Tracker props get their own tab when switched on"],
 ];
 const NOTES = {
-  chooser: "<b>Chooser.</b> Shows once, the first time you open a chat, until you pick. Full Chat is preselected. Same page, copy and look as RoleCall's chooser, with only the two layouts Bunraku has. Saved per studio; Settings &gt; Appearance gets a Chat layout row to change it later.",
-  chat: "<b>Messenger.</b> RoleCall's Discord-style shell around the same Bunraku transcript and composer. Rail = one icon per feature tab; sidebar = Browse Characters, recent chats, active features, your persona; portrait on the right. Click a rail icon, the persona or the gear.",
+  chooser: "<b>Chooser.</b> Shows once, the first time you open a chat, until you pick. Full Chat is preselected. Same page, copy and look as RoleCall's chooser, with only the two layouts Bunzai has. Saved per studio; Settings &gt; Appearance gets a Chat layout row to change it later.",
+  chat: "<b>Messenger.</b> RoleCall's Discord-style shell around the same Bunzai transcript and composer. Rail = one icon per feature tab; sidebar = Browse Characters, recent chats, active features, your persona; portrait on the right. Click a rail icon, the persona or the gear.",
   tab: "<b>Tab view.</b> A rail icon swaps the chat for that feature's panel, in place. The panel is the same component the wings use, not a copy. X goes back to chat.",
   modal: "<b>Settings view.</b> The gear or your profile opens every tab as one dialog with a section list. Esc or outside click closes. Tabs you visited stay mounted, so drafts survive switching.",
   phone: "<b>Phone.</b> Under 640px the rail + recents become a drawer behind a menu button; under 1024px the portrait moves to a 128x144 corner of the header.",
@@ -355,7 +355,7 @@ function openTab(id) {
 }
 function openModal(id) {
   sb.hidden = false; sb.dataset.view = "modal"; snav.hidden = false;
-  document.getElementById("s-cap").textContent = "BUNRAKU SETTINGS"; document.getElementById("s-title").textContent = id === "persona" ? "My Profile" : find(id)[1];
+  document.getElementById("s-cap").textContent = "BUNZAI SETTINGS"; document.getElementById("s-title").textContent = id === "persona" ? "My Profile" : find(id)[1];
   document.getElementById("s-esc").hidden = false; document.getElementById("s-close").setAttribute("aria-label", "Close settings");
   snav.querySelectorAll("button").forEach((b) => b.setAttribute("aria-current", b.dataset.modal === id ? "page" : "false")); body(id); ms.dataset.navOpen = "false";
 }

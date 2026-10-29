@@ -1,44 +1,44 @@
 /* Site content. Plain objects so the site works from file:// and GitHub Pages alike. */
 window.BK = window.BK || {};
 
-BK.REPO = "Coneja-Chibi/Bunraku";
-BK.RELEASES_PAGE = "https://github.com/Coneja-Chibi/Bunraku/releases";
+BK.REPO = "Coneja-Chibi/Bunzai";
+BK.RELEASES_PAGE = "https://github.com/Coneja-Chibi/Bunzai/releases";
 
 BK.SAMPLE_RELEASES = [
   {
     tag_name: "v0.1.42",
     name: "The Prompting wing",
     published_at: "2026-09-25T16:00:00Z",
-    html_url: "https://github.com/Coneja-Chibi/Bunraku/releases",
+    html_url: "https://github.com/Coneja-Chibi/Bunzai/releases",
     body: "- Pick a preset per scene.\n- Switch prompts and samplers per scene.\n- Imported presets keep their example dialogue.",
     assets: [
-      { name: "Bunraku-0.1.42-setup.exe", size: 96888832 },
-      { name: "Bunraku-0.1.42.dmg", size: 108527616 },
-      { name: "Bunraku-0.1.42.AppImage", size: 102760448 }
+      { name: "Bunzai-0.1.42-setup.exe", size: 96888832 },
+      { name: "Bunzai-0.1.42.dmg", size: 108527616 },
+      { name: "Bunzai-0.1.42.AppImage", size: 102760448 }
     ]
   },
   {
     tag_name: "v0.1.41",
     name: "Scenes can talk",
     published_at: "2026-09-18T16:00:00Z",
-    html_url: "https://github.com/Coneja-Chibi/Bunraku/releases",
+    html_url: "https://github.com/Coneja-Chibi/Bunzai/releases",
     body: "- Chat with any character.\n- Swipes and retries.\n- Replies cut off by a crash come back.",
     assets: [
-      { name: "Bunraku-0.1.41-setup.exe", size: 96260096 },
-      { name: "Bunraku-0.1.41.dmg", size: 107950080 },
-      { name: "Bunraku-0.1.41.AppImage", size: 102236160 }
+      { name: "Bunzai-0.1.41-setup.exe", size: 96260096 },
+      { name: "Bunzai-0.1.41.dmg", size: 107950080 },
+      { name: "Bunzai-0.1.41.AppImage", size: 102236160 }
     ]
   },
   {
     tag_name: "v0.1.40",
     name: "Takes and cuts",
     published_at: "2026-09-11T16:00:00Z",
-    html_url: "https://github.com/Coneja-Chibi/Bunraku/releases",
+    html_url: "https://github.com/Coneja-Chibi/Bunzai/releases",
     body: "- Branch scenes into takes.\n- Cut messages can be restored for 3 days.\n- Portrait cards in the Library.",
     assets: [
-      { name: "Bunraku-0.1.40-setup.exe", size: 95420416 },
-      { name: "Bunraku-0.1.40.dmg", size: 107216896 },
-      { name: "Bunraku-0.1.40.AppImage", size: 101711872 }
+      { name: "Bunzai-0.1.40-setup.exe", size: 95420416 },
+      { name: "Bunzai-0.1.40.dmg", size: 107216896 },
+      { name: "Bunzai-0.1.40.AppImage", size: 101711872 }
     ]
   }
 ];
@@ -134,7 +134,7 @@ BK.GUIDES = [
     title: "Your first scene",
     summary: "From a fresh install to your first reply.",
     sections: [
-      ["add-key", "Add your AI key", ["Bunraku uses your own AI key to write replies. Open Settings, choose your provider, and paste your key.", "Your key is stored encrypted on your computer. It is only sent to the provider you picked."]],
+      ["add-key", "Add your AI key", ["Bunzai uses your own AI key to write replies. Open Settings, choose your provider, and paste your key.", "Your key is stored encrypted on your computer. It is only sent to the provider you picked."]],
       ["pick-character", "Pick a character", ["Open the Library and choose a character. No characters yet? Import a card or make one in the Workbench."]],
       ["start", "Start the scene", ["Press Start a scene. The character's first message appears, and you can write back.", "Press Enter to send. Press Shift and Enter together for a new line."]],
       ["next", "What to try next", ["Swipe on a reply to see another one. Branch into a take when you want to try a different path."]]
@@ -145,10 +145,10 @@ BK.GUIDES = [
     title: "Importing cards",
     summary: "Bring characters in from other apps.",
     sections: [
-      ["where", "Where cards come from", ["Bunraku reads cards made in SillyTavern, RoleCall, Chub, and other apps. Most cards are PNG images or JSON files."]],
+      ["where", "Where cards come from", ["Bunzai reads cards made in SillyTavern, RoleCall, Chub, and other apps. Most cards are PNG images or JSON files."]],
       ["how", "How to import", ["Drag the file into the Library, or press Import and choose it. You can bring in many files at once."]],
       ["check", "Check what came in", ["Each import shows a short note if anything looked unusual. Open the character in the Workbench to look it over."]],
-      ["worlds", "Cards with worlds attached", ["If a card carries a lorebook, Bunraku imports it too and links it to the character."]]
+      ["worlds", "Cards with worlds attached", ["If a card carries a lorebook, Bunzai imports it too and links it to the character."]]
     ]
   },
   {
@@ -192,7 +192,7 @@ BK.GUIDES = [
     sections: [
       ["backup", "Making a backup", ["Open Settings, then Backups, and press Make a backup. Keep the file somewhere safe, like a USB drive."]],
       ["password", "Your backup password", ["Backups are encrypted. Write the password down. Without it, nobody can open the backup, including us."]],
-      ["move", "Moving to a new computer", ["Install Bunraku on the new computer, choose Restore from backup, and pick your file."]],
+      ["move", "Moving to a new computer", ["Install Bunzai on the new computer, choose Restore from backup, and pick your file."]],
       ["export", "Exporting to other apps", ["To use your things in another app, open Press and pick the format. Press lists anything that format can't carry."]]
     ]
   },

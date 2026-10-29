@@ -119,7 +119,7 @@
 | `loreBiasGroups?` | `LoreBiasGroup[]` | NovelAI | NovelAI phrase bias groups (loreBiasGroups on wire) |
 | `displayIndex?` | `number \| null` | ST | Creator's manual display order in the editor list - a DISTINCT authored axis from `sortOrder` (placement in the assembled prompt). Real ST cards prove they diverge (Seraphina: sortOrder all 100, displayIndex 0-3), so it is NOT regenerable from sortOrder. null/undefined = follow sortOrder. |
 | `sideEffects` | `EntrySideEffects \| null` | - |  |
-| `boostIds?` | `string[]` | RoleCall | Cross-entry boosting (RoleCall's boostIds/boostAmount; no wire format carries them, so they are Bunraku-authored and RoleCall's own export drops them). When this entry fires, `boostAmount` (0 to 1, default none) is added to the chance of each entry of the SAME book named in `boostIds` that also matched this turn (engine/boosting.ts). Absent or empty means no boost. |
+| `boostIds?` | `string[]` | RoleCall | Cross-entry boosting (RoleCall's boostIds/boostAmount; no wire format carries them, so they are Bunzai-authored and RoleCall's own export drops them). When this entry fires, `boostAmount` (0 to 1, default none) is added to the chance of each entry of the SAME book named in `boostIds` that also matched this turn (engine/boosting.ts). Absent or empty means no boost. |
 | `boostAmount?` | `number` | - |  |
 | `metadata?` | `Record<string, unknown>` | - | extensible bag for format-specific data with no first-class home |
 
@@ -147,7 +147,7 @@
 | `globalMatchWholeWords` | `boolean` | - |  |
 | `globalScanDepth` | `number` | - |  |
 | `globalRecursion` | `boolean` | - |  |
-| `vectorizedRecursion?` | `boolean` | SillyTavern | Whether a `vectorized` entry takes part in recursion, as a source or a target (bug 6, owner decision 2026-09-30). Undefined/absent means true, today's engine behavior, unchanged for every book saved before this existed. No known format (checked: SillyTavern's docs describe no such setting, global or per-book) has an equivalent to round-trip; this is Bunraku-native, beside `globalRecursion` because that is where Bunraku already keeps its own recursion defaults. The engine (`recursion.ts`) and the Workbench's wake map (`wake.ts`) both read this single field so they can never disagree (`vectorizedRecursionOk` in `engine/types.ts`). |
+| `vectorizedRecursion?` | `boolean` | SillyTavern | Whether a `vectorized` entry takes part in recursion, as a source or a target (bug 6, owner decision 2026-09-30). Undefined/absent means true, today's engine behavior, unchanged for every book saved before this existed. No known format (checked: SillyTavern's docs describe no such setting, global or per-book) has an equivalent to round-trip; this is Bunzai-native, beside `globalRecursion` because that is where Bunzai already keeps its own recursion defaults. The engine (`recursion.ts`) and the Workbench's wake map (`wake.ts`) both read this single field so they can never disagree (`vectorizedRecursionOk` in `engine/types.ts`). |
 | `tokenBudget` | `number` | - |  |
 | `budgetMode` | `"token" \| "entry"` | - |  |
 | `entryBudget` | `number` | - |  |

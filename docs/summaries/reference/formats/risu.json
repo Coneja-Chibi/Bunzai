@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/formats/risu",
   "sourcePath": "docs/reference/formats/risu.md",
-  "sourceHash": "sha256:f0ce79c5c74ae60e2d274250030d4cd1c18f6be7d39df9a05dfd7c50ec59fc8f",
-  "summary": "RisuAI format is the developer authority for how Bunraku's risu family detects, maps, and round-trips .charx character cards, native lorebook exports, and regex script sets through the canonical model. The folder exports three codecs: risu character for .charx ZIP with card.json assets and optional module.risum, risu-lorebook for native lore JSON, and risu-regex for .risum or bare customscript rows writing JSON only. Detection covers Character via PK magic and card.json at 1.0 with bounded unzip, and Lorebook via type risu data array at 1 or character_book extract at 0.75. Field map reuses shared Tavern data mapping plus first-class extensions.risuai behavior media and book extract for Character, and native key secondkey alwaysActive insertorder folder modes for Lorebook. Escrow and round-trip seals original.risu with raw assets module and safety flags and overlays lorebook twins; same-format is data-lossless not byte-identical ZIP. Quirks document always CCv3, millisecond dates, selective media cross-format, behavior never executed, risum edit-blocked re-encode, risu-regex scores and rows-only export, native role, and insertorder as sortOrder. Source of truth lists adapters rpack helpers and samples. Regex codec detail lives mainly under Quirks.",
+  "sourceHash": "sha256:061418fa6f966498289e533c8691816be2bb7ed486caff61d5da06836ed70a59",
+  "summary": "RisuAI format is the developer authority for how Bunzai's risu family detects, maps, and round-trips .charx character cards, native lorebook exports, and regex script sets through the canonical model. The folder exports three codecs: risu character for .charx ZIP with card.json assets and optional module.risum, risu-lorebook for native lore JSON, and risu-regex for .risum or bare customscript rows writing JSON only. Detection covers Character via PK magic and card.json at 1.0 with bounded unzip, and Lorebook via type risu data array at 1 or character_book extract at 0.75. Field map reuses shared Tavern data mapping plus first-class extensions.risuai behavior media and book extract for Character, and native key secondkey alwaysActive insertorder folder modes for Lorebook. Escrow and round-trip seals original.risu with raw assets module and safety flags and overlays lorebook twins; same-format is data-lossless not byte-identical ZIP. Quirks document always CCv3, millisecond dates, selective media cross-format, behavior never executed, risum edit-blocked re-encode, risu-regex scores and rows-only export, native role, and insertorder as sortOrder. Source of truth lists adapters rpack helpers and samples. Regex codec detail lives mainly under Quirks.",
   "topics": [
     "risu charx codec",
     "risu-lorebook native",
@@ -112,7 +112,7 @@
       "slug": "escrow-and-round-trip",
       "title": "Escrow and round-trip",
       "level": 2,
-      "sourceHash": "sha256:d74f419a851ae2cef713b35de3163f9d73b3aa762ff10a671ad4a199d26ad732",
+      "sourceHash": "sha256:2cafee7a9fb1656fdb9f7dcfdb7368ad85648cb1412fecbd8f31d3cec8112687",
       "summary": "Character twin is original.risu with raw full card.json envelope, unmapped assetFiles base64 for every non-card non-risum zip entry, moduleRisum bytes, optional structured OpenedRisumModule, and hasExecutableContent plus privileged safety flags. Export clones raw or baseCard V3, applies Tavern three-state overlay, media merge, risuai twin-diff, restores raw millisecond dates, re-stringifies card with 4-space JSON, restores asset bytes, re-emits unedited module.risum or refuses edited, and re-zips. Data is lossless including assets and module but output bytes need not equal input due to JSON and zip regeneration. Lorebook twin original risu-lorebook raw walks rows by id for field-for-field unedited re-emit, partial rewrite on edit, drop on delete, append on add; book-level name depth budget are not written because Risu keeps them on the character record.",
       "topics": [
         "original.risu structure",
@@ -127,7 +127,7 @@
       "slug": "quirks",
       "title": "Quirks",
       "level": 2,
-      "sourceHash": "sha256:53c4b599620bebf291e8471b36500ea5f9f0224a7a9a12832efd8abe12453a5d",
+      "sourceHash": "sha256:e28e49ff44e1a93312c50cd8a756413b89e4441fb978953cb794c1e0bc44058b",
       "summary": "Quirks pin Risu-specific edges. Always CCv3 never V2 via wrapV3 and baseCard. Millisecond dates normalize per field above 1e11 because samples mix units. Media crosses format selectively for data http and ccdefault refs; archive-relative refs need twin uri match; same-format keeps assets via assetFiles. Behavior is first-class editable never executed and never re-emitted by non-Risu codecs. module.risum is RPack opened into structured view; unedited re-exports original bytes; edited throws RpackEditedExportBlockedError until fixtures flip the verified gate. risu-regex detects 0.8 for risum with regex and 0.85 for bare customscript arrays while charx stays character; export is pretty JSON rows never repacked module; phases map editinput output display and request spellings with open unlisted types. Native role is richer than embedded path; insertorder maps to sortOrder for clean ST order conversion.",
       "topics": [
         "always CCv3",

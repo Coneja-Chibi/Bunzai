@@ -1,5 +1,5 @@
 /**
- * Bunraku.exe - the desktop entry. Compiled by scripts/build-desktop.ts (bun build --compile).
+ * Bunzai.exe - the desktop entry. Compiled by scripts/build-desktop.ts (bun build --compile).
  * Real software: OUR process opens a native WebView2 window (webview-bun, MIT, the OS's own
  * webview - no browser dependency, no Electron), so the window and taskbar wear the bunny-b icon
  * baked into this exe. The server owns the MAIN thread; the window's blocking message pump lives
@@ -21,7 +21,7 @@ import { startDesktopWindow } from "./desktop-window-launch";
 import { claimDesktopPort, desktopPortOverride } from "./desktop-port";
 import { focusExisting } from "./desktop-focus";
 
-const TITLE = "Bunraku.";
+const TITLE = "Bunzai.";
 
 /**
  * Bring the studio up and open its window. Throws on any fatal step; the caller turns that into a log
@@ -29,7 +29,7 @@ const TITLE = "Bunraku.";
  * server's own event loop until the window closes.
  */
 async function boot(): Promise<void> {
-  const portOverride = desktopPortOverride(process.env.BUNRAKU_PORT);
+  const portOverride = desktopPortOverride(process.env.BUNZAI_PORT);
   // The committed module is a null placeholder; only scripts/build-desktop.ts bakes the real one.
   // Failing loud beats a compiled exe silently serving nothing (or a stale checkout's UI).
   if (PACKAGED_ASSETS === null) {
@@ -39,7 +39,7 @@ async function boot(): Promise<void> {
   registerPackagedFormats();
   const studioDir = resolveDefaultStudioDir(homedir());
   // The window comes up first and the encrypted library opens behind it, so the load-in can show;
-  // until it is open every Studio call refuses. A Bunraku already
+  // until it is open every Studio call refuses. A Bunzai already
   // running owns the library, so a second launch brings its window forward and exits (decision 9);
   // only if there is no window to raise does it open one onto the running studio.
   const library = createLibrary(studioDir);
@@ -51,7 +51,7 @@ async function boot(): Promise<void> {
   if (ours) void library.open();
   else library.close();
   if (await focusExisting(ours, TITLE, Number(new URL(uiUrl).port))) process.exit(0);
-  console.log(`Bunraku. is up at ${uiUrl} (studio: ${studioDir})`);
+  console.log(`Bunzai. is up at ${uiUrl} (studio: ${studioDir})`);
 
   // The RELATIVE STRING LITERAL is load-bearing: it is the one specifier Bun's compiler recognizes
   // for workers in a standalone executable (paired with the second entrypoint in build-desktop.ts).

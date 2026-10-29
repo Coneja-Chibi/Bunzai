@@ -155,7 +155,7 @@ describe("path safety", () => {
   });
 
   test("a directory source never serves a symlink", async () => {
-    const root = await mkdtemp(join(tmpdir(), "bunraku-lvbak-link-"));
+    const root = await mkdtemp(join(tmpdir(), "bunzai-lvbak-link-"));
     try {
       await writeFile(join(root, "manifest.json"), "{}");
       /**
@@ -241,7 +241,7 @@ describe("readEntryBytes", () => {
 
 describe("zipEntrySourceFromFile", () => {
   test("reads an archive off disk and closes its handle", async () => {
-    const root = await mkdtemp(join(tmpdir(), "bunraku-lvbak-file-"));
+    const root = await mkdtemp(join(tmpdir(), "bunzai-lvbak-file-"));
     const path = join(root, "export.lvbak");
     try {
       await writeFile(path, buildMinimalLvbak());

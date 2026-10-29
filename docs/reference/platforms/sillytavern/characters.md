@@ -31,7 +31,7 @@ Author's Note, or depth-based injections.
 
 The fields are prose, not a mandated mini-language. Free text, structured lists, and pseudo-dialogue are
 all possible. Their actual effect depends on model behavior and the prompt template that surrounds them.
-Bunraku preserves the authored strings and must not normalize one writing method into another.
+Bunzai preserves the authored strings and must not normalize one writing method into another.
 
 ## Greetings and dialogue examples
 
@@ -124,17 +124,17 @@ A leading `\` resolves a subfolder under the current character's sprite folder (
 Portable PNG cards do not carry the full expression grid. Treat sprites as local installation assets unless
 a native Marinara-style pack export is used.
 
-## Import, export, and Bunraku boundaries
+## Import, export, and Bunzai boundaries
 
 SillyTavern imports character cards from files and external URLs and exports cards for sharing. Portable
 cards commonly use Character Card JSON or PNG carriers. PNG artwork and embedded data are separate layers:
 the image is presentation, while the encoded card is the semantic record.
 
-Bunraku maps portable character fields to its canonical character and keeps the complete source snapshot
+Bunzai maps portable character fields to its canonical character and keeps the complete source snapshot
 in escrow. Same-format export can restore SillyTavern-specific fields that have no canonical editing
 surface. Cross-format export carries only fields represented by the target platform. See
 [SillyTavern format](../../formats/sillytavern.md) for the exact current field map and loss behavior.
 
 Do not infer that every SillyTavern extension value is safe to transplant. Regex scripts, automation
 identifiers, local World Info names, and installation-specific links may only work in SillyTavern. Imported
-scripts remain sealed data in Bunraku and are never executed during import or conversion.
+scripts remain sealed data in Bunzai and are never executed during import or conversion.

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/agents-and-tools",
   "sourcePath": "docs/reference/platforms/marinara/agents-and-tools.md",
-  "sourceHash": "sha256:b40e64b551e2e2aaec26adb8e2655fc276209afb43aed07ce2223e5da7760316",
-  "summary": "Documents Marinara agents, Memory Recall and summaries, custom Functions, regex scripts, Professor Mari, and the map boundary at the pinned Engine docs for Kit retrieval. Agents cover activation, phases, abilities, result types, tools, and dynamic package inventory. Memory distinguishes semantic message chunks from Roleplay and Conversation summarization. Functions cover names, parameters, Static Result, Webhook, Script, hidden context, enable lists, import and export, and server restrictions. Regex covers placement, mode, scope, order, depth, import, and safety blocks. Professor Mari covers supported creation and editing, guided chips, selected connections, attachments, Skills, separate history, reversible saved-data edits, and its powerful install-folder command boundary. Hierarchical map semantics route to the dedicated page. Bunraku imports codecs and sealed data without executing Marinara assistants, tools, scripts, or maps.",
+  "sourceHash": "sha256:b884786776f6da139b7c95798aa032d423f32d834b424348afc309173ec222e8",
+  "summary": "Documents Marinara agents, Memory Recall and summaries, custom Functions, regex scripts, Professor Mari, and the map boundary at the pinned Engine docs for Kit retrieval. Agents cover activation, phases, abilities, result types, tools, and dynamic package inventory. Memory distinguishes semantic message chunks from Roleplay and Conversation summarization. Functions cover names, parameters, Static Result, Webhook, Script, hidden context, enable lists, import and export, and server restrictions. Regex covers placement, mode, scope, order, depth, import, and safety blocks. Professor Mari covers supported creation and editing, guided chips, selected connections, attachments, Skills, separate history, reversible saved-data edits, and its powerful install-folder command boundary. Hierarchical map semantics route to the dedicated page. Bunzai imports codecs and sealed data without executing Marinara assistants, tools, scripts, or maps.",
   "topics": [
     "agent phases abilities results",
     "Memory Recall and summaries",
@@ -11,7 +11,7 @@
     "regex apply modes depth",
     "Professor Mari Keep Restore",
     "maps pointer",
-    "Bunraku codec boundary"
+    "Bunzai codec boundary"
   ],
   "sections": [
     {
@@ -19,7 +19,7 @@
       "title": "Agents",
       "level": 2,
       "sourceHash": "sha256:f7e5ee1785480e7cfbd609de86061e6d86ed89b758fdda1f03f3c8ab038262e1",
-      "summary": "Agents are per-chat helpers enabled in Chat Settings. Official packages are mode-limited while custom agents run in all modes. Copy official packages to edit rather than mutating stock. Import export packages where documented. Phases are Pre-Generation Parallel and Post-Processing and result types may force phase. Post may optionally read Turn Data Access of pre-generation injections and parallel results. Abilities opt-in include create edit lorebooks target one book edit messages trackers frontend styling image generation vectors embeddings and main prompt edits. Result types include Context Injection Text Rewrite Lorebook Update Character Tracker Persona Stats Custom Tracker Game State Image Prompt Prompt Patch Frontend Style. Activation keywords skip irrelevant turns. Attach custom tools. Built-in inventory is dynamic from built-in agents docs and Marinara-Agents repo so static Bunraku pages must not freeze the list.",
+      "summary": "Agents are per-chat helpers enabled in Chat Settings. Official packages are mode-limited while custom agents run in all modes. Copy official packages to edit rather than mutating stock. Import export packages where documented. Phases are Pre-Generation Parallel and Post-Processing and result types may force phase. Post may optionally read Turn Data Access of pre-generation injections and parallel results. Abilities opt-in include create edit lorebooks target one book edit messages trackers frontend styling image generation vectors embeddings and main prompt edits. Result types include Context Injection Text Rewrite Lorebook Update Character Tracker Persona Stats Custom Tracker Game State Image Prompt Prompt Patch Frontend Style. Activation keywords skip irrelevant turns. Attach custom tools. Built-in inventory is dynamic from built-in agents docs and Marinara-Agents repo so static Bunzai pages must not freeze the list.",
       "topics": [
         "per-chat enable modes",
         "Pre Parallel Post phases",
@@ -78,8 +78,8 @@
       "slug": "professor-mari",
       "title": "Professor Mari",
       "level": 2,
-      "sourceHash": "sha256:6777006bdcba1b1665db2be272a502131bb3e62c1ae7ddc207d0c253623a5902",
-      "summary": "Professor Mari is Marinara's Home-screen assistant for explanation, agent-catalog comparison, and creation or editing of characters, personas, lorebooks, themes, agents, prompt presets, avatars, sprites, and backgrounds. Guided chips ask one focused question and fill editable drafts. Existing-data edits save then show a ten-minute Review Mari's changes card: Keep confirms and Restore reinstates the previous snapshot; new items usually skip it, and character or persona history is a second recovery path. It remembers a selected text connection, opens Connections when absent, accepts images PDFs and common text up to 20 MB, and needs vision for image reading. Custom Skills have upload, edit, enable, and delete lifecycle. Restart archives separate Mari chat history; Stop cancels work. Its repair authority may inspect or modify only the install folder and run short-lived commands there, never directly write saved data through that path. Remote edits require remote access. Bunraku does not import that command ability.",
+      "sourceHash": "sha256:267ab56c79a1c918f1f4946a82d77bb8a324a406139a0a7d62af34b283073580",
+      "summary": "Professor Mari is Marinara's Home-screen assistant for explanation, agent-catalog comparison, and creation or editing of characters, personas, lorebooks, themes, agents, prompt presets, avatars, sprites, and backgrounds. Guided chips ask one focused question and fill editable drafts. Existing-data edits save then show a ten-minute Review Mari's changes card: Keep confirms and Restore reinstates the previous snapshot; new items usually skip it, and character or persona history is a second recovery path. It remembers a selected text connection, opens Connections when absent, accepts images PDFs and common text up to 20 MB, and needs vision for image reading. Custom Skills have upload, edit, enable, and delete lifecycle. Restart archives separate Mari chat history; Stop cancels work. Its repair authority may inspect or modify only the install folder and run short-lived commands there, never directly write saved data through that path. Remote edits require remote access. Bunzai does not import that command ability.",
       "topics": [
         "home create edit",
         "Keep Restore",
@@ -103,11 +103,11 @@
       "shortSource": true
     },
     {
-      "slug": "bunraku",
-      "title": "Bunraku",
+      "slug": "bunzai",
+      "title": "Bunzai",
       "level": 2,
-      "sourceHash": "sha256:837fe53f1fb1bcba30afe09447f9a5fe726cefb4a36559f042b99ff45435a008",
-      "summary": "Bunraku currently provides Marinara regex and persona codecs for this cluster. Imported scripts remain sealed data. Bunraku does not run Marinara custom Functions, agent pipelines, Professor Mari install commands, or map updates during import or conversion. Unsupported behavior stays platform-owned and must not be inferred from documentation coverage.",
+      "sourceHash": "sha256:42c3e93d5af872c9ac23552838dc438e159c6cbc5f7f6c6aec6bc3f0e17d62a4",
+      "summary": "Bunzai currently provides Marinara regex and persona codecs for this cluster. Imported scripts remain sealed data. Bunzai does not run Marinara custom Functions, agent pipelines, Professor Mari install commands, or map updates during import or conversion. Unsupported behavior stays platform-owned and must not be inferred from documentation coverage.",
       "topics": [
         "marinara-regex persona codecs",
         "scripts sealed",

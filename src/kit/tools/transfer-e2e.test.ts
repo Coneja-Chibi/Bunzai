@@ -250,7 +250,7 @@ test("a lorebook's entry content is macro-checked like any other authored text",
 /**
  * The case the regex editor's lint could never reach: a set converted by Kit.
  *
- * Bunraku's own engine runs JavaScript's `$&`, so it is natural to author, works while being
+ * Bunzai's own engine runs JavaScript's `$&`, so it is natural to author, works while being
  * edited, and stops working the moment the set is written for another platform. Before this, the
  * crossing was silent.
  */

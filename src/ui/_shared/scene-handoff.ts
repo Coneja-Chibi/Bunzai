@@ -9,7 +9,7 @@ export const SCENES_APP = "scenes";
 export const LIBRARY_APP = "library";
 
 function handoff(key: string) {
-  const event = `bunraku:handoff:${key}`;
+  const event = `bunzai:handoff:${key}`;
   return {
     give(value: string | null): void {
       try {
@@ -34,10 +34,10 @@ function handoff(key: string) {
   };
 }
 
-const scene = handoff("bunraku.scenes.open");
+const scene = handoff("bunzai.scenes.open");
 export const handOffScene = scene.give;
 export const handedScene = scene.taken;
 export const onSceneHandoff = scene.on;
 
 /** The Library opens on its Trash when this is set; it clears it once shown. */
-export const libraryTrash = handoff("bunraku.library.trash");
+export const libraryTrash = handoff("bunzai.library.trash");

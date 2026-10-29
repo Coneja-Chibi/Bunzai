@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bunraku site prototype</title>
+<title>Bunzai site prototype</title>
 <link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
 <style>
 /*
- * The Bunraku website, as a clickable prototype of the chosen Ticket booth direction: every page,
+ * The Bunzai website, as a clickable prototype of the chosen Ticket booth direction: every page,
  * real navigation (hash routes), and the moving parts working (marquee bulbs, the curtain, the
  * self-typing scene, guide search, the OS-picked download). Release data here is sample data; the
  * real site reads GitHub's releases in the browser and builds the guides from the repo's docs.
@@ -183,7 +183,7 @@ footer a { color: var(--stage-soft); text-decoration: none; margin-right: 14px; 
 <header class="marq">
   <div class="bulbs"></div>
   <nav class="nav">
-    <a class="logo" href="#/"><svg><use href="#tk"/></svg><b>bunraku<i>.</i></b></a>
+    <a class="logo" href="#/"><svg><use href="#tk"/></svg><b>bunzai<i>.</i></b></a>
     <span class="live" title="Read live from GitHub on the real site"><i></i><span id="ver">v0.1.42</span></span>
     <div class="links">
       <a href="#/tour" data-nav="tour">Tour</a>
@@ -203,11 +203,11 @@ footer a { color: var(--stage-soft); text-decoration: none; margin-right: 14px; 
       <div class="card booth">
         <span class="marquee-pill"><span class="sparkle">&#10022;</span> Tonight <span class="sparkle">&#10022;</span></span>
         <h1 class="h1">Your stories,<br><em>your stage</em></h1>
-        <p class="lede">Bunraku is a cozy app for playing and making AI characters, right on your own computer.</p>
-        <div class="row"><a class="btn" href="#/download">Get Bunraku</a><a class="btn paper" href="#/tour">Take the tour</a></div>
+        <p class="lede">Bunzai is a cozy app for playing and making AI characters, right on your own computer.</p>
+        <div class="row"><a class="btn" href="#/download">Get Bunzai</a><a class="btn paper" href="#/tour">Take the tour</a></div>
       </div>
       <div class="ticket">
-        <div class="main"><div class="adm">ADMIT ONE &middot; FREE FOREVER</div><h2>Bunraku</h2>
+        <div class="main"><div class="adm">ADMIT ONE &middot; FREE FOREVER</div><h2>Bunzai</h2>
           <ul><li>Chat with any character, with your own AI key</li><li>Import cards from SillyTavern, RoleCall, and more</li><li>Everything saved privately on your computer</li></ul></div>
         <div class="stub"><svg><use href="#tk"/></svg><a class="btn" href="#/download" id="dlQuick">Download</a><span class="small" id="osLine">for Windows</span></div>
       </div>
@@ -231,7 +231,7 @@ footer a { color: var(--stage-soft); text-decoration: none; margin-right: 14px; 
 <!-- ============ TOUR ============ -->
 <main class="page" data-page="tour"><div class="wrap">
   <div class="kicker">The tour</div><h1 class="h1">Meet the <em>company</em></h1>
-  <p class="lede">Bunraku is a few rooms under one roof. Each one does one thing well.</p>
+  <p class="lede">Bunzai is a few rooms under one roof. Each one does one thing well.</p>
   <div class="feat-grid" id="featGrid"></div>
 </div></main>
 
@@ -254,11 +254,11 @@ footer a { color: var(--stage-soft); text-decoration: none; margin-right: 14px; 
   <div class="dl">
     <div>
       <div class="ticket" style="transform:rotate(-1deg)">
-        <div class="main"><div class="adm" id="dlAdm">ADMIT ONE &middot; WINDOWS</div><h2 id="dlTitle">Bunraku for Windows</h2>
-          <ul><li id="dlVer">Version 0.1.42 &middot; released 3 days ago</li><li id="dlSize">One file, about 140 MB</li><li>Your library lives in Documents/Bunraku Studio</li></ul></div>
+        <div class="main"><div class="adm" id="dlAdm">ADMIT ONE &middot; WINDOWS</div><h2 id="dlTitle">Bunzai for Windows</h2>
+          <ul><li id="dlVer">Version 0.1.42 &middot; released 3 days ago</li><li id="dlSize">One file, about 140 MB</li><li>Your library lives in Documents/Bunzai Studio</li></ul></div>
         <div class="stub"><svg><use href="#tk"/></svg><a class="btn" id="dlBtn">Download</a><span class="small">free forever</span></div>
       </div>
-      <div class="card checks"><b style="color:var(--stage-card)">First time opening it?</b> Windows may say it does not recognize the app, because it is new and not yet signed. Click <i>More info</i>, then <i>Run anyway</i>. Bunraku adds itself to your Start menu the first time it opens.</div>
+      <div class="card checks"><b style="color:var(--stage-card)">First time opening it?</b> Windows may say it does not recognize the app, because it is new and not yet signed. Click <i>More info</i>, then <i>Run anyway</i>. Bunzai adds itself to your Start menu the first time it opens.</div>
     </div>
     <div class="plats" id="plats"></div>
   </div>
@@ -282,9 +282,9 @@ footer a { color: var(--stage-soft); text-decoration: none; margin-right: 14px; 
 </div></main>
 
 <footer><div class="wrap">
-  <a class="logo" href="#/"><svg><use href="#tk"/></svg><b>bunraku<i>.</i></b></a>
+  <a class="logo" href="#/"><svg><use href="#tk"/></svg><b>bunzai<i>.</i></b></a>
   <span class="grow"></span>
-  <a href="#/guides">Guides</a><a href="#/whats-new">What&apos;s new</a><a href="https://github.com/Coneja-Chibi/Bunraku">GitHub</a>
+  <a href="#/guides">Guides</a><a href="#/whats-new">What&apos;s new</a><a href="https://github.com/Coneja-Chibi/Bunzai">GitHub</a>
   <span class="small">made by Coneja-Chibi &middot; free and open source</span>
 </div></footer>
 
@@ -306,7 +306,7 @@ footer a { color: var(--stage-soft); text-decoration: none; margin-right: 14px; 
     { id: "agent", name: "Agent", tone: "var(--deck-persona)", blurb: "A helper that knows your library.", bullets: ["Ask it to find, fix, or draft things", "It asks before changing anything", "Works with your own AI connection"] },
   ];
   var GUIDES = [
-    { id: "start", cat: "Getting started", title: "Your first scene", about: "Install, import a character, connect an AI, and say hello.", body: ["Install Bunraku", "Bring in a character", "Connect an AI", "Say hello"] },
+    { id: "start", cat: "Getting started", title: "Your first scene", about: "Install, import a character, connect an AI, and say hello.", body: ["Install Bunzai", "Bring in a character", "Connect an AI", "Say hello"] },
     { id: "import", cat: "Getting started", title: "Importing cards", about: "Bring characters in from SillyTavern, RoleCall, Chub, and more.", body: ["Drag and drop", "What comes along", "If something did not import"] },
     { id: "presets", cat: "Scenes", title: "Presets and the Prompting wing", about: "Choose a preset for a scene and switch prompts on and off.", body: ["Pick a preset", "Switch prompts for one scene", "Change samplers", "Edit the preset itself"] },
     { id: "swipes", cat: "Scenes", title: "Swipes, retries, and takes", about: "Get another reply, go back, and branch your story.", body: ["Swipe for another reply", "Retry after a failure", "Takes: branching a scene"] },
@@ -415,11 +415,11 @@ footer a { color: var(--stage-soft); text-decoration: none; margin-right: 14px; 
 
   // ---------------- download: pick the visitor's system ----------------
   var ua = navigator.userAgent, os = /Mac/.test(ua) ? "mac" : /Linux|X11/.test(ua) && !/Android/.test(ua) ? "linux" : "windows";
-  var PLATS = { windows: { name: "Windows", file: "Bunraku.exe", size: "about 140 MB" }, mac: { name: "Mac", file: "bunraku-mac (Apple chip or Intel)", size: "about 90 MB" }, linux: { name: "Linux", file: "bunraku-linux (x64 or ARM)", size: "about 90 MB" } };
+  var PLATS = { windows: { name: "Windows", file: "Bunzai.exe", size: "about 140 MB" }, mac: { name: "Mac", file: "bunzai-mac (Apple chip or Intel)", size: "about 90 MB" }, linux: { name: "Linux", file: "bunzai-linux (x64 or ARM)", size: "about 90 MB" } };
   var mine = PLATS[os];
   document.getElementById("osLine").textContent = "for " + mine.name;
   document.getElementById("dlAdm").textContent = "ADMIT ONE · " + mine.name.toUpperCase();
-  document.getElementById("dlTitle").textContent = "Bunraku for " + mine.name;
+  document.getElementById("dlTitle").textContent = "Bunzai for " + mine.name;
   document.getElementById("dlVer").textContent = "Version " + RELEASES[0].v + " · released " + RELEASES[0].when;
   document.getElementById("dlSize").textContent = "One file, " + mine.size;
   document.getElementById("ver").textContent = "v" + RELEASES[0].v;

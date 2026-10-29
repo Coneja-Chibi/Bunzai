@@ -7,14 +7,14 @@
 <link rel="stylesheet" href="../../../src/ui/theme/tokens.css"><link rel="stylesheet" href="tokens-soft.css">
 <link rel="stylesheet" href="../rc-port/port.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
- * RoleCall's /scenes page and the Library card's Start Scene button, ported to Bunraku. Sizes were
+ * RoleCall's /scenes page and the Library card's Start Scene button, ported to Bunzai. Sizes were
  * read off the running pages on 2026-09-24 (computed styles at 1920x945). RC's "font-cinzel" titles
  * render as a black-weight system sans there, so the port uses --font-big 900 (what users see).
- * Colors are Bunraku tokens: RC's user accent -> --accent; a character's color -> its deck tone.
- * Left out on purpose (nothing in Bunraku backs them yet): Group Performances and its tabs, Smart
+ * Colors are Bunzai tokens: RC's user accent -> --accent; a character's color -> its deck tone.
+ * Left out on purpose (nothing in Bunzai backs them yet): Group Performances and its tabs, Smart
  * Folders, Folders, Show Full Branching Tree, Export to JSONL.
  */
 .app { grid-template-columns: 4.2rem 1fr; }
@@ -237,7 +237,7 @@ body.embed .wf { display: none; }
   </div>
 </div>
 
-<div class="scrim" id="scrim"><div class="cut"><div class="eb">The cutting room</div><h3>Cut this story?</h3><p>"The long storm" and every message in it, all of its takes included. It goes to the scene trash, and nothing in Bunraku can bring it back yet.</p><div class="row"><button class="no" id="cutno">Cancel</button><button class="yes" id="cutyes">Delete</button></div></div></div>
+<div class="scrim" id="scrim"><div class="cut"><div class="eb">The cutting room</div><h3>Cut this story?</h3><p>"The long storm" and every message in it, all of its takes included. It goes to the scene trash, and nothing in Bunzai can bring it back yet.</p><div class="row"><button class="no" id="cutno">Cancel</button><button class="yes" id="cutyes">Delete</button></div></div></div>
 
 <div class="wf" id="wf">
   <button data-s="scenes">Scenes</button><button data-s="menu">Card menu</button><button data-s="cut">Delete confirm</button><button data-s="select">Select mode</button><button data-s="empty">No scenes yet</button><button data-s="library">Library: Start Scene</button>

@@ -19,4 +19,4 @@ Source: https://github.com/SillyTavern/SillyTavern (`default/content`). Two are 
 | context-llama-3-instruct.json | context/Llama 3 Instruct.json |
 | reasoning-deepseek.json | reasoning/DeepSeek.json |
 
-The instruct, context and reasoning files are refusal fixtures: Bunraku has no home for them yet.
+The instruct, context and reasoning files are refusal fixtures: Bunzai has no home for them yet.

@@ -16,7 +16,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const FREEZE = "*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important;scroll-behavior:auto!important}" + NEUTRALIZE;
 
 /** The theme id the settings store takes, and how the harness gets each bundled theme installed. */
-export const THEME_IDS: Record<ThemeName, string> = { theater: "theater", paper: "paper", girliepop: "stage", encore: "bunraku.theme.encore" };
+export const THEME_IDS: Record<ThemeName, string> = { theater: "theater", paper: "paper", girliepop: "stage", encore: "bunzai.theme.encore" };
 
 export interface Browser { context: BrowserContext; page: Page; close: () => Promise<void> }
 
@@ -36,7 +36,7 @@ export async function launch(work: string, port = 9491 + Number(process.env.THEM
 
 const api = (page: Page, method: string, path: string, body?: unknown) => page.evaluate(async ([method, path, body]) => {
   const token = document.querySelector('meta[name="vaude-session"]')?.getAttribute("content") ?? "";
-  const res = await fetch(path as string, { method: method as string, headers: { "content-type": "application/json", "X-Bunraku-Token": token }, body: body === undefined ? undefined : JSON.stringify(body) });
+  const res = await fetch(path as string, { method: method as string, headers: { "content-type": "application/json", "X-Bunzai-Token": token }, body: body === undefined ? undefined : JSON.stringify(body) });
   return { status: res.status, json: await res.json().catch(() => null) as unknown };
 }, [method, path, body] as const);
 

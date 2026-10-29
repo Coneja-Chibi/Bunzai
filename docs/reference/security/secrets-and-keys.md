@@ -20,18 +20,18 @@ incomplete or not measured in the packaged host, this page says so in the same s
 
 Kit is bring-your-own-provider. Importing, editing, inspecting, validating, converting, and deterministic
 analysis do not need a key. Provider-backed turns use the provider or OpenAI-compatible endpoint the user
-selected; Bunraku operates no inference account or proxy. The current provider roster is discovered from
+selected; Bunzai operates no inference account or proxy. The current provider roster is discovered from
 `src/kit/providers/spokes/`, and unknown providers or keyed providers without a key fail before a request is
 made (`src/kit/providers/adapters.ts`; `src/kit/providers/egress.ts`).
 
-Kit is a preview. Run it from a checkout with `bun run kit`, or use a `bunraku-kit-*` release binary.
+Kit is a preview. Run it from a checkout with `bun run kit`, or use a `bunzai-kit-*` release binary.
 `package.json` is private and exposes that source entry, and the GitHub release workflow
-builds with `--kit`, publishing `bunraku-kit-*` binaries beside `Bunraku.exe` and the `bunraku-*` CLI binaries
+builds with `--kit`, publishing `bunzai-kit-*` binaries beside `Bunzai.exe` and the `bunzai-*` CLI binaries
 (`package.json`; `.github/workflows/release.yml`).
 
 ### What the vault seals
 
-Saved providers live at `~/.bunraku/kit-vault.json`, or under `BUNRAKU_HOME` when that override is set
+Saved providers live at `~/.bunzai/kit-vault.json`, or under `BUNZAI_HOME` when that override is set
 (`src/kit/providers/config.ts`). The current implementation does **not** split public metadata from
 secret material. It encrypts the whole `Vault` document: every saved `ProviderConfig`, including its API
 key, base URL, extra headers, options, and label, plus the active provider id. The file on disk contains
@@ -55,7 +55,7 @@ always uses the backend id recorded in that blob; it never tries a different bac
    arguments. The result can be opened only by the same Windows user context
    (`src/kit/keystore/backends/dpapi.ts`).
 2. **macOS Keychain.** On macOS, one random 256-bit key lives in the login keychain as a generic
-   password item (service `bunraku-kit`, account `vault-key`), and the vault is AES-256-GCM under it.
+   password item (service `bunzai-kit`, account `vault-key`), and the vault is AES-256-GCM under it.
    The key is written through `security -i`, which reads its command from stdin, so it never appears
    in process arguments. The item trusts `/usr/bin/security`, so any process running as the same
    user can read it without a prompt: the same trust level as DPAPI
@@ -72,7 +72,7 @@ always uses the backend id recorded in that blob; it never tries a different bac
    fresh lock that replaced it meanwhile is put back rather than taken; the holder re-checks its lock
    just before writing the key. It re-reads before writing and never replaces a stored key
    (`security` without `-U` reports "already exists"). A "key made" marker is kept as a second item
-   in the OS store, beside the key, so every Bunraku folder on the machine sees it and wiping the
+   in the OS store, beside the key, so every Bunzai folder on the machine sees it and wiping the
    keyring clears both. Before a key is made, the marker is written and read back, which proves the
    store is unlocked, and the key is looked up once more, because a locked Linux keyring can answer
    "no key" until that write unlocks it. A store that answers "no key" while the marker exists is
@@ -86,7 +86,7 @@ always uses the backend id recorded in that blob; it never tries a different bac
    job on macOS and Linux, checks them against the real tools; CI runs on Mainstage, so that proof
    exists once this work is merged there.
 4. **Local key file.** The universal fallback, selected wherever no OS-native backend can run. Kit
-   generates a 256-bit key on first use and stores it at `~/.bunraku/kit.identity` as a versioned
+   generates a 256-bit key on first use and stores it at `~/.bunzai/kit.identity` as a versioned
    104-byte blob with an HMAC integrity check, owner-only mode `0600` where the filesystem supports it.
    The vault is then encrypted with AES-256-GCM under that key. The key is re-read per operation and
    never held in memory, so a file moved or deleted underneath a running Kit is noticed rather than
@@ -157,7 +157,7 @@ fixed in code (`src/ui/spotify/client.ts`, `link.ts`, `routes.ts`):
 - **Hosts.** Only `accounts.spotify.com` (the token exchange) and `api.spotify.com` (the Web API). Each has its own `guardedFetch`, so a request to any other host, and a
   redirect to one, is refused before it leaves (`spotifyFetchers`). The page itself cannot reach Spotify: its policy is `connect-src 'self'`, so every call goes through
   the local server. A test names every host a Spotify request reaches, and another proves no source outside `src/ui/spotify/` names a Spotify host.
-- **Whose app.** The Client ID is the person's own Spotify app. Bunraku ships no client id and no client secret. Sign-in is OAuth authorization code with PKCE (S256, a
+- **Whose app.** The Client ID is the person's own Spotify app. Bunzai ships no client id and no client secret. Sign-in is OAuth authorization code with PKCE (S256, a
   fresh 64-byte verifier per attempt).
 - **The redirect.** Spotify allows a plain http redirect only to a loopback IP literal, never `localhost`; the app uses `http://127.0.0.1:<its own port>/spotify/callback`
   (Spotify's redirect-URI documentation, read 2026-10-12). That route sits outside `/api` because a redirect from accounts.spotify.com is a cross-site navigation the `/api`

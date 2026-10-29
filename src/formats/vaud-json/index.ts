@@ -1,5 +1,5 @@
 /**
- * vaud-json - Bunraku's own native format: the canonical entity as plain JSON. The adapter id
+ * vaud-json - Bunzai's own native format: the canonical entity as plain JSON. The adapter id
  * stays "vaud-json" for data compatibility (escrow keys and stored originals reference it).
  * The simplest possible real adapter, and proof the drop-in pattern works end to end.
  * It is also genuinely useful: the lossless local save/interchange format.
@@ -27,10 +27,10 @@ function decodeCanonical(text: string): CanonicalCharacter {
 
 const adapter: CharacterAdapter = {
   id: "vaud-json",
-  label: "Bunraku native (.json)",
+  label: "Bunzai native (.json)",
   outputExtensions: ["json"],
   kind: "character",
-  native: true, // Bunraku's own storage format: importable/exportable, never a "publish to" platform
+  native: true, // Bunzai's own storage format: importable/exportable, never a "publish to" platform
 
   detect(input: AdapterInput): number {
     if (!input.text) return 0;

@@ -11,7 +11,7 @@ import { hashHex } from "../core/sha256";
 import { decompose } from "./piece-parts";
 import { safeParseCanonicalEntity, type ParsedCanonicalEntity } from "./runtime-schema";
 
-const REVISION_ROOT_PREFIX = "bunraku-rev-2\n";
+const REVISION_ROOT_PREFIX = "bunzai-rev-2\n";
 
 /**
  * Hash a structural root directly from `{ name, hash }` pairs, in decompose's canonical order.
@@ -24,7 +24,7 @@ export function revisionFromParts(parts: readonly { name: string; hash: string }
   return hashHex(REVISION_ROOT_PREFIX + lines.join("\n"));
 }
 
-/** Hash the entity's structural root: sha256("bunraku-rev-2\n" + one "name\thash" line per part, in
+/** Hash the entity's structural root: sha256("bunzai-rev-2\n" + one "name\thash" line per part, in
  * decompose's canonical order). A part's hash already covers its blob sentinels (piece-parts-blob.ts),
  * so this stays a pure function of content even though large media and escrow strings live outside
  * the part's own json text. */

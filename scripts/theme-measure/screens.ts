@@ -45,7 +45,7 @@ const settingsTab = (id: string, expect: string) => sc(`settings.${id}`, "settin
 
 export const SCREENS: Screen[] = [
   // shell: the title, first-run setup, lock and load-in gates, dialogs
-  sc("shell.title", "shell", "other", "bunraku", { clearSession: true }, { go: "/?forceTitle=1", settle: 4500 }),
+  sc("shell.title", "shell", "other", "bunzai", { clearSession: true }, { go: "/?forceTitle=1", settle: 4500 }),
   sc("setup.theme", "shell", "other", "Choose your theme", { api: ["PATCH", "/api/settings", { setupComplete: false }] }, { go: "/" }),
   sc("setup.makes", "shell", "other", "What do you want to make", { api: ["PATCH", "/api/settings", { setupComplete: false }] }, { go: "/" }, { click: btn("^next") }),
   sc("setup.publish", "shell", "other", "Where do you publish", { api: ["PATCH", "/api/settings", { setupComplete: false }] }, { go: "/" }, { click: btn("^next") }, { click: btn("^next") }),
@@ -117,13 +117,13 @@ export const SCREENS: Screen[] = [
   settingsTab("workbench", "Workbench"),
   settingsTab("remote-access", "Remote access"),
   settingsTab("updates", "Update"),
-  settingsTab("about", "About|Bunraku"),
+  settingsTab("about", "About|Bunzai"),
 
   // the other apps
   sc("press.home", "press", "other", "run the press", { go: "#press" }),
   sc("press.staged", "press", "other", "Marguerite", { go: "#press" }, { click: btn("Marguerite Vane") }),
   sc("agent.room", "agent", "other", "The Agent", { go: "#agent" }),
-  sc("app-catalog.grid", "app-catalog", "other", "Official Bunraku apps", { go: "#app-catalog" }),
+  sc("app-catalog.grid", "app-catalog", "other", "Official Bunzai apps", { go: "#app-catalog" }),
   sc("docs.home", "docs", "other", "User Docs", { go: "#docs" }),
   sc("docs.page", "docs", "other", "short version", { go: "#docs" }, { click: btn("Troubleshoot common problems") }),
   sc("docs.dev", "docs", "other", "Developer", { go: "#docs" }, { click: btn("Developer Docs") }),

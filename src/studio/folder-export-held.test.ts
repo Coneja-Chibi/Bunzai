@@ -29,7 +29,7 @@ test("a pack with big pictures, a small inline one and escrow art writes the sam
   const whole = await content.read("pack", "p");
   const held = await content.readHeld("pack", "p");
   expect(whole && held).toBeTruthy();
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-held-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-held-"));
   dirs.push(dir);
   const path = join(dir, "p.json");
   await writeHeldPiece(path, held!.entity, (sha, max) => content.readAsset(sha, max), 'pack "p"', 999);
@@ -37,7 +37,7 @@ test("a pack with big pictures, a small inline one and escrow art writes the sam
 });
 
 test("a picture that is gone is reported as unreadable, not written short", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-held-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-held-"));
   dirs.push(dir);
   const entity = { body: { pack: { items: [{ ref: `\u0000b:u:image/png:${"a".repeat(64)}` }] } } };
   await expect(writeHeldPiece(join(dir, "x.json"), entity, async () => ({ status: "missing" }), 'pack "x"')).rejects.toMatchObject({ reason: "part-unreadable" });

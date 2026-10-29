@@ -2,7 +2,7 @@
  * The aux-package download: fetching the remote-access helper binary on demand, verified against a hash
  * baked into this build.
  *
- * WHY THIS EXISTS. The helper is ~31 MB of Go. Embedding it in every Bunraku.exe would add that to a
+ * WHY THIS EXISTS. The helper is ~31 MB of Go. Embedding it in every Bunzai.exe would add that to a
  * download most people never enable, and shipping it beside the exe would end the one-file install. So it
  * is a release asset the user fetches with an explicit click, once.
  *

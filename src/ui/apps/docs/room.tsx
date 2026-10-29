@@ -97,7 +97,7 @@ export function DocsRoom({ ctx }: { ctx: AppContext }): JSX.Element {
         data-part="docs.header"
         kicker="The program notes"
         title="Help / Docs"
-        lede="The same documentation committed to GitHub, packaged into Bunraku so it is always close by."
+        lede="The same documentation committed to GitHub, packaged into Bunzai so it is always close by."
       />
       <div className={styles.room}>
         <header className={styles.mobileHead}>

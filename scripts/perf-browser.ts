@@ -6,7 +6,7 @@
  * route errors, or budget breaches. Neither mode runs in `verify:ci`.
  *
  * NEVER run this against a real studio folder. It refuses to start without an explicit `--sandbox`
- * directory, and never defaults to `~/Documents/Bunraku Studio`. It also never touches the owner's
+ * directory, and never defaults to `~/Documents/Bunzai Studio`. It also never touches the owner's
  * own running instance: pick a `--port` and `--cdp-port` you know are free.
  *
  * playwright-core's CDP transport hangs under `bun run` (observed 2026-09-29, both `chromium.launch`
@@ -35,7 +35,7 @@ function parseArgs(argv: string[]): { sandbox: string; port: number; cdpPort: nu
   if (!sandbox) {
     console.error(
       "perf-browser: refuses to run without --sandbox <dir>. It will seed and boot a throwaway " +
-        "studio there; never point it at a real studio folder or the default ~/Documents/Bunraku Studio.",
+        "studio there; never point it at a real studio folder or the default ~/Documents/Bunzai Studio.",
     );
     process.exit(2);
   }
@@ -87,7 +87,7 @@ async function stopTree(child: ChildProcess): Promise<void> {
 }
 
 const { sandbox, port, cdpPort, skipSeed, releaseEvidence, profile, chromePath, matrixOutput, assetFile, fontFile, svgFile, backgroundFile, importFile, complexityStudio } = parseArgs(process.argv.slice(2));
-if (releaseEvidence && (!skipSeed || profile !== "low-end" || !matrixOutput || !assetFile || !fontFile || !svgFile || !backgroundFile || !importFile || !complexityStudio || !Bun.file(join(sandbox, ".bunraku-scale-owner.json")).size)) {
+if (releaseEvidence && (!skipSeed || profile !== "low-end" || !matrixOutput || !assetFile || !fontFile || !svgFile || !backgroundFile || !importFile || !complexityStudio || !Bun.file(join(sandbox, ".bunzai-scale-owner.json")).size)) {
   throw new Error("release mode requires a marked sandbox, --skip-seed, low-end profile, matrix output, all asset/import fixtures, and an isolated 1k complexity studio");
 }
 const studioDir = join(sandbox, "studio");
@@ -106,7 +106,7 @@ if (!CHROME.startsWith("/") && !/^[A-Za-z]:[\\/]/.test(CHROME)) throw new Error(
 
 // Redirect every per-user location this run could touch, before any module that reads them loads
 // (scripts/test-sandbox.ts documents the same list). This process never writes to the real home.
-process.env["BUNRAKU_HOME"] = homeDir;
+process.env["BUNZAI_HOME"] = homeDir;
 process.env["LOCALAPPDATA"] = localAppData;
 process.env["CODEX_HOME"] = join(sandbox, "codex");
 process.env["CLAUDE_CONFIG_DIR"] = join(sandbox, "claude");
@@ -114,7 +114,7 @@ process.env["XDG_STATE_HOME"] = join(sandbox, "xdg-state");
 
 console.log(`perf-browser: sandbox ${sandbox}`);
 console.log(`perf-browser: studio  ${studioDir}`);
-console.log(`perf-browser: BUNRAKU_HOME redirected to ${homeDir}`);
+console.log(`perf-browser: BUNZAI_HOME redirected to ${homeDir}`);
 
 // ---- 1. Seed a realistic library: 300 character pieces (1-3 MB bodies) and one 4,000-message
 // scene carrying a ~20 MB snapshot. Through the real composition root (library-root.ts) and the
@@ -208,9 +208,9 @@ const server = spawn(process.execPath, serverArgs, {
   env: {
     ...process.env,
     ...(releaseEvidence ? {
-      BUNRAKU_SCALE_PROBE_OUTPUT: join(sandbox, "server-probe.jsonl"),
-      BUNRAKU_SCALE_PROBE_PHASE: join(sandbox, "server-probe-phase.txt"),
-      BUNRAKU_SCALE_PROBE_READY: join(sandbox, "server-probe-ready"),
+      BUNZAI_SCALE_PROBE_OUTPUT: join(sandbox, "server-probe.jsonl"),
+      BUNZAI_SCALE_PROBE_PHASE: join(sandbox, "server-probe-phase.txt"),
+      BUNZAI_SCALE_PROBE_READY: join(sandbox, "server-probe-ready"),
     } : {}),
   },
   stdio: ["ignore", "pipe", "inherit"],
@@ -218,8 +218,8 @@ const server = spawn(process.execPath, serverArgs, {
 });
 let serverUrl: string;
 try {
-  const line = await waitFor(/Bunraku\. is up: (\S+)/, server, 60_000);
-  serverUrl = /Bunraku\. is up: (\S+)/.exec(line)![1]!;
+  const line = await waitFor(/Bunzai\. is up: (\S+)/, server, 60_000);
+  serverUrl = /Bunzai\. is up: (\S+)/.exec(line)![1]!;
   if (releaseEvidence) {
     const ready = join(sandbox, "server-probe-ready");
     const until = Date.now() + 5_000;
@@ -250,8 +250,8 @@ if (releaseEvidence) {
     complexityServer = spawn(process.execPath, ["run", "src/cli.ts", "ui", String(complexityPort), complexityStudio!], {
       cwd: REPO_ROOT, env: { ...process.env }, stdio: ["ignore", "pipe", "inherit"], detached: process.platform !== "win32",
     });
-    const line = await waitFor(/Bunraku\. is up: (\S+)/, complexityServer, 60_000);
-    complexityUrl = /Bunraku\. is up: (\S+)/.exec(line)![1]!;
+    const line = await waitFor(/Bunzai\. is up: (\S+)/, complexityServer, 60_000);
+    complexityUrl = /Bunzai\. is up: (\S+)/.exec(line)![1]!;
   } catch (error) {
     if (complexityServer) await stopTree(complexityServer);
     await stopTree(server);

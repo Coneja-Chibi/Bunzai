@@ -56,7 +56,7 @@ function StudioSection({ ctx }: { ctx: AppContext }): JSX.Element {
 
   return (
     <>
-      <SettingsRow label="Home" hint="The room Bunraku opens in when you start it.">
+      <SettingsRow label="Home" hint="The room Bunzai opens in when you start it.">
         <SegControl
           options={apps.map((m) => ({ value: m.id, label: m.title.replace(/^The /, "") }))}
           current={home}
@@ -94,7 +94,7 @@ const section: SettingsSection = {
   id: "studio",
   act: "studio",
   title: "The studio",
-  lede: "Where Bunraku opens, what the Library shows first, where you publish, and the engines this machine has.",
+  lede: "Where Bunzai opens, what the Library shows first, where you publish, and the engines this machine has.",
   status: (ctx) => { const id = ctx.prefs.get(SETTING_KEYS.homeApp); const app = ctx.apps().find((m) => m.id === id); return app ? `Opens in ${app.title.replace(/^The /, "")}` : undefined; },
   label: "Studio",
   order: 20,

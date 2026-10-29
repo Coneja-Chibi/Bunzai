@@ -1,8 +1,8 @@
 # RoleCall assembler recorder
 
-Records what RoleCall's prompt assembler produces for each fixture, so Bunraku's port has a fixed
-target to match. Nothing here ships or runs in Bunraku's
-suite; Bunraku's parity tests read the committed `fixtures/` and `recorded/`.
+Records what RoleCall's prompt assembler produces for each fixture, so Bunzai's port has a fixed
+target to match. Nothing here ships or runs in Bunzai's
+suite; Bunzai's parity tests read the committed `fixtures/` and `recorded/`.
 
 PIN=68afe385987811c4c1b8594013b27e75bebbe8f2
 

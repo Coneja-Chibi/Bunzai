@@ -69,7 +69,7 @@ export function replyNotice(prefs: Prefs, chatId: string, who: { characterId: st
   if (!who || !desktopOn(prefs)) return;
   if (characterNotify(prefs, who.characterId) === "muted" || mutedScenes(prefs).includes(chatId)) return;
   if (env.permission() !== "granted" || env.focused()) return;
-  env.show("Bunraku", `New reply from ${who.name}`, chatId);
+  env.show("Bunzai", `New reply from ${who.name}`, chatId);
 }
 
 /** The switch turned on: asks for permission now (a user gesture) unless it is already granted, and saves the pref only when it is. */

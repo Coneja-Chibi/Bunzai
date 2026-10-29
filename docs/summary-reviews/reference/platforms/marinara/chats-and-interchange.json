@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/chats-and-interchange",
   "sourcePath": "docs/reference/platforms/marinara/chats-and-interchange.md",
-  "sourceHash": "sha256:658a077d16f840001e5a43667f9c2ab2fde83eb63df66c109da45f9d6a62f35f",
-  "semanticSummaryHash": "sha256:7b09a7c845b9bc0b47c9fd6d2cda3668efe3787a93c616fad97036d7cc1f382f",
+  "sourceHash": "sha256:a50f03f3325d46e4e2fec410ffbcbe976e82d3dc7fab409bd7e07137ac0852c2",
+  "semanticSummaryHash": "sha256:79b8e7421c6274c6c647729f882982e724e9f83c298ee506306f6daf94f8d82f",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:56.074Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:51.904Z"
 }

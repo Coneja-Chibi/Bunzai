@@ -1,5 +1,5 @@
 /**
- * `bunraku export` (cli-export.ts) end to end on throwaway studios with a fake computer vault, never
+ * `bunzai export` (cli-export.ts) end to end on throwaway studios with a fake computer vault, never
  * the real keychain: it exports an existing library, never makes one where there is none, and
  * refuses a library that needs its password, writing nothing either way.
  */
@@ -19,7 +19,7 @@ afterEach(() => {
   for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true });
 });
 const temp = (): string => {
-  const d = mkdtempSync(join(tmpdir(), "bunraku-cli-export-"));
+  const d = mkdtempSync(join(tmpdir(), "bunzai-cli-export-"));
   dirs.push(d);
   return d;
 };

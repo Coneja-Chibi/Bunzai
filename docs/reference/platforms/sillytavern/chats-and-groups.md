@@ -70,8 +70,8 @@ History is always shared. Card assembly modes:
   the group (branches inherit then can diverge); Peek Character Definitions edits the card itself;
   members can be added, removed, reordered.
 
-## Bunraku boundary
+## Bunzai boundary
 
-Bunraku does not host SillyTavern chat runtime. Document interchange and group configuration so Kit
+Bunzai does not host SillyTavern chat runtime. Document interchange and group configuration so Kit
 understands what stored artifacts mean; conversion of chat JSONL is out of scope unless a future adapter
 exists. Character talkativeness remains a card field (see [Characters](characters.md)).

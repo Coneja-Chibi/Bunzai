@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="tokens-soft.css">
 <link rel="stylesheet" href="soft-parts.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
  * shell-settings 1/4: Appearance, Models, Connections, Studio, Workbench, About. Split across four
@@ -140,15 +140,15 @@ body { background: var(--canvas); }
       <div style="display:flex;gap:10px"><button class="s-btn">Save</button><button class="s-btn ghost">Cancel</button></div>
     </div>
     <div class="srow" style="box-shadow:none">
-      <div class="tx"><div class="label">Bunraku as a server</div><div class="hint">Point any MCP client at Bunraku's own belt: the library, catalogs and renderers. Your client asks before each tool runs.</div></div>
-      <code class="mono" style="padding:8px 10px;background:var(--stage-well);box-shadow:inset 0 0 0 1px var(--seam)">claude mcp add bunraku -- bunraku mcp "C:\Users\you\Bunraku"</code>
+      <div class="tx"><div class="label">Bunzai as a server</div><div class="hint">Point any MCP client at Bunzai's own belt: the library, catalogs and renderers. Your client asks before each tool runs.</div></div>
+      <code class="mono" style="padding:8px 10px;background:var(--stage-well);box-shadow:inset 0 0 0 1px var(--seam)">claude mcp add bunzai -- bunzai mcp "C:\Users\you\Bunzai"</code>
     </div>
   </section>
 
   <!-- STUDIO -->
   <section data-only="studio">
     <div class="srow">
-      <div class="tx"><div class="label">Home</div><div class="hint">The room Bunraku opens in when you start it.</div></div>
+      <div class="tx"><div class="label">Home</div><div class="hint">The room Bunzai opens in when you start it.</div></div>
       <div class="ctrl"><span class="plates"><button class="plate on">Workbench</button><button class="plate">Library</button><button class="plate">Scenes</button><button class="plate">Press</button><button class="plate">Agent</button></span></div>
     </div>
     <div class="srow">
@@ -169,10 +169,10 @@ body { background: var(--canvas); }
       </div>
     </div>
     <div class="srow">
-      <div class="tx"><div class="label">Marinara</div><div class="hint">Set by BUNRAKU_MARINARA_ROOT for this run, so the folder below is not being used.</div></div>
+      <div class="tx"><div class="label">Marinara</div><div class="hint">Set by BUNZAI_MARINARA_ROOT for this run, so the folder below is not being used.</div></div>
       <div class="ctrl" style="flex-direction:column;align-items:flex-end;gap:6px">
         <input class="s-input" style="width:16rem" disabled placeholder="paste the folder's path">
-        <span class="mono">env: BUNRAKU_MARINARA_ROOT=C:\tools\marinara</span>
+        <span class="mono">env: BUNZAI_MARINARA_ROOT=C:\tools\marinara</span>
       </div>
     </div>
   </section>
@@ -194,7 +194,7 @@ body { background: var(--canvas); }
     </div>
     <div class="srow">
       <div class="tx"><div class="label">Your studio folder</div><div class="hint">Your pieces are stored here, encrypted in library.db. A copy of this folder opens on another computer only with your recovery words; to share pieces, export them.</div></div>
-      <div class="ctrl mono">C:\Users\you\Bunraku</div>
+      <div class="ctrl mono">C:\Users\you\Bunzai</div>
     </div>
     <div class="srow">
       <div class="tx"><div class="label">Project</div><div class="hint">Open source under AGPL-3.0. Bugs and wishes welcome.</div></div>
@@ -203,18 +203,18 @@ body { background: var(--canvas); }
 
     <div class="section-title">Shortcuts (Windows desktop app only)</div>
     <div class="srow">
-      <div class="tx"><div class="label">Start menu</div><div class="hint">Bunraku is in your Start menu, so searching "Bunraku" finds it.</div></div>
+      <div class="tx"><div class="label">Start menu</div><div class="hint">Bunzai is in your Start menu, so searching "Bunzai" finds it.</div></div>
       <div class="ctrl"><span class="s-switch on"></span></div>
     </div>
     <div class="srow">
-      <div class="tx"><div class="label">Desktop</div><div class="hint">A Bunraku shortcut is on your desktop.</div></div>
+      <div class="tx"><div class="label">Desktop</div><div class="hint">A Bunzai shortcut is on your desktop.</div></div>
       <div class="ctrl"><span class="s-switch on"></span></div>
     </div>
     <p class="wf-note" style="position:static;max-width:none;margin:6px 4px 0">These two switches are proposed (design/wireframes/settings/shortcuts.html): merged into the SAME "The app" card as Restart/Quit/Reset below, per that wireframe's own layout, rather than a separate card. Only on the Windows .exe build; the browser Studio, Mac and Linux show neither row.</p>
 
     <div class="srow" style="align-items:flex-start" data-only="about">
       <div class="tx"><div class="label">The app</div><div class="hint">Restart relaunches the studio in place; Quit stops it fully. Unsaved edits on the Workbench are lost either way. Reset this window forgets only what this page remembers - the app you were on, the agent conversation, the overlay's position - never your studio, tabs or settings.</div></div>
-      <div class="ctrl plates"><button class="plate">Restart Bunraku</button><button class="plate">Quit Bunraku</button><button class="plate">Reset this window</button></div>
+      <div class="ctrl plates"><button class="plate">Restart Bunzai</button><button class="plate">Quit Bunzai</button><button class="plate">Reset this window</button></div>
     </div>
     <div class="armcard" data-only="about-armed">
       <div class="tx"><div class="label">The app</div><div class="hint">A second press actually restarts or quits - this state shows both armed at once for reference; only one arms at a time in the real room.</div></div>
@@ -243,7 +243,7 @@ body { background: var(--canvas); }
     appearance: "Appearance (order 10): theme segmented, house-accent SwatchRow (same component the setup wizard uses).",
     models: "Models (order 15): the vault Kit's terminal also reads. Radio = active provider. Key is never sent back from the server, shown only as \"key saved\"/\"no key\".",
     "models-edit": "Add/edit form: provider select, model picker (falls back to a text field when a provider publishes no list), a spoke-declared option (Claude's \"let Kit make changes this session\"), optional name, base URL when needed, API key.",
-    connections: "Connections (order 16): MCP servers this machine RUNS (consuming) plus the snippet to add Bunraku itself as a server (serving). A rejected server shows its reason above the list.",
+    connections: "Connections (order 16): MCP servers this machine RUNS (consuming) plus the snippet to add Bunzai itself as a server (serving). A rejected server shows its reason above the list.",
     "connections-edit": "Add/edit form: name locked while editing an existing server; env textarea left blank keeps the saved values.",
     studio: "Studio (order 20): Home app picker (every non-comingSoon, non-dockFoot, non-catalogOnly app), Library's first deck (all 7 decks from _shared/decks.ts), publish plates (same data-driven list as setup), then EngineRoots - the machine-specific SillyTavern/Marinara checkout paths Macro Lab needs, last because it is the one block about THIS MACHINE rather than the work.",
     workbench: "Workbench (order 30): autosave (off by default - a setting that writes to your files on a timer should not default to on), restore session, editor layout/mode (mirrors the editor's own header toggles), and the follow-to-Workbench behavior.",

@@ -1,5 +1,5 @@
 /**
- * Bunraku's read-only `tracker` macro: a linked library tracker's state in any macro text (entities/tracker, core/tracker.ts).
+ * Bunzai's read-only `tracker` macro: a linked library tracker's state in any macro text (entities/tracker, core/tracker.ts).
  * `{{tracker::Name}}` is its rendered text, `{{tracker::Name::field}}` a record's field, `{{tracker::Name::row::field}}` a list row's
  * field. The turn hands it the linked trackers on the context (`trackers`, by lowercased name); it reads them and changes nothing. An
  * unknown tracker, row or field is a macro error that names it.

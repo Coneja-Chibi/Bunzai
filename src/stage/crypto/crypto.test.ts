@@ -111,7 +111,7 @@ describe("the password wrap", () => {
     expect(shared.kdf).toMatchObject({ name: "argon2id", m: 65536, t: 3, p: 1 });
   });
 
-  test("any strength setting but the exact one Bunraku writes is damage, refused before any work", async () => {
+  test("any strength setting but the exact one Bunzai writes is damage, refused before any work", async () => {
     for (const kdf of [
       { ...shared.kdf, m: 2 ** 30 },
       { ...shared.kdf, m: 131_072 },

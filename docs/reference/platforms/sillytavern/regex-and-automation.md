@@ -10,7 +10,7 @@ related: [reference/platforms/sillytavern/README, reference/entities/regex, refe
 # SillyTavern regex and automation
 
 SillyTavern regex scripts and STscript are authored content with executable effects inside SillyTavern.
-Bunraku can inspect, edit, and round-trip their text as data, but import and conversion never authorize
+Bunzai can inspect, edit, and round-trip their text as data, but import and conversion never authorize
 execution.
 
 Primary sources: [Regex](https://docs.sillytavern.app/extensions/regex/) and
@@ -70,11 +70,11 @@ documentation warns users to inspect scripts before execution. A script can call
 and lore, change variables, navigate UI, or invoke extension behavior. It is not equivalent to a static
 macro template.
 
-## Bunraku safety and interoperability
+## Bunzai safety and interoperability
 
-Imported regex, macro, Lua, and STscript payloads remain sealed text. Bunraku does not execute STscript,
+Imported regex, macro, Lua, and STscript payloads remain sealed text. Bunzai does not execute STscript,
 resolve Quick Reply procedures, follow Automation IDs, or apply a regex during import or conversion. Regex
-testing is available only through Bunraku's isolated, user-invoked test bench and its terminable worker.
+testing is available only through Bunzai's isolated, user-invoked test bench and its terminable worker.
 
 Same-format export can restore platform-native script fields from escrow. Cross-format movement is allowed
 only when a target adapter has an explicit semantic mapping. A target that merely has "scripts" does not

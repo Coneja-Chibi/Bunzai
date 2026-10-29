@@ -124,7 +124,7 @@
     "figid": "journey",
     "type": "flow",
     "title": "one wire, two names",
-    "caption": "A Chub card is a SillyTavern-shaped Character Card v2/v3 with an extensions.chub block riding inside it. Bunraku reads that block on the Library, edits it as its own set of cards on the Workbench, and on the Press an export back to Chub or SillyTavern keeps it whole. An export to a different app carries the shared character and leaves the Chub block behind.",
+    "caption": "A Chub card is a SillyTavern-shaped Character Card v2/v3 with an extensions.chub block riding inside it. Bunzai reads that block on the Library, edits it as its own set of cards on the Workbench, and on the Press an export back to Chub or SillyTavern keeps it whole. An export to a different app carries the shared character and leaves the Chub block behind.",
     "svg": "docs/generated/figures/chub__journey.svg",
     "w": 950,
     "h": 172
@@ -134,7 +134,7 @@
     "figid": "convert",
     "type": "flow",
     "title": "the convert pipeline",
-    "caption": "bunraku convert runs six checked steps before a byte is written: a bad output path, an unresolvable target, or an adapter that lies about its own output all fail closed before publishAtomic ever opens a file (cli.ts:299-389, cli-io.ts:112-239).",
+    "caption": "bunzai convert runs six checked steps before a byte is written: a bad output path, an unresolvable target, or an adapter that lies about its own output all fail closed before publishAtomic ever opens a file (cli.ts:299-389, cli-io.ts:112-239).",
     "svg": "docs/generated/figures/cli__convert.svg",
     "w": 1138,
     "h": 172
@@ -194,7 +194,7 @@
     "figid": "support",
     "type": "matrix",
     "title": "one card, nine apps",
-    "caption": "What each app's adapter actually reads and writes today. A blank cell isn't a bug, that app never had that piece to begin with, RisuAI has no persona file, Marinara only ever shipped regex and personas. Chub cards are the SillyTavern row: Chub has no wire shape of its own, it rides SillyTavern's Character Card v2/v3 with one extra block along for the ride. Bunraku's own native JSON isn't in this table, it's the local storage format every kind is already saved as, not a convert destination.",
+    "caption": "What each app's adapter actually reads and writes today. A blank cell isn't a bug, that app never had that piece to begin with, RisuAI has no persona file, Marinara only ever shipped regex and personas. Chub cards are the SillyTavern row: Chub has no wire shape of its own, it rides SillyTavern's Character Card v2/v3 with one extra block along for the ride. Bunzai's own native JSON isn't in this table, it's the local storage format every kind is already saved as, not a convert destination.",
     "svg": "docs/generated/figures/faq__support.svg",
     "w": 810,
     "h": 404
@@ -364,7 +364,7 @@
     "figid": "coverage",
     "type": "matrix",
     "title": "ten platforms, four kinds of piece",
-    "caption": "Every column is a deck in the Library. \"No\" means that platform never shipped a file of that shape, not that Bunraku is missing an adapter. Marinara's character cards are SillyTavern-shaped underneath, so they read \"No\" here and go through the SillyTavern page instead.",
+    "caption": "Every column is a deck in the Library. \"No\" means that platform never shipped a file of that shape, not that Bunzai is missing an adapter. Marinara's character cards are SillyTavern-shaped underneath, so they read \"No\" here and go through the SillyTavern page instead.",
     "svg": "docs/generated/figures/platforms-readme__coverage.svg",
     "w": 810,
     "h": 438
@@ -534,7 +534,7 @@
     "figid": "routes",
     "type": "matrix",
     "title": "each untrusted input, its own gate",
-    "caption": "bunraku does not funnel every input through one pipeline. Each kind of untrusted content meets the gate built for it. Import and conversion never execute a card's scripts; the only code that runs is Lua, sandboxed, and only when the user opens the Test Bench.",
+    "caption": "bunzai does not funnel every input through one pipeline. Each kind of untrusted content meets the gate built for it. Import and conversion never execute a card's scripts; the only code that runs is Lua, sandboxed, and only when the user opens the Test Bench.",
     "svg": "docs/generated/figures/security-overview__routes.svg",
     "w": 660,
     "h": 268

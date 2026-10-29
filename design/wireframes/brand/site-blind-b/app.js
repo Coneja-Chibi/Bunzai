@@ -1,4 +1,4 @@
-/* Bunraku site: hash router, live releases with sample fallback, OS detection, help search, demo chat. */
+/* Bunzai site: hash router, live releases with sample fallback, OS detection, help search, demo chat. */
 (function () {
   "use strict";
 
@@ -116,13 +116,13 @@
     }).join("");
     var d = BK.DEMO;
     return {
-      title: "Bunraku: roleplay with AI characters on your own computer",
+      title: "Bunzai: roleplay with AI characters on your own computer",
       html:
         '<div class="wrap hero">' +
           "<div>" +
             '<p class="eyebrow">Free for Windows, Mac and Linux</p>' +
             '<h1 tabindex="-1">Your characters, <em>your stories</em>, your computer.</h1>' +
-            '<p class="lede">Bunraku is a free app for playing and making AI roleplay characters. Everything stays private and encrypted on your own machine.</p>' +
+            '<p class="lede">Bunzai is a free app for playing and making AI roleplay characters. Everything stays private and encrypted on your own machine.</p>' +
             '<div class="hero-cta">' +
               '<a class="btn btn-big" href="#/download" data-dl-button>' + dlLabel() + "</a>" +
               '<a class="btn btn-ghost btn-big" href="#/try">Try it in your browser</a>' +
@@ -180,7 +180,7 @@
     };
   }
   function dlLabel() {
-    return OS_NAMES[userOS] ? "Download for " + OS_NAMES[userOS] : "Get Bunraku";
+    return OS_NAMES[userOS] ? "Download for " + OS_NAMES[userOS] : "Get Bunzai";
   }
 
   function tourIndex() {
@@ -191,7 +191,7 @@
     return {
       title: "Feature tour",
       html:
-        '<div class="wrap page-head"><p class="eyebrow">Feature tour</p><h1 tabindex="-1">What Bunraku can do</h1>' +
+        '<div class="wrap page-head"><p class="eyebrow">Feature tour</p><h1 tabindex="-1">What Bunzai can do</h1>' +
         "<p>Five parts, each with a job. Play in Scenes, make things in the Workbench, keep them in the Library, send them out with Press, and get help from the Agent.</p></div>" +
         '<div class="wrap section" style="padding-top:0"><div class="links wide">' + cards + "</div></div>"
     };
@@ -223,7 +223,7 @@
           (guide ? '<p>Want the details? Read <a href="#/guides/' + guide.slug + '">' + esc(guide.title) + "</a> in Guides.</p>" : "") +
           '<div class="pager">' +
             (prev ? '<a class="btn btn-ghost" href="#/tour/' + prev.slug + '">Back: ' + esc(prev.name) + "</a>" : "<span></span>") +
-            (next ? '<a class="btn btn-ghost" href="#/tour/' + next.slug + '">Next: ' + esc(next.name) + "</a>" : '<a class="btn" href="#/download">Download Bunraku</a>') +
+            (next ? '<a class="btn btn-ghost" href="#/tour/' + next.slug + '">Next: ' + esc(next.name) + "</a>" : '<a class="btn" href="#/download">Download Bunzai</a>') +
           "</div>" +
         "</div></div>"
     };
@@ -312,10 +312,10 @@
   function download() {
     var isDesktop = !!OS_NAMES[userOS];
     return {
-      title: "Download Bunraku",
+      title: "Download Bunzai",
       html:
         '<div class="wrap page-head"><p class="eyebrow">Download</p><h1 tabindex="-1">' +
-          (isDesktop ? "Bunraku for " + OS_NAMES[userOS] : "Bunraku is a desktop app") + "</h1>" +
+          (isDesktop ? "Bunzai for " + OS_NAMES[userOS] : "Bunzai is a desktop app") + "</h1>" +
           "<p>" + (isDesktop
             ? "We picked this for your computer. Free, no account, no sign-up."
             : "It runs on Windows, Mac and Linux computers. Pick yours below, or try the Studio in your browser for now.") + "</p></div>" +
@@ -325,7 +325,7 @@
             "<p>Windows shows a blue box for new apps it hasn't seen much yet. It's fine. To carry on:</p>" +
             "<ol><li>Choose <strong>More info</strong>.</li><li>Choose <strong>Run anyway</strong>.</li></ol></div>" +
           '<div class="ticket note"><h3>After it opens</h3>' +
-            "<p>On first launch, Bunraku adds itself to your Start menu, so you can find it again next time.</p>" +
+            "<p>On first launch, Bunzai adds itself to your Start menu, so you can find it again next time.</p>" +
             '<p>New here? Start with <a href="#/guides/first-scene">Your first scene</a>.</p></div>' +
         "</div></div>",
       after: function (alive) {
@@ -385,7 +385,7 @@
 
   function tryIt() {
     return {
-      title: "Try Bunraku in your browser",
+      title: "Try Bunzai in your browser",
       html:
         '<div class="wrap page-head"><p class="eyebrow">Try it</p><h1 tabindex="-1">The Studio, right in your browser</h1>' +
         "<p>Want a look before you install? The Studio runs in your browser. No download, no account.</p></div>" +
@@ -475,7 +475,7 @@
     clearInterval(demoTimer);
     var token = ++navToken;
     main.innerHTML = page.html;
-    document.title = page.title === "Bunraku" || /^Bunraku/.test(page.title) ? page.title : page.title + " | Bunraku";
+    document.title = page.title === "Bunzai" || /^Bunzai/.test(page.title) ? page.title : page.title + " | Bunzai";
     document.querySelectorAll("[data-nav]").forEach(function (a) {
       if (a.getAttribute("data-nav") === (parts[0] || "")) a.setAttribute("aria-current", "page");
       else a.removeAttribute("aria-current");

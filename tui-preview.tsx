@@ -20,7 +20,7 @@ const rgb = (c: { toInts(): [number, number, number, number] }): string => {
   return `rgb(${r},${g},${b})`;
 };
 
-const t = await testRender(<App studioName="Bunraku Studio" totalPieces={16} decks={[]} session={session} onQuit={() => {}} />, {
+const t = await testRender(<App studioName="Bunzai Studio" totalPieces={16} decks={[]} session={session} onQuit={() => {}} />, {
   width: W,
   height: H,
 });

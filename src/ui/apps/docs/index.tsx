@@ -1,12 +1,12 @@
 /** Help / Docs: the committed documentation corpus, packaged as a first-class app room. */
 import { OverlayWidgets } from "./overlay";
-import type { BunrakuApp } from "../../app-contract";
+import type { BunzaiApp } from "../../app-contract";
 import { DocsRoom } from "./room";
 import { icSvg } from "../../_shared/ic-svg";
 
 const MARK_SVG = icSvg("lucide:file-text", 18);
 
-const app: BunrakuApp = {
+const app: BunzaiApp = {
   OverlayWidgets,
   manifest: {
     id: "docs",
@@ -17,7 +17,7 @@ const app: BunrakuApp = {
     subtitle: "app · help",
     catalogOnly: true,
     agentSurface: {
-      describe: "Everything about Bunraku, readable here or on GitHub from the same source.",
+      describe: "Everything about Bunzai, readable here or on GitHub from the same source.",
     },
   },
   Component: DocsRoom,

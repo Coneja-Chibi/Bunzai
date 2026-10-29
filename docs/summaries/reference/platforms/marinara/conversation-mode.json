@@ -2,15 +2,15 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/conversation-mode",
   "sourcePath": "docs/reference/platforms/marinara/conversation-mode.md",
-  "sourceHash": "sha256:5716ed9e1385e53f759bd43768d6252c9cbe2886cda21b1e24aea8410d783ee8",
-  "summary": "Complete Marinara Conversation Mode authoring reference at the pinned Engine revision. Profiles route to Convo Display Name, About Me defaults and chat overrides, update_about_me scopes, Behavior insertion modes, and Conversation-only macros. The four-step new-chat wizard owns name and connection, prompt preset, participants, and Automation with autonomous messages, schedules, and package-contributed command families. Schedules include chat and character caps, tuning, timing, daily blocks, AI draft actions, temporary status, and user presence. Custom media covers portable emoji export, sticker send modes, Giphy limits, gallery scope, and semantic/random/tool-call selection. Calls document required audio pipeline, four input modes, per-chat versus global settings, answer lifecycle, soundboard, reusable video clips, and history summary. Selfies define every chat setting and reviewed manual generation. Six table games include install, start paths, participant limits, defaults, enforced state, autonomous invitation gates, and early-end deletion. These are upstream product surfaces, not automatic Bunraku adapter capabilities.",
+  "sourceHash": "sha256:8afb5db01dff9f3b2e28638e504b09d389d97760a5e57975d19f7673e0c07451",
+  "summary": "Complete Marinara Conversation Mode authoring reference at the pinned Engine revision. Profiles route to Convo Display Name, About Me defaults and chat overrides, update_about_me scopes, Behavior insertion modes, and Conversation-only macros. The four-step new-chat wizard owns name and connection, prompt preset, participants, and Automation with autonomous messages, schedules, and package-contributed command families. Schedules include chat and character caps, tuning, timing, daily blocks, AI draft actions, temporary status, and user presence. Custom media covers portable emoji export, sticker send modes, Giphy limits, gallery scope, and semantic/random/tool-call selection. Calls document required audio pipeline, four input modes, per-chat versus global settings, answer lifecycle, soundboard, reusable video clips, and history summary. Selfies define every chat setting and reviewed manual generation. Six table games include install, start paths, participant limits, defaults, enforced state, autonomous invitation gates, and early-end deletion. These are upstream product surfaces, not automatic Bunzai adapter capabilities.",
   "topics": [
     "Conversation Mode vs Roleplay Game",
     "Convo profiles and About Me",
     "schedules and autonomous messaging",
     "custom emoji sticker GIF rules",
     "calls clips selfies table games",
-    "Bunraku product boundary"
+    "Bunzai product boundary"
   ],
   "sections": [
     {
@@ -117,9 +117,9 @@
     {
       "children": [],
       "level": 2,
-      "title": "Bunraku",
-      "summary": "Bunraku treats Conversation Mode as a Marinara product surface. Schedules, call media, emoji libraries, and table-game state are not hosted or converted unless a future adapter proves that support with canonical mappings and fixtures. Kit must not infer codec support from this product guide alone.",
-      "slug": "bunraku",
+      "title": "Bunzai",
+      "summary": "Bunzai treats Conversation Mode as a Marinara product surface. Schedules, call media, emoji libraries, and table-game state are not hosted or converted unless a future adapter proves that support with canonical mappings and fixtures. Kit must not infer codec support from this product guide alone.",
+      "slug": "bunzai",
       "shortSource": true,
       "topics": [
         "Marinara product surface",
@@ -127,7 +127,7 @@
         "no invented adapter support",
         "format proof required"
       ],
-      "sourceHash": "sha256:89af1a021e804f9f4893330ce67294ff2848df1b768a8337fbef653f25ecd3b4"
+      "sourceHash": "sha256:d68abf5a66e006bed59bdc78bb72c991960fbba22dffea05665ad2762e7ec552"
     }
   ]
 }

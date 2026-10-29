@@ -3,7 +3,7 @@
  * and live-reload watch. Extracted from server.ts (behavior-preserving).
  *
  * Bundles are memoized until the file watcher below invalidates them, and
- * ship production React when BUNRAKU_UI_PROD_REACT=1 (set by scripts/vaude-browser.ts; `bun run dev`
+ * ship production React when BUNZAI_UI_PROD_REACT=1 (set by scripts/vaude-browser.ts; `bun run dev`
  * never sets it, so it keeps development React).
  */
 import { isFontFile } from "./theme/fonts";
@@ -43,11 +43,11 @@ export const discoverTours = (): Promise<DiscoveredModule[]> => discoverModules(
 
 /**
  * Production React for THIS dev-mode server process: set
- * only by the "Bunraku (Browser)" shortcut (scripts/vaude-browser.ts), never by `bun run dev`, so the
+ * only by the "Bunzai (Browser)" shortcut (scripts/vaude-browser.ts), never by `bun run dev`, so the
  * plain dev server keeps development React's warnings and readable stacks. Read once at module load -
  * one process serves one React build for its whole life, matching the packaged exe's own bake.
  */
-export const PROD_REACT = process.env.BUNRAKU_UI_PROD_REACT === "1";
+export const PROD_REACT = process.env.BUNZAI_UI_PROD_REACT === "1";
 const PROD_REACT_DEFINE: Record<string, string> = { "process.env.NODE_ENV": '"production"' };
 const prodBuildOpts: { minify?: true; define?: Record<string, string> } = PROD_REACT
   ? { minify: true, define: PROD_REACT_DEFINE }
@@ -262,8 +262,8 @@ export async function handleAssetRoutes(
   if (p === "/app.webmanifest") {
     return noStore(
       JSON.stringify({
-        name: "Bunraku.",
-        short_name: "Bunraku.",
+        name: "Bunzai.",
+        short_name: "Bunzai.",
         icons: [{ src: "/icon-256.png", sizes: "256x256", type: "image/png" }],
         display: "standalone",
         // hardcode-ok: the web-manifest spec takes literal colors, CSS vars cannot reach it

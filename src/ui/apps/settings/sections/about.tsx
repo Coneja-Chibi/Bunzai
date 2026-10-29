@@ -13,8 +13,8 @@ import { Button } from "../../../components/button";
 import { SettingsRow, type SettingsSection } from "../section-contract";
 import styles from "../styles.module.css";
 
-const REPO_PAGE = "https://github.com/Coneja-Chibi/Bunraku";
-const RELEASES_PAGE = "https://github.com/Coneja-Chibi/Bunraku/releases";
+const REPO_PAGE = "https://github.com/Coneja-Chibi/Bunzai";
+const RELEASES_PAGE = "https://github.com/Coneja-Chibi/Bunzai/releases";
 
 function AboutSection({ ctx }: { ctx: AppContext }): JSX.Element {
   const [installed, setInstalled] = useState("");
@@ -73,7 +73,7 @@ function AboutSection({ ctx }: { ctx: AppContext }): JSX.Element {
       <SettingsRow
         label="Updates"
         hint={mode === "browser"
-          ? `Version ${installed || "?"}, temporary browser studio. The hosted build updates when Bunraku deploys it.`
+          ? `Version ${installed || "?"}, temporary browser studio. The hosted build updates when Bunzai deploys it.`
           : `Version ${installed || "?"}, ${mode === "source" ? "running from source" : "installed app"}. Checks GitHub only when you press the button; nothing runs on its own.`}
       >
         <div className={styles.plates}>
@@ -108,10 +108,10 @@ function AboutSection({ ctx }: { ctx: AppContext }): JSX.Element {
 
       <SettingsRow label="Project" hint="Open source under AGPL-3.0. Bugs and wishes welcome.">
         <div className={styles.plates}>
-          <Button size="sm" onClick={() => requestExternal(REPO_PAGE, "Bunraku on GitHub")}>
+          <Button size="sm" onClick={() => requestExternal(REPO_PAGE, "Bunzai on GitHub")}>
             GitHub
           </Button>
-          <Button size="sm" onClick={() => requestExternal(RELEASES_PAGE, "Bunraku releases")}>
+          <Button size="sm" onClick={() => requestExternal(RELEASES_PAGE, "Bunzai releases")}>
             Releases
           </Button>
         </div>
@@ -184,7 +184,7 @@ function LifecycleRow({ ctx }: { ctx: AppContext }): JSX.Element {
   }
   if (phase === "closed") {
     return (
-      <SettingsRow label="The app" hint="Bunraku is closed.">
+      <SettingsRow label="The app" hint="Bunzai is closed.">
         <span role="status" className={styles.statusNote}>You can close this tab. Start it again from your shortcut.</span>
       </SettingsRow>
     );
@@ -201,14 +201,14 @@ function LifecycleRow({ ctx }: { ctx: AppContext }): JSX.Element {
           variant={armed === "restart" ? "primary" : "secondary"}
           onClick={() => (armed === "restart" ? void doRestart() : arm("restart"))}
         >
-          {armed === "restart" ? "Really restart?" : "Restart Bunraku"}
+          {armed === "restart" ? "Really restart?" : "Restart Bunzai"}
         </Button>
         <Button
           size="sm"
           variant={armed === "quit" ? "danger" : "secondary"}
           onClick={() => (armed === "quit" ? void doQuit() : arm("quit"))}
         >
-          {armed === "quit" ? "Really quit?" : "Quit Bunraku"}
+          {armed === "quit" ? "Really quit?" : "Quit Bunzai"}
         </Button>
         {/*
           * Not armed like the other two: nothing here can be lost that is not named on the button,
@@ -232,7 +232,7 @@ function LifecycleRow({ ctx }: { ctx: AppContext }): JSX.Element {
 const section: SettingsSection = {
   id: "about",
   act: "house",
-  title: "About Bunraku",
+  title: "About Bunzai",
   lede: "The running build, where your studio lives on disk, the project links, and the app's own controls.",
   label: "About",
   order: 90,

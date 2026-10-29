@@ -1,6 +1,6 @@
 /**
  * Mood Music's pure half. RoleCall plays a catalog of hosted tracks plus the person's own (MoodMusicContext.tsx, MoodMusicWingPanel.tsx);
- * Bunraku plays the sound files in the person's packs, so a "category" is a pack and a track is a pack item whose media type is audio
+ * Bunzai plays the sound files in the person's packs, so a "category" is a pack and a track is a pack item whose media type is audio
  * (an audio item rides the pack entity as `{ id, label, ref, mime }`, the same shape a backdrop picture does). Next walks the current
  * pack and wraps (MoodMusicContext.tsx:390-403); volume is 0 to 1 and starts at 0.6 (MoodMusicContext.tsx:71-80).
  */

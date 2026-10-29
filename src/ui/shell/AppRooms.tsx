@@ -1,12 +1,12 @@
 /** Retain workspace, overlay and draft owners; route each app's one live instance to its presentation host. */
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { AppContext, BunrakuApp } from "../app-contract";
+import type { AppContext, BunzaiApp } from "../app-contract";
 import { useShellStore } from "./store";
 import { AppActivity } from "../_shared/app-activity";
 import { AppSurface } from "./AppSurface";
 import { presentedAppId } from "./store-navigation";
 
-function Room({ app, ctx, active }: { app: BunrakuApp; ctx: AppContext; active: boolean }) {
+function Room({ app, ctx, active }: { app: BunzaiApp; ctx: AppContext; active: boolean }) {
   const lastBrief = useRef<Parameters<AppContext["agent"]["publish"]>[0] | null>(null);
   const context = useMemo(() => ({ ...ctx, setStatus: (message: string) => {
     if (presentedAppId(useShellStore.getState()) === app.manifest.id) ctx.setStatus(message);
@@ -22,11 +22,11 @@ function Room({ app, ctx, active }: { app: BunrakuApp; ctx: AppContext; active: 
 }
 
 export function AppRooms({ app, activeAppId, workspaceAppId, overlayAppId, workspace, overlay, overlayOpen, ctx }: {
-  app: BunrakuApp | null; activeAppId: string; workspaceAppId: string; overlayAppId: string;
+  app: BunzaiApp | null; activeAppId: string; workspaceAppId: string; overlayAppId: string;
   workspace: HTMLElement | null; overlay: HTMLElement | null; overlayOpen: boolean; ctx: AppContext;
 }) {
-  const [retained, setRetained] = useState<BunrakuApp[]>([]);
-  const keep = (room: BunrakuApp): boolean => !!room.manifest.editsPieces || room.manifest.id === workspaceAppId || room.manifest.id === overlayAppId;
+  const [retained, setRetained] = useState<BunzaiApp[]>([]);
+  const keep = (room: BunzaiApp): boolean => !!room.manifest.editsPieces || room.manifest.id === workspaceAppId || room.manifest.id === overlayAppId;
   const rooms = [...retained.filter(keep), ...(app && !retained.includes(app) ? [app] : [])];
   useEffect(() => {
     setRetained((current) => {

@@ -7,8 +7,8 @@
  * back to the default instead of reaching the engine.
  *
  * Reading keeps the parsed file in `original`; writing an entity that has one overwrites only the columns the person changed, so
- * RoleCall-only columns, the tree and the node constraints survive. Writing from nothing (Bunraku's own export) emits `tree: null`
- * and no constraints, because Bunraku derives the tree and stores none. Fields RoleCall has no column for ride in an
+ * RoleCall-only columns, the tree and the node constraints survive. Writing from nothing (Bunzai's own export) emits `tree: null`
+ * and no constraints, because Bunzai derives the tree and stores none. Fields RoleCall has no column for ride in an
  * `unsupported_fields` bag RoleCall's importer ignores. "Featured" is the `is_featured` column, not part of the exported metadata.
  * `compendiumChunks` is the streaming writer: a header, one chunk per entry, a footer.
  */
@@ -179,7 +179,7 @@ function piecesOf(entity: CanonicalLorebook, now: Date): Pieces {
 
 const footer = (tail: Rec): string => `\n  ],${JSON.stringify(tail, null, 2).slice(1)}\n`;
 
-/** The file as chunks: the header, one chunk per entry, the footer. A Bunraku export carries no tree (Bunraku derives it). */
+/** The file as chunks: the header, one chunk per entry, the footer. A Bunzai export carries no tree (Bunzai derives it). */
 export async function* compendiumChunks(entity: CanonicalLorebook, now = new Date()): AsyncGenerator<Uint8Array> {
   const { head, rows, tail } = piecesOf(entity, now);
   const encode = (s: string): Uint8Array => new TextEncoder().encode(s);

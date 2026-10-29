@@ -65,6 +65,6 @@ export const titled = (s: string): string => s.replace(/_/g, " ").replace(/\b\w/
 
 /** Glyphs RoleCall draws in text, written as escapes so no pictograph sits in the source (scan:emoji). */
 export const GLYPH = { sep: "\u25B8", star: "\u2726", starOn: "\u2605", starOff: "\u2606", right: "\u2192", dot: "\u00B7", diamond: "\u25C6", check: "\u2713", cross: "\u2715", revert: "\u21BA" } as const;
-/** A blank value, drawn as a hyphen (RoleCall draws an em dash; Bunraku copy has none). */
+/** A blank value, drawn as a hyphen (RoleCall draws an em dash; Bunzai copy has none). */
 export const BLANK = "-";
 export const typeRole = (type: string | null): string => (type ? `var(${ENTRY_TYPE_INFO[type as EntryType].token})` : "var(--stage-mute)");

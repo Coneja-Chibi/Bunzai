@@ -1,6 +1,6 @@
 /**
  * The Stage wing's Gallery tab (RoleCall ImageGalleryPanel.tsx): the scene's pictures in a grid, a tile opens an enlarged view, and Use as
- * background hangs one behind the messages. RoleCall lists the pictures in a chat's messages; Bunraku messages carry none, so this lists the
+ * background hangs one behind the messages. RoleCall lists the pictures in a chat's messages; Bunzai messages carry none, so this lists the
  * cast's art and one pack (use-stage-gallery.ts). Struck from RoleCall: generated "Received" images and the Sent filter. `onChat` takes the
  * scene's chat back from setSceneBackdrop, as the Backdrop row's does. The tab body carries no title; the Stage strip owns it.
  */

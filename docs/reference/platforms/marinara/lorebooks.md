@@ -133,7 +133,7 @@ Detects Marinara native vs foreign World Info / V2 character-book JSON automatic
 Keywords work immediately. **Semantic search requires re-vectorization** after import (Vectors + Vectorize
 missing / Re-vectorize). Old vectors from another install are not assumed valid.
 
-## Bunraku
+## Bunzai
 
 Canonical lorebook mapping is adapter-specific. Do not claim Marinara budgets/recursion/vectors round-trip
 through every format.

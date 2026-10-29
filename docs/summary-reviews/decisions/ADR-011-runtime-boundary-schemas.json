@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "decisions/ADR-011-runtime-boundary-schemas",
   "sourcePath": "docs/decisions/ADR-011-runtime-boundary-schemas.md",
-  "sourceHash": "sha256:ef46ffadb65f598f08bf6e6bca2b5be02e785b8d9a16d5c61a474e9b6abb47f0",
-  "semanticSummaryHash": "sha256:8a4d9a730903f27961ef819524ac209bc26caeea640ddf3b494ac06f3e6f11bf",
+  "sourceHash": "sha256:8b75837d67b04b231e9f1a1ce646cf33336bda41fd84d1034b35ad93b063ac59",
+  "semanticSummaryHash": "sha256:18b504efcf9978e70f83b2afd5713f01a9d3b50b2e37deeb0c21410af399d05c",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:43.160Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:07.510Z"
 }

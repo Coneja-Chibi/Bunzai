@@ -18,7 +18,7 @@ import { apiReq } from "./server-test-rig";
 afterEach(cleanupChatRouteRigs);
 setDefaultTimeout(30_000);
 
-const HOME = join(tmpdir(), `bunraku-final-cut-routes-${randomUUID()}`);
+const HOME = join(tmpdir(), `bunzai-final-cut-routes-${randomUUID()}`);
 const UNLOCK = { passphrase: "final-cut-routes-test" };
 let server: ReturnType<typeof Bun.serve>;
 const asked: { model: string; stream?: boolean; messages: { role: string; content: string }[] }[] = [];
@@ -26,7 +26,7 @@ let localId = "";
 let passBody = "It might, and the light holds.";
 
 beforeAll(async () => {
-  process.env.BUNRAKU_HOME = HOME;
+  process.env.BUNZAI_HOME = HOME;
   server = Bun.serve({
     port: 0,
     async fetch(req) {
@@ -47,7 +47,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   server.stop(true);
-  delete process.env.BUNRAKU_HOME;
+  delete process.env.BUNZAI_HOME;
   await rm(HOME, { recursive: true, force: true });
 });
 

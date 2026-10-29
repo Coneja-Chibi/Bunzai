@@ -47,9 +47,9 @@ test("the migration adds document_summaries and grave_summaries to an existing d
   const { mkdtempSync, rmSync } = await import("node:fs");
   const { tmpdir } = await import("node:os");
   const { join } = await import("node:path");
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-summaries-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-summaries-"));
   try {
-    const path = join(dir, "bunraku.db");
+    const path = join(dir, "bunzai.db");
     openStageDatabase(path, MIGRATIONS.slice(0, 16)).close();
     const reopened = openStageDatabase(path, MIGRATIONS);
     try {
@@ -70,9 +70,9 @@ test("migration 17 backfills a placeholder summary for a document that already e
   const { mkdtempSync, rmSync } = await import("node:fs");
   const { tmpdir } = await import("node:os");
   const { join } = await import("node:path");
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-summaries-backfill-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-summaries-backfill-"));
   try {
-    const path = join(dir, "bunraku.db");
+    const path = join(dir, "bunzai.db");
     const cipher = testCipher();
     // A document written by code before migration 17 existed: no document_summaries row can exist for it yet.
     const pre = openStageDatabase(path, MIGRATIONS.slice(0, 16));

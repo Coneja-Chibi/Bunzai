@@ -5,7 +5,7 @@ import { OpeningBanner } from "./opening-banner";
 
 test("large opening banner renders every friendly stage cue", async () => {
   const renderer = await testRender(
-    <OpeningBanner studioName="Bunraku Studio" totalPieces={16} animate={false} />,
+    <OpeningBanner studioName="Bunzai Studio" totalPieces={16} animate={false} />,
     { width: 120, height: 48 },
   );
   try {
@@ -24,7 +24,7 @@ test("large opening banner renders every friendly stage cue", async () => {
 test("wide opening composition sits centered on the terminal stage", async () => {
   const width = 160;
   const renderer = await testRender(
-    <OpeningBanner studioName="Bunraku Studio" totalPieces={16} animate={false} />,
+    <OpeningBanner studioName="Bunzai Studio" totalPieces={16} animate={false} />,
     { width, height: 48 },
   );
   try {
@@ -45,7 +45,7 @@ test("wide opening composition sits centered on the terminal stage", async () =>
 
 test("compact terminals keep the complete greeting under a small rainbow mark", async () => {
   const renderer = await testRender(
-    <OpeningBanner studioName="Bunraku Studio" totalPieces={16} animate={false} />,
+    <OpeningBanner studioName="Bunzai Studio" totalPieces={16} animate={false} />,
     { width: 72, height: 24 },
   );
   try {

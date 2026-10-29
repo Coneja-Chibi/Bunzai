@@ -38,7 +38,7 @@ export const unb64 = (value: string): Buffer => Buffer.from(value, "base64");
 /**
  * Encrypt with a 32-byte key, staying in buffers throughout. Throws rather than truncating if the
  * key is the wrong size. `aad` is authenticated but not encrypted: opening with a different `aad`
- * fails, which binds a ciphertext to where it belongs (Bunraku's encrypted cells bind to their table
+ * fails, which binds a ciphertext to where it belongs (Bunzai's encrypted cells bind to their table
  * and column).
  */
 export function aesSealBuf(key: Buffer, plaintext: Buffer, aad?: Buffer): AesPartsBuf {

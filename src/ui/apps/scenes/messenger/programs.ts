@@ -1,8 +1,8 @@
 /**
- * The Messenger's rail: one program per Bunraku wing tab, in RoleCall's order (programs.ts:15-28 GROUPS, left wings then right) with its TITLES (programs.ts:29-36) and the approved
+ * The Messenger's rail: one program per Bunzai wing tab, in RoleCall's order (programs.ts:15-28 GROUPS, left wings then right) with its TITLES (programs.ts:29-36) and the approved
  * wireframe's glyphs (rc-port/messenger.html). A program is a wing and the tab it opens on; the page draws the wing's own panel for it (scene-wings.tsx `bare`), so nothing is copied.
  * Regex lives in the Final Cut wing here but keeps RoleCall's place after Guides; Participants and Writing Helpers are RoleCall tabs (programs.ts:16-18) the wireframe left out.
- * RoleCall folds the sampler into "Generation" (programs.ts:44); Bunraku keeps it in the AI wing, so it is its own "Samplers" program. A Prop with a panel (Story Director, the
+ * RoleCall folds the sampler into "Generation" (programs.ts:44); Bunzai keeps it in the AI wing, so it is its own "Samplers" program. A Prop with a panel (Story Director, the
  * trackers) gets a program while it is on, drawn through the Prop's own panel, as RoleCall's activities are (programs.ts:89-97).
  */
 import { useRef } from "react";

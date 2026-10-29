@@ -1,5 +1,5 @@
 /**
- * Which engines Bunraku can actually drive, and where each one lives on this machine.
+ * Which engines Bunzai can actually drive, and where each one lives on this machine.
  *
  * ONE LIST, BECAUSE TWO CALLERS ASK THE SAME QUESTION. This table began inside preset_verify, where
  * it was the only reader. The Macro Lab asks the same thing from the browser side - is there an
@@ -9,7 +9,7 @@
  * ONLY ENGINES A USER CAN ACTUALLY HAVE. A RoleCall entry shipped here for a while and was wrong in
  * two ways: it could never resolve for anyone without that closed checkout, so callers advertised a
  * capability they could not deliver, and its marker named an internal path of a closed codebase in a
- * public repository. An engine belongs here when somebody who downloaded Bunraku can point at a
+ * public repository. An engine belongs here when somebody who downloaded Bunzai can point at a
  * real install of it.
  *
  * The catalogs in ../macros model five dialects; this models two RUNTIMES. They are different axes
@@ -40,7 +40,7 @@ export interface EngineSpec {
 export const RENDER_ENGINES: Record<RenderEngineId, EngineSpec> = {
   sillytavern: {
     label: "SillyTavern",
-    rootVar: "BUNRAKU_ST_ROOT",
+    rootVar: "BUNZAI_ST_ROOT",
     command: "node",
     args: ["tools/renderers/sillytavern/render.mjs"],
     flag: "--st-root",
@@ -49,7 +49,7 @@ export const RENDER_ENGINES: Record<RenderEngineId, EngineSpec> = {
   },
   marinara: {
     label: "Marinara",
-    rootVar: "BUNRAKU_MARINARA_ROOT",
+    rootVar: "BUNZAI_MARINARA_ROOT",
     command: "bun",
     args: ["tools/renderers/marinara/render.ts"],
     flag: "--marinara-root",
@@ -134,7 +134,7 @@ export async function installRoot(
  * What to say when there is no engine here - in one place, because there are two mouths.
  *
  * The Macro Lab and preset_verify both refuse for the same reason, and both used to say only "set
- * BUNRAKU_ST_ROOT". That was the whole of the interface: a variable, described in a refusal, that
+ * BUNZAI_ST_ROOT". That was the whole of the interface: a variable, described in a refusal, that
  * a person had to know how to set before they could use the room. Settings now takes a folder, so
  * the remedy names the screen first and keeps the variable for whoever launched with one.
  */

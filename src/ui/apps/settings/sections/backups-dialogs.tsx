@@ -56,7 +56,7 @@ export function RestoreDialog({ copy, onClose, onUndo }: { copy: Copy; onClose: 
         <StageNote label="Stage direction: restored" tone="warn">
           {`Your library is back to ${when}. The page will reload to show it. If that was not what you wanted, you can undo it now or any time from the list.`}
         </StageNote>
-        <StageNote label="Other programs" tone="warn">If Kit or another Bunraku window in another program is open on this library, restart it: it keeps its own copy of what it read before the restore.</StageNote>
+        <StageNote label="Other programs" tone="warn">If Kit or another Bunzai window in another program is open on this library, restart it: it keeps its own copy of what it read before the restore.</StageNote>
         {step.result.sealOwed ? (
           <StageNote label="One thing left" tone="flub">{`Some rows are still waiting to be marked as checked (${step.result.sealOwed}). The next save will finish it.`}</StageNote>
         ) : null}
@@ -92,7 +92,7 @@ export function RestoreDialog({ copy, onClose, onUndo }: { copy: Copy; onClose: 
           <Direction>Comparing the copy with your library.</Direction>
         )}
         <StageNote label="Nothing is lost" tone="warn">
-          First, Bunraku saves your library as it is right now as its own copy. Anything this restore sets aside is in that copy, and one button undoes the restore.
+          First, Bunzai saves your library as it is right now as its own copy. Anything this restore sets aside is in that copy, and one button undoes the restore.
         </StageNote>
         <StageActions cta="Restore this copy" onCta={restore} disabled={step.preview === null}>
           <GhostButton onClick={onClose}>Cancel</GhostButton>

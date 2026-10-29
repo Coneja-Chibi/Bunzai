@@ -120,7 +120,7 @@ export function runLuaSandboxed(code: string, opts: SandboxOptions = {}): Promis
       result: {
         ok: false,
         reason: "error",
-        message: "Lua execution needs the installed Bunraku app so it can run on an isolated sandbox origin.",
+        message: "Lua execution needs the installed Bunzai app so it can run on an isolated sandbox origin.",
       },
       chatVars: startingVars,
       log: [],

@@ -23,17 +23,17 @@ import type { GateRequest } from "../../tools/safety/gated-dispatch";
 /**
  * THESE TESTS READ A REAL FILE, and until this was here they read the DEVELOPER'S.
  *
- * The hook remembers the mode from `~/.bunraku/gates.json`, so the suite's idea of "the standing
+ * The hook remembers the mode from `~/.bunzai/gates.json`, so the suite's idea of "the standing
  * policy starts guarded" was really "whatever this machine last chose". Running `/gates full` in the
  * app - an ordinary thing to do, and the thing this feature exists for - turned six tests red with
  * failures that pointed at the gate logic and had nothing to do with it. A suite that breaks because
  * somebody used the product is a suite that gets ignored the next time it is right.
  *
- * BUNRAKU_HOME is the seam the config already reads, so pointing it at an empty directory gives
+ * BUNZAI_HOME is the seam the config already reads, so pointing it at an empty directory gives
  * every run the same fresh-install starting point.
  */
 beforeAll(() => {
-  process.env["BUNRAKU_HOME"] = mkdtempSync(join(tmpdir(), "bunraku-gate-"));
+  process.env["BUNZAI_HOME"] = mkdtempSync(join(tmpdir(), "bunzai-gate-"));
 });
 
 const request = (name: string): GateRequest => ({

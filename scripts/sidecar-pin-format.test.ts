@@ -13,9 +13,9 @@ const H = (n: string): string => n.repeat(64).slice(0, 64);
 const TAG = "v0.1.27";
 
 const realistic = [
-  `${H("a")}  Bunraku.exe`,
-  `${H("b")}  bunraku-cli-windows-x64.exe`,
-  `${H("c")}  bunraku-kit-linux-x64`,
+  `${H("a")}  Bunzai.exe`,
+  `${H("b")}  bunzai-cli-windows-x64.exe`,
+  `${H("c")}  bunzai-kit-linux-x64`,
   `${H("d")}  sidecar-windows-x64.exe`,
   `${H("e")}  sidecar-linux-x64`,
   `${H("f")}  sidecar-linux-arm64`,
@@ -39,8 +39,8 @@ describe("reading SHA256SUMS", () => {
     // taking whatever is listed would let an edited checksum file aim the downloader at any of them.
     const pins = pinsFromChecksums(realistic, TAG);
     const assets = Object.values(pins).map((p) => p.asset);
-    expect(assets).not.toContain("Bunraku.exe");
-    expect(assets).not.toContain("bunraku-cli-windows-x64.exe");
+    expect(assets).not.toContain("Bunzai.exe");
+    expect(assets).not.toContain("bunzai-cli-windows-x64.exe");
   });
 
   test("an unrelated asset that is not in the target table is never pinned", () => {
@@ -77,8 +77,8 @@ describe("reading SHA256SUMS", () => {
 
 describe("the committed module it writes", () => {
   test("exports the two names the app reads, with the digests inside", () => {
-    const src = sidecarPinsModule(pinsFromChecksums(realistic, TAG), "Coneja-Chibi/Bunraku", TAG);
-    expect(src).toContain('export const SIDECAR_REPO = "Coneja-Chibi/Bunraku"');
+    const src = sidecarPinsModule(pinsFromChecksums(realistic, TAG), "Coneja-Chibi/Bunzai", TAG);
+    expect(src).toContain('export const SIDECAR_REPO = "Coneja-Chibi/Bunzai"');
     expect(src).toContain("export const SIDECAR_PINS: SidecarPins = {");
     expect(src).toContain(H("d"));
   });

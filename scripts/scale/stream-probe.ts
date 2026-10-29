@@ -1,6 +1,6 @@
 /**
  * S0 streaming probe: peak memory of one import/export scenario at a time,
- * measured on a throwaway studio and BUNRAKU_HOME. It starts its own server on a free port (never 8321),
+ * measured on a throwaway studio and BUNZAI_HOME. It starts its own server on a free port (never 8321),
  * samples that server's working set and heap every 25 ms (stream-probe-sampler.ts), and prints one JSON row
  * per phase. Run one scenario per invocation; nothing runs in parallel.
  *   bun scripts/scale/stream-probe.ts --sandbox <abs temp dir> --fixtures <dir> --scenario <name> [--port N]
@@ -36,7 +36,7 @@ const saveState = (): void => writeFileSync(stateFile, JSON.stringify(state));
 const sampleFile = join(sandbox, "samples", `${scenario}-${Date.now()}.jsonl`);
 const env = {
   ...process.env,
-  BUNRAKU_HOME: join(sandbox, "home"),
+  BUNZAI_HOME: join(sandbox, "home"),
   LOCALAPPDATA: join(sandbox, "local-app-data"),
   PROBE_OUT: sampleFile,
 };
@@ -101,7 +101,7 @@ async function startServer(): Promise<void> {
   throw new Error("server did not start");
 }
 
-const headers = (extra: Record<string, string> = {}): Record<string, string> => ({ origin: base, "x-bunraku-token": token, ...extra });
+const headers = (extra: Record<string, string> = {}): Record<string, string> => ({ origin: base, "x-bunzai-token": token, ...extra });
 const post = (path: string, body: BodyInit, extra: Record<string, string> = {}): Promise<Response> =>
   fetch(`${base}${path}`, { method: "POST", headers: headers(extra), body });
 const postJson = (path: string, value: unknown): Promise<Response> => post(path, JSON.stringify(value), { "content-type": "application/json" });

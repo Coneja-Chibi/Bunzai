@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/formats/rolecall",
   "sourcePath": "docs/reference/formats/rolecall.md",
-  "sourceHash": "sha256:fae4537160869f7ee0f3ba209f838a234dc8af51472e13b1d8038f8790d1903f",
-  "semanticSummaryHash": "sha256:7408832256eb65f09a85f614a00f26f3d73142ca164ab71bdc6d2360b522988e",
+  "sourceHash": "sha256:d4196e37f3912d9fb7146723b7a7dc2904850cbe03e5622d6c32895129c88111",
+  "semanticSummaryHash": "sha256:3839762ca47bb210e78254b5269698742a1198bb93969a0277dc0954a074e8b2",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Page line 19 and the summary now both say seven codecs, matching the seven listed adapters including rolecall-script-sheet.",
-  "reviewedAt": "2026-10-27T08:08:31.467Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:49.023Z"
 }

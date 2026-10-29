@@ -9,7 +9,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { JSX } from "react";
 import { AGENT_APP_ID, liveSurface } from "../agent/live-state";
-import type { AppContext, BunrakuApp } from "../app-contract";
+import type { AppContext, BunzaiApp } from "../app-contract";
 import { SetupWizard } from "../setup/wizard";
 import "./variant-styles";
 import { NavigationOverlay } from "./NavigationOverlay";
@@ -60,7 +60,7 @@ export function App({ forceSkipTitle = false, testListRetryDelaysMs, pieces: inj
   const [pieces] = useState(() => injectedPieces ?? new PieceStore());
   const { phase, bootError, showTitle, setShowTitle, restoreSettled, onSetupComplete, onLandingMounted } =
     useBoot(forceSkipTitle, testListRetryDelaysMs, pieces);
-  const modulesRef = useRef(new Map<string, BunrakuApp>());
+  const modulesRef = useRef(new Map<string, BunzaiApp>());
   /**
    * Which app's Component is actually on the canvas right now.
    *
@@ -69,7 +69,7 @@ export function App({ forceSkipTitle = false, testListRetryDelaysMs, pieces: inj
    * attributed to whoever actually made it.
    */
   const mountedAppId = useRef("");
-  const [activeModule, setActiveModule] = useState<BunrakuApp | null>(null);
+  const [activeModule, setActiveModule] = useState<BunzaiApp | null>(null);
   const [loadingAppId, setLoadingAppId] = useState<string>();
   const [workspaceTarget, setWorkspaceTarget] = useState<HTMLDivElement | null>(null);
   const [overlayTarget, setOverlayTarget] = useState<HTMLDivElement | null>(null);
@@ -151,7 +151,7 @@ export function App({ forceSkipTitle = false, testListRetryDelaysMs, pieces: inj
       // A failed chunk load (stale hash, network blip) must say so: unguarded, the dock highlights
       // the new app while the canvas sits empty.
       try {
-        const mod = (await import(assetUrl(`apps/${activeAppId}.js`))) as { default: BunrakuApp };
+        const mod = (await import(assetUrl(`apps/${activeAppId}.js`))) as { default: BunzaiApp };
         modulesRef.current.set(activeAppId, mod.default);
         if (!cancelled) {
           mountedAppId.current = activeAppId;
@@ -195,7 +195,7 @@ export function App({ forceSkipTitle = false, testListRetryDelaysMs, pieces: inj
       for (const m of manifests) {
         if (cancelled || m.comingSoon || modulesRef.current.has(m.id)) continue;
         try {
-          const mod = (await import(assetUrl(`apps/${m.id}.js`))) as { default: BunrakuApp };
+          const mod = (await import(assetUrl(`apps/${m.id}.js`))) as { default: BunzaiApp };
           modulesRef.current.set(m.id, mod.default);
         } catch {
           // prefetch is best-effort; the on-demand path above still owns the honest failure story

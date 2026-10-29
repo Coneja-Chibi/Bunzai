@@ -4,7 +4,7 @@
 
 ## Context
 
-Bunraku's canonical entities have rich handwritten TypeScript interfaces under
+Bunzai's canonical entities have rich handwritten TypeScript interfaces under
 `src/entities/<kind>/schema.ts`. TypeScript cannot validate JSON received from disk, HTTP, format
 adapters, or Kit drafts at runtime.
 

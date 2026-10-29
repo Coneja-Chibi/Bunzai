@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "guide/platforms/pygmalion",
   "sourcePath": "docs/guide/platforms/pygmalion.md",
-  "sourceHash": "sha256:364b45a30e2b1b9958711fa4d9b6de06dd431554cc4ae401d597c2541fa3708a",
-  "summary": "Pygmalion is the classic five-field flat character format before Character Card V2: name persona scenario greeting example dialogue as .json or text inside .png. What Bunraku reads: either container by true Pygmalion shape so SillyTavern PNG cards are not mistaken. What comes across cleanly keeps the original and lifts the five fields with persona also shown as description; PNG portrait kept; tool bookkeeping version timestamp tool name rides in background. What changes when you convert to another app keeps same-app everything including folding edits into a fresh PNG when imported as PNG; cross-app has little private extras to drop beyond tool stamps. Editing on the Workbench: description mirrors persona but edit personality to change how the character reads on export. Exporting back out writes .json or folds into PNG only from a Pygmalion PNG you gave it; fold failure falls back to JSON. Common questions cover exact return PNG rules recognition thresholds and bookkeeping drop.",
+  "sourceHash": "sha256:329ae3ca1bb0171264fa3147c549a279d31ef9023fe14137bbe3f36c169820c2",
+  "summary": "Pygmalion is the classic five-field flat character format before Character Card V2: name persona scenario greeting example dialogue as .json or text inside .png. What Bunzai reads: either container by true Pygmalion shape so SillyTavern PNG cards are not mistaken. What comes across cleanly keeps the original and lifts the five fields with persona also shown as description; PNG portrait kept; tool bookkeeping version timestamp tool name rides in background. What changes when you convert to another app keeps same-app everything including folding edits into a fresh PNG when imported as PNG; cross-app has little private extras to drop beyond tool stamps. Editing on the Workbench: description mirrors persona but edit personality to change how the character reads on export. Exporting back out writes .json or folds into PNG only from a Pygmalion PNG you gave it; fold failure falls back to JSON. Common questions cover exact return PNG rules recognition thresholds and bookkeeping drop.",
   "topics": [
     "Pygmalion five fields",
     "JSON or PNG container",
@@ -15,11 +15,11 @@
   ],
   "sections": [
     {
-      "slug": "what-bunraku-reads",
-      "title": "What Bunraku reads",
+      "slug": "what-bunzai-reads",
+      "title": "What Bunzai reads",
       "level": 2,
-      "sourceHash": "sha256:36906645cac9b3676c1372517e0e904bd6d3c212a6ca8815b02845d08bdd229e",
-      "summary": "Bunraku reads Pygmalion classic cards in either container: a .json five-field document alone or a .png with the same text tucked inside the picture like SillyTavern cards. Drop on the Library for a plain-words receipt. Recognition looks inside not filename. A picture can hide several card shapes so Bunraku checks the tucked text is genuinely Pygmalion before claiming the file and never mistakes a real SillyTavern card for Pygmalion just because both hide text the same way. Full walkthrough lives in the importing guide.",
+      "sourceHash": "sha256:807b43618acc578b90af523d0ef43ac9a520709fc06ff4640e726affbbbf8333",
+      "summary": "Bunzai reads Pygmalion classic cards in either container: a .json five-field document alone or a .png with the same text tucked inside the picture like SillyTavern cards. Drop on the Library for a plain-words receipt. Recognition looks inside not filename. A picture can hide several card shapes so Bunzai checks the tucked text is genuinely Pygmalion before claiming the file and never mistakes a real SillyTavern card for Pygmalion just because both hide text the same way. Full walkthrough lives in the importing guide.",
       "topics": [
         "JSON five fields",
         "PNG embedded text",
@@ -33,8 +33,8 @@
       "slug": "what-comes-across-cleanly",
       "title": "What comes across cleanly",
       "level": 2,
-      "sourceHash": "sha256:4619ea050279cec53d6543fdd2d99596fbdc79ff8845aac39b31583277ea4be1",
-      "summary": "Importing loses nothing. Bunraku keeps a complete original then lifts name; persona the one blob of who they are and how they act also shown as description so description-only views still have text; scenario; greeting opening line; example dialogue. If the card arrived as .png the picture is the piece portrait. Some exporters stamp version timestamp tool name bookkeeping with no field so it rides untouched in the background. After import the five fields are ready to edit and the rest is held safely.",
+      "sourceHash": "sha256:cd2b103e9df1a74a8fed592c34c11ff281acff638627c070c0715a1ec8f32814",
+      "summary": "Importing loses nothing. Bunzai keeps a complete original then lifts name; persona the one blob of who they are and how they act also shown as description so description-only views still have text; scenario; greeting opening line; example dialogue. If the card arrived as .png the picture is the piece portrait. Some exporters stamp version timestamp tool name bookkeeping with no field so it rides untouched in the background. After import the five fields are ready to edit and the rest is held safely.",
       "topics": [
         "five field lift",
         "persona as description",
@@ -47,8 +47,8 @@
       "slug": "what-changes-when-you-convert-to-another-app",
       "title": "What changes when you convert to another app",
       "level": 2,
-      "sourceHash": "sha256:7968b51be5cb489087a79d4adcaf0580bbdf0d6aa2a789287c005d83ef871356",
-      "summary": "Same-app round-trip keeps everything because Bunraku kept the original and only rewrote changed fields. If the card came as .png exporting back to Pygmalion folds possibly edited fields into a fresh copy of that same picture. Converting to another app drops little: classic wire never carried extensions scripts tags or system prompt so there is no large private pile. Core five fields come across as far as the target holds. Tool bookkeeping drops cross-app. Picture comes across if the target has a slot. Another app means SillyTavern Agnai Backyard RoleCall Risu. The drop is deliberate though for Pygmalion there is rarely much private to drop.",
+      "sourceHash": "sha256:1c2d127ac11ef2a4657cb119eaa56514bcd4ef351d9005c63d35b30285278006",
+      "summary": "Same-app round-trip keeps everything because Bunzai kept the original and only rewrote changed fields. If the card came as .png exporting back to Pygmalion folds possibly edited fields into a fresh copy of that same picture. Converting to another app drops little: classic wire never carried extensions scripts tags or system prompt so there is no large private pile. Core five fields come across as far as the target holds. Tool bookkeeping drops cross-app. Picture comes across if the target has a slot. Another app means SillyTavern Agnai Backyard RoleCall Risu. The drop is deliberate though for Pygmalion there is rarely much private to drop.",
       "topics": [
         "same-app full keep",
         "PNG fold back",
@@ -62,7 +62,7 @@
       "slug": "editing-on-the-workbench",
       "title": "Editing on the Workbench",
       "level": 2,
-      "sourceHash": "sha256:a8ea929877cf4e37944b89aa7e5b698bcbdd40fd51c219bcbf53c13143e7e209",
+      "sourceHash": "sha256:a691b6fef0d2a6caf5bc36adf56eae4e0deae0145df4829202d9f7ebf4a19641",
       "summary": "Send a piece to the Workbench as a tab and edit name personality scenario first message and example messages. Description mirrors persona for display but on a Pygmalion piece is read-only in effect: editing description alone without personality will not reach the card on export so edit personality when you mean to change how the character reads. Save writes the whole card so tool bookkeeping and untouched parts stay.",
       "topics": [
         "Workbench core fields",
@@ -77,8 +77,8 @@
       "slug": "exporting-back-out",
       "title": "Exporting back out",
       "level": 2,
-      "sourceHash": "sha256:5d2f8ad06c859ef470747049425ad6e210c392760ba1341bf479f2b74571dc01",
-      "summary": "Stage for the Press; each run exports staged pieces to one target. Bunraku writes Pygmalion as .json five fields plus whatever rode along. If the piece history includes an imported .png exporting to Pygmalion folds current fields into a fresh picture; if fold fails it falls back to plain .json rather than a broken file. Converting a piece that started elsewhere to Pygmalion writes plain .json with no picture; Bunraku only produces Pygmalion .png from a Pygmalion .png you actually gave it. Other app targets apply the drop story.",
+      "sourceHash": "sha256:572adae0eb6eb144660ad982952eece20b45f233e37fb22e5cf586e247656504",
+      "summary": "Stage for the Press; each run exports staged pieces to one target. Bunzai writes Pygmalion as .json five fields plus whatever rode along. If the piece history includes an imported .png exporting to Pygmalion folds current fields into a fresh picture; if fold fails it falls back to plain .json rather than a broken file. Converting a piece that started elsewhere to Pygmalion writes plain .json with no picture; Bunzai only produces Pygmalion .png from a Pygmalion .png you actually gave it. Other app targets apply the drop story.",
       "topics": [
         "Press JSON default",
         "PNG fold if history",
@@ -92,8 +92,8 @@
       "slug": "common-questions",
       "title": "Common questions",
       "level": 2,
-      "sourceHash": "sha256:c8b88cfb352a2de4d1f392c664b3bc9a4e51d9faba9913c35d1a7adfeb5f7804",
-      "summary": "Will the card come back exactly as it was? Yes on export to Pygmalion. Imported .png returns as .png only when fold into a fresh picture succeeds; otherwise plain .json not a broken file; other targets write JSON fields without picture. Portrait is kept on import and returns on Pygmalion export; cross-app picture only if target has a slot; converting a card that never had a picture never invents one. Name and greeting alone without persona or scenario is not enough: Bunraku needs at least two of persona greeting and scenario or name plus persona specifically. Tool bookkeeping rides on round-trip and drops cross-app.",
+      "sourceHash": "sha256:ccd770abfbe2cb6377c35289384c75616c26222beb18257a21bbe34a411ecd30",
+      "summary": "Will the card come back exactly as it was? Yes on export to Pygmalion. Imported .png returns as .png only when fold into a fresh picture succeeds; otherwise plain .json not a broken file; other targets write JSON fields without picture. Portrait is kept on import and returns on Pygmalion export; cross-app picture only if target has a slot; converting a card that never had a picture never invents one. Name and greeting alone without persona or scenario is not enough: Bunzai needs at least two of persona greeting and scenario or name plus persona specifically. Tool bookkeeping rides on round-trip and drops cross-app.",
       "topics": [
         "exact Pygmalion return",
         "PNG fold rules",

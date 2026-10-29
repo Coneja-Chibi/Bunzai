@@ -1,6 +1,6 @@
 /**
  * Regression: a tokenizer-family matcher that matches specific model names has to be hand-extended
- * release after release (Qwen3, Qwen3.5, Kimi K2/K2.5, Mistral V7 Tekken, Grok OSS). Bunraku's
+ * release after release (Qwen3, Qwen3.5, Kimi K2/K2.5, Mistral V7 Tekken, Grok OSS). Bunzai's
  * familyOf matches by substring instead, so a newer point release of a known family should
  * classify correctly without an edit here; this is the regression guard for that property.
  */

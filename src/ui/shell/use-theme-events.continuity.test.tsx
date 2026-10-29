@@ -27,7 +27,7 @@ beforeAll(() => { installed = installDom('<html><head><meta name="vaude-session"
 }); });
 beforeEach(() => {
   installed.reinstall();
-  document.querySelector('meta[name="bunraku-runtime"]')?.remove();
+  document.querySelector('meta[name="bunzai-runtime"]')?.remove();
   Object.defineProperty(document, "visibilityState", { configurable: true, value: "visible" });
   revision = { epoch: "a".repeat(48), revision: 1 };
   pending = false; finish = null; reads = cleared = 0;
@@ -104,7 +104,7 @@ test("lock fences a pending foreground read so it cannot resurrect a theme", asy
 });
 
 test("Pocket focus preserves appearance but its lifecycle event clears pending authorization", async () => {
-  const meta = document.createElement("meta"); meta.name = "bunraku-runtime"; meta.content = "browser"; document.head.append(meta);
+  const meta = document.createElement("meta"); meta.name = "bunzai-runtime"; meta.content = "browser"; document.head.append(meta);
   await mount(); cleared = 0; pending = true; await focus();
   expect(cleared).toBe(0);
   await act(async () => {

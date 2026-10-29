@@ -13,7 +13,7 @@ const row = (over: Partial<EngineRow> = {}): EngineRow => ({
   id: "sillytavern",
   label: "SillyTavern",
   install: "a SillyTavern checkout",
-  rootVar: "BUNRAKU_ST_ROOT",
+  rootVar: "BUNZAI_ST_ROOT",
   saved: "",
   env: "",
   root: "",
@@ -41,7 +41,7 @@ describe("engineState", () => {
 
   test("a variable in force names itself and locks the field", () => {
     const state = engineState(row({ saved: "C:\\Saved", env: "C:\\Var", root: "C:\\Var", from: "env" }));
-    expect(state).toEqual({ note: "in use, from BUNRAKU_ST_ROOT", ok: true, locked: true });
+    expect(state).toEqual({ note: "in use, from BUNZAI_ST_ROOT", ok: true, locked: true });
   });
 
   test("a variable that is set and names nothing blames the variable, not the saved folder", () => {
@@ -49,7 +49,7 @@ describe("engineState", () => {
     // that is not the one being used, and no edit to it can help until the variable is unset.
     const state = engineState(row({ saved: "C:\\Saved", env: "C:\\Wrong" }));
     expect(state.ok).toBe(false);
-    expect(state.note).toContain("BUNRAKU_ST_ROOT is set");
+    expect(state.note).toContain("BUNZAI_ST_ROOT is set");
     expect(state.locked).toBe(true);
   });
 });

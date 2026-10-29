@@ -22,15 +22,15 @@ describe("theme extension read routes", () => {
   });
 
   test("example export returns a cloned, validated complete envelope", async () => {
-    const lifecycle = await createThemeLifecycle(memoryStateStore(), [], [await pkg("bunraku.theme.example")]);
-    const [req, url] = request("/api/themes/examples/bunraku.theme.example/package");
+    const lifecycle = await createThemeLifecycle(memoryStateStore(), [], [await pkg("bunzai.theme.example")]);
+    const [req, url] = request("/api/themes/examples/bunzai.theme.example/package");
     const first = await handleThemeRoutes(req, url, lifecycle, settings);
     expect(first?.status).toBe(200);
     const envelope = await first!.json() as ThemePackageInput;
     expect(envelope.licenseText).toBe("CC0 test license");
     (envelope.manifest as { name: string }).name = "Changed outside lifecycle";
     const again = await handleThemeRoutes(req, url, lifecycle, settings);
-    expect(((await again!.json()) as ThemePackageInput).manifest).toMatchObject({ name: "bunraku.theme.example" });
+    expect(((await again!.json()) as ThemePackageInput).manifest).toMatchObject({ name: "bunzai.theme.example" });
   });
 
   test("effective theme: a fresh install paints the default, a saved theme is kept", async () => {
@@ -42,7 +42,7 @@ describe("theme extension read routes", () => {
   });
 
   test("revision polling exposes only a lifecycle epoch and committed revision", async () => {
-    const lifecycle = await createThemeLifecycle(memoryStateStore(), [await pkg("theater")], [await pkg("bunraku.theme.example")]);
+    const lifecycle = await createThemeLifecycle(memoryStateStore(), [await pkg("theater")], [await pkg("bunzai.theme.example")]);
     const [req, url] = request("/api/themes/revision");
     const firstResponse = await handleThemeReadRoutes(req, url, lifecycle, settings);
     expect(firstResponse?.headers.get("cache-control")).toBe("no-store");
@@ -50,12 +50,12 @@ describe("theme extension read routes", () => {
     expect(first.epoch).toMatch(/^[a-f0-9]{48}$/);
     expect(first.revision).toBe(0);
     expect(Object.keys(first).sort()).toEqual(["epoch", "revision"]);
-    const approval = await lifecycle.inspectExample("bunraku.theme.example");
+    const approval = await lifecycle.inspectExample("bunzai.theme.example");
     await lifecycle.install(approval.challenge, approval.preview.digest, "approve");
     const changedResponse = await handleThemeReadRoutes(req, url, lifecycle, settings);
     const changed = await changedResponse!.json() as { epoch: string; revision: number };
     expect(changed).toEqual({ epoch: first.epoch, revision: 1 });
-    await lifecycle.disable("bunraku.theme.example");
+    await lifecycle.disable("bunzai.theme.example");
     expect((await (await handleThemeReadRoutes(req, url, lifecycle, settings))!.json()).revision).toBe(2);
     const restarted = await createThemeLifecycle(memoryStateStore(), [await pkg("theater")]);
     const restartStamp = await (await handleThemeReadRoutes(req, url, restarted, settings))!.json() as { epoch: string; revision: number };

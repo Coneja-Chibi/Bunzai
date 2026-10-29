@@ -17,7 +17,7 @@ afterEach(() => {
   for (const dir of dirs.splice(0)) rmSync(dir, { recursive: true, force: true });
 });
 const file = (): string => {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-mig-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-mig-"));
   dirs.push(dir);
   return join(dir, "library.db");
 };

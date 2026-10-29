@@ -153,7 +153,7 @@ describe("engine-feature support table (travel-honesty axis, grounded in design/
     }
   });
 
-  test("<cbs> flag tokens run on Risu only (Bunraku strips them at compile)", () => {
+  test("<cbs> flag tokens run on Risu only (Bunzai strips them at compile)", () => {
     expect(REGEX_REPLACE_FEATURE_SUPPORT["cbs-flag-tokens"]).toEqual(["risu"]);
     for (const p of REGEX_WRITE_FOR_PROFILES) {
       expect(profileRunsReplaceFeature(p, "cbs-flag-tokens")).toBe(p === "risu");

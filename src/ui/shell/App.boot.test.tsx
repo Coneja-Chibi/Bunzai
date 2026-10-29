@@ -215,7 +215,7 @@ describe("boot paints before the piece list resolves", () => {
     mount(<App />); // no forceSkipTitle, no reload/requested/restore: title-core.ts says show it
 
     const shell = await waitForElement("shell");
-    expect(shell.querySelector('[aria-label="Bunraku title screen"]')?.textContent).toContain("Enter the theater");
+    expect(shell.querySelector('[aria-label="Bunzai title screen"]')?.textContent).toContain("Enter the theater");
   }, TIMEOUT);
 
   test("the status bar never claims the shelves are empty before the list has even been asked", async () => {
@@ -298,11 +298,11 @@ describe("the late correction (every named piece is gone)", () => {
 
     await waitForElement("shell");
     expect(useShellStore.getState().activeAppId).toBe("workbench"); // provisional, from settings alone
-    expect(dom.window.document.querySelector('[aria-label="Bunraku title screen"]')).toBeNull(); // suppressed for now
+    expect(dom.window.document.querySelector('[aria-label="Bunzai title screen"]')).toBeNull(); // suppressed for now
 
     resolveList([]); // the one piece the bench named no longer exists
     await waitUntil(() => useShellStore.getState().activeAppId === "scenes");
-    await waitUntil(() => dom.window.document.querySelector('[aria-label="Bunraku title screen"]') !== null);
+    await waitUntil(() => dom.window.document.querySelector('[aria-label="Bunzai title screen"]') !== null);
   }, TIMEOUT);
 
   test("the user already moved on: left alone, never yanked back or interrupted", async () => {
@@ -326,7 +326,7 @@ describe("the late correction (every named piece is gone)", () => {
     // could pass vacuously an instant before a wrongly-called setShowTitle(true) ever commits.
     await new Promise((r) => dom.window.setTimeout(r, 0));
     expect(useShellStore.getState().activeAppId).toBe("scenes"); // not yanked back to workbench
-    expect(dom.window.document.querySelector('[aria-label="Bunraku title screen"]')).toBeNull(); // no title over live work
+    expect(dom.window.document.querySelector('[aria-label="Bunzai title screen"]')).toBeNull(); // no title over live work
   }, TIMEOUT);
 });
 
@@ -340,7 +340,7 @@ for (const close of [false, true]) test(`late boot correction cannot navigate af
   await new Promise((resolve) => dom.window.setTimeout(resolve, 0));
   expect(useShellStore.getState().activeAppId).toBe("workbench");
   expect(useShellStore.getState().overlayAppId).toBe("scenes");
-  expect(dom.window.document.querySelector('[aria-label="Bunraku title screen"]') === null).toBe(true);
+  expect(dom.window.document.querySelector('[aria-label="Bunzai title screen"]') === null).toBe(true);
 }, TIMEOUT);
 
 describe("a link target always wins, and never restores", () => {
@@ -376,7 +376,7 @@ describe("a link target always wins, and never restores", () => {
 // Two real app modules are served from a temporary folder through the document's base URL, so App.tsx's own import() and cache run.
 describe("a loaded app opens in one step", () => {
   test("no loading canvas paints between two loaded apps", async () => {
-    const assets = mkdtempSync(join(tmpdir(), "bunraku-apps-"));
+    const assets = mkdtempSync(join(tmpdir(), "bunzai-apps-"));
     const base = dom.window.document.querySelector("base")!;
     const blob = base.getAttribute("href")!;
     try {

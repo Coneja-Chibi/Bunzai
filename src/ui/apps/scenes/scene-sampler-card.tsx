@@ -1,6 +1,6 @@
 /**
  * One sampler as RoleCall draws it (PresetPanel.tsx:2859-3030 SamplerSlider): a card holding the label with its own-value dot and a "?" that opens
- * the help, the coloured value (click it to type one, Enter keeps it held to the range and step, Escape drops it), and the slider. Bunraku adds the
+ * the help, the coloured value (click it to type one, Enter keeps it held to the range and step, Escape drops it), and the slider. Bunzai adds the
  * preset's own value, struck through, as the way back when the scene has changed this one. `plain` is the Control Booth's QuickSlider
  * (QuickPlayPanel.tsx:439-498): the label and the value as text, no help and no typing.
  */

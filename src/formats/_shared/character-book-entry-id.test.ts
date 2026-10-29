@@ -37,7 +37,7 @@ describe("an embedded entry's id on the wire", () => {
     /**
      * The exact failure. A lorebook that came from anywhere except a SillyTavern worldbook carries
      * ids that are not numbers, and the cross-format path wrote the canonical string straight
-     * through - producing a card SillyTavern refuses, with nothing in Bunraku reporting a problem
+     * through - producing a card SillyTavern refuses, with nothing in Bunzai reporting a problem
      * because from here the export succeeded.
      */
     const book = lorebookToCharacterBook(bookWith([

@@ -13,7 +13,7 @@ import { storyboardProps } from "./trackers/storyboards";
 import { trackHareProp } from "./trackhare";
 import { directorProp } from "./story-director";
 
-/** The wing's order, RoleCall's catalog order first (Mood Music, then Character Voices' colours), Bunraku's own after. */
+/** The wing's order, RoleCall's catalog order first (Mood Music, then Character Voices' colours), Bunzai's own after. */
 const PROPS: SceneProp[] = [moodMusicProp, dialogueColorsProp, directorProp, ...storyboardProps, ...legacyProps, spotifyProp, trackHareProp];
 
 export const sceneProps = (): SceneProp[] => [...PROPS];

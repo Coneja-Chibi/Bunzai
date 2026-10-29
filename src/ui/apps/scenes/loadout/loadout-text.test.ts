@@ -29,7 +29,7 @@ describe("the undo window", () => {
 });
 
 describe("the banner", () => {
-  test("a clean apply reads RoleCall's words with the Bunraku note", () => {
+  test("a clean apply reads RoleCall's words with the Bunzai note", () => {
     const v = bannerView(receipt([row("connection", ["mainModel"], "applied"), row("preset", ["preset", "samplers"], "applied")]), T0 + 1000);
     expect(v.tone).toBe("applied");
     expect(v.headline).toBe("Slow burn applied");

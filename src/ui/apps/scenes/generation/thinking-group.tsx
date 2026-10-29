@@ -66,7 +66,7 @@ export function ThinkingGroup({ env, prompting }: { env: GenerationEnv; promptin
           {claude && (
             <div role="status" aria-label="Claude prefill compatibility warning" className="gn-claude">
               <p><Ic name="mdi:alert-outline" size={16} /> <b>Claude 4.6+ cannot continue an assistant prefill.</b></p>
-              <p>{role === "assistant" ? "Bunraku will ignore any chat or preset Start Reply With text for this model. The text remains saved for compatible models." : role === "user" ? "Bunraku will send the Start Reply With text as a final user message instead." : "Bunraku will send the Start Reply With text as a final system note."}</p>
+              <p>{role === "assistant" ? "Bunzai will ignore any chat or preset Start Reply With text for this model. The text remains saved for compatible models." : role === "user" ? "Bunzai will send the Start Reply With text as a final user message instead." : "Bunzai will send the Start Reply With text as a final system note."}</p>
               <div className="gn-two">
                 <Segmented<typeof role> label="Claude prefill handling" items={[{ value: "assistant", label: "Ignore for Claude", tone: "var(--stage-warn)" }, { value: "user", label: "Send as user message", tone: "var(--stage-warn)" }]} value={role} onChange={(r) => write({ prefillRole: r === "assistant" ? null : r }, "Start Reply With")} />
               </div>

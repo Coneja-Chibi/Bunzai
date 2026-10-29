@@ -18,7 +18,7 @@
       "title": "Included",
       "level": 2,
       "sourceHash": "sha256:1797bde5d98f31eb33ddd1389c6bbc1a7a3e3e4e0adfb714eb1e254f855d09a2",
-      "summary": "Included classifies 57 files explicitly. Character creation, personas, selection, interchange, colors, sprites, and galleries route to character or media references. Every Conversation guide is named and routed. Card CSS, style profiles, scene backgrounds, animated expressions, and Roleplay backgrounds route to visual assets. All six lorebook files, seven prompt files, and seven agent files receive individual destinations, with hierarchical maps routed to maps rather than agents. Custom tools, regex, Professor Mari, four chat guides, five Game guides, three Roleplay state guides, and three data or import guides complete the selected authoring corpus. These upstream destinations do not imply Bunraku codec support.",
+      "summary": "Included classifies 57 files explicitly. Character creation, personas, selection, interchange, colors, sprites, and galleries route to character or media references. Every Conversation guide is named and routed. Card CSS, style profiles, scene backgrounds, animated expressions, and Roleplay backgrounds route to visual assets. All six lorebook files, seven prompt files, and seven agent files receive individual destinations, with hierarchical maps routed to maps rather than agents. Custom tools, regex, Professor Mari, four chat guides, five Game guides, three Roleplay state guides, and three data or import guides complete the selected authoring corpus. These upstream destinations do not imply Bunzai codec support.",
       "topics": [
         "conversation seven paths",
         "characters sprites visuals",

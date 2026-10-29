@@ -155,7 +155,7 @@ export function readChat(raw: string, filename: string): ImportedScene {
   if (messageRecords.length === 0) throw new SceneRefusal("This chat has no messages in it.");
   if (isGroup(records)) {
     const speakers = byFrequency(messageRecords.filter((r) => r["is_user"] !== true && r["is_system"] !== true).map((r) => r["name"] as string));
-    throw new SceneRefusal(`This is a group chat${speakers.length > 0 ? ` (${speakers.slice(0, 4).join(", ")})` : ""}. A Bunraku scene has one character, so it cannot hold a group chat yet.`);
+    throw new SceneRefusal(`This is a group chat${speakers.length > 0 ? ` (${speakers.slice(0, 4).join(", ")})` : ""}. A Bunzai scene has one character, so it cannot hold a group chat yet.`);
   }
   const header = records.find(isHeader);
   const counts: Counts = { normalized: 0, hidden: 0, untimed: 0 };

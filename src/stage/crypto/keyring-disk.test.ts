@@ -28,7 +28,7 @@ afterEach(() => {
 });
 
 function onDisk(freeSpace?: () => number) {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-keydisk-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-keydisk-"));
   dirs.push(dir);
   const path = join(dir, "b.db");
   const d = openStageDatabase(path, MIGRATIONS, freeSpace ? { freeSpace } : {});

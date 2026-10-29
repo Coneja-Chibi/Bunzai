@@ -9,7 +9,7 @@ import { SLOT_ATTRIBUTE, SLOT_IDS } from "./theme-slot-core";
 const installed = installDom(undefined, { globals: { IS_REACT_ACT_ENVIRONMENT: true }, extraGlobals: ["MutationObserver"] });
 afterAll(() => installed.teardown());
 
-const logo = `/api/themes/assets/bunraku.theme.encore/logo?digest=${"a".repeat(64)}`;
+const logo = `/api/themes/assets/bunzai.theme.encore/logo?digest=${"a".repeat(64)}`;
 
 async function draw(payload: object | string | null, id: (typeof SLOT_IDS)[number] = "library.header"): Promise<HTMLElement> {
   const root = document.documentElement;

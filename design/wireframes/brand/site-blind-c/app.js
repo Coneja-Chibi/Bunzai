@@ -1,8 +1,8 @@
-/* Bunraku site: hash router, live releases with fallback, OS detection, guide search, demo. */
+/* Bunzai site: hash router, live releases with fallback, OS detection, guide search, demo. */
 (function () {
   "use strict";
 
-  var D = window.BUNRAKU_DATA;
+  var D = window.BUNZAI_DATA;
   var main = document.getElementById("main");
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -120,7 +120,7 @@
 
   /* ---------- pages ---------- */
   function downloadButton(big) {
-    var label = OS ? "Download for " + D.systems[OS].name : "Download Bunraku";
+    var label = OS ? "Download for " + D.systems[OS].name : "Download Bunzai";
     var sub = OS ? "Free. Version <span data-version>0.1</span>" : "Windows, Mac and Linux";
     return '<a class="btn btn-stamp' + (big ? " btn-big" : "") + '" href="#/download" data-dl-button>' + icon.download +
       '<span>' + label + (big ? '<span class="btn-sub">' + sub + "</span>" : "") + "</span></a>";
@@ -133,7 +133,7 @@
       '<div>' +
         '<p class="eyebrow">Free and open source</p>' +
         '<h1 tabindex="-1">Your characters. Your stories. <em>Your computer.</em></h1>' +
-        '<p class="lead">Bunraku is a cozy desktop app for playing and making AI roleplay characters. Bring your cards, use your own AI key, and keep everything private on your machine.</p>' +
+        '<p class="lead">Bunzai is a cozy desktop app for playing and making AI roleplay characters. Bring your cards, use your own AI key, and keep everything private on your machine.</p>' +
         '<div class="hero-cta">' + downloadButton(true) +
           '<a class="link-arrow" href="#/try">Or try the Studio in your browser ' + icon.arrow + '</a></div>' +
         '<div class="hero-meta"><span class="chip" data-version-chip><span class="dot"></span>Checking for the latest version</span>' +
@@ -158,7 +158,7 @@
 
     '<section class="section section-alt"><div class="wrap">' +
       '<div class="section-head"><p class="eyebrow">Three things you do</p><h2>Play, make, keep.</h2>' +
-        '<p>Bunraku is built around the three things roleplay fans already do. It just makes each one a little nicer.</p></div>' +
+        '<p>Bunzai is built around the three things roleplay fans already do. It just makes each one a little nicer.</p></div>' +
       '<div class="acts">' +
         act("Act one", "Play scenes", "Chat with any character. Swipe for another reply, or branch the story into takes and try a different path.", "#/features/scenes", "Tour Scenes") +
         act("Act two", "Make things", "Characters, lorebooks and presets, each with an editor that shows what you're doing as you type.", "#/features/workbench", "Tour the Workbench") +
@@ -196,7 +196,7 @@
 
   function pageFeatures() {
     return '<section class="page-head"><div class="wrap">' +
-      '<p class="eyebrow">Feature tour</p><h1 tabindex="-1">Everything Bunraku does, one stop at a time.</h1>' +
+      '<p class="eyebrow">Feature tour</p><h1 tabindex="-1">Everything Bunzai does, one stop at a time.</h1>' +
       '<p class="lead">Five parts, each with its own job. Pick one to take a closer look.</p></div></section>' +
       '<section class="wrap" style="padding-bottom:48px"><div class="feature-list">' +
       D.features.map(function (f) {
@@ -225,7 +225,7 @@
       '<nav class="pager" aria-label="More features">' +
         (prev ? '<a href="#/features/' + prev.slug + '"><small>Previous</small><b>' + esc(prev.name) + '</b></a>' : "") +
         (next ? '<a class="next" href="#/features/' + next.slug + '"><small>Next</small><b>' + esc(next.name) + '</b></a>'
-              : '<a class="next" href="#/download"><small>Ready?</small><b>Download Bunraku</b></a>') +
+              : '<a class="next" href="#/download"><small>Ready?</small><b>Download Bunzai</b></a>') +
       '</nav></section>';
   }
 
@@ -322,13 +322,13 @@
     var others = ["windows", "mac", "linux"].filter(function (k) { return k !== OS; });
     var sys = OS ? D.systems[OS] : null;
     return '<section class="page-head"><div class="wrap">' +
-      '<p class="eyebrow">Download</p><h1 tabindex="-1">Get Bunraku</h1>' +
+      '<p class="eyebrow">Download</p><h1 tabindex="-1">Get Bunzai</h1>' +
       '<p class="lead">Free for Windows, Mac and Linux. No account needed.</p></div></section>' +
       '<section class="wrap" style="padding-bottom:48px"><div class="dl-grid">' +
       '<div class="ticket dl-main" data-dl-main>' +
         (sys
-          ? '<p class="eyebrow">Looks like you\'re on ' + sys.name + '</p><h2>Bunraku for ' + sys.name + '</h2><p class="muted">' + sys.detail + '. ' + sys.file + '.</p>'
-          : '<p class="eyebrow">Pick your computer</p><h2>Bunraku is a desktop app</h2><p class="muted">It runs on Windows, Mac and Linux computers. Choose yours from the list.</p>') +
+          ? '<p class="eyebrow">Looks like you\'re on ' + sys.name + '</p><h2>Bunzai for ' + sys.name + '</h2><p class="muted">' + sys.detail + '. ' + sys.file + '.</p>'
+          : '<p class="eyebrow">Pick your computer</p><h2>Bunzai is a desktop app</h2><p class="muted">It runs on Windows, Mac and Linux computers. Choose yours from the list.</p>') +
         '<dl class="facts"><div><dt>Version</dt><dd data-version>...</dd></div><div><dt>Released</dt><dd data-date>...</dd></div>' +
           (sys ? '<div><dt>Size</dt><dd data-size-' + OS + '>...</dd></div>' : '') + '</dl>' +
         (sys ? '<a class="btn btn-stamp btn-big" data-href-' + OS + ' href="' + D.releasesPage + '">' + icon.download + '<span>Download for ' + sys.name + '</span></a>' : '') +
@@ -342,9 +342,9 @@
         '<a class="other current" href="#/try"><div><strong>No install</strong><span>Try the Studio in your browser</span></div>' + icon.arrow + '</a>' +
       '</div></div></div>' +
       '<div class="note"><h3>If Windows says it doesn\'t recognize the app</h3>' +
-        '<p>Bunraku is new, so Windows may show a blue box that says it protected your PC. That is normal for new apps. To continue:</p>' +
+        '<p>Bunzai is new, so Windows may show a blue box that says it protected your PC. That is normal for new apps. To continue:</p>' +
         '<ol><li>Click <strong>More info</strong>.</li><li>Click <strong>Run anyway</strong>.</li></ol>' +
-        '<p style="margin:12px 0 0">You only need to do this once. On first launch, Bunraku adds itself to your Start menu so it is easy to find again.</p></div>' +
+        '<p style="margin:12px 0 0">You only need to do this once. On first launch, Bunzai adds itself to your Start menu so it is easy to find again.</p></div>' +
       '</section>';
   }
 
@@ -358,7 +358,7 @@
   function pageTry() {
     return '<section class="page-head"><div class="wrap">' +
       '<p class="eyebrow">Try it</p><h1 tabindex="-1">Try the Studio in your browser</h1>' +
-      '<p class="lead">The Studio is the making side of Bunraku. It runs right in your browser, so you can poke around before you install anything.</p>' +
+      '<p class="lead">The Studio is the making side of Bunzai. It runs right in your browser, so you can poke around before you install anything.</p>' +
       '<p><a class="btn btn-stamp btn-big" href="studio/">Open the Studio ' + icon.arrow + '</a></p></div></section>' +
       '<section class="wrap" style="padding-bottom:48px"><div class="try-grid">' +
         '<div class="can"><h3>What works in the browser</h3><ul><li>Make and edit characters, lorebooks and presets.</li><li>Preview macros and prompts as you type.</li></ul></div>' +
@@ -460,7 +460,7 @@
   }
 
   /* ---------- router ---------- */
-  var titles = { "": "Bunraku", features: "Feature tour", guides: "Guides and help", download: "Download", "whats-new": "What's new", try: "Try it" };
+  var titles = { "": "Bunzai", features: "Feature tour", guides: "Guides and help", download: "Download", "whats-new": "What's new", try: "Try it" };
 
   function parse() {
     var h = location.hash.replace(/^#\/?/, "");
@@ -485,17 +485,17 @@
       scrollToSection(p[2]); return;
     }
     clearInterval(demoTimer);
-    if (!top) { html = pageHome(); title = "Bunraku: AI roleplay on your own computer"; }
+    if (!top) { html = pageHome(); title = "Bunzai: AI roleplay on your own computer"; }
     else if (top === "features" && !p[1]) html = pageFeatures();
-    else if (top === "features") { html = pageFeature(p[1]); if (html) title = D.features.filter(function (f) { return f.slug === p[1]; })[0].name + " | Bunraku"; }
+    else if (top === "features") { html = pageFeature(p[1]); if (html) title = D.features.filter(function (f) { return f.slug === p[1]; })[0].name + " | Bunzai"; }
     else if (top === "guides" && !p[1]) html = pageGuides(r.q);
-    else if (top === "guides") { html = pageGuide(p[1]); if (html) title = D.guides.filter(function (g) { return g.slug === p[1]; })[0].title + " | Bunraku"; }
+    else if (top === "guides") { html = pageGuide(p[1]); if (html) title = D.guides.filter(function (g) { return g.slug === p[1]; })[0].title + " | Bunzai"; }
     else if (top === "download" && !p[1]) html = pageDownload();
     else if (top === "whats-new" && !p[1]) html = pageWhatsNew();
     else if (top === "try" && !p[1]) html = pageTry();
-    if (html == null) { html = pageLost(); title = "Page not found | Bunraku"; top = ""; }
+    if (html == null) { html = pageLost(); title = "Page not found | Bunzai"; top = ""; }
     main.innerHTML = html;
-    document.title = title || (titles[top] ? titles[top] + " | Bunraku" : "Bunraku");
+    document.title = title || (titles[top] ? titles[top] + " | Bunzai" : "Bunzai");
     document.querySelectorAll("[data-nav]").forEach(function (a) {
       if (a.getAttribute("data-nav") === top) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });

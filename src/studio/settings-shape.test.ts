@@ -25,8 +25,8 @@ describe("parseSettings", () => {
 
   test("all persisted theme ids round-trip and invalid values fall back to absent", () => {
     for (const theme of STUDIO_THEMES) expect(parseSettings({ setupComplete: true, theme }).theme).toBe(theme);
-    expect(parseSettings({ setupComplete: true, theme: "bunraku.theme.encore" }).theme).toBe("bunraku.theme.encore");
-    for (const theme of ["neon", "encore", "bunraku.theme.", "bunraku.theme.Bad", null, 4, {}]) {
+    expect(parseSettings({ setupComplete: true, theme: "bunzai.theme.encore" }).theme).toBe("bunzai.theme.encore");
+    for (const theme of ["neon", "encore", "bunzai.theme.", "bunzai.theme.Bad", null, 4, {}]) {
       expect(parseSettings({ theme }).theme).toBeUndefined();
     }
     expect(parseSettings({}).theme).toBeUndefined();
@@ -73,7 +73,7 @@ test("the shared theme cycle includes each theme once", () => {
 test("a fresh install has no saved theme and the default is never written into settings", () => {
   expect(parseSettings(null).theme).toBeUndefined();
   expect(parseSettings({ setupComplete: false }).theme).toBeUndefined();
-  for (const theme of ["theater", "paper", "stage", "bunraku.theme.encore"] as const) expect(parseSettings({ setupComplete: true, theme }).theme).toBe(theme);
+  for (const theme of ["theater", "paper", "stage", "bunzai.theme.encore"] as const) expect(parseSettings({ setupComplete: true, theme }).theme).toBe(theme);
 });
 
 describe("stage lights pref", () => {

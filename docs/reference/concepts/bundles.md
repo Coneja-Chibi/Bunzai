@@ -9,7 +9,7 @@ related: [reference/architecture, reference/entities/character, reference/entiti
 
 # Bundles
 
-A character card can embed its own lorebook (`data.character_book` in CCv2/v3). bunraku never keeps that
+A character card can embed its own lorebook (`data.character_book` in CCv2/v3). bunzai never keeps that
 embedded book as a blob on the character: on import it becomes a second, independent `CanonicalLorebook`,
 linked from the character by id (`architecture.md`, "Bundles: a card plus its lorebook"). This page is the
 link mechanism itself: how the two entities split apart on import, how they rejoin on export, and the two
@@ -82,7 +82,7 @@ recoverable later rather than silently dropped.
 
 `knowledgeRefs` is the same field either way, but what resolves it differs by caller.
 
-**The CLI (`bunraku convert`) is one ephemeral pass.** `convertFile` (`convert.ts`) calls
+**The CLI (`bunzai convert`) is one ephemeral pass.** `convertFile` (`convert.ts`) calls
 `readPieces` then `emitPieces` back to back, in memory, for one file in and one file out
 (`cli.ts:341`). No lorebook file is ever written to disk; if the target format embeds knowledge the book
 rides inside the single output file, and the CLI only reports how many entries carried across

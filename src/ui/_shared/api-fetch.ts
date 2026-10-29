@@ -38,9 +38,9 @@ export const apiStatusIs = (error: unknown, status: number): boolean =>
  * another window). The shell's library gate listens and shows the stage door. A window event, not a
  * shared object, because every app is its own bundle with its own copy of this module.
  */
-export const LIBRARY_LOCKED_EVENT = "bunraku:library-locked";
+export const LIBRARY_LOCKED_EVENT = "bunzai:library-locked";
 /** A server replaced the document's session; the host offers explicit recovery without discarding drafts. */
-export const SESSION_STALE_EVENT = "bunraku:session-stale";
+export const SESSION_STALE_EVENT = "bunzai:session-stale";
 
 
 const TOKEN_META = 'meta[name="vaude-session"]';
@@ -67,7 +67,7 @@ export async function apiFetch(path: string, init: ApiFetchInit = {}): Promise<R
   if (requireToken) {
     const token = readSessionToken();
     if (!token) throw new ApiHttpError(403, "missing session");
-    headers["X-Bunraku-Token"] = token;
+    headers["X-Bunzai-Token"] = token;
   }
   const { requireToken: _r, headers: _h, ...rest } = init;
   const res = await fetch(path, { ...rest, headers });

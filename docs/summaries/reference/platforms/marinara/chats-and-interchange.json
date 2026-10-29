@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/chats-and-interchange",
   "sourcePath": "docs/reference/platforms/marinara/chats-and-interchange.md",
-  "sourceHash": "sha256:658a077d16f840001e5a43667f9c2ab2fde83eb63df66c109da45f9d6a62f35f",
-  "summary": "Documents Marinara chat interchange, group behavior, connected-chat relationships, and per-chat setting ownership. JSONL is re-importable while Text is not; single export offers either, bulk export is JSONL-only, new-chat import takes the open mode tab, and branch import reuses the open chat's characters, persona, connection, and prompt preset. Hidden reasoning is excluded from all exports by default. Group chats form at two characters: Roleplay provides Merged or Individual generation with Sequential, Smart, or Manual order, while Conversation provides Reply When Mentioned and Character Exchanges. Disabling every member reactivates all as a safety fallback. Connected Chats is a one-to-one asymmetric Conversation-to-story link, distinct from automatic Cross-Chat Awareness, with influence, durable note, and ooc transfer tags plus disconnect cleanup. Chat Settings and reusable Chat Settings Presets own bounded per-chat configuration without rewriting library artifacts. Bunraku requires an implemented adapter before claiming chat conversion.",
+  "sourceHash": "sha256:a50f03f3325d46e4e2fec410ffbcbe976e82d3dc7fab409bd7e07137ac0852c2",
+  "summary": "Documents Marinara chat interchange, group behavior, connected-chat relationships, and per-chat setting ownership. JSONL is re-importable while Text is not; single export offers either, bulk export is JSONL-only, new-chat import takes the open mode tab, and branch import reuses the open chat's characters, persona, connection, and prompt preset. Hidden reasoning is excluded from all exports by default. Group chats form at two characters: Roleplay provides Merged or Individual generation with Sequential, Smart, or Manual order, while Conversation provides Reply When Mentioned and Character Exchanges. Disabling every member reactivates all as a safety fallback. Connected Chats is a one-to-one asymmetric Conversation-to-story link, distinct from automatic Cross-Chat Awareness, with influence, durable note, and ooc transfer tags plus disconnect cleanup. Chat Settings and reusable Chat Settings Presets own bounded per-chat configuration without rewriting library artifacts. Bunzai requires an implemented adapter before claiming chat conversion.",
   "topics": [
     "JSONL vs Text export",
     "single and bulk export",
@@ -12,7 +12,7 @@
     "reasoning export privacy",
     "group Roleplay Conversation modes",
     "connected chats and ownership",
-    "Bunraku chat boundary"
+    "Bunzai chat boundary"
   ],
   "sections": [
     {
@@ -178,11 +178,11 @@
       "shortSource": true
     },
     {
-      "slug": "bunraku",
-      "title": "Bunraku",
+      "slug": "bunzai",
+      "title": "Bunzai",
       "level": 2,
-      "sourceHash": "sha256:b945552c8d0ab6dbbc93022cdb5aade44c222440a325bc10a0d6eb69dbee9d51",
-      "summary": "Bunraku does not convert Marinara chat JSONL unless an adapter exists. Kit must not invent chat codecs from this interchange page. Export privacy and mode-tab import rules describe upstream product behavior, not proven canonical interchange or round-trip support inside Bunraku.",
+      "sourceHash": "sha256:923d0bd303f56633be9a73355c0403b2ed8611cff33335f6ba4c21231f5315f4",
+      "summary": "Bunzai does not convert Marinara chat JSONL unless an adapter exists. Kit must not invent chat codecs from this interchange page. Export privacy and mode-tab import rules describe upstream product behavior, not proven canonical interchange or round-trip support inside Bunzai.",
       "topics": [
         "no chat JSONL adapter claim",
         "upstream product behavior",

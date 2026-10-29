@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/concepts/escrow-and-roundtrip",
   "sourcePath": "docs/reference/concepts/escrow-and-roundtrip.md",
-  "sourceHash": "sha256:2d4f5bd6f8786cd9c7ec3cb9349059399885c81ccb7bfb218c68f687b0761955",
+  "sourceHash": "sha256:2eeada86471b64837669313fc362df5895afa4cfabd15074b2136f2c5a1eee76",
   "summary": "Escrow and round-trip document how every canonical entity carries a parsed import twin in original so same-format fields are preserved and cross-format conversion loses only non-portable residue by design. The envelope holds raw, unmapped, and optional sourceMedia per adapter key, with primaryOriginalRaw selecting the source twin. A three-state overlay re-encodes edited fields while retaining other parsed fields; it does not promise byte-identical containers. PNG pixels remain available to PNG export, which regenerates card chunks. Cross-format targets read only their own original key and full-encode from the body without blind-copying foreign extensions or scripts.",
   "topics": [
     "escrow original envelope",
@@ -49,7 +49,7 @@
       "slug": "a-cross-format-conversion-is-contained-loss-by-design",
       "title": "A cross-format conversion is contained loss by design",
       "level": 2,
-      "sourceHash": "sha256:53ae1122502f6bb1b8ffc39b63b59d8b4e49b09a88fecd2f461a864358f4e782",
+      "sourceHash": "sha256:52dce57217015c18be3780f03a2a3e392f8e5967343ca3e5fa6a3067f8011384",
       "summary": "convertFile same-kind paths pass the full entity but only the canonical body plus re-embedded lorebooks project into the target file. Per-id keying keeps the source twin under original source while the target adapter looks for original target, finds none on a fresh conversion, and full-encodes from body alone. Private extensions scripts layout and internal ids stay in escrow and are not written into another app file. PNG carrier pixels remain available as the entity portrait and to the PNG export path, but are not written into unrelated target formats. Loss is bounded to non-portable extras while the portable core crosses.",
       "topics": [
         "body only crosses",

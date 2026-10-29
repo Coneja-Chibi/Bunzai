@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { inspectThemePackage, type ThemePackageInput } from "../theme-contract";
 import { SLOT_IDS } from "../slot-registry";
 
-const dir = new URL("./bunraku.theme.encore/", import.meta.url);
+const dir = new URL("./bunzai.theme.encore/", import.meta.url);
 const text = (path: string): string => readFileSync(new URL(path, dir), "utf8");
 const base64 = (path: string): string => readFileSync(new URL(path, dir)).toString("base64");
 

@@ -19,7 +19,7 @@ export interface Commit {
 export interface ReleaseInfo {
   /** the tag, e.g. "v0.1.11" (shape-validated: only real semver tags survive parsing) */
   readonly version: string;
-  /** release title, e.g. "Bunraku v0.1.11" */
+  /** release title, e.g. "Bunzai v0.1.11" */
   readonly name: string;
   /** published_at ISO string ("" when absent) */
   readonly date: string;

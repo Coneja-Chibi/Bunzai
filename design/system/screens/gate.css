@@ -1,5 +1,5 @@
 /*
- * Bunraku design system: gate.html ("gate.door"). The library gate: the stage door (password,
+ * Bunzai design system: gate.html ("gate.door"). The library gate: the stage door (password,
  * wrong password, recovery words, not-this-computer), load-in (carrying, no room), all aboard,
  * and failed. This whole screen is a PROTECTED surface: color and font come only from
  * tokens/protected.css, never a theme; no .bk-frame (it reads theme frame tokens). Spacing and

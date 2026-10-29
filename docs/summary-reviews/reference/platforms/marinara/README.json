@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/README",
   "sourcePath": "docs/reference/platforms/marinara/README.md",
-  "sourceHash": "sha256:2c10977c64538ce68933d7a1b625865fec15717ad2f259b859ebdf2e8ee764ba",
-  "semanticSummaryHash": "sha256:77a87c214526112f9b29116e206cb47c52e29db6955b5b28e9a77c92594c8e3f",
+  "sourceHash": "sha256:3feb630a202485001109d60f3ff274340829f79eaf819ff2d86f9278c88b3e7f",
+  "semanticSummaryHash": "sha256:a6092b364e6ee3c2209eebbcdf0319ebe8cb3915bc51313c5e571bf2897bf7b2",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:57.490Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:50.940Z"
 }

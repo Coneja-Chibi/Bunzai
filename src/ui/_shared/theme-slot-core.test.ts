@@ -4,7 +4,7 @@ import type { ThemeSlots } from "../../extensions/slot-registry";
 import { SLOT_ATTRIBUTE as MOD_SLOT_ATTRIBUTE, slotPayload } from "../shell/theme-mod";
 import { readSlotItems, SLOT_ATTRIBUTE } from "./theme-slot-core";
 
-const logo = `/api/themes/assets/bunraku.theme.encore/logo?digest=${"a".repeat(64)}`;
+const logo = `/api/themes/assets/bunzai.theme.encore/logo?digest=${"a".repeat(64)}`;
 const read = (slots: object, assets: object = {}, classes: string[] = []): ReturnType<typeof readSlotItems> =>
   readSlotItems(JSON.stringify({ slots, assets, classes }));
 

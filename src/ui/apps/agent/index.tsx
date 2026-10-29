@@ -1,7 +1,7 @@
 /**
  * The agent window - a dock app that knows which screen you are standing on.
  *
- * WHY IT IS AN APP AND NOT A PANEL. Everything else in Bunraku arrives by dropping a folder into
+ * WHY IT IS AN APP AND NOT A PANEL. Everything else in Bunzai arrives by dropping a folder into
  * src/ui/apps, and an agent that needed the shell edited to exist would be the first exception. It
  * gets a tile like the rest, which also means it can be closed and ignored by anybody who does not
  * want it.
@@ -19,14 +19,14 @@
  * review.
  */
 import { OverlayWidgets } from "./overlay";
-import type { BunrakuApp } from "../../app-contract";
+import type { BunzaiApp } from "../../app-contract";
 import { AgentRoom } from "./room";
 import { icSvg } from "../../_shared/ic-svg";
 
 /** A speech mark with a cursor in it: something that talks, and edits. */
 const MARK_SVG = icSvg("lucide:bot", 18);
 
-const app: BunrakuApp = {
+const app: BunzaiApp = {
   OverlayWidgets,
   manifest: {
     id: "agent",

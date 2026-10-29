@@ -3,7 +3,7 @@
  *
  * REPAIRED RATHER THAN REFUSED, because refusing is the wrong answer twice over: the data is all
  * there, and the person whose file it is did nothing wrong. Found in a real studio, where seven
- * files sat behind "is not in a format Bunraku recognises" and five held a preset: four encoded as
+ * files sat behind "is not in a format Bunzai recognises" and five held a preset: four encoded as
  * JSON twice over, one inside an export envelope. The other two are honestly refused - one is a
  * single injected block, the other a set of narration snippets. Neither is a preset.
  *

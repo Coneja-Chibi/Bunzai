@@ -117,7 +117,7 @@ describe("archiveErrorMessage: honest words for every failure class", () => {
   test("an unexpected error (the 2 GiB stringify RangeError's class) never blames the backup", () => {
     const msg = archiveErrorMessage(new RangeError("Out of memory"));
     expect(msg).not.toContain("does not look like a Lumiverse backup");
-    expect(msg.toLowerCase()).toContain("bunraku");
+    expect(msg.toLowerCase()).toContain("bunzai");
   });
 
   test("the importer's own deliberate rejection keeps the plain not-a-backup line", () => {

@@ -43,7 +43,7 @@ export type RegexFieldKey =
 
 /** Platform tab labels (character/lore lens precedent: ONE platform per lens, never smushed). */
 export const REGEX_WRITE_FOR_LABELS: Record<RegexWriteForProfile, string> = {
-  full: "Bunraku",
+  full: "Bunzai",
   sillytavern: "SillyTavern",
   risu: "Risu",
   rolecall: "RoleCall",

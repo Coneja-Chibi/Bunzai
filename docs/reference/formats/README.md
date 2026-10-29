@@ -1,6 +1,6 @@
 # Formats
 
-Every format bunraku reads and writes. A **format** is a folder in `src/formats/<name>/`; the loader
+Every format bunzai reads and writes. A **format** is a folder in `src/formats/<name>/`; the loader
 discovers it automatically (see [../architecture.md](../architecture.md)). Each format family gets one
 reference page here.
 
@@ -45,7 +45,7 @@ Tracked here so the matrix stays honest about what exists versus what is coming.
 | Wyvern lorebook | lorebook | **no standalone wire format** (see below) |
 
 Wyvern needs **no dedicated lorebook codec**: it has no verifiable standalone lorebook file. Wyvern's
-character export is a **CCv2 PNG**, which bunraku already reads as a character; its Lexicon is
+character export is a **CCv2 PNG**, which bunzai already reads as a character; its Lexicon is
 character-attached, so it either rides that card's `extensions.wyvern` as escrow (already carried by the
 CCv2 reader) or lives only in-app (like Janitor), with no serialized file to convert. No public real
 Wyvern export exists to confirm which, and building a codec from wiki-inferred fields with zero real bytes
@@ -59,8 +59,8 @@ CCv3/ST worldbook codecs. Lumiverse is a local app, so lorebooks only move in an
 the file forms are Risu/CCv3, not anything Lumiverse-native:
 
 - **Import** accepts exactly two shapes: Risu-native `{type:"risu", data:[...]}` and CCv3/TavernAI
-  `{entries:{...}}`. bunraku's `risu-lorebook` emits the former and `sillytavern-lorebook` emits the latter.
-- **Export** goes back out the same way: a Lumiverse module file carries Risu-shaped lore entries, and Bunraku
+  `{entries:{...}}`. bunzai's `risu-lorebook` emits the former and `sillytavern-lorebook` emits the latter.
+- **Export** goes back out the same way: a Lumiverse module file carries Risu-shaped lore entries, and Bunzai
   reads that module file. There is no lorebook export that emits a Lumiverse-native file.
 - The app's own lorebook entry is a database record, not a portable file. It is never serialized standalone;
   the only file that carries it is the `.lvbak` full-account backup, a separate multi-entity concern, not a

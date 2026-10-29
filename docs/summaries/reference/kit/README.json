@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/kit",
   "sourcePath": "docs/reference/kit/README.md",
-  "sourceHash": "sha256:c9d9ed0c26d58530a6930ac8ba58b1fdc68b2c6791f534375010cea386ce854e",
-  "summary": "Kit reference is the short index for Bunraku's conversational terminal surface. Kit uses the same canonical entities and Studio store as the Web UI, so terminal and browser share one model of truth. Content tools documents the capability catalog, progressive model exposure, and the implemented canonical content bundles. Kit can search and read catalog-declared Bunraku user and developer documentation through the read-only docs_query model tool without arbitrary filesystem paths. UI reference covers terminal shell behavior users can run today. Architecture documents semantic content capability ownership and dependency direction between entity pure layers and Kit runtime adapters.",
+  "sourceHash": "sha256:b1cb9c9a01798968048729d6ea4d6c27d9e355d5fea9a7314c94897e3709ed04",
+  "summary": "Kit reference is the short index for Bunzai's conversational terminal surface. Kit uses the same canonical entities and Studio store as the Web UI, so terminal and browser share one model of truth. Content tools documents the capability catalog, progressive model exposure, and the implemented canonical content bundles. Kit can search and read catalog-declared Bunzai user and developer documentation through the read-only docs_query model tool without arbitrary filesystem paths. UI reference covers terminal shell behavior users can run today. Architecture documents semantic content capability ownership and dependency direction between entity pure layers and Kit runtime adapters.",
   "topics": [
     "kit terminal surface",
     "shared studio store",

@@ -24,7 +24,7 @@ import { fullCharacter, fullLorebook, fullPersona, fullPreset, fullRegex } from 
 
 const PIECE_COUNT_PER_KIND = 40;
 
-const dir = mkdtempSync(join(tmpdir(), "bunraku-perf-summaries-"));
+const dir = mkdtempSync(join(tmpdir(), "bunzai-perf-summaries-"));
 let failed = false;
 try {
   const d = openStageDatabase(join(dir, "perf.db"), MIGRATIONS);

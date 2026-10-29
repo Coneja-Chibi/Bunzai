@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/platform-native-fields",
   "sourcePath": "docs/reference/platform-native-fields.md",
-  "sourceHash": "sha256:c63fbbc38f1ebb45377f9bbe2f45c841ae65d9aa75ab476a5580d946239cabc6",
+  "sourceHash": "sha256:827ad0d14556b2404746081fe77a59dac192759db58f3ad264c11473cd945031",
   "summary": "Platform native fields is verified research source of truth for building each platforms key.ts native-field schema against real exported platform formats with honest confidence and open questions. A native field is a dot path into entity.original plus a control under rule buckets authored-editor executable-opaque db-social-readonly link-out and canonical-skip. Storage reality explains how Marinara Lumiverse and Chub ride SillyTavern CCv2 under original.sillytavern.raw while Default CCv3 is the thin-host interop shape without fake host extension bags. Marinara HIGH re-audit maps bare extensions rpgStats colors and persona bars not character pools. Chub HIGH maps namespaced extensions.chub including custom_css CssWorkshop and sealed Stages. Lumiverse MEDIUM traces bare extensions plus first-class portable Character LoRA. Character.AI is DROPPED; Crushon SKIPPED; Janitor thin optional; Pygmalion HIGH with landed flat adapter. Default CCv3 interop shape lists portable data fields. New components this research calls for include color CssWorkshop and expression stubs.",
   "topics": [
     "entity.original native paths",
@@ -49,8 +49,8 @@
       "slug": "chub-high---verified-vs-live-chub-api-re-audit-2026-07-09-for-jewel",
       "title": "Chub (HIGH - verified vs live Chub API; re-audit 2026-07-09 for jewel)",
       "level": 2,
-      "sourceHash": "sha256:90857831675e0a1ddc74a645d3093f89b9182ccb52e10723ae53abbf895b0950",
-      "summary": "Root is sillytavern.raw.data.extensions.chub namespaced not bare extensions, verified against live Chub API. id and full_path are read-only hub identity. custom_css is CssWorkshop editable plain CSS with sealed preview only never applied in Bunraku chrome. background_image is editable URL. expressions and alt_expressions are sprites milestone stubs with twin kept often empty on download. related_lorebooks refs are read-only link-out without book bytes. preset and Chub Stages extensions are read-only never run. ST core name description greetings character book depth_prompt map to body or ST native. vectorized is a lorebook entry field not a chub-block field.",
+      "sourceHash": "sha256:87db4b5f7287b75739e7ed45e3c248551ecf588df9579fb7e1156e889496962e",
+      "summary": "Root is sillytavern.raw.data.extensions.chub namespaced not bare extensions, verified against live Chub API. id and full_path are read-only hub identity. custom_css is CssWorkshop editable plain CSS with sealed preview only never applied in Bunzai chrome. background_image is editable URL. expressions and alt_expressions are sprites milestone stubs with twin kept often empty on download. related_lorebooks refs are read-only link-out without book bytes. preset and Chub Stages extensions are read-only never run. ST core name description greetings character book depth_prompt map to body or ST native. vectorized is a lorebook entry field not a chub-block field.",
       "topics": [
         "extensions.chub namespace",
         "custom_css CssWorkshop",
@@ -64,7 +64,7 @@
       "slug": "lumiverse-from-exported-cards-medium-confidence-expressions-key-unverified",
       "title": "Lumiverse (from exported cards; MEDIUM confidence, expressions key unverified)",
       "level": 2,
-      "sourceHash": "sha256:8cd8b91bd159233e6e379e109903629d610c2f1b8c7620a8df12c6b1199620cc",
+      "sourceHash": "sha256:1018b713d5e564b9fef469d979e0eee2bd55eddf8ad1751dd1d39d8ce685c8f6",
       "summary": "Root is sillytavern.raw.data.extensions bare keys with no lumiverse namespace, as observed in exported cards with unverified keys marked not guessed. expressions enabled defaultExpression mappings are asset-manager plus toggle with KEY still unverified versus expression_config. expression_groups are ListEditor of asset-managers. alternate_fields per description personality scenario are ListEditor of label content. alternate_avatars are asset-manager. world_book_ids and databank_ids are lorebook-link or read-only. Character LoRA is first-class portable card mirror under extensions.lumiverse_image_gen_lora distinct from host-local runtime binding; never auto-fetch source_url. catch-all covers remaining unknown extension keys flagged script-like opaque and character_loras is not the canonical LoRA path.",
       "topics": [
         "bare extensions bag",
@@ -78,7 +78,7 @@
           "slug": "character-lora-first-class---was-wrongly-buried-as-catch-all",
           "title": "Character LoRA (FIRST-CLASS - was wrongly buried as catch-all)",
           "level": 3,
-          "sourceHash": "sha256:3711d0d420e670bea171e3189f07ef63853fba723ed3c0b3080a89ffdecb579e",
+          "sourceHash": "sha256:fc6933c65952a39a1cf97c604eab51b74c7b3e61bb3fc99af38e6d24816549fd",
           "summary": "Lumiverse attaches image-gen LoRA via Character editor LoRA tab with dual storage. Runtime binding is per-user app settings characterLora characterId with weight_model weight_clip and is not on the card. Portable card mirror is character.extensions.lumiverse_image_gen_lora PortableLoraReference v1 with lora_filename weight base_tags source_url written when bound and cleared when unbound. Importers surface expected LoRA but never auto-fetch source_url for safetensors phishing risk. Control is structured form not catch-all. character_loras name is wrong. Runtime weight_clip is not mirrored into portable single weight. ComfyUI pipeline uses runtime binding only.",
           "topics": [
             "runtime vs portable",

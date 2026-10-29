@@ -74,11 +74,11 @@ describe("html handoff", () => {
    * the whole viewer down over a preview.
    */
   test("says nothing is waiting rather than throwing on a value it cannot read", () => {
-    dom.window.sessionStorage.setItem("bunraku.html-view.doc", "<h1>a raw string, the old shape</h1>");
+    dom.window.sessionStorage.setItem("bunzai.html-view.doc", "<h1>a raw string, the old shape</h1>");
     expect(takeHandedHtml()).toBeNull();
-    dom.window.sessionStorage.setItem("bunraku.html-view.doc", '{"at":"piece"}');
+    dom.window.sessionStorage.setItem("bunzai.html-view.doc", '{"at":"piece"}');
     expect(takeHandedHtml()).toBeNull();
-    dom.window.sessionStorage.setItem("bunraku.html-view.doc", "{not json");
+    dom.window.sessionStorage.setItem("bunzai.html-view.doc", "{not json");
     expect(takeHandedHtml()).toBeNull();
   });
 

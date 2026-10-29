@@ -10,13 +10,13 @@
 <script src="../theme.js">document.querySelector(".sh .branch").style.cursor = "pointer";
 document.querySelector(".sh .branch").addEventListener("click", function () { window.wfShow && window.wfShow("takes"); });
 </script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
- * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunraku. Every size below was
+ * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunzai. Every size below was
  * read off the running page on 2026-09-24 (computed styles at 1920x945 and 390x844) or from the
  * component source (WingRail, WingItem, WingShell, FoldoutTabs, GreetingSelector,
- * composer-shell-styles). Colors are Bunraku tokens:
+ * composer-shell-styles). Colors are Bunzai tokens:
  *   RC zinc-300 / zinc-400 / zinc-500 / zinc-600  ->  --stage-soft / --stage-text-dim / --stage-mute / --stage-line
  *   RC black/55 bubble, white/8 edge              ->  color-mix of --stage-black and --stage-card
  *   RC user accent (violet)                       ->  --accent
@@ -514,7 +514,7 @@ body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-
 
 <div class="wf" id="wf" style="display:none"></div>
 <div class="wf-chip"><span>Edit history</span><button data-o-show="more">More menu</button><button data-o-show="more-none">More, never edited</button><button data-o-show="hist">History list</button><button data-o-show="hist-empty">History, empty</button><button data-o-show="undo-edit">Undo toast</button><button data-theme-switch>Theme</button><a href="../index.html">All</a></div>
-<div class="wf-note"><b>RoleCall's own:</b> the More overflow (MessageActionOverflow) with its Undo last edit item (EditableMessage.tsx:1537), and toasts. <b>New:</b> RC keeps one 12 second in-memory snapshot, only for toolbar edits, so it has no history list. Bunraku stores every replaced text, so More gains <b>Edit history</b> (this popover, in the overflow menu look) and Undo last edit becomes durable. Undo and Restore save through the normal edit, so the text they replace joins the history and they can themselves be undone. Both items are disabled on a version that was never edited. Previews are two lines, no timestamps. No edited mark on the bubble (RC has none).</div>
+<div class="wf-note"><b>RoleCall's own:</b> the More overflow (MessageActionOverflow) with its Undo last edit item (EditableMessage.tsx:1537), and toasts. <b>New:</b> RC keeps one 12 second in-memory snapshot, only for toolbar edits, so it has no history list. Bunzai stores every replaced text, so More gains <b>Edit history</b> (this popover, in the overflow menu look) and Undo last edit becomes durable. Undo and Restore save through the normal edit, so the text they replace joins the history and they can themselves be undone. Both items are disabled on a version that was never edited. Previews are two lines, no timestamps. No edited mark on the bubble (RC has none).</div>
 
 <script>
 (function () {

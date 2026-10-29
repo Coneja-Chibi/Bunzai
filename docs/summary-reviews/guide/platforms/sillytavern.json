@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/platforms/sillytavern",
   "sourcePath": "docs/guide/platforms/sillytavern.md",
-  "sourceHash": "sha256:112d22862841c3af3a5a47eb489a47492f2be32f5fb5361f62bdd42509b5fca4",
-  "semanticSummaryHash": "sha256:172a802ce08031d7bcb8dbee38a15f46300e65d5b5cd676ac38872ac0cdcb2de",
+  "sourceHash": "sha256:95415fbb02f50f2424a1ee88b300d447a7ae4956253c7380fbb8e83528091727",
+  "semanticSummaryHash": "sha256:ebf63f508b52ad266b4e72fc6fca5d7dd4562b8f9acbe9f99550e7a343205590",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:47.745Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:39.999Z"
 }

@@ -1,7 +1,7 @@
 /**
  * A turn with the tracker Props (ChatStore rules 21 and 43): the state a switched-on tracker keeps reaches the request, a switched-off one
  * does not however much it kept (VVS-825), and the trace names the block so the Tokens sheet can show it. RoleCall never sends this to the
- * narrator; this proves Bunraku does.
+ * narrator; this proves Bunzai does.
  */
 import { describe, expect, test } from "bun:test";
 import { typedEntry } from "../core/compendium/fixture-book";

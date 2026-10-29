@@ -1,5 +1,5 @@
 /**
- * The Prompting wing's Scene Note tab: RoleCall's AuthorNotePanel on Bunraku. A persistent line of
+ * The Prompting wing's Scene Note tab: RoleCall's AuthorNotePanel on Bunzai. A persistent line of
  * guidance that rides along with the prompt at a position and frequency, kept on the scene (ChatStore rule
  * 37). It saves one second after the last change and when the tab closes, as RoleCall's panel does.
  */

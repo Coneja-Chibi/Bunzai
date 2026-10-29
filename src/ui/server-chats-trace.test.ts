@@ -319,13 +319,13 @@ test("an old trace without verdicts still answers, with missed: []", async () =>
 // --- wired-into-the-server integration check (one test, modeled on server-chats-lore.test.ts) ---
 
 setDefaultTimeout(30_000);
-const HOME = join(tmpdir(), `bunraku-trace-route-${randomUUID()}`);
+const HOME = join(tmpdir(), `bunzai-trace-route-${randomUUID()}`);
 const UNLOCK = { passphrase: "trace-route-test" };
 let server: ReturnType<typeof Bun.serve>;
 let localId = "";
 
 beforeAll(async () => {
-  process.env.BUNRAKU_HOME = HOME;
+  process.env.BUNZAI_HOME = HOME;
   server = Bun.serve({
     port: 0,
     async fetch() {
@@ -339,7 +339,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   server.stop(true);
-  delete process.env.BUNRAKU_HOME;
+  delete process.env.BUNZAI_HOME;
   await rm(HOME, { recursive: true, force: true });
 });
 

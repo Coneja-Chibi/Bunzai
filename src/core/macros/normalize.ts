@@ -1,7 +1,7 @@
 /**
  * Input normalization ahead of the macro parser: RoleCall's `preprocessSyntax`,
  * rule for rule and in its order, WITH an offset map back
- * to the authored text. The map is Bunraku's addition: a render segment's offsets must point into
+ * to the authored text. The map is Bunzai's addition: a render segment's offsets must point into
  * what the person wrote, not into a string the rewrites made up, or the editable preview could not
  * splice an edit. A rewritten range maps to its whole authored tag, the only honest answer.
  *

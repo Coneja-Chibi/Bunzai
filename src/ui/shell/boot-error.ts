@@ -24,11 +24,11 @@ export function settingsBootProblem(
     const guide = forwardingGuide(page.port);
     return {
       message:
-        "This browser reached Bunraku, but the Studio API refused the address it used.",
+        "This browser reached Bunzai, but the Studio API refused the address it used.",
       ...guide,
       remoteSetupUrl: `${guide.localUrl}/#settings/remote-access`,
       sandboxNote:
-        "A one-port tunnel opens the main Studio only. Lua and regex test benches use a second, random local port. Restart Bunraku and copy the complete two-port SSH command printed in its terminal.",
+        "A one-port tunnel opens the main Studio only. Lua and regex test benches use a second, random local port. Restart Bunzai and copy the complete two-port SSH command printed in its terminal.",
     };
   }
   return {

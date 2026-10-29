@@ -9,7 +9,7 @@ const manifest = (path: string): ThemePalette => parsePalette((JSON.parse(readFi
 const THEMES: Record<string, ThemePalette> = {
   greenroom: manifest("../../extensions/themes/greenroom/manifest.json"), theater: manifest("../../extensions/themes/theater/manifest.json"),
   paper: manifest("../../extensions/themes/paper/manifest.json"), girliepop: manifest("../../extensions/themes/stage/manifest.json"),
-  encore: manifest("../../extensions/examples/bunraku.theme.encore/manifest.json"),
+  encore: manifest("../../extensions/examples/bunzai.theme.encore/manifest.json"),
 };
 const COLORS = { white: "#ffffff", black: "#000000", neon: "#39ff14", magenta: "#ff00ff", teal: "#008080", pink: "#ff69b4", grey: "#777777", navy: "#0a0a40", cream: "#fffdd0" };
 

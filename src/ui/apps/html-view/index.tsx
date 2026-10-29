@@ -19,7 +19,7 @@ import { Button } from "../../components/button";
 import { RoomHeader } from "../../components/room-header";
 import { OverlayWidgets } from "./overlay";
 import { useCallback, useEffect, useRef, useState, type JSX } from "react";
-import type { AppContext, BunrakuApp } from "../../app-contract";
+import type { AppContext, BunzaiApp } from "../../app-contract";
 import { useEscapeKey } from "../../_shared/use-escape-key";
 import { SealedHtmlPreview } from "../../components/sealed-html-preview";
 import { exitFullscreen, fullscreenElement, requestFullscreen } from "../../_shared/fullscreen";
@@ -159,7 +159,7 @@ export function HtmlView({ ctx }: { ctx: AppContext }): JSX.Element {
   );
 }
 
-const app: BunrakuApp = {
+const app: BunzaiApp = {
   OverlayWidgets,
   manifest: {
     id: "html-view",

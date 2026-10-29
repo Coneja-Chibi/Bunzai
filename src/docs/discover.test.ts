@@ -22,7 +22,7 @@ afterEach(() => {
 });
 
 const tempDocs = (): string => {
-  const root = mkdtempSync(join(tmpdir(), "bunraku-docs-"));
+  const root = mkdtempSync(join(tmpdir(), "bunzai-docs-"));
   temps.push(root);
   return root;
 };

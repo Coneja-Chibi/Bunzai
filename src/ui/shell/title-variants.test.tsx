@@ -48,7 +48,7 @@ const control = (host: Element, action: string, label: string): HTMLElement =>
 for (const variant of SURFACES["shell.title"]) {
   test(`${variant}: the title screen, tagline, newest scene and a focusable sheet are present`, async () => {
     const host = await mount(variant);
-    expect(host.querySelector('section[aria-label="Bunraku title screen"]')?.getAttribute("tabindex")).toBe("-1");
+    expect(host.querySelector('section[aria-label="Bunzai title screen"]')?.getAttribute("tabindex")).toBe("-1");
     expect(host.textContent).toContain("Every story deserves a stage.");
     expect(host.textContent).toContain("Latest story");
   });

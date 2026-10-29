@@ -3,7 +3,7 @@
  * an honest "installs later" tile, never mountable until the act lands. Its presence in the dock is
  * the moddability promise made visible.
  */
-import type { AppContext, BunrakuApp } from "../../app-contract";
+import type { AppContext, BunzaiApp } from "../../app-contract";
 import { COMPANY_AGENT_SURFACE, usePublishCompanySurface } from "./agent-surface";
 import { icSvg } from "../../_shared/ic-svg";
 
@@ -18,7 +18,7 @@ function Company({ ctx }: { ctx: AppContext }): null {
   return null;
 }
 
-const app: BunrakuApp = {
+const app: BunzaiApp = {
   manifest: {
     id: "company",
     title: "The Company",

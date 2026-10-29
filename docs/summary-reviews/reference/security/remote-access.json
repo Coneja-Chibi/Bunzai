@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/security/remote-access",
   "sourcePath": "docs/reference/security/remote-access.md",
-  "sourceHash": "sha256:0136dfdcf632a08077846bb198560d5083398ba276088bd5c6973ad1e6dddbe6",
-  "semanticSummaryHash": "sha256:cce2d7757afebeed6dd79b1a24157ba89a061bd2e651b85236b4103e8f76e8c5",
+  "sourceHash": "sha256:46c3091e60a1f10de2f2208758c262b68bafdb1eccdddc1df50f6e7a9828fab3",
+  "semanticSummaryHash": "sha256:31f4bdec118838f48da4343ad83b7573151e1ddff35a2129eb9d586011768cb5",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:48:01.942Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:59.169Z"
 }

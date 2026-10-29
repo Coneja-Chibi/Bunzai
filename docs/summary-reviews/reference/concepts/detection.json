@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/concepts/detection",
   "sourcePath": "docs/reference/concepts/detection.md",
-  "sourceHash": "sha256:8903d8a72b0ac2b11cc80e9e97d7763de7d2fec4b752ac6bf1bef887ea5ff291",
-  "semanticSummaryHash": "sha256:c9f37dbd948898fff26c4ef857562b5f3299e9cd5ea1c6d474df90f13227bbe8",
+  "sourceHash": "sha256:9fcdbdff99d9c5e7ea607c2be114948bc56f2900ee8b2bf70f8dedd06aae0565",
+  "semanticSummaryHash": "sha256:33f550fcdeb993feff8c1b6eceea5773d375fe95b59212154fb374b825693ef3",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:50.289Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:42.841Z"
 }

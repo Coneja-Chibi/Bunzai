@@ -84,7 +84,7 @@ test("renders live HTML title, actions and decorative art", () => {
 
 test("landing belongs to the canvas and leaves shell navigation outside a modal", () => {
   expect(dom.window.document.querySelector('[role="dialog"]') === null).toBe(true);
-  expect(dom.window.document.querySelector('section[aria-label="Bunraku title screen"]')).not.toBeNull();
+  expect(dom.window.document.querySelector('section[aria-label="Bunzai title screen"]')).not.toBeNull();
   expect(dom.window.document.querySelector('header')).toBeNull();
 });
 
@@ -123,7 +123,7 @@ test("a lone Shift does not dismiss", () => {
 });
 
 test("clicking scenery does not dismiss", () => {
-  const stage = dom.window.document.querySelector('[aria-label="Bunraku title screen"]')!;
+  const stage = dom.window.document.querySelector('[aria-label="Bunzai title screen"]')!;
   flushSync(() => {
     stage.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true }));
   });

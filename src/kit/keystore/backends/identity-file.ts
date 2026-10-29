@@ -44,16 +44,16 @@ import { writeIdentityFile } from "./identity-write";
 
 const MAGIC = Buffer.from([0x89, 0x48, 0x4c, 0x4b]); // \x89HLK
 const VERSION = 0x01;
-const DERIVATION_TAG = Buffer.from("bunraku-kit-identity-v1", "utf8");
+const DERIVATION_TAG = Buffer.from("bunzai-kit-identity-v1", "utf8");
 const FILE_SIZE = 104;
 
 /**
  * Where the key lives. The rule is restated here rather than imported from providers/config: the
- * keystore sits BELOW the provider layer and must not depend upward on it. Both read BUNRAKU_HOME,
+ * keystore sits BELOW the provider layer and must not depend upward on it. Both read BUNZAI_HOME,
  * so a test or a portable install relocates the key and the vault together.
  */
 export const identityPath = (): string =>
-  join(process.env["BUNRAKU_HOME"] ?? homedir(), ".bunraku", "kit.identity");
+  join(process.env["BUNZAI_HOME"] ?? homedir(), ".bunzai", "kit.identity");
 
 const maskFor = (salt: Buffer): Buffer =>
   createHash("sha256").update(Buffer.concat([salt, DERIVATION_TAG])).digest();
@@ -89,7 +89,7 @@ function decodeIdentity(file: Buffer): Buffer {
     throw new IdentityFormatError(`identity file is ${file.length} bytes, expected ${FILE_SIZE}`);
   }
   if (!file.subarray(0, 4).equals(MAGIC)) {
-    throw new IdentityFormatError("not a Bunraku identity file (bad magic)");
+    throw new IdentityFormatError("not a Bunzai identity file (bad magic)");
   }
   if (file[4] !== VERSION) {
     throw new IdentityFormatError(`unsupported identity file version ${file[4]}`);
@@ -116,7 +116,7 @@ export interface IdentityStatus {
 }
 
 /**
- * What happened per key path. Keyed rather than a single slot because BUNRAKU_HOME can move the
+ * What happened per key path. Keyed rather than a single slot because BUNZAI_HOME can move the
  * key (portable installs, tests), and reporting the previous location's outcome for the current one
  * would be a confidently wrong answer.
  *

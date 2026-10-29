@@ -8,8 +8,8 @@
  * third-party theme cannot have. Behavior that must differ per theme belongs on a surface pick or a manifest field; a comparison
  * that is truly about the bundled set (default selection, the setup list) is marked `theme-key-ok: <reason>`.
  */
-const KEYED = /data-theme\s*[~|^$*]?=\s*[^a-z]{0,2}(?:theater|encore|stage|girliepop|paper|greenroom|bunraku\.theme\.encore)\b/;
-const COMPARED = /[=!]==?\s*["\x27](?:theater|encore|stage|girliepop|paper|greenroom|bunraku\.theme\.encore)["\x27]|["\x27](?:theater|encore|stage|girliepop|paper|greenroom|bunraku\.theme\.encore)["\x27]\s*[=!]==?|\bcase\s+["\x27](?:theater|encore|stage|girliepop|paper|greenroom)["\x27]/;
+const KEYED = /data-theme\s*[~|^$*]?=\s*[^a-z]{0,2}(?:theater|encore|stage|girliepop|paper|greenroom|bunzai\.theme\.encore)\b/;
+const COMPARED = /[=!]==?\s*["\x27](?:theater|encore|stage|girliepop|paper|greenroom|bunzai\.theme\.encore)["\x27]|["\x27](?:theater|encore|stage|girliepop|paper|greenroom|bunzai\.theme\.encore)["\x27]\s*[=!]==?|\bcase\s+["\x27](?:theater|encore|stage|girliepop|paper|greenroom)["\x27]/;
 
 export interface ThemeKeyHit { line: number; text: string }
 

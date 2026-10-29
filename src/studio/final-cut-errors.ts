@@ -23,7 +23,7 @@ const ADVICE: Partial<Record<FailureClass, string>> = {
   cancelled: "Final Cut was stopped. The last accepted draft was kept; unfinished passes were not applied.",
   timed_out: "Final Cut reached its time limit. The last accepted draft was kept; unfinished passes were not applied.",
   truncation: "The model started writing but ran out of room (hit max_tokens mid-output). The retry already raised the budget - if it still truncates, pick a model with more output capacity or shorten the input.",
-  reasoning_exhausted: "The model spent its entire token budget on internal reasoning and never produced any output. This is a behavior of 'thinking'-style models, not a Bunraku bug. Switch to a non-reasoning model, or raise this pass's max output capacity.",
+  reasoning_exhausted: "The model spent its entire token budget on internal reasoning and never produced any output. This is a behavior of 'thinking'-style models, not a Bunzai bug. Switch to a non-reasoning model, or raise this pass's max output capacity.",
   no_tool_call: "Model returned text instead of calling the tool. This usually means the provider doesn't strictly enforce tool_choice - switch to tagged mode or pick a different model.",
   malformed_args: "Tool call returned malformed JSON. Strict mode should have prevented this - try a different model if it persists.",
   empty_body: "Tool call was missing the body field. Strict mode should have prevented this - try a different model if it persists.",

@@ -57,7 +57,7 @@ function check(name: string, run: () => string): ProbeCheck {
  * `dbPath` exists so a test can name the file and then assert it and its sidecars are gone.
  */
 export function probeSqliteRuntime(dbPath?: string): ProbeResult {
-  const path = dbPath ?? join(tmpdir(), `bunraku-probe-${process.pid}-${Date.now()}.db`);
+  const path = dbPath ?? join(tmpdir(), `bunzai-probe-${process.pid}-${Date.now()}.db`);
   const cleanup = () => {
     for (const suffix of ["", "-wal", "-shm"]) {
       try {

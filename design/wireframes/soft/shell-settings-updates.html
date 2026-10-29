@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="tokens-soft.css">
 <link rel="stylesheet" href="soft-parts.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
  * shell-settings 4/4: Updates (src/ui/apps/settings/sections/updates.tsx + updates-dialogs.tsx).
@@ -148,16 +148,16 @@ body { background: var(--canvas); }
   </div>
 
   <div class="overlay" data-only="confirm-update">
-    <div class="popup"><div class="ct">Update to 0.15.0?</div><div class="jump">0.14.2 <span class="arrow">&rarr;</span> 0.15.0</div><div class="cb">Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunraku restarts itself when it is ready.</div><div class="actionscenter"><button class="s-btn">Update</button><button class="s-btn ghost">Cancel</button></div></div>
+    <div class="popup"><div class="ct">Update to 0.15.0?</div><div class="jump">0.14.2 <span class="arrow">&rarr;</span> 0.15.0</div><div class="cb">Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunzai restarts itself when it is ready.</div><div class="actionscenter"><button class="s-btn">Update</button><button class="s-btn ghost">Cancel</button></div></div>
   </div>
   <div class="overlay" data-only="confirm-rollback">
-    <div class="popup"><div class="ct">Roll back to 0.13.0?</div><div class="jump">0.14.2 <span class="arrow">&rarr;</span> 0.13.0</div><div class="cb">Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunraku restarts itself when it is ready.</div><div class="actionscenter"><button class="s-btn danger">Roll back</button><button class="s-btn ghost">Cancel</button></div></div>
+    <div class="popup"><div class="ct">Roll back to 0.13.0?</div><div class="jump">0.14.2 <span class="arrow">&rarr;</span> 0.13.0</div><div class="cb">Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunzai restarts itself when it is ready.</div><div class="actionscenter"><button class="s-btn danger">Roll back</button><button class="s-btn ghost">Cancel</button></div></div>
   </div>
   <div class="overlay" data-only="confirm-rollback-old">
-    <div class="popup"><div class="ct">Roll back to 0.08.0?</div><div class="jump">0.14.2 <span class="arrow">&rarr;</span> 0.08.0</div><div class="warnnote">0.08.0 is older than this Updates screen. After the restart it will not show a confirmation or an Undo button, so <b>this screen is your receipt</b>.</div><div class="cb">Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunraku restarts itself when it is ready.</div><div class="actionscenter"><button class="s-btn danger">Roll back</button><button class="s-btn ghost">Cancel</button></div></div>
+    <div class="popup"><div class="ct">Roll back to 0.08.0?</div><div class="jump">0.14.2 <span class="arrow">&rarr;</span> 0.08.0</div><div class="warnnote">0.08.0 is older than this Updates screen. After the restart it will not show a confirmation or an Undo button, so <b>this screen is your receipt</b>.</div><div class="cb">Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunzai restarts itself when it is ready.</div><div class="actionscenter"><button class="s-btn danger">Roll back</button><button class="s-btn ghost">Cancel</button></div></div>
   </div>
   <div class="overlay" data-only="progress">
-    <div class="popup"><div class="ct">Switching version</div><span class="status"><span class="dot busy"></span>Restarting Bunraku...</span><div class="cb">Do not close Bunraku. It restarts itself when the switch is ready.</div></div>
+    <div class="popup"><div class="ct">Switching version</div><span class="status"><span class="dot busy"></span>Restarting Bunzai...</span><div class="cb">Do not close Bunzai. It restarts itself when the switch is ready.</div></div>
   </div>
   <div class="overlay" data-only="result-success">
     <div class="popup"><div class="badge">&#10003;</div><div class="big">You are now on 0.15.0</div><div class="sub">Done. Everything is ready.</div><div class="actionscenter"><button class="s-btn">Done</button><button class="s-btn ghost">Undo, back to 0.14.2</button></div></div>
@@ -166,10 +166,10 @@ body { background: var(--canvas); }
     <div class="popup"><div class="badge bad">&times;</div><div class="big">Still on 0.14.2</div><div class="sub">The switch to 0.15.0 did not complete, so nothing changed. Your app is exactly as it was.</div><div class="actionscenter"><button class="s-btn">OK</button></div></div>
   </div>
   <div class="overlay" data-only="could-not-switch">
-    <div class="popup"><div class="ct">Could not switch</div><div class="sub">Bunraku did not come back on its own. Start it again from your shortcut.</div><div class="actionscenter"><button class="s-btn">OK</button></div></div>
+    <div class="popup"><div class="ct">Could not switch</div><div class="sub">Bunzai did not come back on its own. Start it again from your shortcut.</div><div class="actionscenter"><button class="s-btn">OK</button></div></div>
   </div>
   <div class="overlay" data-only="download-ready">
-    <div class="popup"><div class="ct">Download ready</div><div class="sub">0.15.0 was downloaded and verified. Close Bunraku and run the installer to finish.</div><div class="actionscenter"><button class="s-btn">OK</button></div></div>
+    <div class="popup"><div class="ct">Download ready</div><div class="sub">0.15.0 was downloaded and verified. Close Bunzai and run the installer to finish.</div><div class="actionscenter"><button class="s-btn">OK</button></div></div>
   </div>
 </div>
 

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "README",
   "sourcePath": "docs/README.md",
-  "sourceHash": "sha256:4ad72241202708a125ef7d1de264391b8e29890ac29bb83522a125f8d350ad33",
-  "summary": "Complete documentation map for Bunraku's user guidance, contributor references, accepted decisions, future contracts, and generated support material. Guide lists task pages for setup, importing, converting, editing, exporting, and lorebooks, plus platform pages for Agnai, Backyard, Chub, Lumiverse, Marinara, NovelAI, Pygmalion, RisuAI, RoleCall, and SillyTavern. Reference points builders to the reference-tree contract, as-built architecture, canonical entity schemas, format coverage, cross-cutting concepts, the Studio and Kit UI, generated component catalog, and platform-native field research; Chub is represented through its guide, coverage matrix, and adapter source rather than a dedicated reference page. Decisions and planning separates accepted ADRs, the required vision/architecture/conventions spine, the detailed source map, roadmap exit criteria, and the live-registry FORMAT-SUPPORT matrix. It also distinguishes generated field tables, figure data, and media assets from browsable prose pages, and warns that specifications describe planned or load-bearing contracts without proving every feature ships.",
+  "sourceHash": "sha256:f286ce851a2c71740e591ae4884fb72b541f24258d376203d30feffed7b2f3ac",
+  "summary": "Complete documentation map for Bunzai's user guidance, contributor references, accepted decisions, future contracts, and generated support material. Guide lists task pages for setup, importing, converting, editing, exporting, and lorebooks, plus platform pages for Agnai, Backyard, Chub, Lumiverse, Marinara, NovelAI, Pygmalion, RisuAI, RoleCall, and SillyTavern. Reference points builders to the reference-tree contract, as-built architecture, canonical entity schemas, format coverage, cross-cutting concepts, the Studio and Kit UI, generated component catalog, and platform-native field research; Chub is represented through its guide, coverage matrix, and adapter source rather than a dedicated reference page. Decisions and planning separates accepted ADRs, the required vision/architecture/conventions spine, the detailed source map, roadmap exit criteria, and the live-registry FORMAT-SUPPORT matrix. It also distinguishes generated field tables, figure data, and media assets from browsable prose pages, and warns that specifications describe planned or load-bearing contracts without proving every feature ships.",
   "topics": [
     "documentation map",
     "user task guides",
@@ -37,7 +37,7 @@
       "slug": "reference",
       "title": "Reference",
       "level": 2,
-      "sourceHash": "sha256:da537e396842e4198249706d5ee931a61fbe8b46aeab5b2c46e95070566e79ce",
+      "sourceHash": "sha256:462c37b39e5d435ad2e667b38600fe05aaad0f2d2628021030a796870a933bb0",
       "summary": "Reference is the contributor-facing statement of shipping behavior. Its root explains the tree contract and field tables; architecture maps the canonical model, escrow, adapters, entity kinds, registry, and CLI. Entity pages define character, lorebook, pack, persona, preset, and regex schemas. Format pages pair the coverage matrix with family-specific behavior, while concept pages cover embedded character books, persona and regex editors, regex execution, safe rendering, and tags. The UI page covers the visual Studio and Kit, components is generated from source, and platform-native-fields records verified native research. Chub has no dedicated reference page yet, so its current format truth remains in the matrix and adapter folder.",
       "topics": [
         "reference tree contract",

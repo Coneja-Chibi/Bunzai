@@ -30,7 +30,7 @@ function render() {
     screen.innerHTML = `<div class="room">${PT.head(config.title,'Design state: '+state)}<section class="empty sheet fold">${PaperArt.icon(config.icon)}<h2>${stateCopy[0]}</h2><p>${stateCopy[1]}</p>${PT.button(state==='error'?'Try again':state==='empty'?'Start here':'Show ready state','ready','primary')}${PT.link('Library','library','quiet')}</section></div>`;
   }
   document.querySelector('#review-note').innerHTML = `<strong>${config.title}.</strong> ${config.note} <a href="#foundations">Visual language</a> · <a href="DECISIONS.md">Decisions & coverage</a>`;
-  document.title = `Bunraku · ${config.title} · Paper theater`;
+  document.title = `Bunzai · ${config.title} · Paper theater`;
 }
 window.addEventListener('hashchange',render);
 screenPick.addEventListener('change',()=>{location.hash = screenPick.value;});

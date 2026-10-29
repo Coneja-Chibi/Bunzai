@@ -1,5 +1,5 @@
 /*
- * Bunraku design system: the person's own settings win. Every declaration is !important in the
+ * Bunzai design system: the person's own settings win. Every declaration is !important in the
  * bk.access layer, which is declared FIRST: for important declarations the earliest layer wins, so
  * no theme, mod (even with !important) or unlayered CSS can switch motion back on or lower contrast.
  */

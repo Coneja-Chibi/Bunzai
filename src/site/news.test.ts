@@ -3,7 +3,7 @@ import { describe, expect, test } from "bun:test";
 import { newsHeadline, plainSubject, visibleChanges } from "./news";
 
 const release = (subjects: string[], headline = "") => ({
-  version: "v0.1.41", name: "Bunraku v0.1.41", date: "", url: "", headline,
+  version: "v0.1.41", name: "Bunzai v0.1.41", date: "", url: "", headline,
   commits: subjects.map((subject, i) => ({ hash: `abcdef${i}`, subject })),
 });
 

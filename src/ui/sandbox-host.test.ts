@@ -48,7 +48,7 @@ describe("createSandboxHandler", () => {
     // The worker protocol deliberately contains the *name* of forbidden credential-shaped keys.
     // What matters is that the sandbox bundle cannot contain an actual launch credential.
     expect(body).not.toContain("secret-token-value");
-    expect(body).not.toContain("X-Bunraku-Token");
+    expect(body).not.toContain("X-Bunzai-Token");
   }, 60_000);
 
   test("OPTIONS preflight only for allowlisted paths", async () => {

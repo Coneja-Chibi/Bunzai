@@ -12,7 +12,7 @@ import { join, resolve } from "node:path";
 import { createGrantBook } from "./grant-book";
 import { checkGrant, type Grant } from "./grants";
 
-const scratch = async (): Promise<string> => mkdtemp(join(tmpdir(), "bunraku-grant-"));
+const scratch = async (): Promise<string> => mkdtemp(join(tmpdir(), "bunzai-grant-"));
 const basenameOf = (path: string): string => path.split(/[\\/]/).filter(Boolean).pop() ?? "";
 
 describe("grant book", () => {

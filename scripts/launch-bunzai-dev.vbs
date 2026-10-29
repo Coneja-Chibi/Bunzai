@@ -1,6 +1,6 @@
-' Launch Bunraku (dev): the native app window over LIVE source, with no console window.
-' A Start Menu shortcut points here, so the Windows search-bar "Bunraku (Dev)" always opens today's
-' code - no compile, no snapshot; it hot-reloads from src/ on every open. Shipped Bunraku.exe is separate.
+' Launch Bunzai (dev): the native app window over LIVE source, with no console window.
+' A Start Menu shortcut points here, so the Windows search-bar "Bunzai (Dev)" always opens today's
+' code - no compile, no snapshot; it hot-reloads from src/ on every open. Shipped Bunzai.exe is separate.
 ' Self-locating: repo root is this script's parent's parent (scripts/ sits under the repo root), so
 ' there is no hardcoded user path to rot.
 Dim fso : Set fso = CreateObject("Scripting.FileSystemObject")

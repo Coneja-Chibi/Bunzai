@@ -35,7 +35,7 @@ export interface Status {
   copied?: { files: number; renamed: { from: string; to: string }[]; leftInFolder: number } | null;
 }
 
-const SEEN_LOAD_IN = "bunraku.library.loadInSeen";
+const SEEN_LOAD_IN = "bunzai.library.loadInSeen";
 const TWELVE = (): string[] => Array.from({ length: 12 }, () => "");
 const session = webStorage("session");
 const seen = (key: string): boolean => {
@@ -187,7 +187,7 @@ function LoadIn({ status }: { status: Status }): JSX.Element {
           <pre className={styles.proof}>{recent.length ? recent.map((f, i) => `${i === recent.length - 1 && done < total ? "carrying" : "checked "} ${f}`).join("\n") : "opening the library"}</pre>
           <div className={styles.count}>{total ? `${done} / ${total} pieces carried in` : " "}</div>
         </Lines>
-        <p className={styles.subtle}>Closing Bunraku now is safe: nothing is kept half done, and it starts over next time.</p>
+        <p className={styles.subtle}>Closing Bunzai now is safe: nothing is kept half done, and it starts over next time.</p>
       </Dossier>
     </Stage>
   );
@@ -347,7 +347,7 @@ export function LibraryGate({ children, pieces: injectedPieces }: { children: Re
           <Dossier act="The stage door" title="The house" accent="is dark">
             <StageNote label="Line flub" tone="flub">{`The library could not open: ${status.reason ?? "an unknown error"}. Your studio folder was not changed.`}</StageNote>
             <StageActions cta="Try again" onCta={() => void check()}>
-              <p className={styles.subtle}>If this keeps happening, close Bunraku and open it again.</p>
+              <p className={styles.subtle}>If this keeps happening, close Bunzai and open it again.</p>
             </StageActions>
           </Dossier>
         </Stage>

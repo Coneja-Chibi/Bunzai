@@ -1,5 +1,5 @@
 /*
- * Bunraku design system: motion, contract v1.
+ * Bunzai design system: motion, contract v1.
  * Motion says something changed or something is waiting. It never decorates: no shake, jitter,
  * glitch, flicker, spin or parallax. Movement is at most a 2px lift, opacity, or a short slide of a
  * sheet into place. Every transition and animation reads these tokens, so access.css can stop them.

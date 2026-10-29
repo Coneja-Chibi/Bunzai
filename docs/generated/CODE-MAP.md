@@ -24,7 +24,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 ## scripts/
 
 - `book-cover-catalog.ts`: Derive the cover catalog from drop-in asset folders; no hand-maintained design registry.
-- `build-desktop.ts`: Build Bunraku.exe - real software from the same code the CLI runs.
+- `build-desktop.ts`: Build Bunzai.exe - real software from the same code the CLI runs.
 - `build-pages.ts`: Build what GitHub Pages publishes: the website at the root and the browser-only Studio under studio/.
 - `build-site.ts`: Build the public website into a folder: pages, the rendered user guides, media, fonts, style, and script.
 - `capability-manifest.ts`: Generate the browser-safe capability import seam from entity and format drop-in folders.
@@ -67,7 +67,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `perf-gate.ts`: The speed budget, enforced: nothing may block the main thread for more than 100 ms.
 - `perf-measure.ts`: The perf gates' one stopwatch: runs `work` while a heartbeat timer records the longest time the event loop was held (the main thread's freeze), and how long the work took in all.
 - `pin-sidecar.ts`: Pin the remote-access helper to a published release.
-- `preview-pages.ts`: Serve the generated Pages artifact locally under the same /Bunraku/ project prefix.
+- `preview-pages.ts`: Serve the generated Pages artifact locally under the same /Bunzai/ project prefix.
 - `probe-keychain.ts`: Runs the macOS Keychain or Linux Secret Service keystore backend against the REAL tool on this machine (CI's keychain job), because the unit tests only prove it against fakes.
 - `probe-sqlite-runtime.ts`: Proves the SQLite runtime capabilities the data model depends on, inside whatever artifact is running this code.
 - `publish-export-core.ts`: The pure half of `bun run publish:export`: which tracked paths stay private, and which text in the public remainder still points at one of them (a markdown link, a "see ..." note, the name of a private file).
@@ -77,12 +77,12 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `sillytavern-macros.ts`: Generate src/core/preset/macros/sillytavern-new.ts from SillyTavern's registry engine.
 - `slot-manifest.ts`: Writes the slot list from the slot files (every src/core/scene-state/slots/<id>.ts is a scene-state slot): src/generated/slots.ts.
 - `test-react-dom.ts`: Loads react-dom once, before any test file, with a DOM present (bunfig.toml preload).
-- `test-sandbox.ts`: The test sandbox, preloaded before every `bun test` run (bunfig.toml): every place Bunraku keeps per-user files points at one throwaway folder, so no test can write into the person's real home or read their real crede...
+- `test-sandbox.ts`: The test sandbox, preloaded before every `bun test` run (bunfig.toml): every place Bunzai keeps per-user files points at one throwaway folder, so no test can write into the person's real home or read their real creden...
 - `theme-measure.ts`: theme:measure - what share of the WHOLE app looks structurally different across the four bundled themes.
 - `third-party-notices.ts`: Writes or checks THIRD-PARTY-NOTICES.md: name, version, license and repository of every package in the production dependency closure (package.json `dependencies`, followed through each installed package's own `depende...
 - `ui-bundle.ts`: Shared Bun browser-bundle helpers for the desktop bake and static Pages build.
 - `update-macro-pins.ts`: Regenerate hermetic macro-catalog source pins after an intentional upstream review.
-- `vaude-browser.ts`: Open Bunraku in the default browser (hot-reloading).
+- `vaude-browser.ts`: Open Bunzai in the default browser (hot-reloading).
 - `wireframe-theme.ts`: Regenerate the palette block in design/wireframes/theme.js from the bundled theme manifests, so wireframes that switch themes by data-theme paint the same custom properties the app's painter writes.
 
 ## scripts/hooks/
@@ -145,7 +145,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `check.ts`: The browser half of the top-layer proof, run under Node (Playwright cannot attach to Chrome from Bun on Windows).
 - `entry.ts`: Browser entry for the harness: the real apply pipeline, reachable as window.Mod.
 - `live-browse.ts`: The browser half of live.ts, under Node.
-- `live.ts`: Live proof of the protected layer in the real app: a throwaway studio (BUNRAKU_HOME and the library both inside `work`), a hostile theme package installed through the real Gate path, and headless Chrome on its own pro...
+- `live.ts`: Live proof of the protected layer in the real app: a throwaway studio (BUNZAI_HOME and the library both inside `work`), a hostile theme package installed through the real Gate path, and headless Chrome on its own prof...
 - `run.ts`: Build the apply pipeline into one browser script and run the Node browser half against it.
 
 ## scripts/scale/
@@ -162,7 +162,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `stream-probe-browser.ts`: Tab side of the S0 streaming probe: a headless system Chrome on its own profile opens the Library, sends the first pack to the Workbench, and reports, per step, the peak working set of every Chrome process of that pro...
 - `stream-probe-fixtures.ts`: Builds the two S0 streaming-probe fixtures from a folder of real pictures: a picture zip (stored) and a realistic .lvbak (characters with avatars, gallery images, a world book, a preset).
 - `stream-probe-sampler.ts`: Preload for the S0 streaming probe: samples this process every 25 ms into PROBE_OUT (JSON lines).
-- `stream-probe.ts`: S0 streaming probe: peak memory of one import/export scenario at a time, measured on a throwaway studio and BUNRAKU_HOME.
+- `stream-probe.ts`: S0 streaming probe: peak memory of one import/export scenario at a time, measured on a throwaway studio and BUNZAI_HOME.
 - `timed.ts`: Opt-in S21 low-end scale run.
 - `word-sampler.ts`: Deterministic one-draw-per-word sampling shared by scale fixtures and performance gates.
 
@@ -178,23 +178,23 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 
 ## src/
 
-- `app-data.ts`: Where Bunraku keeps MACHINE-LOCAL support files - one owner, so two features cannot disagree.
+- `app-data.ts`: Where Bunzai keeps MACHINE-LOCAL support files - one owner, so two features cannot disagree.
 - `browser-mode.ts`: Detect the static, memory-only browser Studio and announce committed receipt changes.
-- `cli-derived.ts`: `bunraku derived --stats|--clear`: inspect or discard only rebuildable derived rows.
-- `cli-export.ts`: `bunraku export <folder> [studio]`: the library written out as a plain studio folder (src/studio/folder-export.ts).
+- `cli-derived.ts`: `bunzai derived --stats|--clear`: inspect or discard only rebuildable derived rows.
+- `cli-export.ts`: `bunzai export <folder> [studio]`: the library written out as a plain studio folder (src/studio/folder-export.ts).
 - `cli-inspect.ts`: `inspect`'s per-kind summary: each kind's own `describe` lines (src/entities/<kind>/kind.ts), indented, then a blank line.
 - `cli-io.ts`: Pure CLI convert IO policy: flag parse, path identity, container agreement, atomic publish.
 - `cli-validation.ts`: CLI validation boundary.
-- `cli.ts`: bunraku - the Bunraku command line.
+- `cli.ts`: bunzai - the Bunzai command line.
 - `color.ts`: Shared hex/RGB/HSV color contract: parse once, convert, and format the lowercase six-digit CSS color Studio uses.
 - `convert.ts`: The bundle/link layer that sits above the single-entity adapters: a card is not just a character, it may bundle an embedded lorebook.
 - `desktop-boot-report.ts`: Boot-failure reporting for the packaged desktop app - the surface that makes a failed launch SAY something.
-- `desktop-dev.ts`: Bunraku (dev) - the native desktop window over the LIVE source.
-- `desktop-focus.ts`: Second launch: bring the running Bunraku window forward instead of opening another onto the same library (decision 9).
+- `desktop-dev.ts`: Bunzai (dev) - the native desktop window over the LIVE source.
+- `desktop-focus.ts`: Second launch: bring the running Bunzai window forward instead of opening another onto the same library (decision 9).
 - `desktop-port.ts`: Desktop listen-port selection and claim policy.
 - `desktop-window-launch.ts`: Shared window-worker wiring; each caller supplies its compile-safe worker factory and its own failure policy.
 - `desktop-window.ts`: The native window, in a WORKER thread - because webview's run() is a blocking native message pump that would starve the server's event loop on the main thread (verified live: window up, server dead).
-- `desktop.ts`: Bunraku.exe - the desktop entry.
+- `desktop.ts`: Bunzai.exe - the desktop entry.
 - `ensure-formats.ts`: One owner for "make the format registry ready in whatever runtime this is".
 - `error-message.ts`: Render an error's message, a caller fallback, or the value's string form in that order.
 - `foreign-reader.ts`: Reading a file in the studio folder that is not one of ours.
@@ -217,7 +217,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `draft-prompts.ts`: The text the draft tools send (studio/scene-draft.ts), in one place so the Writing Tools tab can show it read-only.
 - `formula.ts`: Running a formula (entities/formula) where nothing may change: on a structuredClone of the macro context (its messages shared, as they are only read), so no variable, counter or template it touches reaches the scene,...
 - `guards.ts`: The one copy of the small type guards untrusted JSON is read through.
-- `guide-record.ts`: A guide in the library: RoleCall's `guided_responses` row as Bunraku keeps it (RoleCall `lib/content/types.ts` GuideContent, `app/api/content/guides/route.ts`).
+- `guide-record.ts`: A guide in the library: RoleCall's `guided_responses` row as Bunzai keeps it (RoleCall `lib/content/types.ts` GuideContent, `app/api/content/guides/route.ts`).
 - `index.ts`: The engine core.
 - `links.ts`: Links between pieces: a body field holding the ids of pieces of another kind (a character's knowledgeRefs point at lorebooks).
 - `list-ops.ts`: The small array/map operations every list-shaped entity body (regex rules, preset blocks, lorebook entries, lore groups) reaches for.
@@ -231,7 +231,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `reasoning-tags.ts`: Takes the model's thinking out of a reply for display (RoleCall's "Catch thinking", reasoning-capture.ts holds its modes and tag lists): <think>, <thinking> and <thought> by default, or whatever the scene's Catch thin...
 - `registry.ts`: The registry - the pure, in-memory adapter table (no filesystem, no runtime deps).
 - `reports.ts`: Parse and serialize loss reports.
-- `scene-import.ts`: The carrier a chat-log adapter hands the import path: a finished conversation in Bunraku's own words, with every name still a NAME, because the scene's cast is resolved against the library at save time (src/studio/sce...
+- `scene-import.ts`: The carrier a chat-log adapter hands the import path: a finished conversation in Bunzai's own words, with every name still a NAME, because the scene's cast is resolved against the library at save time (src/studio/scen...
 - `scene-search.ts`: The pure half of in-scene search, ported from RoleCall's useChatSearch.ts (words of 2+ characters that must all be present, a 50-character context) and ChatSearchOverlay.tsx (thinking detection, the mark in a result).
 - `sha256.ts`: Small synchronous SHA-256 used where browser and host code share revision contracts.
 - `skill.ts`: When a linked skill is on (.claude/plans/skill-agent-kinds.md section 2.2): always; when the chat mentions it, matched by the lore engine's own trigger matcher over the newest `scanDepth` messages (newest first, as a...
@@ -411,9 +411,9 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 
 - `_test-helpers.ts`: Shared factories for engine/*.test.ts.
 - `boosting.ts`: Cross-entry boosting (RoleCall selection/boosting.ts applyProbabilityBoosts, engine.ts step 6): after inclusion groups and before the budget, every entry that fired adds its `boostAmount` to the chance of each entry i...
-- `budget.ts`: Priority/sortOrder eviction and two-stage budgeting (Bunraku change 3, - do NOT copy RoleCall's selection/priority.ts here).
+- `budget.ts`: Priority/sortOrder eviction and two-stage budgeting (Bunzai change 3, - do NOT copy RoleCall's selection/priority.ts here).
 - `character-filter.ts`: Whitelist/blacklist an entry to specific characters by name or tag.
-- `engine.ts`: The lore engine orchestrator: RoleCall's engine.ts process(), restructured as a pure function over canonical books plus Bunraku's four changes (derived timers, seeded rng, sortOrder/priority budgeting, positions retur...
+- `engine.ts`: The lore engine orchestrator: RoleCall's engine.ts process(), restructured as a pure function over canonical books plus Bunzai's four changes (derived timers, seeded rng, sortOrder/priority budgeting, positions return...
 - `groups.ts`: Inclusion groups: when several triggered entries share a `groupName`, only one injects, picked by weighted random draw (`groupWeight`).
 - `index.ts`: Public surface of the lore engine.
 - `key-index.ts`: M3, compiled lore matcher: a multi-pattern matcher over a book's plain (non-regex, non-special) trigger keys, so one pass over an entry's scan text finds every plain key hit, instead of triggers-keyword.ts's matchKeyw...
@@ -423,7 +423,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `scan.ts`: Build an entry's scan text and evaluate its triggers.
 - `side-effects.ts`: Declarative variable mutations for injecting entries.
 - `stored-input.ts`: Private revision trust for one deeply immutable body returned by the encrypted store.
-- `timers.ts`: Derived timer state (Bunraku change 1: timers are derived, never stored).
+- `timers.ts`: Derived timer state (Bunzai change 1: timers are derived, never stored).
 - `triggers-emotion-banks-1.ts`: Emotion pattern data, part 1 of 2: primary + secondary emotions.
 - `triggers-emotion-banks-2.ts`: Emotion pattern data, part 2 of 2: complex + physical/situational emotions.
 - `triggers-emotion.ts`: [emotion:X] trigger matching.
@@ -447,7 +447,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `normalize.ts`: Input normalization ahead of the macro parser: RoleCall's `preprocessSyntax`, rule for rule and in its order, WITH an offset map back to the authored text.
 - `parse.ts`: The macro parser: a span-carrying port of RoleCall's clean-room `parseNodesV2`.
 - `phases.ts`: Evaluation phases (RoleCall's macro engine spec Part VIII; RoleCall's macros/phases.ts).
-- `process.ts`: The engine's entry point: normalize, parse, evaluate, post-process (RoleCall's `processMacros`), and report the render as top-level segments tied to the authored source (Bunraku's addition, for the preset workbench's...
+- `process.ts`: The engine's entry point: normalize, parse, evaluate, post-process (RoleCall's `processMacros`), and report the render as top-level segments tied to the authored source (Bunzai's addition, for the preset workbench's e...
 - `registry.ts`: The closed macro registry (ADR-012 decision 5), holding RoleCall's handler families.
 - `scopes.ts`: Variable scopes: `scope:key` ({{state.set::session:callsign::X}}) resolved onto the two storage maps, as RoleCall resolves them.
 - `types.ts`: The macro engine's shared types: RoleCall's engine inside ADR-012.
@@ -455,7 +455,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 ## src/core/macros/handlers/
 
 - `character.ts`: Character card macros: fields carried on the card beyond identity (scenario, examples, tags, creator metadata, colors).
-- `chat-watch.ts`: Bunraku's own read-only macros for formulas: how often the chat mentions a word, how long since it last did, which of several words leads, and a seeded true/false chance.
+- `chat-watch.ts`: Bunzai's own read-only macros for formulas: how often the chat mentions a word, how long since it last did, which of several words leads, and a seeded true/false chance.
 - `choice.ts`: Choice macros: read the preset's choice-group selections (choice-groups.ts) at render time, so prompts can react to what the user picked in the preset UI without toggle-prompt gymnastics.
 - `composition.ts`: Composition and template macros (macro engine spec Part V.1 / V.2).
 - `conditional.ts`: Conditional macros: if/else, switch, comparison operators, and the plain-English shortcuts ({{when_all}}, {{when_any}}, {{whenempty}}, {{ifset}}).
@@ -479,7 +479,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `time-almanac.ts`: Season, moon phase, and zodiac: split out of time.ts to keep both files under the 500-line cap (RoleCall's time handler is 526 lines for all fourteen time macros).
 - `time.ts`: Time and date macros: RoleCall's handler inside ADR-012.
 - `timing.ts`: Timing and frequency macros: RoleCall's handler inside ADR-012.
-- `tracker.ts`: Bunraku's read-only `tracker` macro: a linked library tracker's state in any macro text (entities/tracker, core/tracker.ts).
+- `tracker.ts`: Bunzai's read-only `tracker` macro: a linked library tracker's state in any macro text (entities/tracker, core/tracker.ts).
 - `user-macros.ts`: User-defined macro functions: RoleCall's handler, inside ADR-012.
 - `variables-global.ts`: Global (cross-chat) variable macros: RoleCall's handler inside ADR-012.
 - `variables-structured.ts`: Structured (array/object) variable macros: RoleCall's handler inside ADR-012.
@@ -573,8 +573,8 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 
 ## src/core/preset/render/
 
-- `contract.ts`: The render contract: what Bunraku asks a platform's own macro engine, and what it must answer.
-- `engines.ts`: Which engines Bunraku can actually drive, and where each one lives on this machine.
+- `contract.ts`: The render contract: what Bunzai asks a platform's own macro engine, and what it must answer.
+- `engines.ts`: Which engines Bunzai can actually drive, and where each one lives on this machine.
 - `runner.ts`: The imperative half of rendering: spawn a declared renderer, hand it a request on stdin, read one JSON reply from stdout.
 - `scratch.ts`: Run a scrap of macro text through a platform's real engine and get the resolved text back.
 
@@ -592,7 +592,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `platform-fields.ts`: Which first-class regex fields each Write-for profile OWNS on a real wire, and which pipeline PHASES each profile's wire can carry.
 - `readout.ts`: The composed readout the Plain-words editor shows under a built pattern.
 - `replace-ops.ts`: The full replacement grammar in one module.
-- `scene-pass.ts`: Which regex rules a scene runs, and at what depth: RoleCall's `display_only` and `prompt_only` placements on Bunraku's rule shape (apps/rc lib/regex/apply-regex.ts:96-130, hooks/scene/useDisplayMessages.ts:329-348, li...
+- `scene-pass.ts`: Which regex rules a scene runs, and at what depth: RoleCall's `display_only` and `prompt_only` placements on Bunzai's rule shape (apps/rc lib/regex/apply-regex.ts:96-130, hooks/scene/useDisplayMessages.ts:329-348, lib...
 - `structure-atoms.ts`: Structure atoms for the NL builder.
 - `template-catalog.ts`: The starter-recipe catalog - pure DATA, no logic.
 - `templates.ts`: Starter-recipe types + helpers.
@@ -707,7 +707,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `summary-corpus.ts`: Pure Markdown section boundaries, hashing, scaffold, and stamp for semantic docs.
 - `summary-types.ts`: Wire types for authored semantic documentation sidecars and review receipts.
 - `summary-validate.ts`: Fail-closed validation of authored semantic documentation sidecars.
-- `types.ts`: Shared wire types for Bunraku's generated documentation corpus.
+- `types.ts`: Shared wire types for Bunzai's generated documentation corpus.
 
 ## src/entities/_shared/
 
@@ -949,7 +949,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `repair-json.ts`: Files that hold a real piece inside a shape nothing recognises.
 - `st-preset-emit.ts`: SillyTavern completion-preset wire layer, emit side.
 - `st-preset-wire.ts`: SillyTavern completion-preset wire layer, parse side (RoleCall's preset export writes this same flat grammar).
-- `st-template-wire.ts`: SillyTavern's non-chat-completion preset files that DO have a home in a Bunraku preset: the KoboldAI / TextGen / NovelAI sampler sets (their samplers land on the preset's samplers) and the system prompt template (its...
+- `st-template-wire.ts`: SillyTavern's non-chat-completion preset files that DO have a home in a Bunzai preset: the KoboldAI / TextGen / NovelAI sampler sets (their samplers land on the preset's samplers) and the system prompt template (its t...
 - `tavern-fields.ts`: Shared Tavern-card field mapping (V2/V3 `data` <-> canonical CharacterBody).
 
 ## src/formats/_shared/media-bridge/
@@ -1079,7 +1079,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 
 ## src/formats/vaud-json/
 
-- `index.ts`: vaud-json - Bunraku's own native format: the canonical entity as plain JSON.
+- `index.ts`: vaud-json - Bunzai's own native format: the canonical entity as plain JSON.
 
 ## src/kit/_shared/
 
@@ -1148,9 +1148,9 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 
 ## src/kit/docs/
 
-- `catalog.ts`: Pure deterministic search and section extraction for Kit's Bunraku documentation tool.
+- `catalog.ts`: Pure deterministic search and section extraction for Kit's Bunzai documentation tool.
 - `navigation.ts`: Pure folder, page, and outline projections over the docs catalog index.
-- `repository.ts`: Read-only, catalog-contained access to Bunraku's generated documentation corpus.
+- `repository.ts`: Read-only, catalog-contained access to Bunzai's generated documentation corpus.
 
 ## src/kit/doctor/
 
@@ -1163,7 +1163,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `provider.ts`: Doctor provider check: the same real ping path as /test, bounded by the doctor runner.
 - `studio.ts`: Doctor studio check: prove the bound canonical store can enumerate its current pieces.
 - `vault.ts`: Doctor vault check: report the actual sealing backend and whether a saved provider is active.
-- `version.ts`: Doctor version check: report the exact local Bunraku and Bun builds without making network egress.
+- `version.ts`: Doctor version check: report the exact local Bunzai and Bun builds without making network egress.
 
 ## src/kit/keystore/
 
@@ -1484,7 +1484,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `collections.ts`: Read tool: the person's own groupings of pieces - a cast, a series, this week's four things.
 - `delete.ts`: Studio lifecycle: remove one piece from the studio.
 - `discover.ts`: The tool loader: folders-as-schema for Kit's tools, the IMPURE edge that mirrors src/core/loader.ts.
-- `docs-query.ts`: Read-only meta-tool for searching, browsing, outlining, and reading Bunraku docs.
+- `docs-query.ts`: Read-only meta-tool for searching, browsing, outlining, and reading Bunzai docs.
 - `duplicate.ts`: Studio lifecycle: copy one piece to a new id.
 - `export.ts`: Studio export: convert one stored piece to another platform's format and write the file.
 - `folder-import.ts`: Bring a file from a shared folder into the studio, where it can actually be changed.
@@ -1545,13 +1545,13 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `client-protocol.ts`: The client side of the MCP wire, as shapes and parsing only.
 - `main.ts`: The entry point a client spawns: Kit's tools, served on stdio.
 - `protocol.ts`: The MCP wire, as shapes and parsing only.
-- `run.ts`: Starting the MCP server: `bunraku mcp [studio-dir] [--read-only]`.
+- `run.ts`: Starting the MCP server: `bunzai mcp [studio-dir] [--read-only]`.
 - `server.ts`: Kit's tools, served over MCP on stdio.
 
 ## src/pocket/
 
 - `asset-routes.ts`: Bounded, receipt-pinned asset reads for the temporary browser Studio.
-- `index.ts`: Boot the static, tab-scoped Bunraku Studio before mounting the ordinary React shell.
+- `index.ts`: Boot the static, tab-scoped Bunzai Studio before mounting the ordinary React shell.
 - `runtime.ts`: Browser-only Studio runtime for static hosting.
 - `search-index.ts`: Worker-owned portable search summaries, memberships and bounded lore shards.
 - `search-worker.ts`: Disposable browser search worker using the same grammar, ranking and bounded wire protocol.
@@ -1589,7 +1589,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `news.ts`: What's new, in plain words: turn a release's commit subjects (the fenced block release.yml writes) into the lines a visitor reads.
 - `pages.ts`: The website's pages as HTML strings: the shared frame (fonts, nav, footer, logo) and every page.
 - `reel.ts`: The home page's feature reel, after RoleCall's landing Feature Reel: one "now showing" stage that steps through the cast, each act washing the room in its own color.
-- `tour.ts`: The feature tour: the cast (one entry per part of Bunraku) and the page each one gets.
+- `tour.ts`: The feature tour: the cast (one entry per part of Bunzai) and the page each one gets.
 
 ## src/stage/
 
@@ -1847,7 +1847,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `health-structure.ts`: The structural half of the scan: rows that point at rows that are not there, parts and images nothing owns, pieces and versions with no content, and chats whose pointers lead nowhere.
 - `health-test-support.ts`: Test harness for the health check: a throwaway library on a real file in the system temp folder (never the maintainer's), with a few pieces (one with history, one buried), a chat with edits, a fork, and a cast snapsho...
 - `health-types.ts`: The health check's shapes: what a scan reports and what a repair is asked to do.
-- `kit-sessions.ts`: Kit's session store in the encrypted library (migration 5): the same SessionStore Kit already uses, with each transcript a sealed row instead of a plain JSON file in ~/.bunraku/sessions.
+- `kit-sessions.ts`: Kit's session store in the encrypted library (migration 5): the same SessionStore Kit already uses, with each transcript a sealed row instead of a plain JSON file in ~/.bunzai/sessions.
 - `lane-probe.ts`: A build-time probe, compiled into a standalone executable (like the shipped app, with `--root src`) to prove the background lane works there: a database on a real file is written, rebuilt on the lane's maintenance wor...
 - `maintenance-worker.ts`: The background lane's worker (src/stage/store/sqlite/background.ts): heavy database work on its own thread and its own connection, so the app's main thread never freezes behind it (the speed budget: nothing blocks the...
 - `migration-18-parts.ts`: Migration 18, held in its own file (with `migrations.ts`, whose combined list would otherwise pass the line cap): Appendix A P2.
@@ -2186,7 +2186,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `app-contract-scenes.ts`: The scene half of the app contract's `api` (src/ui/app-contract.ts): the library's scenes, their edits, and a scene's turn and connection.
 - `app-contract-search.ts`: UI transport names for the shared runtime-neutral search request and result.
 - `app-contract-spotify.ts`: The Spotify routes an app may call through the local server, which holds the link and the token; the page never sees either.
-- `app-contract.ts`: The Bunraku app contract v2 (ADR-008, CONTRACT V2) - the dock's folders-as-schema, React shaped.
+- `app-contract.ts`: The Bunzai app contract v2 (ADR-008, CONTRACT V2) - the dock's folders-as-schema, React shaped.
 - `assets.ts`: Packaged-assets contract: the difference between dev and shipped software, isolated to ONE seam.
 - `boot.ts`: The shell's client boot (ADR-008, CONTRACT V2) - mounts the React root and wires dev live-reload.
 - `collection-edit.ts`: Parse the bounded HTTP-shaped collection edit shared by desktop and browser runtimes.
@@ -2499,7 +2499,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `scene-foldout.tsx`: FoldoutTabs: the strip over a wing panel (RoleCall's FoldoutTabs): the "Scene / Cast" breadcrumb and one square tile per panel the wing owns, the open one marked, each with a small subtitle.
 - `scene-greeting-picker.tsx`: The Opening Message header before the first send (RoleCall's greeting picker): which of the card's greetings starts the scene.
 - `scene-guide-editor.tsx`: The Guides tab's editor for one guide: RoleCall's embedded GuideEntryPanel.
-- `scene-guides-wing.tsx`: The Prompting wing's Guides tab: RoleCall's GuidesPanel on Bunraku.
+- `scene-guides-wing.tsx`: The Prompting wing's Guides tab: RoleCall's GuidesPanel on Bunzai.
 - `scene-history-core.ts`: The Edit history list's facts (approved wireframe rc-port/scene-history.html).
 - `scene-history-style.ts`: Edit history popover and the Undo toast (approved wireframe rc-port/scene-history.html).
 - `scene-history.tsx`: Edit history (approved wireframe rc-port/scene-history.html; RoleCall has no history list, so it borrows the look of its More overflow menu).
@@ -2512,17 +2512,17 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `scene-lore-entries.tsx`: The World wing's entries panel for one open book (RoleCall's LorebookEntriesPanel and MiniEntryItem): the action row (saving state, "+" New entry, open in the Workbench) over the search, then the Constant and Selectiv...
 - `scene-lore-entry.tsx`: The World wing's entry editor (RoleCall's EntryPanel, drawn pixel for pixel): the header (status dot, on switch, title; with advanced settings open also the Constant/Selective type, Order and Scan boxes; the token est...
 - `scene-lore-keys.tsx`: The entry editor's keyword boxes (RoleCall's TriggerInputBox and TriggerChip): chips that hold three at first and "and N more" for the rest, Enter to add (a "/pattern/flags" becomes a regex trigger and is refused when...
-- `scene-lore-wing.tsx`: The World wing's Lorebook tab: RoleCall's LorebookPanel on Bunraku's library, drawn to its layout (scene-lore-books.tsx, scene-lore-entries.tsx, scene-lore-entry.tsx).
+- `scene-lore-wing.tsx`: The World wing's Lorebook tab: RoleCall's LorebookPanel on Bunzai's library, drawn to its layout (scene-lore-books.tsx, scene-lore-entries.tsx, scene-lore-entry.tsx).
 - `scene-meta-core.ts`: The facts a message's meta line shows, ported from RoleCall's EditableMessage (timestamp formatter, finish-reason chip, short model name, generation time).
 - `scene-meta.tsx`: The meta row under a message, as RoleCall's ImmersiveMessage draws it (rc-port/scene-turn.html) grown to every message with its header facts (rc-port/scene-meta.html): the time, for a reply the model, how long it took...
-- `scene-note-wing.tsx`: The Prompting wing's Scene Note tab: RoleCall's AuthorNotePanel on Bunraku.
+- `scene-note-wing.tsx`: The Prompting wing's Scene Note tab: RoleCall's AuthorNotePanel on Bunzai.
 - `scene-page-types.ts`: The scene page's own types: the open dialog, the page's rows, and what the stable Bubble-action dispatchers read at call time.
 - `scene-page.tsx`: The scene page: RoleCall's StandardLayout (approved wireframe rc-port/chat.html).
 - `scene-persona-picker.tsx`: The Casting Call: the one persona picker (RoleCall's SatelliteOrbiters PersonaQuickSwap, in the approved Cast wing wireframe).
 - `scene-portrait-zoom.tsx`: A message portrait that enlarges on click (RoleCall's EditableMessage.tsx:1946 `cursor-zoom-in` + `openScenePortrait`): the portrait fills a button, and the click opens the Stage Gallery's lightbox on the scene's froz...
 - `scene-preset-parts.tsx`: The Prompting wing's parts (approved wireframe rc-port/scene-preset-wing.html): RoleCall's CollapsibleSamplerBar, its prompt list (MiniPromptItem rows under category switches), and its PromptEditPane.
 - `scene-preset-templates.tsx`: The preset's system prompts (RoleCall's PresetPanel Templates section and its TemplateItem): eight always-listed text fields, each a collapsed row with its token estimate or "empty" that opens into a textarea.
-- `scene-preset-wing.tsx`: The Prompting wing's Preset tab (approved wireframe rc-port/scene-preset-wing.html): RoleCall's PresetPanel on Bunraku's library.
+- `scene-preset-wing.tsx`: The Prompting wing's Preset tab (approved wireframe rc-port/scene-preset-wing.html): RoleCall's PresetPanel on Bunzai's library.
 - `scene-prompt-regex.ts`: The page's half of a scene's prompt regex (studio/scene-turn-regex.ts): the turn holds its request and hands over the rules and the conversation messages; the page runs them in the sandbox worker (ADR-009), one batch...
 - `scene-prompting.tsx`: The Prompting wing (RoleCall's left "Prompting" rail): its tabs.
 - `scene-reasoning-blocks.tsx`: The scene.reasoning surface (approved wireframe rc-port/scene-reasoning-themes.html): the two blocks above a reply, the provider's native reasoning first ("Backstage - Native Reasoning") and the thinking written insid...
@@ -2532,7 +2532,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `scene-regex-actions.ts`: The Regex tab's actions, one place for every presentation of it (the Final Cut wing's Regex tab and the Messenger's Regex Workshop): the library list in the person's saved order, switching a set on for the scene, a dr...
 - `scene-regex-core.ts`: The Regex tab's list rules (RoleCall's RegexPanel.tsx): the library list in the person's saved order, a drag that moves one set to another's place, and the selected sets in list order after a drag.
 - `scene-regex-style.ts`: The Final Cut wing's Regex tab (RoleCall's RegexPanel, on the Prompting wing's look in prompting-style.ts) and the Stage wing's Wardrobe rows: the script list with its drag handle, the open row's actions, and the empt...
-- `scene-regex-wing.tsx`: The Final Cut wing's Regex tab: RoleCall's RegexPanel on Bunraku.
+- `scene-regex-wing.tsx`: The Final Cut wing's Regex tab: RoleCall's RegexPanel on Bunzai.
 - `scene-row.ts`: What a scenes.list row variant draws for one scene: the scene, its place in the list, the backdrop art and the take dots.
 - `scene-sampler-card.tsx`: One sampler as RoleCall draws it (PresetPanel.tsx:2859-3030 SamplerSlider): a card holding the label with its own-value dot and a "?" that opens the help, the coloured value (click it to type one, Enter keeps it held...
 - `scene-signals.ts`: What the scene page knows about its own turns and swipes, held where the panels that draw scene state can read it (the page's `scene` is not handed down to a pop-out or a program's panel, only the chat).
@@ -2543,7 +2543,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `scene-tree-core.ts`: Takes as RoleCall lays them out, the pure half: the Branching Tree's nesting (rc app/scenes/branching-tree page.tsx:88-162), a row's title and second line (:114-129), what the take menu lists for the take you are on (...
 - `scene-tree-style.ts`: The Branching Tree page (RoleCall app/scenes/branching-tree page.tsx), scoped under `.sct`, read as Tailwind and converted: a zinc-950 to black page (p-6, max-w-4xl), a 40px icon tile in a purple-to-pink wash, text-2x...
 - `scene-tree.tsx`: The Branching Tree (RoleCall app/scenes/branching-tree page.tsx, "Full conversation timeline with all branches"): every take of one scene as a nested list, a click opens that take, the pencil renames it, the trash sen...
-- `scene-turn-parts.tsx`: A turn's pieces as the approved wireframe rc-port/scene-turn.html draws them: RoleCall's Starting chip, ImmersiveMessage's meta row with the SwipeCounter (scene-meta.tsx), its failure card, Bunraku's two additions (th...
+- `scene-turn-parts.tsx`: A turn's pieces as the approved wireframe rc-port/scene-turn.html draws them: RoleCall's Starting chip, ImmersiveMessage's meta row with the SwipeCounter (scene-meta.tsx), its failure card, Bunzai's two additions (the...
 - `scene-turn-stream.ts`: Reading one scene turn's server-sent events in the browser (item 11).
 - `scene-turn-style.ts`: The scene's turn controls and AI wing, from the approved wireframes rc-port/scene-turn.html (send, stop, the Starting chip, the live bubble, the meta row and SwipeCounter (on every message, with the time and finish re...
 - `scene-wing-data.ts`: The scene's wings as RoleCall's rails list them (the scene page's LEFT_WING_ITEMS and RIGHT_WING_ITEMS, `controlTooltips.ts` WING_PANEL_TASK_LABELS and WING_PANEL_TOOLTIPS): the order, the tone each wing carries, the...
@@ -2552,7 +2552,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `scene-wing-style.ts`: The default theme's wing shell, measured from RoleCall (every value names its source): `WingRail.tsx` and `WingItem.tsx` (the glass rail, the icon states, the labels and the long help), `WingPanelContainer.tsx` (the p...
 - `scene-wings.tsx`: The scene's wings (RoleCall's WingRail and WingShell).
 - `scene-world-wing.tsx`: The World wing's chrome (RoleCall `FoldoutTabs` and the `left-world` group, `LeftWingPanelContent.tsx:245-252`): the "Scene / World" crumb over two equal cards, LOREBOOK with its "N linked" line and COMPENDIUM.
-- `scene-writing-tools.tsx`: The Prompting wing's Writing Tools tab: RoleCall's WritingToolsPanel on Bunraku.
+- `scene-writing-tools.tsx`: The Prompting wing's Writing Tools tab: RoleCall's WritingToolsPanel on Bunzai.
 - `scenes-cards.tsx`: The Scenes list's card grid (approved wireframe design/wireframes/soft/scenes-game.html): a fixed 2:3 portrait card per scene, the character's backdrop art (SceneArt), a take strip when the scene has more than one tak...
 - `scenes-core.ts`: The Scenes list's pure logic: RoleCall's time filters (All Time / Week / Month / Year), its two orders (Recent / Messages), the search over title and character, relative times, and the P3 gamified list's own grouping...
 - `scenes-dialogs.tsx`: The Scenes list's dialogs, all on the existing Cutting Room skin (.scn-cut, from the plain list): rename a scene, cut one or several to the Trash, name or rename a folder, delete a folder (the scenes stay), and move a...
@@ -2595,7 +2595,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `stage-style.ts`: The Stage wing's styles: its one width for every tab (RoleCall resized the wing per tab, F1, as `--wing-w`) and the Appearance tab, copied from StageSettingsPanel.tsx's Tailwind classes into values (text-sm 14, text-x...
 - `stage-tabs.ts`: The Stage wing's tab contract (RoleCall's buildRightFoldoutTabs, right-wing-groups.ts:108-115): Appearance, Gallery, Music, Spotify, Wardrobe, in that order.
 - `stage-type-act.tsx`: The Type act (RoleCall's "The Type", StageSettingsPanel.tsx:1940-2110): text size, message font, the three text colours and line spacing.
-- `stage-wardrobe.tsx`: The Stage wing's Wardrobe tab (RoleCall's WardrobeWingPanel, an Understudies beta there; Bunraku has no tiers).
+- `stage-wardrobe.tsx`: The Stage wing's Wardrobe tab (RoleCall's WardrobeWingPanel, an Understudies beta there; Bunzai has no tiers).
 - `tools-style.ts`: The scene tools' styles, from RoleCall's own components (approved wireframes rc-port/scene-*.html, built from design/wireframes/rc-port/rc-parts.css): EditableMessage's delete dropdown, MessageActionOverflow's menu, B...
 - `touch-actions-core.ts`: Touch reach for a message's action bar, as RoleCall does it (EditableMessage.tsx:1475-1500, 1992-2010; useMessageActions.ts:75-90; useIsMobile.ts:12): below 1024 px (tablets count) a tap on the message toggles the bar...
 - `trash-scene.ts`: Moves a scene whose character is gone to the Trash (soft delete), then leaves the page; a refusal is said, not swallowed.
@@ -2649,7 +2649,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 
 - `add-participant.tsx`: Add participant: a person written in by hand (a name, an optional note, and whether they are on stage), sent as one `{op:"add"}` run through the roster writer the Participants tab and the Messenger members panel alrea...
 - `cast-character-tab.tsx`: The Cast wing's Character tab (approved wireframe; RoleCall's CharacterPanel): the hero, the tall portrait with the Now Playing chip, version badge and alt-art look strip, and the form in RoleCall's order: the casting...
-- `cast-core.ts`: The Cast wing's pure rules: the tabs, how a failed save reads, the content-rating words RoleCall shows over Bunraku's canonical grades, and the one-line stats and version captions.
+- `cast-core.ts`: The Cast wing's pure rules: the tabs, how a failed save reads, the content-rating words RoleCall shows over Bunzai's canonical grades, and the one-line stats and version captions.
 - `cast-defaults.tsx`: The Character tab's "New scene defaults" section: what a NEW scene with this character starts on (preset, samplers, backdrop, Story Director).
 - `cast-dialogs.tsx`: The Cast wing's two small surfaces besides its tabs: the confirm before the scene plays someone else (what changes and what does not, in the approved wireframe's words) and the New persona form (a name and the identit...
 - `cast-injection.tsx`: The Persona tab's Prompt Injection extras, after RoleCall's PersonaPanel: the status line over the stops (the preset scan) and the Live Preview with its Tokens footer.
@@ -2796,7 +2796,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `use-forecast.ts`: Next send's read of the forecast route (RoleCall `hooks/usePromptPreview.ts`): after a 300 ms pause in typing, ask for the request a send of the draft would build, dropping an answer that a newer request has overtaken.
 - `use-reply-trace.ts`: The Context wing's one read of a reply's trace (`ctx.api.getSceneTrace`): the take's newest reply, or the one the person paged to.
 - `use-summary.ts`: The Memory tab's one read and its writers (`ctx.api` summary calls; ChatStore rule 45).
-- `variable-history.tsx`: One variable's history in State's fold (Bunraku's own; RoleCall keeps only the current value): the changes the take's replies made to it, newest first, each as the reply's number, the value before and after, and when.
+- `variable-history.tsx`: One variable's history in State's fold (Bunzai's own; RoleCall keeps only the current value): the changes the take's replies made to it, newest first, each as the reply's number, the value before and after, and when.
 
 ## src/ui/apps/scenes/final-cut/
 
@@ -2882,7 +2882,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `messenger-style.ts`: The Messenger shell's styles, sizes from RoleCall discord.css (the rail :11-18, the sidebar :19-35, the user bar :36-40, the header :41-44, the 640px step :155-173) and the approved wireframes messenger-discord/shell....
 - `messenger.tsx`: The Messenger as the scene page mounts it: the shell (messenger-chrome.tsx) with its stylesheet, and the settings layer wired to the page's wing arguments.
 - `program-open.ts`: Asking the Messenger to open one of its programs from somewhere that does not hold its navigation (a chip under a reply opening the Trackers program).
-- `programs.ts`: The Messenger's rail: one program per Bunraku wing tab, in RoleCall's order (programs.ts:15-28 GROUPS, left wings then right) with its TITLES (programs.ts:29-36) and the approved wireframe's glyphs (rc-port/messenger....
+- `programs.ts`: The Messenger's rail: one program per Bunzai wing tab, in RoleCall's order (programs.ts:15-28 GROUPS, left wings then right) with its TITLES (programs.ts:29-36) and the approved wireframe's glyphs (rc-port/messenger.h...
 - `use-messenger-focus.ts`: The Messenger's width and drawer rules (RoleCall DiscordChrome.tsx:147-151,229-280,282-303), on the studio's own Escape arbiter and focus-trap core.
 - `use-messenger-nav.ts`: Which program the Messenger shows (RoleCall DiscordChrome.tsx:119-157,186-191, here with one open program at a time): opening one swaps whatever was open, closing returns to the chat, the programs visited stay in `vis...
 - `use-messenger-open.ts`: Which part of the scene page is away from the chat, and how a panel asks for a wing: the wing in Full Chat, a numbered request the Messenger honours once in the Messenger (use-messenger-nav.ts).
@@ -3564,7 +3564,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `live-build.tsx`: LiveBuild - the engine-truth pane.
 - `live-preview.tsx`: LivePreview - the RESOLVED rail pane, and the editable half the LiveBuild pane deliberately is not.
 - `macro-reference.tsx`: MacroReference - the AVAILABLE MACROS section of the EDIT PROMPT sidebar (a faithful port of RC's MacroReferenceDropdown): a "Click to copy" header, bordered collapsible group boxes (icon + name + count + chevron), an...
-- `marker-menu.tsx`: "+ Marker" in the prompt list's toolbar (wireframe design/wireframes/premiere/prompt-placement-nodes.html, Legacy, callout 4): every marker slot, SillyTavern's and Bunraku's feature markers, with the placed ones greye...
+- `marker-menu.tsx`: "+ Marker" in the prompt list's toolbar (wireframe design/wireframes/premiere/prompt-placement-nodes.html, Legacy, callout 4): every marker slot, SillyTavern's and Bunzai's feature markers, with the placed ones greyed...
 - `preset-core.ts`: Pure helpers the preset editor leans on: entity parsing, edit touches, selection flips, group reveal.
 - `preset-editor.tsx`: PresetEditorView.
 - `prompt-edit-panel.tsx`: PromptEditPanel - the EDIT PROMPT tab of the right rail (a faithful transcription of RC's PromptEditPanelV4).
@@ -3682,7 +3682,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 
 ## src/ui/components/animated-theme-toggler/
 
-- `index.tsx`: AnimatedThemeToggler adapts Magic UI's circular View Transition reveal to Bunraku's controlled paper/stage theme store and existing Stamp control.
+- `index.tsx`: AnimatedThemeToggler adapts Magic UI's circular View Transition reveal to Bunzai's controlled paper/stage theme store and existing Stamp control.
 - `overlay-reveal.ts`: The theme reveal, done with an ordinary element instead of the View Transitions API.
 - `transition-core.ts`: Pure geometry for the animated theme reveal.
 
@@ -3835,7 +3835,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 
 ## src/ui/components/leaving-gate/
 
-- `index.tsx`: LeavingGate - the full-window "you are leaving Bunraku" interstitial.
+- `index.tsx`: LeavingGate - the full-window "you are leaving Bunzai" interstitial.
 
 ## src/ui/components/lens-rail/
 
@@ -3982,7 +3982,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 
 ## src/ui/components/stage-dossier/
 
-- `index.tsx`: The stage dossier: RoleCall's encryption-flow grammar for Bunraku's own screens (the approved in-between wireframes in design/wireframes/encryption/in-between/).
+- `index.tsx`: The stage dossier: RoleCall's encryption-flow grammar for Bunzai's own screens (the approved in-between wireframes in design/wireframes/encryption/in-between/).
 
 ## src/ui/components/structured-persona/
 
@@ -4077,7 +4077,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `BootErrorScreen.tsx`: Studio boot-failure screen with direct recovery and Remote Access setup links.
 - `ClosePieceDialog.tsx`: Shell-owned confirmation before closing an editor that still has unsaved changes.
 - `dock-core.ts`: Pure dock roster: every available app is reachable, with utility apps separated at the end.
-- `Dock.tsx`: RoleCall's persistent bottom-dock interaction, backed by Bunraku's discovered apps and host navigation.
+- `Dock.tsx`: RoleCall's persistent bottom-dock interaction, backed by Bunzai's discovered apps and host navigation.
 - `DropVeil.tsx`: DropVeil - app-wide file-drop feedback.
 - `error-boundary.tsx`: The last net under the whole shell.
 - `FollowDialog.tsx`: FollowDialog - the shell's "N items were sent to the Workbench.
@@ -4134,7 +4134,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `packaged-engine.ts`: Packaged-build switch engine.
 - `routes.ts`: The version-switch routes (host-only; /api/updates/* is refused to any remote/LAN device upstream).
 - `setup.ts`: Boot wiring for version switching: build the SwitchManager the trusted handler drives.
-- `source-engine.ts`: Source-checkout switch engine: move a `git`-run Bunraku to a release tag by checking it out and reinstalling.
+- `source-engine.ts`: Source-checkout switch engine: move a `git`-run Bunzai to a release tag by checking it out and reinstalling.
 
 ## src/ui/theme/
 

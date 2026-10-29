@@ -1,6 +1,6 @@
 /**
  * The Studio's own stamp on a stored piece: when it first arrived (`importedAt`) and the accent read
- * from its portrait. It lives in the piece's `original["vaud-studio"]` escrow, the one bag Bunraku
+ * from its portrait. It lives in the piece's `original["vaud-studio"]` escrow, the one bag Bunzai
  * owns, so no format's escrow is ever touched. It never records when a piece last changed: the
  * library keeps that, and a stamp that changed on every save would make every save a new version.
  */

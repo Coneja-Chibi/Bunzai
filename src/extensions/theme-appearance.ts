@@ -35,8 +35,8 @@ export const DISPLAY_FONTS = ["archivo", "cinzel", "fraunces", "atkinson", "fred
 export const BODY_FONTS = ["archivo", "atkinson", "fraunces", "inter", "system-ui"] as const;
 export const UI_FONTS = ["archivo", "cinzel", "fraunces", "atkinson", "fredoka", "inter", "system-ui"] as const;
 export const MONO_FONTS = ["plex-mono", "courier-prime", "jetbrains-mono", "system-mono"] as const;
-/** The chrome sizing a theme wears: Bunraku's square corners and 12px floor, or RoleCall's radii and small-label scale. */
-export const CHROMES = ["bunraku", "rolecall"] as const;
+/** The chrome sizing a theme wears: Bunzai's square corners and 12px floor, or RoleCall's radii and small-label scale. */
+export const CHROMES = ["bunzai", "rolecall"] as const;
 export interface ThemeAppearance {
   surfaces: SurfaceVariants;
   palette: ThemePalette;

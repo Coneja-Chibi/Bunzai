@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/components",
   "sourcePath": "docs/reference/components.md",
-  "sourceHash": "sha256:03ce741a8278217d8d880d727fad2e5c951ae6625ebb45c94b5e567c8165462a",
-  "semanticSummaryHash": "sha256:c141806029bf21ea0b45d1e657d3b354419467745f1ebb12d73f5f56fdb117e1",
+  "sourceHash": "sha256:48382c6366efc996bad4bc6359fc2c5d67bc0e63eda72b5e3dc16a5d1d17bfbf",
+  "semanticSummaryHash": "sha256:b99be5a292a3107ac082529c1603ad0bea27e0af7bd831fa04287a15f9177522",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "FeatureNode's row description now matches the doc comment on the component: 'A feature that splices into the request (trackers, library trackers, storyboards). Its port is a piece node's port: drag a wire to a block to put its marker there.' Signature (p: FeatureNodeProps) unchanged; summary names no such row and stays accurate; sidecar fresh.",
-  "reviewedAt": "2026-10-29T09:15:13.356Z"
+  "notes": "rename to Bunzai only; generated table cells truncate at fixed width so two cut-off points moved with the shorter name",
+  "reviewedAt": "2026-10-29T20:48:08.160Z"
 }

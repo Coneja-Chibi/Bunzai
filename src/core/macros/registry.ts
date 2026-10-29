@@ -2,7 +2,7 @@
  * The closed macro registry (ADR-012 decision 5), holding RoleCall's handler families.
  *
  * There is no runtime registration API: the table is built once from `CATALOG` and never changes,
- * so the evaluator can only run handlers Bunraku ships, chosen by name. An unlisted name is an
+ * so the evaluator can only run handlers Bunzai ships, chosen by name. An unlisted name is an
  * unknown macro. RoleCall builds the same table by calling register functions at startup; the
  * lookup rules below are its rules exactly, because they decide which handler owns a name that
  * two families both claim:

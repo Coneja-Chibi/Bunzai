@@ -45,7 +45,7 @@ async function main(): Promise<void> {
   // The encrypted library opens first; a locked one is said plainly instead of failing on the first read.
   const library = await openLibrary(bridge.studioDir);
   if (library?.state === "locked") {
-    console.error("kit: your library is locked. Open it in Bunraku first, then start Kit again.");
+    console.error("kit: your library is locked. Open it in Bunzai first, then start Kit again.");
     process.exitCode = 1;
     return;
   }
@@ -62,7 +62,7 @@ async function main(): Promise<void> {
    * matched. See the same split in the desktop window's use-mentions.ts.
    */
   const groups = (await bridge.collections?.())?.collections ?? [];
-  const studioName = basename(bridge.studioDir) || "Bunraku Studio";
+  const studioName = basename(bridge.studioDir) || "Bunzai Studio";
   /**
    * A live handle to the rail, filled in by the shell once it mounts.
    *

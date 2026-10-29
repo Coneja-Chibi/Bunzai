@@ -27,7 +27,7 @@ type Child = ReturnType<typeof Bun.spawn>;
  * actionable half is that LAN mode is right below and needs no extra binary at all.
  */
 export const NO_SIDECAR_DETAIL =
-  "This copy of Bunraku was built without the Tailscale helper, so the private-mesh link cannot start. " +
+  "This copy of Bunzai was built without the Tailscale helper, so the private-mesh link cannot start. " +
   "LAN mode below works with no extra download.";
 
 export interface SidecarManagerOptions {
@@ -120,7 +120,7 @@ export function createSidecarManager(opts: SidecarManagerOptions): SidecarManage
       const argv =
         process.platform === "win32"
           ? ["taskkill", "/F", "/IM", "sidecar.exe"]
-          : ["pkill", "-f", "bunraku/sidecar"];
+          : ["pkill", "-f", "bunzai/sidecar"];
       await Bun.spawn(argv, {
         stdout: "ignore",
         stderr: "ignore",
@@ -154,7 +154,7 @@ export function createSidecarManager(opts: SidecarManagerOptions): SidecarManage
         // window when the window-less packaged app spawns it. Belt-and-suspenders with the sidecar's
         // own -H=windowsgui build.
         windowsHide: true,
-        env: { ...process.env, BUNRAKU_SIDECAR_SECRET: opts.sharedSecret },
+        env: { ...process.env, BUNZAI_SIDECAR_SECRET: opts.sharedSecret },
       });
     } catch (err) {
       // The technical detail belongs in the HOST's console, not in a panel a remote device can read:

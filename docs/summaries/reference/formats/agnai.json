@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/formats/agnai",
   "sourcePath": "docs/reference/formats/agnai.md",
-  "sourceHash": "sha256:70022381f5c288cc092bbf0f455a370dbc1c7f4e28bb27faad706d3119da4f78",
+  "sourceHash": "sha256:e5a6c2f744d5431798920bd9b4c79a3b9fa4086bc069274c6bdcc940b532104d",
   "summary": "Developer reference for the Agnai Agnaistic adapter family: native JSON character shape and memory-book lorebooks, not Tavern-lineage. Persona is structured kind plus attribute map, preserved in canonical persona.structured. Folder src/formats/agnai default-exports agnai character and agnai-lorebook codecs, both .json; schema facts come from Agnai source under AGPL as interop only with no code copied. Detection covers character score 1.0 when kind character persona object greeting string and schemaVersion body both absent to firewall vaud-json; lorebook scores 1.0 kind memory, 0.9 kind-less native entry keywords array, 0.7 standalone CCv3 character_book soft import, else 0. Field map covers character and lorebook canonical mappings. Escrow retains the parsed source card and unknown keys as a twin; export overlays canonical fields and regenerates JSON, so fidelity is semantic/field-level rather than byte-identical. The character persona is always rebuilt, and multi-element text attributes collapse to the first element. Lorebook entries overlay by id and preserve parsed fields and raw-only residue, while JSON formatting may normalize. Embedded characterBook uses Agnai MemoryBook mapping, not the CCv3 mapper. Quirks include overlay behavior, firewall, imageSettings per-key merge, single insert, embedded book handling, and selectiveLogic ST residue.",
   "topics": [
     "Agnai character JSON",
@@ -19,7 +19,7 @@
       "slug": "detection",
       "title": "Detection",
       "level": 2,
-      "sourceHash": "sha256:a8fae38cbe1feeb77b62e0fb750891afea94bbab81b106ca3f0d6bc94709a4d8",
+      "sourceHash": "sha256:7549624ab896c51d11678d2eea98a4338b6798c80b86ff9fa424bed39ab7c744",
       "summary": "Registry keeps the single highest detect score above 0.5 so specific formats outrank generic ones. Character detect parses JSON and returns 1.0 only when kind is character, persona is a non-null object, greeting is a string, schemaVersion is undefined, and body is undefined; otherwise 0. The last two clauses firewall vaud-json which carries schemaVersion and body so Agnai never fights the native wrapper on the same file. Parse failure or missing text returns 0. Agnai scores 1.0 not 0.9 as a self-identifying shape no other adapter supersets. Lorebook agnai-lorebook uses coerceMemoryBook: 1.0 for kind memory, 0.9 for kind-less books whose entries array first entry still has native entry plus keywords, 0.7 for standalone CCv3 Chub character_book with keys or content re-exported as MemoryBook, else 0 including SillyTavern keyed-object worldbooks and Risu envelopes without top-level entries array.",
       "topics": [
         "character detect 1.0",
@@ -33,7 +33,7 @@
           "slug": "character",
           "title": "Character",
           "level": 3,
-          "sourceHash": "sha256:542ea7c9fc83ec87c69bff48b6c4401ceecb11a32c09035b92ed8214446e3682",
+          "sourceHash": "sha256:cc20dd86259fd1d8d374b7fd1475c4f174a0888ad346c982d8349b120db4b0d0",
           "summary": "detect requires kind character, non-null persona object, string greeting, and both schemaVersion and body undefined. Those absences block vaud-json collision. Failure or missing text yields 0; success is 1.0 as a specific self-identifying shape.",
           "topics": [
             "five detect gates",

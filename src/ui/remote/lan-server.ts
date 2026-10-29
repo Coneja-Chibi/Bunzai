@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { json } from "../server-security";
 import type { LanHost, LanSessionStatus } from "./lan-host";
 
-const COOKIE = "bunraku-lan";
+const COOKIE = "bunzai-lan";
 
 export interface LanServerHandle {
   origin: string;
@@ -84,7 +84,7 @@ async function ensureCert(
   await mkdir(certDir, { recursive: true });
   const certPath = join(certDir, "lan-cert.pem");
   const keyPath = join(certDir, "lan-key.pem");
-  const san = ["DNS:bunraku-lan", "IP:127.0.0.1"];
+  const san = ["DNS:bunzai-lan", "IP:127.0.0.1"];
   if (hostIp && hostIp !== "unknown") san.push(`IP:${hostIp}`);
 
   let have = (await Bun.file(certPath).exists()) && (await Bun.file(keyPath).exists());
@@ -97,7 +97,7 @@ async function ensureCert(
     const { code } = await run([
       "openssl", "req", "-x509", "-newkey", "rsa:2048",
       "-keyout", keyPath, "-out", certPath, "-days", "3650", "-nodes",
-      "-subj", "/CN=bunraku-lan",
+      "-subj", "/CN=bunzai-lan",
       "-addext", `subjectAltName=${san.join(",")}`,
     ]);
     if (code !== 0) throw new Error("lan: openssl self-signed cert generation failed");
@@ -154,7 +154,7 @@ function gatePage(status: LanSessionStatus | null): Response {
   return page(
     "Connect to the studio",
     `<h1>Enter the connect code</h1><p>Shown in Settings &gt; About &gt; Remote access on the computer ` +
-      `running Bunraku.</p><input id="c" autocomplete="off" placeholder="XXX-XXX-XXX">` +
+      `running Bunzai.</p><input id="c" autocomplete="off" placeholder="XXX-XXX-XXX">` +
       `<div class="err" id="e"></div><button id="b">Connect</button>`,
     `const c=document.getElementById('c'),b=document.getElementById('b'),e=document.getElementById('e');` +
       `b.onclick=async()=>{e.textContent='';b.disabled=true;try{const r=await fetch('/lan/code',` +

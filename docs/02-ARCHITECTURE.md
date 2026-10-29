@@ -1,6 +1,6 @@
 # Architecture
 
-Bunraku is a Bun and TypeScript application rooted in `src/`. The canonical engine is shared by
+Bunzai is a Bun and TypeScript application rooted in `src/`. The canonical engine is shared by
 three surfaces: the command-line interface, the loopback React Studio, and Kit's terminal interface.
 No surface owns a private format conversion path.
 
@@ -52,7 +52,7 @@ saved entity validates.
 
 ## The three surfaces
 
-- `bunraku`: inspect, validate, label, convert, enumerate formats, and start the Studio.
+- `bunzai`: inspect, validate, label, convert, enumerate formats, and start the Studio.
 - Studio: the packaged React UI served by a loopback Bun server and wrapped by the desktop executable
   on Windows. Remote listeners exist only through the separately enabled remote-access flow.
 - Kit: an active-development terminal interface available from a source checkout with
@@ -74,7 +74,7 @@ Network access is deliberate and scoped:
   current fetch path does not revalidate runtime redirects, so this is not an end-to-end redirect
   policy.
 - Update checks and version switches use fixed GitHub release endpoints.
-- Bunraku has no account, telemetry service, inference proxy, or background content upload.
+- Bunzai has no account, telemetry service, inference proxy, or background content upload.
 
 Provider credentials are encrypted at rest by Kit's local vault and used only as authentication to
 the configured endpoint. They are excluded from canonical pieces, prompts, tool observations,

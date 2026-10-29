@@ -6,7 +6,7 @@ import { Playbill } from "./playbill";
 test("wide terminals render the NOW PLAYING marquee without persistent inventory copy", async () => {
   const renderer = await testRender(
     <Playbill
-      studioName="Bunraku Studio"
+      studioName="Bunzai Studio"
     />,
     { width: 110, height: 32 },
   );
@@ -15,7 +15,7 @@ test("wide terminals render the NOW PLAYING marquee without persistent inventory
     const frame = renderer.captureCharFrame();
     expect(frame).toContain("N O W");
     expect(frame).toContain("P L A Y I N G");
-    expect(frame).toContain("Bunraku Studio");
+    expect(frame).toContain("Bunzai Studio");
     expect(frame).not.toContain("ctx");
     expect(frame).not.toContain("turn");
     expect(frame).not.toContain("session");
@@ -31,7 +31,7 @@ test("wide terminals render the NOW PLAYING marquee without persistent inventory
 test("short terminals keep the compact Kit masthead", async () => {
   const renderer = await testRender(
     <Playbill
-      studioName="Bunraku Studio"
+      studioName="Bunzai Studio"
     />,
     { width: 80, height: 12 },
   );

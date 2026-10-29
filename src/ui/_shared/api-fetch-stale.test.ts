@@ -6,7 +6,7 @@ import { installDom } from "./test-dom";
 test("stale-session responses announce recovery and remain refused; ordinary refusals do not request reload", async () => {
   const installed = installDom('<!doctype html><meta name="vaude-session" content="fixture-token">', { extraGlobals: ["Event", "location"] });
   const originalFetch = globalThis.fetch; let offers = 0;
-  installed.dom.window.addEventListener("bunraku:session-stale", () => { offers++; });
+  installed.dom.window.addEventListener("bunzai:session-stale", () => { offers++; });
   try {
     for (const error of ["stale session", "permission denied"]) {
       globalThis.fetch = Object.assign(async () => new Response(JSON.stringify({ error }), { status: 403 }), { preconnect: originalFetch.preconnect });

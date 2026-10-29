@@ -60,12 +60,12 @@
 </style>
 </head>
 <body>
-<nav class="top"><a href="index.html">Bunraku moods</a><span>1 / 6 &middot; The Call Board</span><a href="2-ghost-light.html">next</a></nav>
+<nav class="top"><a href="index.html">Bunzai moods</a><span>1 / 6 &middot; The Call Board</span><a href="2-ghost-light.html">next</a></nav>
 
 <header class="hero">
   <div class="lamp"></div>
   <div class="board" id="board">
-    <div class="p head staple">CALL BOARD<small>BUNRAKU COMPANY &middot; STAGE DOOR</small></div>
+    <div class="p head staple">CALL BOARD<small>BUNZAI COMPANY &middot; STAGE DOOR</small></div>
     <div class="p cast tape"><h4>CAST LIST</h4>
       <div>Scenes<i></i>play</div><div>Workbench<i></i>make</div><div>Library<i></i>keep</div><div>Press<i></i>share</div><div>Agent<i></i>help out</div><div>You<i></i>lead</div></div>
     <div class="p sign staple"><h4>SIGN IN BY HALF HOUR</h4>
@@ -76,7 +76,7 @@
     <div class="p note staple" style="right:6%;top:48%;background:var(--pink);transform:rotate(4deg)">what's new? read the rehearsal reports</div>
     <div class="p note staple" style="right:21%;top:56%;background:var(--blue);transform:rotate(-3deg)">tour the cast. left side.</div>
     <div class="p quiet staple">QUIET PLEASE<small>SHOW IN PROGRESS</small></div>
-    <div class="p stub"><span>ADMIT ONE<small>BUNRAKU &middot; ANY NIGHT</small></span></div>
+    <div class="p stub"><span>ADMIT ONE<small>BUNZAI &middot; ANY NIGHT</small></span></div>
   </div>
   <div class="hint">drag anything on the board</div>
 </header>
@@ -85,7 +85,7 @@
   <section class="b"><div class="label"><b>01</b>The idea</div>
     <div class="pitch"><div><h1>The Call Board</h1><div class="line">sign in, you're in the show</div></div>
       <div><p>Every theater has one: the corkboard by the stage door. It holds the cast list, the sign-in sheet, rehearsal reports, a dozen sticky notes and at least one sign nobody reads. It is the most honest object in the building: <b>the real show, before the polish.</b></p>
-      <p>RoleCall is the house: velvet, gold and a curtain. Bunraku is the wall behind it, painted black, with a clip light and a board full of paper. <b>The whole site is that board.</b> You pull things off it to read them and pin them back when you're done.</p>
+      <p>RoleCall is the house: velvet, gold and a curtain. Bunzai is the wall behind it, painted black, with a clip light and a board full of paper. <b>The whole site is that board.</b> You pull things off it to read them and pin them back when you're done.</p>
       <p>It feels like a company, not a product: people wrote on this, it changes every week, and your name can go on the sheet.</p></div></div>
   </section>
 
@@ -165,7 +165,7 @@
 <script>
 // Every piece on the board drags; positions persist per viewer (a wireframe convenience only).
 const board = document.getElementById("board");
-const key = "bunraku-callboard";
+const key = "bunzai-callboard";
 let saved = {};
 try { saved = JSON.parse(localStorage.getItem(key) || "{}"); } catch {}
 [...board.querySelectorAll(".p")].forEach((el, i) => {

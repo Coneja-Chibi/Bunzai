@@ -25,7 +25,7 @@
  *   --reuse           measure the screenshots already in <work>/shots instead of capturing again
  *   --only a,b        capture only these screen ids (for debugging a reach; the result is not written)
  *   --themes a,b      capture only these themes (debugging)
- * A real studio is never touched: BUNRAKU_HOME and the library both live in a fresh folder inside --work (never reused, since the fake device key is per run).
+ * A real studio is never touched: BUNZAI_HOME and the library both live in a fresh folder inside --work (never reused, since the fake device key is per run).
  */
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -45,7 +45,7 @@ const CHECK = args.includes("--check");
 const REUSE = args.includes("--reuse");
 const ONLY = flag("--only")?.split(",");
 const THEME_ARG = flag("--themes")?.split(",") as ThemeName[] | undefined;
-const work = flag("--work") ?? mkdtempSync(join(tmpdir(), "bunraku-theme-measure-"));
+const work = flag("--work") ?? mkdtempSync(join(tmpdir(), "bunzai-theme-measure-"));
 const shotPath = (theme: string, id: string) => join(work, "shots", theme, `${id}.png`);
 
 /** Run the Node browser half against a fresh throwaway studio; it leaves maps.json and failed.json in the work folder. */

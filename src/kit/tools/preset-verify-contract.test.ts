@@ -42,7 +42,7 @@ describe("what it asks for", () => {
 
   test("a long filesystem path no longer fits", () => {
     // Not a guarantee, a signal: the field is now sized for an id.
-    const long = `C:/Users/me/Documents/Bunraku Studio/preset/${"x".repeat(200)}.json`;
+    const long = `C:/Users/me/Documents/Bunzai Studio/preset/${"x".repeat(200)}.json`;
     expect(shape.safeParse({ engine: "sillytavern", preset: long }).success).toBe(false);
   });
 });
@@ -57,17 +57,17 @@ describe("when it is offered", () => {
   });
 
   test("with no engine configured, it takes itself out of the belt", async () => {
-    const before = { st: process.env["BUNRAKU_ST_ROOT"], mar: process.env["BUNRAKU_MARINARA_ROOT"] };
-    delete process.env["BUNRAKU_ST_ROOT"];
-    delete process.env["BUNRAKU_MARINARA_ROOT"];
+    const before = { st: process.env["BUNZAI_ST_ROOT"], mar: process.env["BUNZAI_MARINARA_ROOT"] };
+    delete process.env["BUNZAI_ST_ROOT"];
+    delete process.env["BUNZAI_MARINARA_ROOT"];
     // Clearing the variables is no longer the whole of "no engine": a saved folder applied by
     // another file in this run would answer too, and the failure would read as this tool's bug.
     applyEngineRoots({});
     try {
       expect(await presetVerify.available!()).toBe(false);
     } finally {
-      if (before.st !== undefined) process.env["BUNRAKU_ST_ROOT"] = before.st;
-      if (before.mar !== undefined) process.env["BUNRAKU_MARINARA_ROOT"] = before.mar;
+      if (before.st !== undefined) process.env["BUNZAI_ST_ROOT"] = before.st;
+      if (before.mar !== undefined) process.env["BUNZAI_MARINARA_ROOT"] = before.mar;
     }
   });
 
@@ -80,10 +80,10 @@ describe("when it is offered", () => {
    * this change exists to close - and "shared with Kit" would be a sentence written from intent.
    */
   test("a folder set in the window puts the tool in the terminal's belt", async () => {
-    const before = { st: process.env["BUNRAKU_ST_ROOT"], mar: process.env["BUNRAKU_MARINARA_ROOT"] };
-    delete process.env["BUNRAKU_ST_ROOT"];
-    delete process.env["BUNRAKU_MARINARA_ROOT"];
-    const studio = await mkdtemp(join(tmpdir(), "bunraku-kit-engines-"));
+    const before = { st: process.env["BUNZAI_ST_ROOT"], mar: process.env["BUNZAI_MARINARA_ROOT"] };
+    delete process.env["BUNZAI_ST_ROOT"];
+    delete process.env["BUNZAI_MARINARA_ROOT"];
+    const studio = await mkdtemp(join(tmpdir(), "bunzai-kit-engines-"));
     try {
       const session = await createSession(createBridge(studio));
       expect(session.contextSnapshot?.().tools.map((t) => t.name)).not.toContain("preset_verify");
@@ -101,20 +101,20 @@ describe("when it is offered", () => {
     } finally {
       applyEngineRoots({});
       await rm(studio, { recursive: true, force: true });
-      if (before.st !== undefined) process.env["BUNRAKU_ST_ROOT"] = before.st;
-      if (before.mar !== undefined) process.env["BUNRAKU_MARINARA_ROOT"] = before.mar;
+      if (before.st !== undefined) process.env["BUNZAI_ST_ROOT"] = before.st;
+      if (before.mar !== undefined) process.env["BUNZAI_MARINARA_ROOT"] = before.mar;
     }
   }, 30_000);
 
   test("a root pointing at nothing is not an engine", async () => {
     // The marker check: a wrong folder must fail as loudly as a missing one.
-    const before = process.env["BUNRAKU_ST_ROOT"];
-    process.env["BUNRAKU_ST_ROOT"] = "/definitely/not/a/sillytavern/checkout";
+    const before = process.env["BUNZAI_ST_ROOT"];
+    process.env["BUNZAI_ST_ROOT"] = "/definitely/not/a/sillytavern/checkout";
     try {
       expect(await presetVerify.available!()).toBe(false);
     } finally {
-      if (before === undefined) delete process.env["BUNRAKU_ST_ROOT"];
-      else process.env["BUNRAKU_ST_ROOT"] = before;
+      if (before === undefined) delete process.env["BUNZAI_ST_ROOT"];
+      else process.env["BUNZAI_ST_ROOT"] = before;
     }
   });
 });

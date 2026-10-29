@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bunraku Taste Quest</title>
+<title>Bunzai Taste Quest</title>
 <style>
 @font-face { font-family: "Fraunces"; font-weight: 100 900; src: url("../../src/site/fonts/fraunces-latin-normal.woff2") format("woff2"); }
 @font-face { font-family: "Cinzel"; font-weight: 400 900; src: url("../../src/ui/theme/fonts/cinzel-latin-normal.woff2") format("woff2"); }
@@ -69,7 +69,7 @@ nav.tabs button:focus-visible,.opt:focus-visible,button:focus-visible,textarea:f
 </style>
 </head><body>
 <header class="hud"><div class="hud-in">
-  <div class="brand">Taste Quest<small>BUNRAKU · CHI'S PICKS</small></div>
+  <div class="brand">Taste Quest<small>BUNZAI · CHI'S PICKS</small></div>
   <nav class="tabs" role="tablist" id="tabs"></nav>
   <div class="save" id="save">loading…</div>
   <div class="meter"><span id="mlabel">0 / 0</span><div class="track"><div class="fill" id="mfill"></div></div></div>
@@ -96,22 +96,22 @@ const WANTS = {label:"What I want", title:"What gets built, and how", intro:"Spe
  {id:"ingestfirst",t:"A finished chapter should first become",kind:"one",o:[
   ["lore","A lorebook",""],["novel","A novel chapter",""],["manga","A manga page (needs image gen)",""]]},
  {id:"imagegen",t:"Image generation",kind:"one",o:[
-  ["never","Not in Bunraku",""],["comfy","ComfyUI only, my own setup",""],["providers","Built-in providers too",""],["later","Later, after 1.0",""]]},
+  ["never","Not in Bunzai",""],["comfy","ComfyUI only, my own setup",""],["providers","Built-in providers too",""],["later","Later, after 1.0",""]]},
  {id:"voice",t:"Voice (text to speech)",kind:"one",o:[["never","Never",""],["later","After 1.0",""],["soon","Soon",""]]},
  {id:"choices",t:"Story choices and stakes (choice buttons, a money/health ledger)",kind:"one",o:[
   ["core","Built in",""],["prop","An optional Prop you switch on",""],["no","Not wanted",""]]},
  {id:"costline",t:"Show what each reply cost",kind:"one",o:[["always","Always, one quiet line",""],["hover","On hover",""],["never","Never",""]]},
  {id:"ext",t:"Extensions (code that adds features)",kind:"one",o:[
-  ["first","Only ones Bunraku makes (Props)",""],["third","Third-party too, sandboxed",""],["later","Third-party, but later",""]]},
+  ["first","Only ones Bunzai makes (Props)",""],["third","Third-party too, sandboxed",""],["later","Third-party, but later",""]]},
  {id:"modhub",t:"Getting themes and mods",kind:"one",o:[
   ["files","Just drop files in",""],["browser","An in-app browser",""],["site","A website you download from",""]]},
  {id:"kit",t:"The Kit agent should feel like",kind:"one",o:[
   ["helper","A quiet helper you call",""],["cowriter","A co-writer on the stage",""],["tool","A power tool for editing and building",""]]},
  {id:"phone",t:"On a phone",kind:"one",o:[
-  ["remote","Reach my desktop Bunraku from my phone","Already partly built"],["app","A full phone app",""],["none","Not needed",""]]},
+  ["remote","Reach my desktop Bunzai from my phone","Already partly built"],["app","A full phone app",""],["none","Not needed",""]]},
  {id:"sync",t:"Using two computers",kind:"one",o:[
-  ["none","Not needed",""],["folder","Sync through my own cloud folder",""],["service","A Bunraku sync service",""]]},
- {id:"rc",t:"Bunraku and RoleCall",kind:"one",o:[
+  ["none","Not needed",""],["folder","Sync through my own cloud folder",""],["service","A Bunzai sync service",""]]},
+ {id:"rc",t:"Bunzai and RoleCall",kind:"one",o:[
   ["io","Import and export between them",""],["live","Live sync of my library",""],["separate","Keep them unrelated",""]]},
  {id:"price",t:"Price",kind:"one",o:[["free","Free",""],["pwyw","Pay what you want",""],["once","Paid once",""],["donate","Free, with donations",""]]},
  {id:"source",t:"Open source",kind:"one",o:[["yes","Yes",""],["later","Later",""],["no","No",""]]},
@@ -165,7 +165,7 @@ function render() {
     next ? el("button", { class: "btn", onclick: () => { current = next; render(); scrollTo(0, 0); } }, "Next: " + QUIZZES[next].label) : el("span", { class: "status" }, "That's all three. Thank you!"),
     el("button", { class: "btn", onclick: saveFile }, "Save answers file"),
     el("button", { class: "btn ghost", onclick: copyAnswers }, "Copy answers"),
-    el("span", { class: "status", id: "foot-status" }, "Saves in this browser as you go. \"Save answers file\" puts bunraku-taste-answers.json in Downloads for Claude.")));
+    el("span", { class: "status", id: "foot-status" }, "Saves in this browser as you go. \"Save answers file\" puts bunzai-taste-answers.json in Downloads for Claude.")));
   meter();
 }
 
@@ -225,9 +225,9 @@ function payload() {
 }
 function saveFile() {
   const url = URL.createObjectURL(new Blob([payload()], { type: "application/json" }));
-  const a = el("a", { href: url, download: "bunraku-taste-answers.json" }); document.body.append(a); a.click(); a.remove();
+  const a = el("a", { href: url, download: "bunzai-taste-answers.json" }); document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
-  $("#foot-status").textContent = "Saved bunraku-taste-answers.json to your Downloads folder.";
+  $("#foot-status").textContent = "Saved bunzai-taste-answers.json to your Downloads folder.";
 }
 async function copyAnswers() {
   try { await navigator.clipboard.writeText(payload()); $("#foot-status").textContent = "Copied. Paste it to Claude."; }

@@ -10,7 +10,7 @@
 <script src="../play-shared/palettes.js"></script>
 <script src="../play-shared/play.js"></script>
 <style>
-/* Bunraku part: the real Director, Props and tracker styles copied from tracker-updates.html (generated from director-style.ts, props-style.ts, tracker-style.ts). Theme tokens only. */
+/* Bunzai part: the real Director, Props and tracker styles copied from tracker-updates.html (generated from director-style.ts, props-style.ts, tracker-style.ts). Theme tokens only. */
 .ds{--w:var(--deck-persona);display:flex;flex-direction:column;gap:12px}
 .ds-block{display:flex;flex-direction:column;gap:6px}
 .ds-h{font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--stage-text-dim)}
@@ -156,7 +156,7 @@
 .cap-note { font-family: var(--font-mono); font-size: .68rem; line-height: 1.55; color: var(--text-dim); max-width: 60rem; }
 .cap-note b { color: var(--text); }
 
-/* new in this wireframe (Bunraku) */
+/* new in this wireframe (Bunzai) */
 .cmp { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
 @media (max-width: 56rem) { .cmp { grid-template-columns: 1fr; } }
 .col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
@@ -187,7 +187,7 @@
 .ds-trow .linkish, .ds-hint .linkish { padding: 0; border: 0; background: none; color: var(--w); font: var(--text-meta) var(--font-body); text-decoration: underline; cursor: pointer; }
 .fr .ds, .fr .trk { --w: var(--deck-persona); }
 
-/* RoleCall part: a mock of RC's own look. These values restate RC's Tailwind zinc scale and wing accent for this mock only; they are not Bunraku tokens and must not be copied into Bunraku code. */
+/* RoleCall part: a mock of RC's own look. These values restate RC's Tailwind zinc scale and wing accent for this mock only; they are not Bunzai tokens and must not be copied into Bunzai code. */
 .rcm { --z950: #09090b; --z900: #18181b; --z800: #27272a; --z700: #3f3f46; --z600: #52525b; --z500: #71717a; --z400: #a1a1aa; --z300: #d4d4d8; --z200: #e4e4e7; --z100: #f4f4f5; --acc: #a78bfa; --acc-soft: rgba(167,139,250,.15);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--z300); background: #0b0b0d; border: 1px solid var(--z800); padding: 14px; display: flex; flex-direction: column; gap: 10px; border-radius: 2px; }
 .rcm * { box-sizing: border-box; }
@@ -240,13 +240,13 @@
   <div class="themebar"></div>
   <header class="wf-head"><div>
     <h1 class="wf-title">Story Director: one switch for automatic tracker updates</h1>
-    <p class="wf-lede">Drawn twice, once in Bunraku's own look and once as a mock of RoleCall's. Each block has a Today column and a Proposed column. The change: no number hides "off". One switch in the Story Director settings turns automatic tracker updates on or off. When it is on, a short list shows every tracker that is switched on in the scene, each with its own switch and its own "every N replies". A tracker's own settings menu has no control for this; it only says what happens and links to the list. The call budget sits inside the same section and shows only while the switch is on.</p>
+    <p class="wf-lede">Drawn twice, once in Bunzai's own look and once as a mock of RoleCall's. Each block has a Today column and a Proposed column. The change: no number hides "off". One switch in the Story Director settings turns automatic tracker updates on or off. When it is on, a short list shows every tracker that is switched on in the scene, each with its own switch and its own "every N replies". A tracker's own settings menu has no control for this; it only says what happens and links to the list. The call budget sits inside the same section and shows only while the switch is on.</p>
   </div></header>
 
   <div class="wf-note"><b>What each old number hid.</b> Default AI Awareness: 0 meant manual only. Max Tool Rounds: 1 meant trackers never update. A tracker's DM Updates number: 0 meant never, and an empty value meant follow the scene. Now off is a switch and the smallest N is 1. The call budget is called "Model calls per reply", runs 1 to 5, and has no hidden off value: 1 means one call, not "never".</div>
 
   <section class="pn wide">
-    <h2 class="sec-h">Part 1. Bunraku</h2>
+    <h2 class="sec-h">Part 1. Bunzai</h2>
     <p class="cap2">Square corners, theme tokens only, the app's real Director, Props and tracker styles. The Today frames show the trap values (0 and 1) on purpose.</p>
 
     <p class="sub-cap">1a. Story Director settings block (Props wing)</p>

@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="tokens-soft.css">
 <link rel="stylesheet" href="soft-parts.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
  * shell-app: the always-on chrome (src/ui/shell/**). Dock (roster + collapse + catalog-only apps
@@ -174,7 +174,7 @@ body { background: var(--canvas); }
 
 <div class="shell" id="shell">
   <nav class="s-dock" id="dock">
-    <button class="home" id="home"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--rose)" stroke-width="2.4"><path d="M4 5.5h16v10H12l-5 4v-4H4z"/></svg><b class="lbl">bunraku<i style="color:var(--rose)">.</i></b></button>
+    <button class="home" id="home"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--rose)" stroke-width="2.4"><path d="M4 5.5h16v10H12l-5 4v-4H4z"/></svg><b class="lbl">bunzai<i style="color:var(--rose)">.</i></b></button>
     <div class="docklabel">Apps</div>
     <button class="s-app c-scenes on" id="wb"><i><svg width="16" height="16"><use href="#ic-workbench"/></svg></i><span class="tx"><b>The Workbench</b><small>app &middot; home</small></span><kbd>1</kbd></button>
     <button class="s-app c-library" style="--c:var(--deck-regex)"><i><svg width="16" height="16"><use href="#ic-library"/></svg></i><span class="tx"><b>The Library</b><small>app</small></span><kbd>2</kbd></button>
@@ -221,7 +221,7 @@ body { background: var(--canvas); }
         <button class="it">Remove from the Workbench</button>
       </div>
       <div class="vmenu" id="menuShell" style="left:520px;top:260px;" data-only="menu-shell">
-        <div class="hd">Bunraku.</div>
+        <div class="hd">Bunzai.</div>
         <button class="it">Go home</button>
         <button class="it">Import files</button>
         <button class="it">Switch theme</button>
@@ -244,8 +244,8 @@ body { background: var(--canvas); }
 
       <div class="catalogroom" data-only="catalog">
         <div class="eyebrow">Apps in this build</div>
-        <h1>Official Bunraku apps</h1>
-        <p class="lede">Everything here shipped with this copy of Bunraku. Open a room when you need it; compact specialist tools stay here instead of crowding your everyday Dock.</p>
+        <h1>Official Bunzai apps</h1>
+        <p class="lede">Everything here shipped with this copy of Bunzai. Open a room when you need it; compact specialist tools stay here instead of crowding your everyday Dock.</p>
         <div class="cgrid">
           <div class="s-card ccard" style="--c:var(--deck-character)"><div class="chead"><span class="mk"><svg width="15" height="15"><use href="#ic-workbench"/></svg></span><h2>The Workbench</h2></div><p>Where every piece is edited.</p><div class="cfoot"><span class="status">On your Dock</span><button class="s-btn ghost" style="padding:6px 12px">Open</button></div></div>
           <div class="s-card ccard" style="--c:var(--deck-regex)"><div class="chead"><span class="mk"><svg width="15" height="15"><use href="#ic-library"/></svg></span><h2>The Library</h2></div><p>Every piece you have, on shelves by kind.</p><div class="cfoot"><span class="status">On your Dock</span><button class="s-btn ghost" style="padding:6px 12px">Open</button></div></div>
@@ -290,7 +290,7 @@ body { background: var(--canvas); }
     <span class="sep">&middot;</span>
     <span class="seg"><span class="k">pieces</span><b>214</b></span>
     <span class="spacer"></span>
-    <span class="vaude">$ bunraku<i>.</i></span>
+    <span class="vaude">$ bunzai<i>.</i></span>
   </footer>
 </div>
 
@@ -314,7 +314,7 @@ body { background: var(--canvas); }
 <script>
 (function () {
   var NOTES = {
-    full: "Dock, full: Workbench/Library/Scenes/Press/Agent numbered 1-5 (ctrl+1..5, app-keys.ts), Settings pinned in the foot (ctrl+,). Add app opens the catalog. Tab strip: one dirty tab (Vera, unsaved dot), one clean; +, Import, theme toggle. Status bar: app, theme, piece count, the bunraku. wordmark.",
+    full: "Dock, full: Workbench/Library/Scenes/Press/Agent numbered 1-5 (ctrl+1..5, app-keys.ts), Settings pinned in the foot (ctrl+,). Add app opens the catalog. Tab strip: one dirty tab (Vera, unsaved dot), one clean; +, Import, theme toggle. Status bar: app, theme, piece count, the bunzai. wordmark.",
     slim: "Marks-only collapse (the dock's own toggle, persisted as shell.dockSlim) - same visual rule the code uses when a piece is open for editing (Discord rule, src/ui/shell/Dock.tsx): tile labels and kbd hints hide, icons stay, tooltips still carry the whole chord.",
     future: "A comingSoon + catalogOnly app (The Company) shown for reference only: today's real dock has NO divider or dimmed tile, because dock-core.ts's `future` group is currently empty. This state is a labelled hypothetical, not current behavior.",
     catalog: "The Add app destination (app-catalog room, catalog-core.ts's officialCatalogApps): every app that is not comingSoon/dockFoot/appCatalog, so it lists the 5 dock apps again (\"On your Dock\") plus CSS Workshop, Help/Docs, HTML View and Macro Lab (\"Included app\"). Company (comingSoon) and Settings (dockFoot) are excluded, same as the real filter.",

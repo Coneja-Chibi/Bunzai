@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "id": "bunraku.theme.encore",
+  "id": "bunzai.theme.encore",
   "version": "3.0.0",
   "name": "Encore",
   "requests": [
@@ -122,7 +122,7 @@
       "frameWidth": 2,
       "density": "dense",
       "motion": "snappy",
-      "chrome": "bunraku"
+      "chrome": "bunzai"
     },
     "accent": {
       "follows": "user"

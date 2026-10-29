@@ -7,7 +7,7 @@ import { THEME_PROPERTY_NAMES, themeProperties } from "./theme-tokens";
 
 const previews = await Promise.all([...(await themeInventory()), ...(await exampleThemeInventory())].map((input) => {
   const id = (input.manifest as { id: string }).id;
-  return inspectThemePackage(input, id.startsWith("bunraku.") ? undefined : id);
+  return inspectThemePackage(input, id.startsWith("bunzai.") ? undefined : id);
 }));
 
 test("no theme, with or without a user accent, writes anything outside the declared set or any --host-* token", () => {

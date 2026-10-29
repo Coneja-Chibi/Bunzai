@@ -97,7 +97,7 @@ try {
   await stepOf("library loaded", cdp, async () => {
     await page.goto(`${base}/#library`);
     await page.getByText(/skip all/i).click({ timeout: 4000 }).catch(() => undefined);
-    await page.getByText(/^open bunraku/i).first().click({ timeout: 3000 }).catch(() => undefined);
+    await page.getByText(/^open bunzai/i).first().click({ timeout: 3000 }).catch(() => undefined);
     await page.getByText(/^skip$/i).first().click({ timeout: 3000 }).catch(() => undefined);
     await page.getByText(/^packs$/i).first().click({ timeout: 8000 }).catch(() => undefined);
     await page.getByText(/^pictures$/i).first().waitFor({ timeout: 30000 });

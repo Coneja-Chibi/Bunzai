@@ -1,10 +1,10 @@
 /**
- * Build Bunraku.exe - real software from the same code the CLI runs.
+ * Build Bunzai.exe - real software from the same code the CLI runs.
  * 1. Bake the UI assets (index/tokens/boot + every discovered app bundle + manifests) into
  *    src/generated/packaged-assets.ts.
  * 2. Bake a STATIC format registry into src/generated/packaged-formats.ts (a compiled binary cannot
  *    glob; the generator preserves drop-in truth by regenerating from the folder scan every build).
- * 3. bun build --compile src/desktop.ts -> dist/Bunraku.exe with the bunny-b icon, console hidden.
+ * 3. bun build --compile src/desktop.ts -> dist/Bunzai.exe with the bunny-b icon, console hidden.
  * Run: bun run scripts/build-desktop.ts
  */
 import { mkdir } from "node:fs/promises";
@@ -307,22 +307,22 @@ try {
         join(root, "src", "stage", "crypto", "password-worker.ts"),
         join(root, "src", "stage", "store", "cold-read-worker.ts"),
         join(root, "src", "stage", "search", "search-worker.ts"),
-        "--outfile", join(root, desktopOutfile ?? "dist/Bunraku.exe"),
+        "--outfile", join(root, desktopOutfile ?? "dist/Bunzai.exe"),
         `--windows-icon=${join(root, "build", "vaude.ico")}`,
         "--windows-hide-console",
       ],
       { cwd: root, stdout: "inherit", stderr: "inherit" },
     );
     if (compile.exitCode !== 0) throw new Error("compile failed");
-    console.log(`${desktopOutfile ?? "dist/Bunraku.exe"} ready`);
+    console.log(`${desktopOutfile ?? "dist/Bunzai.exe"} ready`);
   }
   for (const target of cliTargets) {
     const short = target.replace(/^bun-/, "");
     // "cli" is in the name on purpose. These are terminal tools, and a Windows user who
-    // double-clicks a bare `bunraku-windows-x64.exe` sees a console flash and vanish, which reads
+    // double-clicks a bare `bunzai-windows-x64.exe` sees a console flash and vanish, which reads
     // as a broken app rather than a program that wants arguments. The filename is the first and
     // cheapest place to say what this is.
-    const out = join(root, "dist", `bunraku-cli-${short}${short.startsWith("windows") ? ".exe" : ""}`);
+    const out = join(root, "dist", `bunzai-cli-${short}${short.startsWith("windows") ? ".exe" : ""}`);
     const compile = Bun.spawnSync(
       [process.execPath, "build", "--compile", ...NO_PROPRIETARY_SDK, `--target=${target}`, join(root, "src", "cli.ts"), "--outfile", out],
       { cwd: root, stdout: "inherit", stderr: "inherit" },
@@ -335,7 +335,7 @@ try {
     // Host platform only, and named for it, since this binary cannot be built anywhere else.
     const arch = process.arch === "arm64" ? "arm64" : "x64";
     const os = process.platform === "win32" ? "windows" : process.platform === "darwin" ? "darwin" : "linux";
-    const out = join(root, "dist", `bunraku-kit-${os}-${arch}${os === "windows" ? ".exe" : ""}`);
+    const out = join(root, "dist", `bunzai-kit-${os}-${arch}${os === "windows" ? ".exe" : ""}`);
     const compile = Bun.spawnSync(
       [process.execPath, "build", "--compile", ...NO_PROPRIETARY_SDK, join(root, "src", "kit", "index.tsx"), "--outfile", out],
       { cwd: root, stdout: "inherit", stderr: "inherit" },

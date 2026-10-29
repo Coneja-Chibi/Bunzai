@@ -1,11 +1,11 @@
 /*
- * The in-between: RoleCall's theatrical structure on Bunraku's tokens, so local Bunraku feels like
+ * The in-between: RoleCall's theatrical structure on Bunzai's tokens, so local Bunzai feels like
  * RoleCall without leaving its own theme. Taken from RoleCall's encryption flow
  * (EncryptionSetup.tsx: the act label, the Cinzel marquee with a hard text
  * shadow, the flourish, the parenthesised stage direction, the "Your Lines" box with an accent spine,
  * the STAGE DIRECTION warning, LINE FLUB, cues delivered) and the Vaudeville Design System
  * (eyebrow, marquee title with one colored word, one italic line of voice, mono for proof).
- * Colors and spacing are Bunraku tokens only. Cinzel comes from the design system's font folder
+ * Colors and spacing are Bunzai tokens only. Cinzel comes from the design system's font folder
  * for this wireframe; shipping it means bundling the font in the app.
  */
 
@@ -42,7 +42,7 @@
 .direction b { font-style: normal; font-weight: 600; color: var(--accent-deep); }
 :root[data-theme="stage"] .direction b { color: var(--accent); }
 
-/* one line of voice (Bunraku's voice role is Crimson Pro italic 600) */
+/* one line of voice (Bunzai's voice role is Crimson Pro italic 600) */
 .voice { font-family: var(--font-body); font-style: italic; font-weight: 600; font-size: 1.1rem; color: var(--text); text-align: center; }
 
 /* "Your Lines" / "Your Cues": the box with the accent spine */

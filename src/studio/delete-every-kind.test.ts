@@ -40,7 +40,7 @@ const bodies: Record<StudioEntityKind, (name: string) => unknown> = {
 const piece = (kind: StudioEntityKind, id: string, name: string) => ({ schemaVersion: CANONICAL_SCHEMA_VERSION, kind, id, body: bodies[kind](name) });
 
 const studio = (): StudioStore => {
-  return new StudioStore(tempDirSync("bunraku-delete-kinds-"));
+  return new StudioStore(tempDirSync("bunzai-delete-kinds-"));
 };
 const nameOf = (entity: { body?: unknown } | null): unknown => {
   const body = entity?.body as { name?: unknown; identity?: { name?: unknown } } | undefined;

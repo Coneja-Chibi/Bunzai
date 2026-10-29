@@ -280,10 +280,10 @@ describe("Macro Lab", () => {
     unmountLab(flushSync);
   });
 
-  test("offers no Bunraku platform, because Bunraku runs no macros", async () => {
+  test("offers no Bunzai platform, because Bunzai runs no macros", async () => {
     const flushSync = await mountLab();
     // It was a button showing RoleCall's macro list under a name with no engine behind it.
-    expect(byText("Bunraku")).toBeUndefined();
+    expect(byText("Bunzai")).toBeUndefined();
     for (const real of ["RoleCall", "SillyTavern", "Marinara", "Lumiverse"]) {
       expect(byText(real)).toBeDefined();
     }

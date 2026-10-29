@@ -9,7 +9,7 @@ import styles from "./styles.module.css";
 export type DialogPlacement = "center" | "pane-bottom" | "fullscreen" | "embedded";
 
 // Apps and shell are separate bundles. Share the context identity, as the Escape arbiter shares its owner.
-const DEPTH = Symbol.for("bunraku.dialog-depth");
+const DEPTH = Symbol.for("bunzai.dialog-depth");
 const contexts = globalThis as typeof globalThis & { [DEPTH]?: Context<number> };
 /** Relocated app surfaces inherit their visible modal host's depth without remounting the app. */
 export const DialogDepth = contexts[DEPTH] ??= createContext(0);

@@ -9,7 +9,7 @@ let installed: InstalledDom;
 
 beforeAll(() => {
   installed = installDom("<!doctype html><html><head></head><body></body></html>", {
-    url: "https://coneja-chibi.github.io/Bunraku/"
+    url: "https://coneja-chibi.github.io/Bunzai/"
   });
   dom = installed.dom;
 });
@@ -18,7 +18,7 @@ afterAll(() => installed.teardown());
 describe("asset URLs", () => {
   test("preserves a static project path", () => {
     expect(assetUrl("docs/media/example.png")).toBe(
-      "https://coneja-chibi.github.io/Bunraku/docs/media/example.png",
+      "https://coneja-chibi.github.io/Bunzai/docs/media/example.png",
     );
   });
 
@@ -28,11 +28,11 @@ describe("asset URLs", () => {
       "/api/docs/asset?path=docs%2Fmedia%2Fexample.png",
     );
     const meta = dom.window.document.createElement("meta");
-    meta.name = "bunraku-runtime";
+    meta.name = "bunzai-runtime";
     meta.content = "browser";
     dom.window.document.head.append(meta);
     expect(docAssetUrl("docs/media/example.png")).toBe(
-      "https://coneja-chibi.github.io/Bunraku/docs/media/example.png",
+      "https://coneja-chibi.github.io/Bunzai/docs/media/example.png",
     );
     meta.remove();
   });

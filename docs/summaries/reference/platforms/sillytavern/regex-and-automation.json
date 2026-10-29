@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/sillytavern/regex-and-automation",
   "sourcePath": "docs/reference/platforms/sillytavern/regex-and-automation.md",
-  "sourceHash": "sha256:d2a2cdd0754feff541a6d620d97acf00fcee91fff6ede1f0f5490c9f3ab33f50",
-  "summary": "Defines SillyTavern regex scripts and STscript as authored content with executable effects inside SillyTavern while Bunraku only inspects, edits, and round-trips their text as data. Regex script records cover display name, find expression, replacement with complete match and capture groups, trim strings, enabled state, source scopes, macro-substitution mode, depth bounds, run-on-edit, ephemerality, JavaScript-style flags, global versus character scope, export JSON portability, Affects selectors for user input AI response slash values World Info and reasoning, and empty-selector plus depth constraints. Ephemerality and visible truth separates persistent chat JSONL rewrites from display-only and prompt-only modes, creating three truths of stored, rendered, and model-bound messages that both ephemerality flags must preserve, plus find-expression macro modes disabled raw or regex-escaped and the requirement for bounded terminable testing. STscript and Quick Replies describes pipe-batched slash commands, variables, conditions, generation, World Info mutation, QR presets and qrset, properties, a.b cross-preset calls, management commands, auto-execute triggers including World Info Automation ID, and installation-dependent extension commands. Bunraku safety and interoperability seals imported payloads, forbids execution during import or conversion, limits regex testing to the isolated user-invoked terminable worker, escrows same-format script fields, requires explicit semantic mapping for cross-format movement, and routes execution-condition edits through Gate review.",
+  "sourceHash": "sha256:ec55feda297558731979619d8554cd2b0aba5160ef9465a79ae99e5d2a6cee0b",
+  "summary": "Defines SillyTavern regex scripts and STscript as authored content with executable effects inside SillyTavern while Bunzai only inspects, edits, and round-trips their text as data. Regex script records cover display name, find expression, replacement with complete match and capture groups, trim strings, enabled state, source scopes, macro-substitution mode, depth bounds, run-on-edit, ephemerality, JavaScript-style flags, global versus character scope, export JSON portability, Affects selectors for user input AI response slash values World Info and reasoning, and empty-selector plus depth constraints. Ephemerality and visible truth separates persistent chat JSONL rewrites from display-only and prompt-only modes, creating three truths of stored, rendered, and model-bound messages that both ephemerality flags must preserve, plus find-expression macro modes disabled raw or regex-escaped and the requirement for bounded terminable testing. STscript and Quick Replies describes pipe-batched slash commands, variables, conditions, generation, World Info mutation, QR presets and qrset, properties, a.b cross-preset calls, management commands, auto-execute triggers including World Info Automation ID, and installation-dependent extension commands. Bunzai safety and interoperability seals imported payloads, forbids execution during import or conversion, limits regex testing to the isolated user-invoked terminable worker, escrows same-format script fields, requires explicit semantic mapping for cross-format movement, and routes execution-condition edits through Gate review.",
   "topics": [
     "regex script records",
     "scope and Affects selectors",
@@ -11,7 +11,7 @@
     "STscript pipe language",
     "Quick Reply presets",
     "Automation ID triggers",
-    "sealed Bunraku payloads",
+    "sealed Bunzai payloads",
     "terminable regex test bench"
   ],
   "sections": [
@@ -62,11 +62,11 @@
       "children": []
     },
     {
-      "slug": "bunraku-safety-and-interoperability",
-      "title": "Bunraku safety and interoperability",
+      "slug": "bunzai-safety-and-interoperability",
+      "title": "Bunzai safety and interoperability",
       "level": 2,
-      "sourceHash": "sha256:ff8a9098e5e7a8ece94616c7404813c4c210e8ac321fed0a601df2da845dee40",
-      "summary": "Bunraku safety and interoperability requires that imported regex, macro, Lua, and STscript payloads remain sealed text. Bunraku does not execute STscript, resolve Quick Reply procedures, follow Automation IDs, or apply a regex during import or conversion. Regex testing is available only through Bunraku's isolated, user-invoked test bench and its terminable worker. Same-format export can restore platform-native script fields from escrow. Cross-format movement is allowed only when a target adapter has an explicit semantic mapping; a target that merely has scripts does not prove compatible scope, lifecycle, persistence, or command semantics. Kit should describe executable consequences before proposing an edit. It must not imply that a disabled list switch, an internal disabled field, an empty Affects set, and ephemerality are interchangeable. Changes to any execution condition belong in the semantic Gate review even though the payload remains sealed.",
+      "sourceHash": "sha256:39af6d992c47343755286844497ec7af1af10f794e04daa60bda8964a2f33451",
+      "summary": "Bunzai safety and interoperability requires that imported regex, macro, Lua, and STscript payloads remain sealed text. Bunzai does not execute STscript, resolve Quick Reply procedures, follow Automation IDs, or apply a regex during import or conversion. Regex testing is available only through Bunzai's isolated, user-invoked test bench and its terminable worker. Same-format export can restore platform-native script fields from escrow. Cross-format movement is allowed only when a target adapter has an explicit semantic mapping; a target that merely has scripts does not prove compatible scope, lifecycle, persistence, or command semantics. Kit should describe executable consequences before proposing an edit. It must not imply that a disabled list switch, an internal disabled field, an empty Affects set, and ephemerality are interchangeable. Changes to any execution condition belong in the semantic Gate review even though the payload remains sealed.",
       "topics": [
         "sealed import payloads",
         "no execution on convert",

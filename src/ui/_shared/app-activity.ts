@@ -2,7 +2,7 @@
 import { createContext, type Context } from "react";
 import { isTopDialog } from "./use-escape-key";
 
-const ACTIVITY = Symbol.for("bunraku.app-activity");
+const ACTIVITY = Symbol.for("bunzai.app-activity");
 const contexts = globalThis as typeof globalThis & { [ACTIVITY]?: Context<boolean> };
 export const AppActivity = contexts[ACTIVITY] ??= createContext(true);
 

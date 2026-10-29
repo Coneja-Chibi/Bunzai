@@ -18,13 +18,13 @@ import { apiReq } from "./server-test-rig";
 
 afterEach(cleanupChatRouteRigs);
 setDefaultTimeout(30_000);
-const HOME = join(tmpdir(), `bunraku-lore-routes-${randomUUID()}`);
+const HOME = join(tmpdir(), `bunzai-lore-routes-${randomUUID()}`);
 const UNLOCK = { passphrase: "lore-routes-test" };
 let server: ReturnType<typeof Bun.serve>;
 let localId = "";
 
 beforeAll(async () => {
-  process.env.BUNRAKU_HOME = HOME;
+  process.env.BUNZAI_HOME = HOME;
   server = Bun.serve({
     port: 0,
     async fetch() {
@@ -38,7 +38,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   server.stop(true);
-  delete process.env.BUNRAKU_HOME;
+  delete process.env.BUNZAI_HOME;
   await rm(HOME, { recursive: true, force: true });
 });
 

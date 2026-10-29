@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/security/README",
   "sourcePath": "docs/reference/security/README.md",
-  "sourceHash": "sha256:30e3b88b7e9cfa112afe3d5beb6f7ae9297a9b141c5d38e6a2a4ee11371a046e",
-  "semanticSummaryHash": "sha256:ec2b42e1910cac922de7c83b5b50119e5f73c8165df9121909d2e0ff172db631",
+  "sourceHash": "sha256:2ff2ce2d0797b31f366384fed9c515c93f66fd35b4fd5d0521be7b65f0e3d1f3",
+  "semanticSummaryHash": "sha256:fd0decc38ac817063f13ea2c1de64e50a3d2ada44006da49a65be8829a85493a",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
-  "reviewedAt": "2026-10-25T01:23:14.298Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:58.206Z"
 }

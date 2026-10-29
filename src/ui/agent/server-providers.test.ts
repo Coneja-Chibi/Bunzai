@@ -16,15 +16,15 @@ let home = "";
 let previous: string | undefined;
 
 beforeEach(async () => {
-  // The vault lives under BUNRAKU_HOME; pointing it at a temp dir keeps a real one untouched.
+  // The vault lives under BUNZAI_HOME; pointing it at a temp dir keeps a real one untouched.
   home = await mkdtemp(join(tmpdir(), "hoplight-vault-"));
-  previous = process.env["BUNRAKU_HOME"];
-  process.env["BUNRAKU_HOME"] = home;
+  previous = process.env["BUNZAI_HOME"];
+  process.env["BUNZAI_HOME"] = home;
 });
 
 afterEach(async () => {
-  if (previous === undefined) delete process.env["BUNRAKU_HOME"];
-  else process.env["BUNRAKU_HOME"] = previous;
+  if (previous === undefined) delete process.env["BUNZAI_HOME"];
+  else process.env["BUNZAI_HOME"] = previous;
   await rm(home, { recursive: true, force: true });
 });
 

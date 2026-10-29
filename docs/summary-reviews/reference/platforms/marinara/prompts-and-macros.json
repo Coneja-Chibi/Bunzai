@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/prompts-and-macros",
   "sourcePath": "docs/reference/platforms/marinara/prompts-and-macros.md",
-  "sourceHash": "sha256:5d199790f4eeb05de3781c6ae400a4a1b3f70dcb7049dc3e3187b1da02224c47",
-  "semanticSummaryHash": "sha256:84734e9c9c1bfc519e59fe09667f20b2d3f7966c444d548fb298d4b12ce664d2",
+  "sourceHash": "sha256:5a8d49c05f50f81afbdf4a5880baa4b4414ca5d94a25bb8a64ab0f4961860f31",
+  "semanticSummaryHash": "sha256:05b9ae2f49e1f6e39130fa8dbac4507bc1f71d5d933e0e4f18c46d73ab318be5",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:57.250Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:53.439Z"
 }

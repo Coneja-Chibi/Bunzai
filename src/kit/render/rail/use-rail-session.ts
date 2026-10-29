@@ -81,7 +81,7 @@ export function useRailSession(
     /**
      * THE ID IT WROTE, WHICH IS NOT ALWAYS THE ID IT WAS ASKED ABOUT.
      *
-     * Editing a foreign piece saves a Bunraku COPY under a free id, on purpose - the original is
+     * Editing a foreign piece saves a Bunzai COPY under a free id, on purpose - the original is
      * a raw export and writing over it is the one thing that path exists to prevent. But the rail
      * went on following the original, so a rename applied cleanly and the header snapped back to
      * the untouched source. It reads as the rename being lost, and the next apply would have made

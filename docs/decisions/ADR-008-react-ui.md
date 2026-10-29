@@ -8,7 +8,7 @@ forward unchanged and hardened here.
 
 Two constraints crystallized after ADR-007:
 
-1. Bunraku renders untrusted card text and extension fields. Direct DOM construction makes
+1. Bunzai renders untrusted card text and extension fields. Direct DOM construction makes
    HTML-sink safety depend on every caller following convention. React escapes text by default,
    while repository gates can ban the small set of explicit escape hatches.
 2. The roadmap's chat/agent surfaces (M4 Table Read, packages/agent, Studio app) plus the

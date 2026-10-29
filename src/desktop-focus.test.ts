@@ -72,41 +72,41 @@ describe("flashInfo", () => {
 
 describe("focusExisting", () => {
   test("a second launch raises the window owned by the process listening on our port", async () => {
-    const { deps, calls } = rig({ "Bunraku.|700": 42 });
-    expect(await focusExisting(false, "Bunraku.", 8321, deps)).toBe(true);
-    expect(calls).toEqual(["find:Bunraku.:700", "raise:42"]);
+    const { deps, calls } = rig({ "Bunzai.|700": 42 });
+    expect(await focusExisting(false, "Bunzai.", 8321, deps)).toBe(true);
+    expect(calls).toEqual(["find:Bunzai.:700", "raise:42"]);
   });
 
   test("a decoy with the same title owned by another process is never raised", async () => {
-    const { deps, calls } = rig({ "Bunraku.|999": 13 });
-    expect(await focusExisting(false, "Bunraku.", 8321, deps)).toBe(false);
+    const { deps, calls } = rig({ "Bunzai.|999": 13 });
+    expect(await focusExisting(false, "Bunzai.", 8321, deps)).toBe(false);
     expect(calls.some((c) => c.startsWith("raise"))).toBe(false);
   });
 
   test("another instance on another port is not ours to raise", async () => {
-    const { deps } = rig({ "Bunraku.|700": 42 });
-    expect(await focusExisting(false, "Bunraku.", 8322, deps)).toBe(false);
+    const { deps } = rig({ "Bunzai.|700": 42 });
+    expect(await focusExisting(false, "Bunzai.", 8322, deps)).toBe(false);
   });
 
   test("the first launch never loads the window API or touches a window", async () => {
-    const { deps, calls } = rig({ "Bunraku.|700": 42 });
-    expect(await focusExisting(true, "Bunraku.", 8321, deps)).toBe(false);
+    const { deps, calls } = rig({ "Bunzai.|700": 42 });
+    expect(await focusExisting(true, "Bunzai.", 8321, deps)).toBe(false);
     expect(calls).toEqual([]);
   });
 
   test("a runner that bound its port but has not opened its window yet is waited for", async () => {
-    const { deps, calls } = rig({ "Bunraku.|700": 42 }, 3);
-    expect(await focusExisting(false, "Bunraku.", 8321, deps)).toBe(true);
+    const { deps, calls } = rig({ "Bunzai.|700": 42 }, 3);
+    expect(await focusExisting(false, "Bunzai.", 8321, deps)).toBe(true);
     expect(calls.filter((c) => c.startsWith("find")).length).toBe(4);
   });
 
   test("a runner whose window never opens leaves the caller to open one, after a bounded wait", async () => {
     const { deps, calls } = rig({});
-    expect(await focusExisting(false, "Bunraku.", 8321, deps)).toBe(false);
+    expect(await focusExisting(false, "Bunzai.", 8321, deps)).toBe(false);
     expect(calls.filter((c) => c.startsWith("find")).length).toBeLessThan(100);
   });
 
   test("with no window API on this platform the caller keeps today's behavior", async () => {
-    expect(await focusExisting(false, "Bunraku.", 8321, { api: null })).toBe(false);
+    expect(await focusExisting(false, "Bunzai.", 8321, { api: null })).toBe(false);
   });
 });

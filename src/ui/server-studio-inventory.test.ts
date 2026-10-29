@@ -23,7 +23,7 @@ afterEach(async () => {
 
 describe("/api/studio/inventory", () => {
   test("returns healthy entities and exact damage records", async () => {
-    const root = await mkdtemp(join(tmpdir(), "bunraku-damaged-route-"));
+    const root = await mkdtemp(join(tmpdir(), "bunzai-damaged-route-"));
     roots.push(root);
     const backend = memoryDocumentBackend();
     const content = createContentStore(backend);
@@ -53,7 +53,7 @@ describe("/api/studio/inventory", () => {
   });
 
   test("is protected by the same API gate as the healthy list route", async () => {
-    const root = await mkdtemp(join(tmpdir(), "bunraku-damaged-auth-"));
+    const root = await mkdtemp(join(tmpdir(), "bunzai-damaged-auth-"));
     roots.push(root);
     const handler = createHandler(new StudioStore(root), new SettingsStore(root), undefined, filledSec());
     const deniedList = await handler(apiReq("/api/studio/list", { host: "evil.example" }));

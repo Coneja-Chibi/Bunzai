@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "decisions/ADR-012-macro-evaluation-boundary",
   "sourcePath": "docs/decisions/ADR-012-macro-evaluation-boundary.md",
-  "sourceHash": "sha256:074d60c06a62311017e5f9c3b5cd25f20b2b15239580a968070a56852dc2e4d3",
-  "semanticSummaryHash": "sha256:9e4ef9bc2a46772dd8df34fb818f82e3d0e2e88bce88b544466940a040de7dfe",
+  "sourceHash": "sha256:5f78d7fb092faa8701f69a30ad12bfff07a07c20736ff535009a7eb59dc6fd5e",
+  "semanticSummaryHash": "sha256:9f971ed1632526c221381e50a37492239f0a5f52a50f8f9e1cb1706ec0fef79e",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
-  "reviewedAt": "2026-10-25T01:23:11.724Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:07.732Z"
 }

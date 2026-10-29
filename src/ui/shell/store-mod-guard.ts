@@ -14,7 +14,7 @@ export function installModGuard(): void {
   setModHandlers({
     broken: (info) => {
       useShellStore.getState().invalidateAppearance();
-      useShellStore.setState({ statusNote: "A theme covered a protected prompt, so Bunraku turned it off." });
+      useShellStore.setState({ statusNote: "A theme covered a protected prompt, so Bunzai turned it off." });
       void postTheme("/api/themes/broken", { id: info.themeId, digest: info.digest }).then(() => useShellStore.getState().refreshAppearance());
     },
     healthy: (info) => { void postTheme("/api/themes/healthy", { digest: info.digest }); },

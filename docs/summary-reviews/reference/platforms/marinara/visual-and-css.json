@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/visual-and-css",
   "sourcePath": "docs/reference/platforms/marinara/visual-and-css.md",
-  "sourceHash": "sha256:c78e8b2f2b2fc75cdb257d4d21e97de9adead91e4ffd664ae999b3dd2c9bfc2f",
-  "semanticSummaryHash": "sha256:7f2188eb9b2208b176cdc3c9deddd7bd3b855bdbf5fa9e18459bbd045c847783",
+  "sourceHash": "sha256:47274b20f4396c1d13241434f7803f8364458467cccb727f1ee565bf69b950b3",
+  "semanticSummaryHash": "sha256:ea3a8cc80651522c54ad991ed53431688918ca1d4fee6adf939dcf7a5f8f3bcc",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:58.198Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:54.096Z"
 }

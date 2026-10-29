@@ -37,7 +37,7 @@ export function LoadoutReview({ ctx, chatId, loadout, applying, onCancel, onAppl
       <div className="ldd">
         <div className="ldd-lbl">Review changes</div>
         <h2>Apply {loadout.name}?</h2>
-        <p className="ldd-note">Bunraku can apply this loadout without erasing unrelated settings. Messages, takes, and variables stay untouched.</p>
+        <p className="ldd-note">Bunzai can apply this loadout without erasing unrelated settings. Messages, takes, and variables stay untouched.</p>
         <div className="ldr-metrics">{metric("Will change", count("will-change"))}{metric("Stay as-is", count("unchanged"))}{metric("Protected", count("kept-current"))}</div>
         {why && <p className="ldd-err" role="alert">{why}</p>}
         <ul className="ldr-rows">

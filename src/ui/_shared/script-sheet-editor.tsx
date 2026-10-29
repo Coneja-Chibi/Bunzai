@@ -1,7 +1,7 @@
 /**
  * The Script Sheet editor, ported from RoleCall (components/scene/wings/panels/ScriptSheetEditor.tsx): a name, one
  * instruction, the samplers handed in, and one save. RoleCall opens the same editor from Prompting and from the
- * Library, and so does Bunraku: the Prompting wing and the Workbench both mount this. A new sheet is created and then
+ * Library, and so does Bunzai: the Prompting wing and the Workbench both mount this. A new sheet is created and then
  * chosen; when choosing fails the saved sheet is kept and the button offers to use it. Unsaved changes ask before going
  * back. The host may own the save keys and the dirty mark (the Workbench's guards); otherwise Ctrl+S saves here.
  */

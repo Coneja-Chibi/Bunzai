@@ -46,7 +46,7 @@ const SNAP = { character: { id: "vera" } };
 
 /** A populated library. `now` is a deterministic clock. */
 export async function makeLibrary(): Promise<Library> {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-health-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-health-"));
   const path = join(dir, "library.db");
   const database = openStageDatabase(path, MIGRATIONS);
   const dataKeys = subkeys(newDataKey());

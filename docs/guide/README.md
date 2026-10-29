@@ -2,14 +2,14 @@
 id: guide/README
 title: User guide
 audience: user
-summary: A map of Bunraku's rooms and links to every guide page, setup, importing, browsing, editing, personas, lorebooks, regex sets, converting, exporting, and platform notes.
+summary: A map of Bunzai's rooms and links to every guide page, setup, importing, browsing, editing, personas, lorebooks, regex sets, converting, exporting, and platform notes.
 tags: [guide, index, rooms, dock, platforms]
 related: [guide/getting-started, reference/ui, reference/architecture, reference/formats/README]
 ---
 
 # User guide
 
-Bunraku is the forge for AI-roleplay content: convert, edit, and ship any format. This page is the
+Bunzai is the forge for AI-roleplay content: convert, edit, and ship any format. This page is the
 index for the user guide, the pages that walk through using the app itself, as opposed to its file
 formats or internals (that's the [reference docs](../reference/README.md)). New here? The first row of
 the table below gets you through setup and your first import; everything after it reads fine in
@@ -17,7 +17,7 @@ whatever order matches what you're doing that day.
 
 ## The rooms
 
-Bunraku is a handful of rooms behind one dock. [Get started](getting-started.md) covers the dock in
+Bunzai is a handful of rooms behind one dock. [Get started](getting-started.md) covers the dock in
 full; this is the fast map.
 
 | Room | What it's for |
@@ -45,7 +45,7 @@ full; this is the fast map.
 
 ## Platform notes
 
-Every supported platform gets its own page: what Bunraku reads, what comes across cleanly, and what is
+Every supported platform gets its own page: what Bunzai reads, what comes across cleanly, and what is
 dropped on purpose when you convert to a different app. Read [Convert a card](converting.md) first for
 the general rule; come here for the platform-specific detail.
 

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/kit/tools",
   "sourcePath": "docs/reference/kit/tools.md",
-  "sourceHash": "sha256:2f3989ddf182678b12f339e5d9dd98961d08e77d9a4650b638c2139580cf379a",
+  "sourceHash": "sha256:41b009903182b13bb84a5ea7ed73fa29cf669070cc6c0eff940e5d2770e8ec93",
   "summary": "Kit content tools separates model-facing runtime tools from terminal slash commands. Its lifecycle covers all eight canonical kinds through pure previews, one four-domain discovery catalog, complete draft evidence, guarded semantic review, documentation query, whole-piece reads, and bounded result handles. Twenty-six direct tools start a turn, or twenty-five without an engine checkout; search reveals up to five deferred schemas, browse reveals none, and exact describe reveals one. Typed creation covers character, lorebook, persona, preset, regex, pack, quick-reply set, and HTML document without an existing target. Duplicate retains escrow, delete is explicitly classified, and transfer previews adapter costs without writing. External MCP tools join the same exact-name egress gate and bounded result store, and connection changes invalidate the cached session. Guarded apply uses the application review card; atomic create-only apply refuses occupied IDs and verifies storage. Unit and integration proof exists, while a real-provider terminal run remains outstanding.",
   "topics": [
     "runtime tools vs slash",
@@ -21,7 +21,7 @@
       "slug": "built-lifecycle",
       "title": "Built lifecycle",
       "level": 2,
-      "sourceHash": "sha256:59dd4f1488836c32bc252ee483bcf775ad6dcdc6caf87fa0ff267aae5165e6c0",
+      "sourceHash": "sha256:55747b76244f26ec19b39d106ae6921e68f3428a9be3bd01d5da3e849fa807ba",
       "summary": "Built lifecycle connects all eight canonical content kinds to Kit. Entity capability folders own stable IDs, search, exposure, and pure semantic operations; Kit discovers and adapts them into one registry. Eight typed create workflows draft without writing: character, lorebook, persona, preset, regex, pack, quick-reply set, and HTML document. Duplicate carries body, profiles, and escrow. studio_delete alone destroys canonical content and remains direct because deferred apply workflows are rejected. studio_transfer previews another adapter without writing. Preset verification, regex diagnostics, drawing-to-regex transcription, shared-folder search and import, rail opening, whole-piece reads, and HTML document update complete the live lifecycle. The change session retains one baseline, composed operations, warnings, platform impact, and escrow until a separately authorized apply.",
       "topics": [
         "six content bundles",
@@ -240,10 +240,10 @@
       ]
     },
     {
-      "slug": "bunraku-documentation-query",
-      "title": "Bunraku documentation query",
+      "slug": "bunzai-documentation-query",
+      "title": "Bunzai documentation query",
       "level": 2,
-      "sourceHash": "sha256:6fb804504764510b33ddf834b93f98635801c4b5d0f3116aad4b4623f93b3fd0",
+      "sourceHash": "sha256:259b8331aa3ae7617f396f375105ad1550085d5b301efb42275973bb7b968db1",
       "summary": "docs_query is a direct read-only meta-tool with four actions. browse lists collections and pages from index metadata only, with root or immediate children, limit 12 cap 25, offset pagination, and slash-separated collection ids that never path-escape. outline returns a semantic page overview and collapsed H2 map without loading Markdown; a returned section slug expands only that branch and its H3 summaries. search ranks body text plus title, short summary, semantic summary, topics, and headings with in-memory BM25. read alone returns authoritative source prose: omit the section for a whole document or select a slug for a targeted nugget. Bounded responses provide continuation offsets so long documents can be read completely across calls. Whole-document reads are preferred around located answers to preserve qualifications, failure conditions, and current-versus-planned distinctions. Semantic navigation merges only from docs/summaries sidecars with current independent APPROVE receipts bound to source and semantic-summary hashes. Authoring discovery is folder-derived from docs/. New and edited pages require authoring, stamping, focused checking, and independent review. Global check requires every page APPROVED. No embeddings or network.",
       "topics": [
         "collapsed browse outline expand search read",
@@ -261,10 +261,10 @@
       "slug": "serving-the-belt-to-another-client",
       "title": "Serving the belt to another client",
       "level": 2,
-      "sourceHash": "sha256:f0801ed2015e95cef9e5a33723a15a07092311b28a4c393ba8fcf98d351f4e17",
-      "summary": "bunraku mcp serves the same tools over MCP on stdio, so Claude Code, Cursor, Zed or Codex can read and edit the studio; register it once with the client own command. A studio directory is the first non-flag argument. The subcommand exists so nothing needs to know where the source lives: a compiled binary has no main file to point at, and a path that worked from a checkout failed silently for an installed copy, answering without tools. Two postures differ only in who holds the gate. Registered by a person, their client prompts before every call, so the full belt is safe and is the default. Spawned by Kit for the Claude subscription provider the client prompt is off and Kit gate cannot cross a process, so that path passes --read-only and gets read-effect tools only, filtered by building the dispatcher from the reduced set so a filtered name is unknown rather than run. The belt comes from discoverTools and the schemas from the tools own Zod, with no MCP SDK dependency.",
+      "sourceHash": "sha256:e2e2231411275967bc6d436c3567d177074d22d4a5eeb8ec69f4d57acaa1bbb2",
+      "summary": "bunzai mcp serves the same tools over MCP on stdio, so Claude Code, Cursor, Zed or Codex can read and edit the studio; register it once with the client own command. A studio directory is the first non-flag argument. The subcommand exists so nothing needs to know where the source lives: a compiled binary has no main file to point at, and a path that worked from a checkout failed silently for an installed copy, answering without tools. Two postures differ only in who holds the gate. Registered by a person, their client prompts before every call, so the full belt is safe and is the default. Spawned by Kit for the Claude subscription provider the client prompt is off and Kit gate cannot cross a process, so that path passes --read-only and gets read-effect tools only, filtered by building the dispatcher from the reduced set so a filtered name is unknown rather than run. The belt comes from discoverTools and the schemas from the tools own Zod, with no MCP SDK dependency.",
       "topics": [
-        "bunraku mcp stdio",
+        "bunzai mcp stdio",
         "client holds the gate",
         "read-only for no prompt",
         "fails closed on filter",
@@ -276,8 +276,8 @@
       "slug": "wearing-other-peoples-belts",
       "title": "Wearing other people's belts",
       "level": 2,
-      "sourceHash": "sha256:9705b5675be20c04f2dff4944bf79cbdd8101918f0a1c6ee084f4a1adec487f6",
-      "summary": "MCP servers configured in Settings Connections join Kit's belt. The host-only API writes fail-closed machine-local mcp.json entries; environment values never return, and omitting env preserves stored values. Saving, disabling, or removing a server synchronizes the shared connection manager and invalidates the cached Kit session, so the next turn sees the exact new belt without restarting. One manager per process reuses enabled servers, restarts changed recipes, and kills children on exit. External names and schemas come from the server, collisions are dropped, and every enumerated name receives exact egress classification in the same assembly step. Unknown names remain denied, external tools cannot gain write, delete, or exec classification, and Bunraku does not re-export them. Large external results use the shared bounded store, returning a handle and peek or a named omission beyond its cap.",
+      "sourceHash": "sha256:8d8801e5047a84d0b00d951c5ae6398640bbe119cb869a4e198e694623a26372",
+      "summary": "MCP servers configured in Settings Connections join Kit's belt. The host-only API writes fail-closed machine-local mcp.json entries; environment values never return, and omitting env preserves stored values. Saving, disabling, or removing a server synchronizes the shared connection manager and invalidates the cached Kit session, so the next turn sees the exact new belt without restarting. One manager per process reuses enabled servers, restarts changed recipes, and kills children on exit. External names and schemas come from the server, collisions are dropped, and every enumerated name receives exact egress classification in the same assembly step. Unknown names remain denied, external tools cannot gain write, delete, or exec classification, and Bunzai does not re-export them. Large external results use the shared bounded store, returning a handle and peek or a named omission beyond its cap.",
       "topics": [
         "mcp.json home-keyed",
         "host-only api mcp",

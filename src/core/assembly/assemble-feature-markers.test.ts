@@ -41,7 +41,7 @@ const input = (over: Partial<AssemblyInput> = {}): AssemblyInput => ({
 /** Every request here is also checked for a leaked placeholder (feature-slots.ts). */
 const lines = (over: Partial<AssemblyInput>) => {
   const out = assemble(input(over)).messages.map((m) => `${m.role}:${m.content}`);
-  expect(out.some((l) => l.includes("\uE000bunraku-slot:"))).toBe(false);
+  expect(out.some((l) => l.includes("\uE000bunzai-slot:"))).toBe(false);
   return out;
 };
 const BASE = ["system:Be Vera.", "assistant:Evening.", "user:Hi", "assistant:Hello.", "user:Any storms?"];
@@ -146,7 +146,7 @@ describe("feature markers through SillyTavern", () => {
 describe("the placeholder cannot be forged", () => {
   test("a chat message holding placeholder-shaped text is sent as written, never filled or refused", () => {
     // the shape the placeholder had before it carried a nonce, and one with a guessed nonce
-    const forged = "\uE000bunraku-slot:trackers\uE001 \uE000bunraku-slot:0000:trackers\uE001";
+    const forged = "\uE000bunzai-slot:trackers\uE001 \uE000bunzai-slot:0000:trackers\uE001";
     const history = [msg("g", "assistant", "Evening."), msg("u1", "user", `Hi ${forged}`), msg("a1", "assistant", "Hello.")];
     const out = assemble(input({ preset: preset(marker("trackers")), ...trackersOn, history })).messages.map((m) => `${m.role}:${m.content}`);
     expect(out).toContain(`user:Hi ${forged}`);
@@ -164,6 +164,6 @@ describe("the budget", () => {
     };
     assemble(input({ preset: preset(marker("trackers"), tail), ...trackersOn, budgeter, window: { context: 8000, reply: 500 } }));
     expect(seen).toHaveLength(1);
-    expect(seen[0]!.some((c) => c.includes("bunraku-slot"))).toBe(false);
+    expect(seen[0]!.some((c) => c.includes("bunzai-slot"))).toBe(false);
   });
 });

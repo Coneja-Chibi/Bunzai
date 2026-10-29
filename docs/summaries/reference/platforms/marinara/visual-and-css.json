@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/visual-and-css",
   "sourcePath": "docs/reference/platforms/marinara/visual-and-css.md",
-  "sourceHash": "sha256:c78e8b2f2b2fc75cdb257d4d21e97de9adead91e4ffd664ae999b3dd2c9bfc2f",
-  "summary": "Documents Marinara card CSS, image style profiles, scene and Roleplay background lifecycles, and animated expression generation at the pinned Engine docs. Card CSS covers Creator Notes ownership, active-character control visibility, Disabled Exclusive Chat scopes, sanitizer boundaries, layout-specific selectors, and Native versus Tavern export. Style Profiles covers ten built-ins, clone reset delete, four prompt grammars, per-kind tags, validation, cleaning, and app to connection to chat precedence. Backgrounds distinguish Gallery generation from library selection and the non-generating Background agent, including modes, connection fallback, prompt review, upload formats and ownership, per-image actions, chat pinning, cross-fade, and solid-color fallback. Animated expressions cover video plus ffmpeg requirements, per-expression partial success, fixed 9:16 GIF output, duration, missing cleanup and transparency guarantee, and explicit failure modes. Bunraku does not claim visual round-trip fidelity it has not proven.",
+  "sourceHash": "sha256:47274b20f4396c1d13241434f7803f8364458467cccb727f1ee565bf69b950b3",
+  "summary": "Documents Marinara card CSS, image style profiles, scene and Roleplay background lifecycles, and animated expression generation at the pinned Engine docs. Card CSS covers Creator Notes ownership, active-character control visibility, Disabled Exclusive Chat scopes, sanitizer boundaries, layout-specific selectors, and Native versus Tavern export. Style Profiles covers ten built-ins, clone reset delete, four prompt grammars, per-kind tags, validation, cleaning, and app to connection to chat precedence. Backgrounds distinguish Gallery generation from library selection and the non-generating Background agent, including modes, connection fallback, prompt review, upload formats and ownership, per-image actions, chat pinning, cross-fade, and solid-color fallback. Animated expressions cover video plus ffmpeg requirements, per-expression partial success, fixed 9:16 GIF output, duration, missing cleanup and transparency guarantee, and explicit failure modes. Bunzai does not claim visual round-trip fidelity it has not proven.",
   "topics": [
     "card CSS Exclusive Chat modes",
     "supported forbidden surfaces",
@@ -73,11 +73,11 @@
       "children": []
     },
     {
-      "slug": "bunraku",
-      "title": "Bunraku",
+      "slug": "bunzai",
+      "title": "Bunzai",
       "level": 2,
-      "sourceHash": "sha256:1117df47f64ef39e2f6b62dc325651e147bdce455cd8c0afa23a73d4fb43f9fd",
-      "summary": "Native Marinara export may carry CSS in Creator Notes and media folders. Compatible Tavern PNG does not prove preservation of Marinara-specific CSS, background libraries, animated expressions, style profiles, or generation settings. Bunraku reports unsupported visual ownership rather than executing media or claiming a silent full-fidelity round trip.",
+      "sourceHash": "sha256:f3ac0530983cd6de43515090510e5ad10b37164b3a6f9c9d8e588bc3a7f74950",
+      "summary": "Native Marinara export may carry CSS in Creator Notes and media folders. Compatible Tavern PNG does not prove preservation of Marinara-specific CSS, background libraries, animated expressions, style profiles, or generation settings. Bunzai reports unsupported visual ownership rather than executing media or claiming a silent full-fidelity round trip.",
       "topics": [
         "Native CSS media",
         "PNG fidelity loss",

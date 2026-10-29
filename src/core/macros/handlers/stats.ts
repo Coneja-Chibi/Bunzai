@@ -1,7 +1,7 @@
 /**
  * Stats and meta macros: RoleCall's handler inside ADR-012.
  * Token counts, budgets, and API cost information. These fields (token counts, budgets, cost rates)
- * are not on Bunraku's MacroContext; RoleCall reaches them through a cast, and `StatsMacroContext`
+ * are not on Bunzai's MacroContext; RoleCall reaches them through a cast, and `StatsMacroContext`
  * keeps that pattern here rather than adding fields to the shared context (its header: "no host
  * surface on MacroContext... a handler that reaches outside needs its own ADR" -- these fields are
  * plain numbers, not a host surface, so the cast is the right seam, matching RoleCall's own choice).

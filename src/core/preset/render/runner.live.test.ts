@@ -15,8 +15,8 @@ import { join } from "node:path";
 import { runRenderer, type RendererCommand } from "./runner";
 import { unresolvedCount, type RenderedPreset } from "./contract";
 
-const ST_ROOT = process.env.BUNRAKU_ST_ROOT ?? "";
-const PRESETS = process.env.BUNRAKU_PRESET_CORPUS ?? "";
+const ST_ROOT = process.env.BUNZAI_ST_ROOT ?? "";
+const PRESETS = process.env.BUNZAI_PRESET_CORPUS ?? "";
 
 /**
  * Found by scanning rather than named outright. The published preset carries decorative characters in

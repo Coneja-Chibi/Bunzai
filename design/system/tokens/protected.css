@@ -1,5 +1,5 @@
 /*
- * Bunraku design system: the protected layer, contract v1.
+ * Bunzai design system: the protected layer, contract v1.
  * The lock screen, the Kit Gate (approve or deny a write), secrets, recovery words and the mod
  * manager are drawn by the host from these tokens ONLY. Two guards:
  *   1. Every declaration is !important in bk.protected, a layer declared before every other one,

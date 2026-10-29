@@ -144,7 +144,7 @@ async function stagePayloads(payloads: readonly StagedPayload[], session: string
     if (stagings.size + active.size > MAX_STAGINGS) throw new StagingError(503, "import staging is at capacity");
     if (failedCleanup.size + active.size >= CLEANUP_LIMIT) throw new StagingError(503, "staging cleanup is at capacity");
     checkAbort(controller.signal);
-    dir = await mkdtemp(join(tmpdir(), "bunraku-import-staged-"));
+    dir = await mkdtemp(join(tmpdir(), "bunzai-import-staged-"));
     const token = randomBytes(24).toString("base64url");
     const refs: StagedRowRef[] = [];
     for (let i = 0; i < payloads.length; i += 1) {

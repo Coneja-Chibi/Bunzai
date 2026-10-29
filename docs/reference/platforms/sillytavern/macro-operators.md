@@ -175,7 +175,7 @@ SillyTavern still recognizes these markers during processing:
 | `<GROUP>` | `{{group}}` |
 | `<CHARIFNOTGROUP>` | `{{charIfNotGroup}}` |
 
-New content should use modern braces. Bunraku preserves legacy text during same-format round trips rather
+New content should use modern braces. Bunzai preserves legacy text during same-format round trips rather
 than rewriting it merely for style.
 
 ## Evaluation and safety contract
@@ -184,7 +184,7 @@ Parsing does not imply universal field support. The current field and processing
 are registered and when nested expressions run. Variable assignment, deletion, random selection, banned
 word changes, and extension-provided macros can have effects beyond producing text.
 
-Bunraku treats macro payloads as sealed source data during import, inspection, conversion, and export.
+Bunzai treats macro payloads as sealed source data during import, inspection, conversion, and export.
 It never evaluates a macro to discover what it means. Cross-format conversion preserves supported literal
 text, reports dialect behavior that cannot be represented, and avoids name-only substitutions between
 incompatible languages.

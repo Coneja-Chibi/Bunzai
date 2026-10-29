@@ -88,7 +88,7 @@
       for (var k in state.notes) if (state.notes[k].trim()) notes[k] = state.notes[k].trim();
       var json = JSON.stringify({ contract: 1, theme: root.getAttribute("data-theme"), exported: new Date().toISOString(), picks: state.picks, notes: notes }, null, 2);
       try { navigator.clipboard.writeText(json); } catch (e) {}
-      var a = el("a", { href: URL.createObjectURL(new Blob([json], { type: "application/json" })), download: "bunraku-taste-picks.json" });
+      var a = el("a", { href: URL.createObjectURL(new Blob([json], { type: "application/json" })), download: "bunzai-taste-picks.json" });
       document.body.appendChild(a); a.click(); a.remove();
     });
     var bar = document.querySelector(".spec-bar");

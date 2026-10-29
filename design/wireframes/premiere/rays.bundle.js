@@ -1,4 +1,4 @@
-// ../Bunraku/node_modules/ogl/src/core/Program.js
+// ../Bunzai/node_modules/ogl/src/core/Program.js
 var ID = 1;
 var arrayCacheF32 = {};
 
@@ -288,7 +288,7 @@ function warn(message) {
   if (warnCount > 100)
     console.warn("More than 100 program warnings - stopping logs.");
 }
-// ../Bunraku/node_modules/ogl/src/math/functions/Vec3Func.js
+// ../Bunzai/node_modules/ogl/src/math/functions/Vec3Func.js
 function length(a) {
   let x = a[0];
   let y = a[1];
@@ -478,7 +478,7 @@ function exactEquals(a, b) {
   return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
 }
 
-// ../Bunraku/node_modules/ogl/src/math/Vec3.js
+// ../Bunzai/node_modules/ogl/src/math/Vec3.js
 class Vec3 extends Array {
   constructor(x = 0, y = x, z = x) {
     super(x, y, z);
@@ -640,7 +640,7 @@ class Vec3 extends Array {
   }
 }
 
-// ../Bunraku/node_modules/ogl/src/core/Renderer.js
+// ../Bunzai/node_modules/ogl/src/core/Renderer.js
 var tempVec3 = /* @__PURE__ */ new Vec3;
 var ID2 = 1;
 
@@ -956,7 +956,7 @@ class Renderer {
     });
   }
 }
-// ../Bunraku/node_modules/ogl/src/math/functions/Vec4Func.js
+// ../Bunzai/node_modules/ogl/src/math/functions/Vec4Func.js
 function copy2(out, a) {
   out[0] = a[0];
   out[1] = a[1];
@@ -990,7 +990,7 @@ function dot2(a, b) {
   return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
 }
 
-// ../Bunraku/node_modules/ogl/src/math/functions/QuatFunc.js
+// ../Bunzai/node_modules/ogl/src/math/functions/QuatFunc.js
 function identity(out) {
   out[0] = 0;
   out[1] = 0;
@@ -1162,7 +1162,7 @@ var set3 = set2;
 var dot3 = dot2;
 var normalize3 = normalize2;
 
-// ../Bunraku/node_modules/ogl/src/math/Quat.js
+// ../Bunzai/node_modules/ogl/src/math/Quat.js
 class Quat extends Array {
   constructor(x = 0, y = 0, z = 0, w = 1) {
     super(x, y, z, w);
@@ -1303,7 +1303,7 @@ class Quat extends Array {
   }
 }
 
-// ../Bunraku/node_modules/ogl/src/math/functions/Mat4Func.js
+// ../Bunzai/node_modules/ogl/src/math/functions/Mat4Func.js
 var EPSILON = 0.000001;
 function copy4(out, a) {
   out[0] = a[0];
@@ -1897,7 +1897,7 @@ function multiplyScalar(out, a, b) {
   return out;
 }
 
-// ../Bunraku/node_modules/ogl/src/math/Mat4.js
+// ../Bunzai/node_modules/ogl/src/math/Mat4.js
 class Mat4 extends Array {
   constructor(m00 = 1, m01 = 0, m02 = 0, m03 = 0, m10 = 0, m11 = 1, m12 = 0, m13 = 0, m20 = 0, m21 = 0, m22 = 1, m23 = 0, m30 = 0, m31 = 0, m32 = 0, m33 = 1) {
     super(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
@@ -2069,7 +2069,7 @@ class Mat4 extends Array {
   }
 }
 
-// ../Bunraku/node_modules/ogl/src/math/functions/EulerFunc.js
+// ../Bunzai/node_modules/ogl/src/math/functions/EulerFunc.js
 function fromRotationMatrix(out, m, order = "YXZ") {
   if (order === "XYZ") {
     out[1] = Math.asin(Math.min(Math.max(m[8], -1), 1));
@@ -2129,7 +2129,7 @@ function fromRotationMatrix(out, m, order = "YXZ") {
   return out;
 }
 
-// ../Bunraku/node_modules/ogl/src/math/Euler.js
+// ../Bunzai/node_modules/ogl/src/math/Euler.js
 var tmpMat4 = /* @__PURE__ */ new Mat4;
 
 class Euler extends Array {
@@ -2216,7 +2216,7 @@ class Euler extends Array {
   }
 }
 
-// ../Bunraku/node_modules/ogl/src/core/Transform.js
+// ../Bunzai/node_modules/ogl/src/core/Transform.js
 class Transform {
   constructor() {
     this.parent = null;
@@ -2293,7 +2293,7 @@ class Transform {
   }
 }
 
-// ../Bunraku/node_modules/ogl/src/math/functions/Mat3Func.js
+// ../Bunzai/node_modules/ogl/src/math/functions/Mat3Func.js
 function fromMat4(out, a) {
   out[0] = a[0];
   out[1] = a[1];
@@ -2481,7 +2481,7 @@ function normalFromMat4(out, a) {
   return out;
 }
 
-// ../Bunraku/node_modules/ogl/src/math/Mat3.js
+// ../Bunzai/node_modules/ogl/src/math/Mat3.js
 class Mat3 extends Array {
   constructor(m00 = 1, m01 = 0, m02 = 0, m10 = 0, m11 = 1, m12 = 0, m20 = 0, m21 = 0, m22 = 1) {
     super(m00, m01, m02, m10, m11, m12, m20, m21, m22);
@@ -2543,7 +2543,7 @@ class Mat3 extends Array {
   }
 }
 
-// ../Bunraku/node_modules/ogl/src/core/Mesh.js
+// ../Bunzai/node_modules/ogl/src/core/Mesh.js
 var ID3 = 0;
 
 class Mesh extends Transform {
@@ -2599,7 +2599,7 @@ class Mesh extends Transform {
     this.afterRenderCallbacks.forEach((f) => f && f({ mesh: this, camera }));
   }
 }
-// ../Bunraku/node_modules/ogl/src/core/Geometry.js
+// ../Bunzai/node_modules/ogl/src/core/Geometry.js
 var tempVec32 = /* @__PURE__ */ new Vec3;
 var ID4 = 1;
 var ATTR_ID = 1;
@@ -2807,7 +2807,7 @@ class Geometry {
   }
 }
 
-// ../Bunraku/node_modules/ogl/src/extras/Triangle.js
+// ../Bunzai/node_modules/ogl/src/extras/Triangle.js
 class Triangle extends Geometry {
   constructor(gl, { attributes = {} } = {}) {
     Object.assign(attributes, {

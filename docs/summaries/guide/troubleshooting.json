@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "guide/troubleshooting",
   "sourcePath": "docs/guide/troubleshooting.md",
-  "sourceHash": "sha256:7da56aebe916a8b1d31055752129b18f605f40107b91dded52e082c6c013c623",
-  "summary": "Troubleshoot common problems using plain messages Bunraku already shows: failed Studio boot prints address and SSH command; failed import names a reason; export lists Note or Dropped per field; Press rows settle printed skipped or failed with why. The short version: read the message you have; ask the file with bunraku inspect and validate; check Workbench lens or Export honesty before re-export; check FORMAT-SUPPORT matrix; if unexplained run bunraku formats for known support. The studio says forbidden over SSH: bind is loopback 127.0.0.1:8321 so use printed ssh -L command leave tunnel open open exact localhost not server IP; second -L for sandbox test benches; recovery buttons Open Studio and Remote Access setup; Settings Remote access for everyday devices. A card would not import: receipt headings Pick what to keep or Here is what we read; unrecognized format not damage; import never overwrites -2; lorebook heal; scripts inert; deep access refused; Import no browser after pieces exist. A convert dropped something: shared canonical only; same app means exact format id; persona one lorebook ref; placement foreign closest; Press bundle lorebook once. An export looks wrong: lens honesty agree; Export anyway on Note Dropped; Press skipped vs failed; -2 name collision; editor one file Press zip; casting fields platform slots. Tips: message first CLI inspect exact format round-trip shared coverage unknown format issue sample.",
+  "sourceHash": "sha256:649089d83b8bbfc186cfd9187aefa8cf882c7b5e2a42b19e59c9f6827516de0b",
+  "summary": "Troubleshoot common problems using plain messages Bunzai already shows: failed Studio boot prints address and SSH command; failed import names a reason; export lists Note or Dropped per field; Press rows settle printed skipped or failed with why. The short version: read the message you have; ask the file with bunzai inspect and validate; check Workbench lens or Export honesty before re-export; check FORMAT-SUPPORT matrix; if unexplained run bunzai formats for known support. The studio says forbidden over SSH: bind is loopback 127.0.0.1:8321 so use printed ssh -L command leave tunnel open open exact localhost not server IP; second -L for sandbox test benches; recovery buttons Open Studio and Remote Access setup; Settings Remote access for everyday devices. A card would not import: receipt headings Pick what to keep or Here is what we read; unrecognized format not damage; import never overwrites -2; lorebook heal; scripts inert; deep access refused; Import no browser after pieces exist. A convert dropped something: shared canonical only; same app means exact format id; persona one lorebook ref; placement foreign closest; Press bundle lorebook once. An export looks wrong: lens honesty agree; Export anyway on Note Dropped; Press skipped vs failed; -2 name collision; editor one file Press zip; casting fields platform slots. Tips: message first CLI inspect exact format round-trip shared coverage unknown format issue sample.",
   "topics": [
     "read message first",
     "inspect validate formats",
@@ -19,14 +19,14 @@
       "slug": "the-short-version",
       "title": "The short version",
       "level": 2,
-      "sourceHash": "sha256:beb8ad8f8bc338f6f6a03b91e1cf80e14deb5a119443f2e66b4bd586a40c16e8",
-      "summary": "Read the message you already have: a Studio boot error receipt line Note or Dropped line or Press row note states a fact and a next step. Ask the file what it is from a project terminal: bunraku inspect names kind and format or says it could not be read; bunraku validate exits 0 if the file opens at all. Check the lens or honesty view before you export again: pick target platform on Workbench and read dimmed fields or open Export Note and Dropped lines; both read the same coverage claims so they never disagree. Check the format matrix if one field is the question: docs FORMAT-SUPPORT.md is generated from live adapters what each platform reads and writes kind by kind. If none of that explains it the file may be a format Bunraku does not know yet not a broken one; bunraku formats lists everything currently supported.",
+      "sourceHash": "sha256:1f0b7a531ba4da6a6001569f5ff2f005ede7d54c7843e8040bb8cf81901e9aab",
+      "summary": "Read the message you already have: a Studio boot error receipt line Note or Dropped line or Press row note states a fact and a next step. Ask the file what it is from a project terminal: bunzai inspect names kind and format or says it could not be read; bunzai validate exits 0 if the file opens at all. Check the lens or honesty view before you export again: pick target platform on Workbench and read dimmed fields or open Export Note and Dropped lines; both read the same coverage claims so they never disagree. Check the format matrix if one field is the question: docs FORMAT-SUPPORT.md is generated from live adapters what each platform reads and writes kind by kind. If none of that explains it the file may be a format Bunzai does not know yet not a broken one; bunzai formats lists everything currently supported.",
       "topics": [
         "read message first",
-        "bunraku inspect validate",
+        "bunzai inspect validate",
         "lens honesty coverage",
         "FORMAT-SUPPORT matrix",
-        "bunraku formats list"
+        "bunzai formats list"
       ],
       "children": []
     },
@@ -34,8 +34,8 @@
       "slug": "the-studio-says-forbidden-over-ssh",
       "title": "The Studio says \"forbidden\" over SSH",
       "level": 2,
-      "sourceHash": "sha256:b2c92fcc87d6917c7c84daa984a47493b230bd1fd109a33e29ab6e38916ae540",
-      "summary": "Bunraku listens at 127.0.0.1:8321 by default deliberately local. Container or headless use needs you to carry loopback to your browser machine. Start Bunraku on the server; copy the printed full ssh -L command; replace user at server with your login; leave the tunnel open; open the exact localhost URL not server or container IP. Two -L entries appear when the Lua regex sandbox is up: Studio plus random sandbox port; copy both for test benches. If shell loads but Studio could not start and refused the address use Open Studio Open Remote Access setup and Copy SSH command recovery pointed at forwarded localhost. Restart reprints the current two-port command. This tunnel is owner loopback access; Settings Remote access is for approved phones and everyday devices. Test benches stay host-local unless the second port is forwarded too.",
+      "sourceHash": "sha256:48e92a68ba7819934f960bbc74d921fd776efa293e4c103bf87dc3474846012b",
+      "summary": "Bunzai listens at 127.0.0.1:8321 by default deliberately local. Container or headless use needs you to carry loopback to your browser machine. Start Bunzai on the server; copy the printed full ssh -L command; replace user at server with your login; leave the tunnel open; open the exact localhost URL not server or container IP. Two -L entries appear when the Lua regex sandbox is up: Studio plus random sandbox port; copy both for test benches. If shell loads but Studio could not start and refused the address use Open Studio Open Remote Access setup and Copy SSH command recovery pointed at forwarded localhost. Restart reprints the current two-port command. This tunnel is owner loopback access; Settings Remote access is for approved phones and everyday devices. Test benches stay host-local unless the second port is forwarded too.",
       "topics": [
         "loopback 8321 only",
         "ssh -L two ports",
@@ -50,8 +50,8 @@
       "slug": "a-card-would-not-import",
       "title": "A card would not import",
       "level": 2,
-      "sourceHash": "sha256:28bdc6b357d23bb49036104141c67ae42936cc363c804f2cec59c2fd2f097f05",
-      "summary": "Every file is read before write under Pick what to keep when clean or Here is what we read when some fail; every row has checkbox and reason. Could not read means unrecognized format not damage for known shapes png json charx lorebook byaf; use bunraku inspect before calling it broken. Import never overwrites: second drop gets -2 id so re-drop cannot clobber edits; update via Workbench save instead. Broken lorebooks heal with receipt fix lines and entry counts. Scripts stay text inert until the test stage; Workshop toggle shows them when present. Deep access is refused on the receipt; rest still imports. After pieces exist Import only routes to shelves to drop; empty studio alone opens a file browser.",
+      "sourceHash": "sha256:97bdfa7b878516c2d2ec36dccae5a623ac12c6be781ea2f2b5f52b2bc2df664e",
+      "summary": "Every file is read before write under Pick what to keep when clean or Here is what we read when some fail; every row has checkbox and reason. Could not read means unrecognized format not damage for known shapes png json charx lorebook byaf; use bunzai inspect before calling it broken. Import never overwrites: second drop gets -2 id so re-drop cannot clobber edits; update via Workbench save instead. Broken lorebooks heal with receipt fix lines and entry counts. Scripts stay text inert until the test stage; Workshop toggle shows them when present. Deep access is refused on the receipt; rest still imports. After pieces exist Import only routes to shelves to drop; empty studio alone opens a file browser.",
       "topics": [
         "receipt before write",
         "unrecognized not damaged",
@@ -66,8 +66,8 @@
       "slug": "a-convert-dropped-something",
       "title": "A convert dropped something",
       "level": 2,
-      "sourceHash": "sha256:e32048ab3d5920e7fb14253df77d19fbbf2c04abec243c52edd76cd19cdb5d91",
-      "summary": "Convert reads into one shared canonical model then writes the target shape; most drop bugs are that design working. Different-app loss of scripts regex modules is expected: only shared model crosses; private blocks never copy; full rule packs need a keeper like Risu charx. Same-app still different means you did not use the exact format id both ways; RoleCall in then plain SillyTavern JSON is cross-format; export through the import format for byte-honest copy. Persona wires carry one lorebook ref so only the first crosses; reorder Knowledge or stage the book alone. Rich placement exists only under Bunraku and some platforms; Risu NovelAI land every entry on the character floor with foreign closest slot. Staged characters bundle linked lorebooks once; Press drop from this run omits without unlink; ride again restores.",
+      "sourceHash": "sha256:6378906dda78c554655ab5c11dc59ffe1edba5d450ee48ce51815b7a497cc335",
+      "summary": "Convert reads into one shared canonical model then writes the target shape; most drop bugs are that design working. Different-app loss of scripts regex modules is expected: only shared model crosses; private blocks never copy; full rule packs need a keeper like Risu charx. Same-app still different means you did not use the exact format id both ways; RoleCall in then plain SillyTavern JSON is cross-format; export through the import format for byte-honest copy. Persona wires carry one lorebook ref so only the first crosses; reorder Knowledge or stage the book alone. Rich placement exists only under Bunzai and some platforms; Risu NovelAI land every entry on the character floor with foreign closest slot. Staged characters bundle linked lorebooks once; Press drop from this run omits without unlink; ride again restores.",
       "topics": [
         "canonical shared only",
         "exact format id round-trip",
@@ -82,8 +82,8 @@
       "slug": "an-export-looks-wrong",
       "title": "An export looks wrong",
       "level": 2,
-      "sourceHash": "sha256:d5f05359023905e52448ca7ade85a7ad26c14b6480e70c803fcdc14f99789ec1",
-      "summary": "Export and Press share Workbench lens coverage so they never disagree on carry. Dimmed or missing fields are the lens hiding unsupported slots; Bunraku tab restores the full card nothing deleted. Export becomes Export anyway when honesty shows Note or Dropped; Note is partial Dropped does not travel not a hard stop. Press skipped names reasons like no persona format before the run not a failure. Failed is a real row error with the actual message while the batch continues. Colliding names mint -2; rename or pick txt md before run then fields lock. Editor Export always one file; Press always a zip even for one piece. Casting full name title pronouns drop when the target has no slot; check the lens not the field.",
+      "sourceHash": "sha256:b8a5a2faab8b1a22f090b13735e80b0064774f861f1de0c454f7225cba9399ca",
+      "summary": "Export and Press share Workbench lens coverage so they never disagree on carry. Dimmed or missing fields are the lens hiding unsupported slots; Bunzai tab restores the full card nothing deleted. Export becomes Export anyway when honesty shows Note or Dropped; Note is partial Dropped does not travel not a hard stop. Press skipped names reasons like no persona format before the run not a failure. Failed is a real row error with the actual message while the batch continues. Colliding names mint -2; rename or pick txt md before run then fields lock. Editor Export always one file; Press always a zip even for one piece. Casting full name title pronouns drop when the target has no slot; check the lens not the field.",
       "topics": [
         "lens honesty same claims",
         "Export anyway Note Dropped",
@@ -98,8 +98,8 @@
       "slug": "tips",
       "title": "Tips",
       "level": 2,
-      "sourceHash": "sha256:0b0669dedc30e224e5c22de14e23b616d6ef4cd88627057b5cfc528c41e7eeeb",
-      "summary": "Read the message first; it was already the answer. Use bunraku inspect validate formats before clicking around. Same-app lossless needs the exact import format id out not a lookalike. Lens and honesty share one coverage table so dimmed means Dropped. Unsupported format is not a broken file; file an issue with a sample.",
+      "sourceHash": "sha256:c84158342104293c6d64dcd040e29bf3e01b5bbcca12b926749706b80b48e016",
+      "summary": "Read the message first; it was already the answer. Use bunzai inspect validate formats before clicking around. Same-app lossless needs the exact import format id out not a lookalike. Lens and honesty share one coverage table so dimmed means Dropped. Unsupported format is not a broken file; file an issue with a sample.",
       "topics": [
         "message first",
         "CLI inspect formats",

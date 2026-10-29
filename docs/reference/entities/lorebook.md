@@ -227,7 +227,7 @@ together), but the SillyTavern codec (`src/formats/sillytavern/lorebook.ts`) con
 run when the entry fires: the prompt assembler applies them to the scene's own variables before any macro
 resolves, so `{{getvar}}` in the same prompt sees them. A new version of a reply starts from the variables as
 they were before the reply it replaces ran them, so they are never counted twice. `boostIds` and
-`boostAmount` are Bunraku-authored cross-entry boosting: when the entry fires, each listed entry of the same
+`boostAmount` are Bunzai-authored cross-entry boosting: when the entry fires, each listed entry of the same
 book that also matched is likelier to be injected.
 
 ### CharacterFilter
@@ -324,7 +324,7 @@ Per the superset rule (see [architecture.md](../architecture.md)), a field earns
 if some real wire format serializes it. Rides escrow, because no serializer emits it: three RoleCall
 in-memory-only fields, `allowRecursion`, `scanPreset`, and `probabilityMode`, fail that gate (RoleCall's
 `boostIds` and `boostAmount` fail it too, but the engine reads them and the World wing authors them, so they
-have Bunraku-authored slots that RoleCall's export drops). The schema.ts doc comment records them as verified absent from `packages/lorebook`'s
+have Bunzai-authored slots that RoleCall's export drops). The schema.ts doc comment records them as verified absent from `packages/lorebook`'s
 `serializeEntryToRoleCallV1` and parser, and that its parser hardcodes them as defaults with its own
 comment that the RC schema does not have them yet; `packages/lorebook` is an external VAUDEVILLE-platform
 source, not in this repository, so that claim rides on the schema comment rather than an independent

@@ -112,7 +112,7 @@ async function personaResolver(studio: StudioStoreLike, avatarOf: PersonaAvatarO
  */
 export async function importScene(chats: ChatStore, studio: StudioStoreLike, raw: unknown, avatarOf: PersonaAvatarOf): Promise<ImportedSceneSummary> {
   const parsed = carrier.safeParse(raw);
-  if (!parsed.success) throw new StudioValidationError("that chat is not in a shape Bunraku can save");
+  if (!parsed.success) throw new StudioValidationError("that chat is not in a shape Bunzai can save");
   const { body } = parsed.data;
   const characters = await studio.list("character");
   const character = pick(characters, [...body.characterNames, ...(body.headerCharacter ? [body.headerCharacter] : [])], "character");
@@ -141,7 +141,7 @@ export async function importScene(chats: ChatStore, studio: StudioStoreLike, raw
     ?? body.personaNames.map((n) => who(n)).find((p) => p !== null) ?? null;
   const messages: ImportedMessage[] = body.messages.map((m) => {
     const persona = m.role === "user" ? stampOf(m.speaker, m.avatar) : null;
-    if (m.current >= m.swipes.length) throw new StudioValidationError("that chat is not in a shape Bunraku can save");
+    if (m.current >= m.swipes.length) throw new StudioValidationError("that chat is not in a shape Bunzai can save");
     return { role: m.role, createdAt: m.createdAt, current: m.current, swipes: m.swipes, ...(m.hidden ? { hidden: true } : {}), ...(persona ? { persona: { id: persona.id, name: persona.name } } : {}) };
   });
   const history: ChatHistory = { createdAt: body.createdAt, updatedAt: body.updatedAt, messages, source: sourceOf(body) };

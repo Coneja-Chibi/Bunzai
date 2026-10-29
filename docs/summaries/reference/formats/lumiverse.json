@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/formats/lumiverse",
   "sourcePath": "docs/reference/formats/lumiverse.md",
-  "sourceHash": "sha256:211d2c171e2799307d4cc13d6efceb5abfeef58d32e6d97f7c26b813b7c7189a",
+  "sourceHash": "sha256:efa71ca1cdb8bb38d1030aea972766658820cc4d16ac2f366021df7112c12b6e",
   "summary": "Developer reference for four Lumiverse adapters: an ST CCv2/v3 character wire with Lumiverse extensions and an optional modules ZIP, a versioned regex export, an account Persona object, and a block-based preset wrapper that exports as a flat ST preset. There is no dedicated lorebook codec; embedded character_book uses the shared bundle layer. Detection, field mapping, bounded archive handling, dual escrow twins, module packing, character variants, regex and persona behavior, and the preset wrapper's import-only asymmetry are documented with their source files.",
   "topics": [
     "lumiverse CCv3 modules ZIP",
@@ -137,7 +137,7 @@
       "slug": "quirks",
       "title": "Quirks",
       "level": 2,
-      "sourceHash": "sha256:e2a701e8df6de20db2c1ebbc8b5881890cf35e483474fc5f8801dde1962a5097",
+      "sourceHash": "sha256:1008d6e0820dcf08b982fd78a9f8abf0cf6e1b986ae35294b0501d750fe48544",
       "summary": "All ZIP inflate uses unzipBounded CARD_ARCHIVE_BOUNDS shared with Risu and BYAF: 96 MiB archive, 512 entries, 64 MiB per entry, 96 MiB aggregate. Regex codec converges account RegexScript export and reduced archive regex_scripts on one RegexRule with extras sealing account fields; placement maps to phases including memory; unmapped placements and substitution modes are not fabricated. Persona maps title, pronouns, knowledge refs, and image URL; its twin seals folder, default, narrator, and metadata. A from-scratch persona materializes required description, subjective, and objective string keys while optional possessive stays absent. alternate_character_name is a prompt override. Lumiverse preset import converts blocks to ST preset wire; export writes ST flat preset and does not reproduce the wrapper.",
       "topics": [
         "CARD_ARCHIVE_BOUNDS",

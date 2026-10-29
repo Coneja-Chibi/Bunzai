@@ -9,14 +9,14 @@ related: [reference/architecture, reference/entities/character]
 
 # vaud-json format
 
-vaud-json is bunraku's own native format: the [canonical entity](../architecture.md#the-canonical-entity)
+vaud-json is bunzai's own native format: the [canonical entity](../architecture.md#the-canonical-entity)
 written straight to plain JSON. Every other adapter translates between its app's wire shape and the
 canonical model; vaud-json does no translation at all. It serializes the `CanonicalCharacter` wrapper
 itself (`schemaVersion` / `kind` / `id` / `body` / `profiles?` / `original?`, `canonical.ts:70-81`) and
 reads it back unchanged. That makes it the lossless local save and interchange format, the simplest real
 adapter in the registry, and proof the drop-in folder pattern works end to end.
 
-- `id: "vaud-json"`, label `Bunraku native (.json)`, kind `character`, container JSON, writes `.json`.
+- `id: "vaud-json"`, label `Bunzai native (.json)`, kind `character`, container JSON, writes `.json`.
 - One codec, one file: `src/formats/vaud-json/index.ts:21-46`. No `lorebook` variant exists in this
   folder.
 - `native: true` (`index.ts:26`): importable and exportable like any other adapter, but never listed as
@@ -95,7 +95,7 @@ re-project if it is later exported back to SillyTavern.
   character adapters where `a.coverage && !a.native` both hold (`src/ui/server.ts:272-276`), so vaud-json,
   which is native and has no `coverage.ts` of its own, never reaches that list at all, not even as an
   undeclared-coverage entry. vaud-json still works as an ordinary import/export target everywhere else,
-  including `bunraku convert` and the Workbench's editing surface.
+  including `bunzai convert` and the Workbench's editing surface.
 
 ## Source of truth
 

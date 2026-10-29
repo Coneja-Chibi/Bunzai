@@ -26,7 +26,7 @@ That dynamic boundary does not make this static catalog partial relative to its 
 
 Signatures show recommended modern syntax. A field may reject or defer a macro because fields are processed
 at different stages. A listed macro is not proof that every card, lore, prompt, regex, or script field can
-resolve it. State-changing macros remain sealed in Bunraku and are never evaluated during conversion.
+resolve it. State-changing macros remain sealed in Bunzai and are never evaluated during conversion.
 
 ## Names, participants, cards, and personas
 

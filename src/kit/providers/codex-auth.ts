@@ -31,8 +31,8 @@ const REFRESH_URL = "https://auth.openai.com/oauth/token";
  *
  * The service gates on it: an unrecognised value is refused with "requires a newer version of Codex",
  * verified against the live endpoint. So it is read from the Codex install on this machine, which
- * makes it true rather than invented. `originator` and the user agent are where Bunraku identifies
- * itself, and those say Bunraku.
+ * makes it true rather than invented. `originator` and the user agent are where Bunzai identifies
+ * itself, and those say Bunzai.
  *
  * The fallback only applies when Codex is installed but has not cached a version yet. It will go
  * stale eventually, and the failure is loud and self-describing when it does.
@@ -162,14 +162,14 @@ export const needsRefresh = (auth: CodexAuth, now: number): boolean =>
 /**
  * The headers ChatGPT's Codex endpoint expects alongside the bearer token.
  *
- * `originator` and the user agent name BUNRAKU. They identify the client to the service, so
+ * `originator` and the user agent name BUNZAI. They identify the client to the service, so
  * borrowing another application's name would file this traffic under software that did not send it.
  */
 export function codexHeaders(auth: CodexAuth, clientVersion: string): Record<string, string> {
   const headers: Record<string, string> = {
     version: clientVersion,
-    originator: "bunraku",
-    "User-Agent": `Bunraku/${APP_VERSION}`,
+    originator: "bunzai",
+    "User-Agent": `Bunzai/${APP_VERSION}`,
   };
   if (auth.accountId) headers["ChatGPT-Account-ID"] = auth.accountId;
   return headers;

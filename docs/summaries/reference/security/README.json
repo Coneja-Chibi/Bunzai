@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/security/README",
   "sourcePath": "docs/reference/security/README.md",
-  "sourceHash": "sha256:30e3b88b7e9cfa112afe3d5beb6f7ae9297a9b141c5d38e6a2a4ee11371a046e",
+  "sourceHash": "sha256:2ff2ce2d0797b31f366384fed9c515c93f66fd35b4fd5d0521be7b65f0e3d1f3",
   "summary": "Developer threat model for a local content forge that protects provider credentials, remote join secrets and approvals, filesystem state, trusted UI authority, and machine availability from hostile files and explicitly approved remote clients. The layers document canonical parse-not-execute conversion with semantic Round-Trip guarantees, bounded archives, pre-compile ReDoS rejection plus runtime budgets, sanitized rendering and CSP, capability-starved Lua with worker termination and value-only messages, a three-asset sandbox origin whose packaged proof is blocked, the primary loopback API plus separately gated remote listeners, and Kit's encrypted BYOK vault. Honest gaps include packaged-host sandbox measurement, malformed-vault recovery, the absent non-Windows passphrase flow, and provider redirects that are not revalidated after the initial host check. Each layer names its enforcement and test boundary so scaffolded behavior is not presented as packaged proof.",
   "topics": [
     "local content threat model",
@@ -38,7 +38,7 @@
       "slug": "the-layers",
       "title": "The layers",
       "level": 2,
-      "sourceHash": "sha256:465f8d12b713c8c84e48f204eb1aa28d1bdceb3cab23c66f4f7a0308d2958c5f",
+      "sourceHash": "sha256:ada6f17383a7e25eab1f7badadf128884bf0e3c459d90713b6ba730124d75d82",
       "summary": "The layers combine structural prevention with bounded execution and explicitly scoped evidence. 1. Parse, not execute keeps private payloads opaque and conversion canonical. 2. Decompression caps on archives bound selection and inflation. 3. ReDoS-guarded regex rejects dangerous AST shapes before native execution. 4. Sanitized rendering applies DOMPurify, pure policy, and CSP. 5. The Lua sandbox and its resource budgets remove host capabilities, cap state, and kill workers. 6. Distinct-origin sandbox isolation adds a second HTTP-tested listener whose packaged proof remains blocked. 7. The token-gated primary local server and separately enabled remote listeners protect API authority with request gates, join secrets, device approval, and host-only controls. The tunnel also carries the only path that turns a download into an executable, host-only and verified against a committed SHA-256 before the bytes reach disk. 8. The BYOK provider vault encrypts configurations while documenting passphrase, redirect, and recovery limits.",
       "topics": [
         "parse and escrow",
@@ -55,7 +55,7 @@
           "slug": "1-parse-not-execute",
           "title": "1. Parse, not execute",
           "level": 3,
-          "sourceHash": "sha256:f0a675e4357781cdcbcc512133055c054901ac09f98110f76a012b9f4e0a2b07",
+          "sourceHash": "sha256:c9a705fe24eb5e9cb07474476e6a33e2aadbda9d6a13d30a90fc81092229d7be",
           "summary": "Every format enters and leaves through the canonical superset rather than converting directly to another platform. Source-specific scripts, extension blocks, and layout remain opaque escrow data. Cross-format exports carry only canonical content, preventing one application's executable payload from being copied into another, while typed adapter contracts prevent cross-kind writers. The engine and server do not evaluate imported scripts; the user-invoked Lua Test Bench is the sole execution exception. Same-format Round-Trip requires semantic preservation unless a format specification explicitly declares and fixtures prove a byte-level tier.",
           "topics": [
             "hub and spoke conversion",
@@ -118,7 +118,7 @@
           "slug": "5-the-lua-sandbox-and-its-resource-budgets",
           "title": "5. The Lua sandbox and its resource budgets",
           "level": 3,
-          "sourceHash": "sha256:47acf3b5e4b97619b3419c91c678eb18c65ed53eb1d4a7d80bf48a97f8511ff0",
+          "sourceHash": "sha256:c613cab8aff0bc5a2ba5fd2b263a15e46ffe846201edaf52a371e1ae0a76312d",
           "summary": "Lua executes only when the user invokes the Risu Test Bench. Wasmoon opens a deliberately small pure-library set, excludes io, os, debug, and package, then removes loaders and host-reaching globals. Typed ceilings cover wall time, heap, source, wire data, and host state; release maxima include five seconds, 64 MiB heap, and 2 MiB source and state budgets, and callers cannot raise them. Each run occurs in a Worker that is terminated at deadline. Its versioned value-only protocol accepts plain data, rejects functions, exotic prototypes, forbidden keys, and secret-shaped fields, and never receives the API bearer.",
           "topics": [
             "opt-in Lua execution",
@@ -202,7 +202,7 @@
       "slug": "what-this-document-does-not-claim",
       "title": "What this document does not claim",
       "level": 2,
-      "sourceHash": "sha256:a86953e1418752dc18c65f36c67e1843f4e622a150c8562ad3e42e2f46021079",
+      "sourceHash": "sha256:bd09a87ac61acbb55770f3ce27210ff0b4ae98d1ebfbfa85830917151db19799",
       "summary": "The document does not call the Lua environment fully isolated because its second-origin behavior is proven at the Bun HTTP layer, not inside packaged WebView2. It does not claim exploitation is impossible; controls reduce blast radius as defense in depth. Regex time budgets cannot interrupt one catastrophic native call, so structural rejection remains essential. Kit's vault lacks complete malformed-envelope recovery and a settings-driven portable passphrase flow, the release workflow ships Kit binaries with those gaps open, and provider redirects are not revalidated after the initial host check. A same-origin sandbox fallback is explicitly degraded and receives no isolation claim.",
       "topics": [
         "not fully sandboxed",

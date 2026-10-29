@@ -6,7 +6,7 @@
  * values go in and never come back (key names only, the vault's rule), and every external tool runs
  * as `egress` - confirmed at the Gate, never silently.
  *
- * SERVING - the other way around: any MCP client can use Bunraku's belt via `bunraku mcp`. That
+ * SERVING - the other way around: any MCP client can use Bunzai's belt via `bunzai mcp`. That
  * side needs no state here; the card shows the command to register, with this studio's real path.
  */
 import { useCallback, useEffect, useState, type JSX } from "react";
@@ -142,7 +142,7 @@ function ConnectionsSection(): JSX.Element {
     }
   };
 
-  const serveSnippet = `claude mcp add bunraku -- bunraku mcp "${studioDir || "<your studio folder>"}"`;
+  const serveSnippet = `claude mcp add bunzai -- bunzai mcp "${studioDir || "<your studio folder>"}"`;
 
   return (
     <div {...protect("mcp-connections")}>
@@ -257,8 +257,8 @@ function ConnectionsSection(): JSX.Element {
       )}
 
       <SettingsRow
-        label="Bunraku as a server"
-        hint="Point any MCP client at Bunraku's own belt: the library, catalogs and renderers. Your client asks before each tool runs."
+        label="Bunzai as a server"
+        hint="Point any MCP client at Bunzai's own belt: the library, catalogs and renderers. Your client asks before each tool runs."
       >
         <code className={styles.snippet}>{serveSnippet}</code>
       </SettingsRow>
@@ -272,7 +272,7 @@ const section: SettingsSection = {
   id: "connections",
   act: "agent",
   title: "Connections",
-  lede: "MCP in both directions: servers this machine runs so their tools join Kit's belt, and Bunraku's own belt for any MCP client.",
+  lede: "MCP in both directions: servers this machine runs so their tools join Kit's belt, and Bunzai's own belt for any MCP client.",
   protectedNote: "An entry is a command this machine executes. Host only; environment values go in and never come back, only key names do. Every external tool asks at the Gate before it runs.",
   label: "Connections",
   // Beside Models: both answer "what can the agent reach", and somebody wiring one wires the other.

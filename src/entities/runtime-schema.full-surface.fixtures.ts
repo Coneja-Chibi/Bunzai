@@ -102,7 +102,7 @@ export const fullCharacter: CanonicalCharacter = {
     attribution: {
       creator: "Chi",
       originalCreator: "Chi",
-      source: ["bunraku"],
+      source: ["bunzai"],
       sourceUrl: "https://example.test/mira",
       license: "CC-BY-4.0",
       creatorNotes: "Full fixture",
@@ -290,7 +290,7 @@ export const fullPersona: CanonicalPersona = {
       body: "Tall",
       personality: "Curious",
       quirks: "Indexes everything",
-      history: "Built Bunraku",
+      history: "Built Bunzai",
     },
     sectionOrder: ["history", "personality"],
     traits: ["curious"],
@@ -309,7 +309,7 @@ export const fullPersona: CanonicalPersona = {
     knowledgeRefs: ["aetheria"],
     rating: "all-ages",
     chatInjection: { position: "character", depth: 1, role: "user", wrapper: "The user is:" },
-    attribution: { creator: "Chi", version: "1", createdAt: "2026-07-26", source: "bunraku" },
+    attribution: { creator: "Chi", version: "1", createdAt: "2026-07-26", source: "bunzai" },
     media: {
       portrait: {
         role: "portrait",

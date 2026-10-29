@@ -117,7 +117,7 @@ function ProveBody({ hasPassword, onProved }: { hasPassword: boolean; onProved: 
 function PrintedScript({ words }: { words: readonly string[] }): JSX.Element {
   return createPortal(
     <div className={`${styles.script} host-protected`}>
-      <h1>Bunraku recovery words</h1>
+      <h1>Bunzai recovery words</h1>
       <p>Spoken in order, these open your library on any computer. Keep this page somewhere safe.</p>
       <ol>
         {words.map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (w, i) => (
@@ -188,7 +188,7 @@ export function OpeningLines({ hasPassword, onDone, onCancel }: { hasPassword: b
           <WordList words={words} />
         </Lines>
         <StageNote label="Stage direction" tone="warn">
-          Lose these lines, and the show cannot go on. Bunraku keeps no copy it can show you again, and nobody can prompt you.
+          Lose these lines, and the show cannot go on. Bunzai keeps no copy it can show you again, and nobody can prompt you.
         </StageNote>
         <GhostButton onClick={() => window.print()}>Print the script</GhostButton>
         <Pledge checked={pledged} onChange={setPledged}>
@@ -367,7 +367,7 @@ export function Rehearsal({ due, onWriteNew, onDone, onCancel }: { due: boolean;
   return (
     <Sheet label="Rehearsal" onDismiss={onCancel}>
       <Dossier act="Rehearsal" title="Still know your" accent="lines?">
-        <Direction>{`${due ? "Three months since the last run-through. " : ""}Bunraku stores no single word, so the whole script is asked for.`}</Direction>
+        <Direction>{`${due ? "Three months since the last run-through. " : ""}Bunzai stores no single word, so the whole script is asked for.`}</Direction>
         <CueGrid values={cues} onChange={setCues} />
         {problem ? <StageNote label={problem.label} tone="flub">{problem.text}</StageNote> : null}
         <StageActions cta="Run my lines" onCta={() => void run()} disabled={busy || cues.some((c) => !c)}>

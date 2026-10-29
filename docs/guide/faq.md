@@ -2,25 +2,25 @@
 id: guide/faq
 title: Frequently asked questions
 audience: user
-summary: Straight answers on where your files live, what a convert actually keeps or drops, which apps Bunraku reads and writes, and whether converting or editing a card can damage it.
+summary: Straight answers on where your files live, what a convert actually keeps or drops, which apps Bunzai reads and writes, and whether converting or editing a card can damage it.
 tags: [faq, privacy, convert, formats]
 related: [guide/converting, guide/importing, guide/exporting, reference/architecture]
 ---
 
 # Frequently asked questions
 
-Four questions come up more than any others: where your files go, what actually survives a convert, which apps Bunraku speaks, and whether any of this can damage a card you care about. Short answers first, then the full one behind each.
+Four questions come up more than any others: where your files go, what actually survives a convert, which apps Bunzai speaks, and whether any of this can damage a card you care about. Short answers first, then the full one behind each.
 
 ## The short version
 
-1. **Is my content private?** Yes. Bunraku runs a local server bound to your own machine, your pieces are saved encrypted in one file in a folder on your disk, and there is no account, no cloud, and no telemetry.
+1. **Is my content private?** Yes. Bunzai runs a local server bound to your own machine, your pieces are saved encrypted in one file in a folder on your disk, and there is no account, no cloud, and no telemetry.
 2. **What converts?** The plain card, name, description, personality, scenario, greetings, example messages, and a lorebook's entries, keys, and placement. An app's private extras, its own scripts, layout, and ids, only survive a round trip back to that same app.
 3. **Which apps are supported?** SillyTavern, RoleCall, RisuAI, Backyard/Faraday, Agnai, NovelAI, Pygmalion, Lumiverse, Marinara, and Chub, though not every app carries every kind of piece.
 4. **Can a convert damage my card?** No. A convert only ever writes a new file; your original is kept untouched, and every export shows you exactly what will and will not travel before you commit to it.
 
 ## Is my content private?
 
-Yes. `bunraku ui` starts a local server bound to `127.0.0.1`, loopback only, so nothing outside your own machine can reach it. Your pieces are stored encrypted in one file, `library.db`, in a studio folder on your disk (`Documents/Bunraku Studio` by default, unless you point it somewhere else). This computer opens it by itself unless you set a password in Settings, Security, and no one at Bunraku can read it.
+Yes. `bunzai ui` starts a local server bound to `127.0.0.1`, loopback only, so nothing outside your own machine can reach it. Your pieces are stored encrypted in one file, `library.db`, in a studio folder on your disk (`Documents/Bunzai Studio` by default, unless you point it somewhere else). This computer opens it by itself unless you set a password in Settings, Security, and no one at Bunzai can read it.
 
 There is no sign-up and no account anywhere in the app. Every request the interface makes goes to that same local server, not to some service on the internet, and there is no telemetry: nothing about what you open, edit, or convert is collected or sent anywhere.
 
@@ -30,7 +30,7 @@ Importing does not trust a file just because it opened cleanly, either. A card t
 
 Every convert goes through one shared model in the middle: your file is read into it, then written back out in the target app's shape. Nothing goes directly from one app's file to another's.
 
-**Back to the app you started in, everything survives.** Bunraku keeps your original file, so a same-app round trip is lossless. Anything the shared model has no slot for, an app's private extensions, layout, or ids, comes straight back from that saved copy.
+**Back to the app you started in, everything survives.** Bunzai keeps your original file, so a same-app round trip is lossless. Anything the shared model has no slot for, an app's private extensions, layout, or ids, comes straight back from that saved copy.
 
 **Into a different app, only the shared part crosses.** Name, description, personality, scenario, greetings, and example messages travel to any character-capable app. A lorebook's entries, keys, and placement travel to any lorebook-capable one. What does not travel is anything the target has no place for: one app's trigger scripts, regex, virtual script, and backdrop HTML are dropped when the target cannot run them, on purpose, never quietly copied in as inert baggage. Risu (.charx) is the one target that keeps the full rule pack; plainer apps like Agnai or legacy Backyard keep the words, not the machinery.
 
@@ -51,7 +51,7 @@ A few notes worth knowing:
 - **Chub** has no wire format of its own. A Chub download is a SillyTavern-shaped Character Card v2/v3 with one extra block, `extensions.chub`, riding inside it, so it shares SillyTavern's row above.
 - **NovelAI** has no character-card concept; its "card" is a lorebook, so that is the only kind it reads or writes.
 - **Marinara** ships regex scripts and personas only, no character or lorebook file.
-- **Bunraku's own native JSON** is the shape every piece in your library is kept in, every kind, stored encrypted inside `library.db` in your studio folder. It is lossless by construction and it is not in the table above, because it is not something you convert to, it is what a piece already is before you convert it anywhere.
+- **Bunzai's own native JSON** is the shape every piece in your library is kept in, every kind, stored encrypted inside `library.db` in your studio folder. It is lossless by construction and it is not in the table above, because it is not something you convert to, it is what a piece already is before you convert it anywhere.
 
 Formats are drop-in folders under the hood, so this list can grow without touching any format already on it.
 

@@ -85,9 +85,9 @@ const ART_DATA_URI = `data:image/png;base64,${bytesToBase64(ART_BYTES)}`;
 const ART_SHA = hashHex(ART_BYTES);
 
 test("nothing written through the stores can be found in the database files", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "bunraku-rest-"));
+  const dir = mkdtempSync(join(tmpdir(), "bunzai-rest-"));
   dirs.push(dir);
-  const path = join(dir, "bunraku.db");
+  const path = join(dir, "bunzai.db");
   const d = openStageDatabase(path, MIGRATIONS);
   const ring = createKeyring(d, vault);
   await ring.setup();

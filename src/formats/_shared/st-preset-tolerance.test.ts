@@ -8,7 +8,7 @@
  * values without ever normalising them - went from loading fine to "corrupt entity file". Re-
  * exporting from ST did not help: it hands back the same types it was given.
  *
- * The fix converts at the boundary rather than relaxing the decoder, so a typo in Bunraku's OWN
+ * The fix converts at the boundary rather than relaxing the decoder, so a typo in Bunzai's OWN
  * writer is still a loud failure. That is the line these tests hold: real drifted data loads,
  * genuinely ambiguous data is still refused rather than guessed at.
  */

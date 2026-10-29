@@ -1,4 +1,4 @@
-/** Logit Bias entries to token ids: exact only where the model's tokenizer is one Bunraku carries, never a guess. */
+/** Logit Bias entries to token ids: exact only where the model's tokenizer is one Bunzai carries, never a guess. */
 import { describe, expect, test } from "bun:test";
 import { encode as o200k } from "gpt-tokenizer/encoding/o200k_base";
 import { encode as cl100k } from "gpt-tokenizer/encoding/cl100k_base";

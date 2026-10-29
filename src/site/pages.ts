@@ -1,7 +1,7 @@
 /**
  * The website's pages as HTML strings: the shared frame (fonts, nav, footer, logo) and every page.
  * Pure; scripts/build-site.ts writes the result into dist/pages. Copy must match the shipped app.
- * Links are relative (`up` climbs out of a subfolder) because Pages serves the site under /Bunraku/.
+ * Links are relative (`up` climbs out of a subfolder) because Pages serves the site under /Bunzai/.
  */
 import type { Guide } from "./guides";
 import { reel } from "./reel";
@@ -12,7 +12,7 @@ export interface Page {
   readonly html: string;
 }
 
-const REPO = "https://github.com/Coneja-Chibi/Bunraku";
+const REPO = "https://github.com/Coneja-Chibi/Bunzai";
 const LATEST = `${REPO}/releases/latest/download/`;
 
 const LOGO = `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
@@ -51,14 +51,14 @@ function frame({ title, description, up, section, body }: Frame): string {
 ${LOGO}
 <a class="skip" href="#main">Skip to content</a>
 <div class="wrap"><nav class="nav" aria-label="Main">
-<a class="brand" href="${up}index.html"><svg width="36" height="36" aria-hidden="true"><use href="#bun"/></svg>bunraku</a>
+<a class="brand" href="${up}index.html"><svg width="36" height="36" aria-hidden="true"><use href="#bun"/></svg>bunzai</a>
 ${link("tour", `${up}tour/scenes.html`, "Tour")}${link("guides", `${up}guides/index.html`, "Guides")}${link("news", `${up}news.html`, "What's new")}<a class="link" href="${up}studio/">Try it</a>
 <a class="btn" href="${up}download.html">Download</a>
 </nav></div>
 <main id="main">
 ${body}
 </main>
-<div class="wrap"><footer><span>bunraku &middot; free and open source &middot; a Coneja-Chibi production</span>
+<div class="wrap"><footer><span>bunzai &middot; free and open source &middot; a Coneja-Chibi production</span>
 <span class="links"><a href="${up}guides/index.html">Guides</a><a href="${up}studio/">Browser Studio</a><a href="${REPO}">GitHub</a><a href="${REPO}/issues">Report a problem</a></span></footer></div>
 <script type="module" src="${up}site.js"></script>
 </body>
@@ -68,10 +68,10 @@ ${body}
 
 const ticket = (up: string): string => `<div class="ticket">
 <div class="adm">ADMIT ONE &middot; ANY NIGHT</div>
-<h3>Bunraku</h3>
+<h3>Bunzai</h3>
 <p>Free, open source, and yours to keep. No account needed.</p>
 <div class="tear"></div>
-<div class="os"><a href="${LATEST}Bunraku.exe">Windows</a><a href="${up}download.html#mac">Mac</a><a href="${up}download.html#linux">Linux</a></div>
+<div class="os"><a href="${LATEST}Bunzai.exe">Windows</a><a href="${up}download.html#mac">Mac</a><a href="${up}download.html#linux">Linux</a></div>
 <small><span data-version>latest</span> &middot; Mac and Linux run from the terminal</small>
 </div>`;
 
@@ -88,7 +88,7 @@ function home(): Page {
 <div class="act"><b>Act I</b> &middot; hello</div>
 <h1>A little theater for your <em>stories</em>.</h1>
 <p>Make characters, build their worlds, and play scenes with them using your own AI. Your library stays on your computer, encrypted. No account, no cloud.</p>
-<div class="row"><a class="btn" href="download.html">Get Bunraku</a><a class="btn ghost" href="studio/">Try it in your browser</a></div>
+<div class="row"><a class="btn" href="download.html">Get Bunzai</a><a class="btn ghost" href="studio/">Try it in your browser</a></div>
 <p class="small" style="margin:18px 0 0">Free and open source &middot; Windows, Mac, Linux &middot; <span data-version>latest</span></p>
 </div>
 <div class="peek"><svg class="bun" aria-hidden="true"><use href="#bun"/></svg>${SCENE_WINDOW}</div>
@@ -110,7 +110,7 @@ ${reel()}
 <h2>Not sure yet? <em>Look around</em> right here.</h2>
 <p class="lede">The Studio runs in your browser too. Import a card, edit it, convert it, download it. Nothing is saved there, so download what you make before you close the tab.</p></div>
 <a class="btn" href="studio/">Open the Studio</a></div></section>`;
-  return { path: "index.html", html: frame({ title: "Bunraku: a little theater for your stories", description: "Make characters, build their worlds, and play scenes with them using your own AI. Free, open source, and private.", up: "", section: "home", body }) };
+  return { path: "index.html", html: frame({ title: "Bunzai: a little theater for your stories", description: "Make characters, build their worlds, and play scenes with them using your own AI. Free, open source, and private.", up: "", section: "home", body }) };
 }
 
 function download(): Page {
@@ -118,27 +118,27 @@ function download(): Page {
     `<section class="os-block" id="${id}" data-os="${id}"><h2>${name}</h2><ol class="steps">${steps}</ol>${extra}</section>`;
   const body = `<div class="wrap page">
 <div class="act"><b>Act IV</b> &middot; your ticket</div>
-<h1>Get Bunraku.</h1>
+<h1>Get Bunzai.</h1>
 <p class="lede">Free and open source. Every download comes from the latest release on GitHub, <span data-version>latest</span>.</p>
 <div class="pair" style="margin-top:36px">
 <div>
-${os("windows", "Windows", `<li>Download <a class="more" href="${LATEST}Bunraku.exe">Bunraku.exe</a>.</li><li>Double-click it. That is the whole install.</li><li>Windows warns once because the app is new and unsigned: click <b>More info</b>, then <b>Run anyway</b>.</li>`, `<p class="note">App starts but no window? Install Microsoft's <a class="more" href="https://developer.microsoft.com/microsoft-edge/webview2/">WebView2 runtime</a> and open it again. Windows 11 already has it.</p>`)}
-${os("mac", "Mac", `<li>Download the one for your Mac: <a class="more" href="${LATEST}bunraku-cli-darwin-arm64">Apple Silicon</a> or <a class="more" href="${LATEST}bunraku-cli-darwin-x64">Intel</a>.</li><li>In Terminal, make it runnable: <code>chmod +x bunraku-cli-darwin-arm64</code></li><li>Start it: <code>./bunraku-cli-darwin-arm64 ui</code></li><li>Open the address it prints in your browser.</li>`)}
-${os("linux", "Linux", `<li>Download the one for your machine: <a class="more" href="${LATEST}bunraku-cli-linux-x64">Intel or AMD</a> or <a class="more" href="${LATEST}bunraku-cli-linux-arm64">ARM, like a Raspberry Pi</a>.</li><li>Make it runnable: <code>chmod +x bunraku-cli-linux-x64</code></li><li>Start it: <code>./bunraku-cli-linux-x64 ui</code></li><li>Open the address it prints in your browser.</li>`)}
+${os("windows", "Windows", `<li>Download <a class="more" href="${LATEST}Bunzai.exe">Bunzai.exe</a>.</li><li>Double-click it. That is the whole install.</li><li>Windows warns once because the app is new and unsigned: click <b>More info</b>, then <b>Run anyway</b>.</li>`, `<p class="note">App starts but no window? Install Microsoft's <a class="more" href="https://developer.microsoft.com/microsoft-edge/webview2/">WebView2 runtime</a> and open it again. Windows 11 already has it.</p>`)}
+${os("mac", "Mac", `<li>Download the one for your Mac: <a class="more" href="${LATEST}bunzai-cli-darwin-arm64">Apple Silicon</a> or <a class="more" href="${LATEST}bunzai-cli-darwin-x64">Intel</a>.</li><li>In Terminal, make it runnable: <code>chmod +x bunzai-cli-darwin-arm64</code></li><li>Start it: <code>./bunzai-cli-darwin-arm64 ui</code></li><li>Open the address it prints in your browser.</li>`)}
+${os("linux", "Linux", `<li>Download the one for your machine: <a class="more" href="${LATEST}bunzai-cli-linux-x64">Intel or AMD</a> or <a class="more" href="${LATEST}bunzai-cli-linux-arm64">ARM, like a Raspberry Pi</a>.</li><li>Make it runnable: <code>chmod +x bunzai-cli-linux-x64</code></li><li>Start it: <code>./bunzai-cli-linux-x64 ui</code></li><li>Open the address it prints in your browser.</li>`)}
 </div>
 <div>${ticket("")}
-<p class="note" style="--c:var(--mint)">Your pieces live in <code>Documents/Bunraku Studio</code> on your computer, encrypted. Opening Bunraku again while it is running just opens another window onto the same studio.</p>
+<p class="note" style="--c:var(--mint)">Your pieces live in <code>Documents/Bunzai Studio</code> on your computer, encrypted. Opening Bunzai again while it is running just opens another window onto the same studio.</p>
 <p class="note" style="--c:var(--lilac)"><b>Kit</b>, the optional terminal companion, is a separate download on the <a class="more" href="${REPO}/releases/latest">release page</a>. <a class="more" href="tour/kit.html">What is Kit?</a></p>
 <p class="note" style="--c:var(--sky)">Want to check your download? <a class="more" href="${LATEST}SHA256SUMS">SHA256SUMS</a> lists every file's fingerprint.</p>
 </div></div>
 <section class="s tight" style="padding-top:56px"><h2>Or run it from source</h2>
 <p class="lede">You need <a class="more" href="https://bun.sh">Bun</a> 1.3 or newer.</p>
 <pre class="source"><code>git clone ${REPO}
-cd Bunraku
+cd Bunzai
 bun install
 bun run dev</code></pre></section>
 </div>`;
-  return { path: "download.html", html: frame({ title: "Download Bunraku", description: "Get Bunraku for Windows, Mac, or Linux. Free and open source.", up: "", section: "download", body }) };
+  return { path: "download.html", html: frame({ title: "Download Bunzai", description: "Get Bunzai for Windows, Mac, or Linux. Free and open source.", up: "", section: "download", body }) };
 }
 
 function news(): Page {
@@ -149,14 +149,14 @@ function news(): Page {
 <ul class="news" data-news="full"><li><div class="v"></div><div><p>Loading the releases.</p></div></li></ul>
 <a class="more" href="${REPO}/releases">All releases on GitHub &rarr;</a>
 </div>`;
-  return { path: "news.html", html: frame({ title: "What's new in Bunraku", description: "Every Bunraku release, newest first.", up: "", section: "news", body }) };
+  return { path: "news.html", html: frame({ title: "What's new in Bunzai", description: "Every Bunzai release, newest first.", up: "", section: "news", body }) };
 }
 
 function notFound(): Page {
   const body = `<div class="wrap page" style="min-height:50vh"><div class="act"><b>Intermission</b></div>
 <h1>This page wandered off stage.</h1><p class="lede">It may have moved, or never existed.</p>
-<div class="row" style="margin-top:28px"><a class="btn" href="/Bunraku/">Back to the start</a><a class="btn ghost" href="/Bunraku/studio/">Open the Studio</a></div></div>`;
-  return { path: "404.html", html: frame({ title: "Not found: Bunraku", description: "This page wandered off stage.", up: "/Bunraku/", section: "none", body }) };
+<div class="row" style="margin-top:28px"><a class="btn" href="/Bunzai/">Back to the start</a><a class="btn ghost" href="/Bunzai/studio/">Open the Studio</a></div></div>`;
+  return { path: "404.html", html: frame({ title: "Not found: Bunzai", description: "This page wandered off stage.", up: "/Bunzai/", section: "none", body }) };
 }
 
 const GROUPS: readonly (readonly [string, readonly string[]])[] = [
@@ -181,14 +181,14 @@ function guidePages(guides: readonly Guide[]): Page[] {
   const side = (current: string): string => `<ul class="side">${groups.map(([name, list]) =>
     `<li class="small">${name}</li>${list.map((g) => `<li><a href="${g.slug}.html"${g.slug === current ? ' aria-current="page"' : ""}>${g.title}</a></li>`).join("")}`).join("")}</ul>`;
   const index = `<div class="wrap page"><div class="act"><b>Act V</b> &middot; guides</div>
-<h1>Guides, written for people.</h1><p class="lede">Short, plain how-tos for everything Bunraku does.</p>
+<h1>Guides, written for people.</h1><p class="lede">Short, plain how-tos for everything Bunzai does.</p>
 ${groups.map(([name, list]) => `<div class="act" style="margin-top:44px">${name}</div><div class="grid-links" style="margin-top:0">${list.map((g) => `<a href="${g.slug}.html"><div><h3>${g.title}</h3><p>${g.summary}</p></div><span>&rarr;</span></a>`).join("")}</div>`).join("")}
 </div>`;
-  const pages: Page[] = [{ path: "guides/index.html", html: frame({ title: "Guides: Bunraku", description: "Short, plain how-tos for everything Bunraku does.", up: "../", section: "guides", body: index }) }];
+  const pages: Page[] = [{ path: "guides/index.html", html: frame({ title: "Guides: Bunzai", description: "Short, plain how-tos for everything Bunzai does.", up: "../", section: "guides", body: index }) }];
   for (const g of guides) {
     if (g.slug === "index") continue;
     const body = `<div class="wrap page"><a class="crumb" href="index.html">&larr; All guides</a><div class="guide-wrap">${side(g.slug)}<article class="doc">${g.html}</article></div></div>`;
-    pages.push({ path: `guides/${g.slug}.html`, html: frame({ title: `${g.title}: Bunraku`, description: g.summary, up: "../", section: "guides", body }) });
+    pages.push({ path: `guides/${g.slug}.html`, html: frame({ title: `${g.title}: Bunzai`, description: g.summary, up: "../", section: "guides", body }) });
   }
   return pages;
 }
@@ -197,7 +197,7 @@ ${groups.map(([name, list]) => `<div class="act" style="margin-top:44px">${name}
 export function sitePages(guides: readonly Guide[]): Page[] {
   const tour = CAST.map((m) => ({
     path: `tour/${m.id}.html`,
-    html: frame({ title: `${m.name}: Bunraku`, description: m.card, up: "../", section: "tour", body: tourBody(m) }),
+    html: frame({ title: `${m.name}: Bunzai`, description: m.card, up: "../", section: "tour", body: tourBody(m) }),
   }));
   return [home(), download(), news(), notFound(), ...tour, ...guidePages(guides)];
 }

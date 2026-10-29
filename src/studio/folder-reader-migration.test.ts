@@ -8,7 +8,7 @@
  *
  * Tolerance lives HERE, at the read-from-disk boundary, and deliberately not inside
  * parseCanonicalEntity: the converters and the capability preview parse on the WRITE path, where a
- * wrong shape is a Bunraku bug that must still fail loudly.
+ * wrong shape is a Bunzai bug that must still fail loudly.
  */
 import { describe, expect, test } from "bun:test";
 import { mkdir, writeFile } from "node:fs/promises";

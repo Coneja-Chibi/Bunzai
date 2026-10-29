@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/entities/formula",
   "sourcePath": "docs/reference/entities/formula.md",
-  "sourceHash": "sha256:231bd799c30b55e8abf5d65c4a0118cb6f3977f72c6f87e2361a646372305c27",
-  "summary": "The formula entity page covers CanonicalFormula, a saved macro expression, bounded only by a hostile-input ceiling, such as a word count over the chat plus a roll, made once and run anywhere. A formula is macro text and nothing else, so what it can do is what the macro engine gives it, including Bunraku's own mentions, lastmention, tally and odds macros, and its decoder checks only shape and size. The page explains that a tool runs a formula through its formula action on the macro context the turn built its prompt from, handed to the tools once the prompt is built, and that the run happens on a copy, with any variable write refused out loud and blank or failing formulas refused too. The Editing section describes the formula editor and its Try rail, which runs the text on a copy of a scene through the formula-try route.",
+  "sourceHash": "sha256:a79539e3bfd31678d93f5914326e57bb555fddac1dd7a5753a1f2826d61c49e6",
+  "summary": "The formula entity page covers CanonicalFormula, a saved macro expression, bounded only by a hostile-input ceiling, such as a word count over the chat plus a roll, made once and run anywhere. A formula is macro text and nothing else, so what it can do is what the macro engine gives it, including Bunzai's own mentions, lastmention, tally and odds macros, and its decoder checks only shape and size. The page explains that a tool runs a formula through its formula action on the macro context the turn built its prompt from, handed to the tools once the prompt is built, and that the run happens on a copy, with any variable write refused out loud and blank or failing formulas refused too. The Editing section describes the formula editor and its Try rail, which runs the text on a copy of a scene through the formula-try route.",
   "topics": [
     "CanonicalFormula",
     "macro expression",

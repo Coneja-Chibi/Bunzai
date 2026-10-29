@@ -1,6 +1,6 @@
 /**
  * A turn's pieces as the approved wireframe rc-port/scene-turn.html draws them: RoleCall's Starting
- * chip, ImmersiveMessage's meta row with the SwipeCounter (scene-meta.tsx), its failure card, Bunraku's two additions
+ * chip, ImmersiveMessage's meta row with the SwipeCounter (scene-meta.tsx), its failure card, Bunzai's two additions
  * (the line on a reply a crash cut off and the card holding a reply the take moved past), and
  * LiveBubble, the streaming reply's own bubble. Text is shown as text, never
  * as HTML.
@@ -33,7 +33,7 @@ export function LiveBubble({ n, who, tone, art, live, format, prefs, speakers }:
 
 export function CutOff({ busy, onRegenerate }: { busy: boolean; onRegenerate(): void }): JSX.Element {
   return (
-    <div className="cutoff"><Ic name="lucide:circle-alert" size={14} /><span className="grow">Cut off when Bunraku closed. <small>What arrived is kept.</small></span>
+    <div className="cutoff"><Ic name="lucide:circle-alert" size={14} /><span className="grow">Cut off when Bunzai closed. <small>What arrived is kept.</small></span>
       <Button size="sm" disabled={busy} onClick={onRegenerate}>Regenerate</Button></div>
   );
 }
@@ -58,7 +58,7 @@ export function FailCard({ code, message, draft, onDismiss, onRetry }: { code: s
   );
 }
 
-/** Bunraku: the take changed while the reply was written; the reply waits to be added or discarded. */
+/** Bunzai: the take changed while the reply was written; the reply waits to be added or discarded. */
 export function HeldCard({ draft, onDiscard, onKeep }: { draft: string; onDiscard(): void; onKeep(): void }): JSX.Element {
   return (
     <div className="fail held" role="alert">

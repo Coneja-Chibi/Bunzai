@@ -2,7 +2,7 @@
  * Kit's tools, served over MCP on stdio.
  *
  * WHAT THIS IS FOR, and it is two things at once. A client like Claude Code can be pointed at this
- * and use Bunraku's library, macro catalogs and preset renderers directly. And Kit's own Claude
+ * and use Bunzai's library, macro catalogs and preset renderers directly. And Kit's own Claude
  * provider points the Claude Code CLI back at Kit through it, which is the only way to get tool calls
  * out of a CLI that runs its own agent loop: it cannot hand a call back unrun, so instead the call
  * comes home here and executes under Kit's rules.
@@ -32,7 +32,7 @@ import {
   type McpTool,
 } from "./protocol";
 
-export const SERVER_NAME = "bunraku";
+export const SERVER_NAME = "bunzai";
 
 /**
  * READ-ONLY, and this is a security clamp rather than a scoping preference.

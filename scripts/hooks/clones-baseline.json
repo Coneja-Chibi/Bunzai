@@ -51,7 +51,7 @@
  "src/core/trackers/knowledge.ts#next | src/core/trackers/spellbook.ts#next",
  "src/core/trackers/memories.ts#next | src/core/trackers/spellbook.ts#next",
  "src/core/trackers/party.ts#next | src/core/trackers/spellbook.ts#next",
- "src/extensions/examples/bunraku.theme.encore/styles.css#[data-part=\"slot.library.header\"] | src/ui/components/ink-dialog/chrome.module.css#.head",
+ "src/extensions/examples/bunzai.theme.encore/styles.css#[data-part=\"slot.library.header\"] | src/ui/components/ink-dialog/chrome.module.css#.head",
  "src/formats/backyard/byaf.ts#extForMime | src/kit/render/diff-classify.ts#kindOf",
  "src/formats/backyard/byaf.ts#extForMime | src/ui/apps/scenes/props/story-director/director-core.ts#statusTone",
  "src/formats/marinara/lorebook.ts#toCanonical | src/formats/marinara/preset.ts#toCanonical",

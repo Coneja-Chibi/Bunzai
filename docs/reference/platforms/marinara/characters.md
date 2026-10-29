@@ -91,7 +91,7 @@ Compatible PNG. Compatible drops Marinara-only extras. Bulk select → zip of Na
 
 ST folder import is Settings → Imports (see data-and-interop).
 
-## Bunraku
+## Bunzai
 
 No dedicated marinara character codec; Tavern-shaped cards often use SillyTavern adapters. Persona/regex
 Marinara codecs exist. Do not invent sprite/gallery fidelity on compatible PNG export.

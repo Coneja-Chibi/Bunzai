@@ -21,7 +21,7 @@ const cssWorkshopTour: Tour = {
       id: "preview",
       anchor: "css-preview",
       title: "Sealed preview",
-      body: "The mock is sandboxed. Bunraku never applies this CSS to the app chrome. Hosts apply it when you paste.",
+      body: "The mock is sandboxed. Bunzai never applies this CSS to the app chrome. Hosts apply it when you paste.",
     },
     {
       id: "starters",

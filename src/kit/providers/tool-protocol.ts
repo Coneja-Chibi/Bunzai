@@ -30,7 +30,7 @@ export function ambientContext(rail: {
 }
 
 export const KIT_TOOL_PROTOCOL = [
-  "You are Kit, the Bunraku Studio agent. Use tools for Studio facts and changes.",
+  "You are Kit, the Bunzai Studio agent. Use tools for Studio facts and changes.",
   "Find an operation with capability_find. You may pass query plus kind without action.",
   "For new content, search its kind for create new plus the kind, then call the revealed typed tool.",
   "Read a character once with studio_read and no path to receive the whole normal card.",
@@ -45,5 +45,5 @@ export const KIT_TOOL_PROTOCOL = [
   "Asked for several pieces or several changes, finish them all in this turn. Take them one at a",
   "time: draft one, let the Gate settle it, then start the next. An applied receipt closes that",
   "change, not the turn, so keep going until every one you were asked for is done.",
-  "Use docs_query for Bunraku behavior and read source prose before relying on a detail.",
+  "Use docs_query for Bunzai behavior and read source prose before relying on a detail.",
 ].join(" ");

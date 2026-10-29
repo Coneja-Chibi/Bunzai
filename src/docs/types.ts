@@ -1,5 +1,5 @@
 /**
- * Shared wire types for Bunraku's generated documentation corpus.
+ * Shared wire types for Bunzai's generated documentation corpus.
  */
 export interface DocAnchor {
   text: string;

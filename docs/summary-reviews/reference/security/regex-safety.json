@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/security/regex-safety",
   "sourcePath": "docs/reference/security/regex-safety.md",
-  "sourceHash": "sha256:db33c9f61b196931c6864bdf3b9e7acf0cd724ae7d65c5f25d4b05a0071eeba5",
-  "semanticSummaryHash": "sha256:ae62fa704982ec6716efe7b44fc4582817624f5b58a125ff647ad5c95c280dfe",
+  "sourceHash": "sha256:222c3253e40aa1fcd97c7a25eb8cb7b85bc6405d8e4a04afded2ca3c234730f2",
+  "semanticSummaryHash": "sha256:ada0fac51d13b266b8d6bb705bcc98e983c8c312b717b29adf38e54f9afd5881",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
-  "reviewedAt": "2026-10-25T01:23:14.451Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:58.863Z"
 }

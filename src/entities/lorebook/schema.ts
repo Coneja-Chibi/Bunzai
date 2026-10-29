@@ -18,7 +18,7 @@ import type { CanonicalEntity } from "../../core/canonical";
  * verified absent from RoleCall's lorebook package serializeEntryToRoleCallV1 + the ST serializer) ride original:
  * first-classing a field nothing serializes is dead surface. The exception is boostIds/boostAmount: no
  * wire carries them either, but the activation engine reads them (engine/boosting.ts) and the World wing
- * authors them, so they are Bunraku-authored slots (RoleCall's own export drops them). But under the
+ * authors them, so they are Bunzai-authored slots (RoleCall's own export drops them). But under the
  * schema-is-editor doctrine, an AUTHORED field a real format DOES serialize gets a slot even if only one
  * format produces it (single-platform is not a reason to original). So ST's extra scan sources
  * (matchCharacterDepthPrompt, matchCreatorNotes), the vectorized/group-override/group-scoring toggles,
@@ -243,7 +243,7 @@ export interface LorebookEntry {
 
   /**
    * Cross-entry boosting (RoleCall's boostIds/boostAmount; no wire format carries them, so they are
-   * Bunraku-authored and RoleCall's own export drops them). When this entry fires, `boostAmount` (0 to 1,
+   * Bunzai-authored and RoleCall's own export drops them). When this entry fires, `boostAmount` (0 to 1,
    * default none) is added to the chance of each entry of the SAME book named in `boostIds` that also
    * matched this turn (engine/boosting.ts). Absent or empty means no boost.
    */
@@ -296,8 +296,8 @@ export interface LorebookBody {
    * Whether a `vectorized` entry takes part in recursion, as a source or a target (bug 6, owner
    * decision 2026-09-30). Undefined/absent means true, today's engine behavior, unchanged for
    * every book saved before this existed. No known format (checked: SillyTavern's docs describe
-   * no such setting, global or per-book) has an equivalent to round-trip; this is Bunraku-native,
-   * beside `globalRecursion` because that is where Bunraku already keeps its own recursion
+   * no such setting, global or per-book) has an equivalent to round-trip; this is Bunzai-native,
+   * beside `globalRecursion` because that is where Bunzai already keeps its own recursion
    * defaults. The engine (`recursion.ts`) and the Workbench's wake map (`wake.ts`) both read this
    * single field so they can never disagree (`vectorizedRecursionOk` in `engine/types.ts`).
    */

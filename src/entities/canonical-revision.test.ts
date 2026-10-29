@@ -8,7 +8,7 @@ import { entityRevision } from "./canonical-revision";
 import { decompose } from "./piece-parts";
 import type { ParsedCanonicalEntity } from "./runtime-schema";
 
-test("entity revision is sha256(\"bunraku-rev-2\\n\" + one \"name\\thash\" line per part)", () => {
+test("entity revision is sha256(\"bunzai-rev-2\\n\" + one \"name\\thash\" line per part)", () => {
   const entity = {
     schemaVersion: "1",
     kind: "character",
@@ -16,7 +16,7 @@ test("entity revision is sha256(\"bunraku-rev-2\\n\" + one \"name\\thash\" line 
     body: { identity: { name: "Ada" } },
   } as ParsedCanonicalEntity;
   const lines = decompose(entity).map((p) => `${p.name}\t${p.hash}`);
-  expect(entityRevision(entity)).toBe(sha256Hex(`bunraku-rev-2\n${lines.join("\n")}`));
+  expect(entityRevision(entity)).toBe(sha256Hex(`bunzai-rev-2\n${lines.join("\n")}`));
 });
 
 test("entity revision is still 64 lowercase hex", () => {

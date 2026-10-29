@@ -12,7 +12,7 @@ import { join } from "node:path";
 import { modeFromStored, readGateMode, SAFE_MODE, writeGateMode } from "./gate-store";
 
 const tmp = async (): Promise<string> =>
-  join(await mkdtemp(join(tmpdir(), "bunraku-gates-")), "gates.json");
+  join(await mkdtemp(join(tmpdir(), "bunzai-gates-")), "gates.json");
 
 describe("modeFromStored", () => {
   test("a remembered mode comes back", () => {
@@ -78,7 +78,7 @@ describe("writeGateMode", () => {
   });
 
   test("it creates the folder it needs", async () => {
-    const path = join(await mkdtemp(join(tmpdir(), "bunraku-gates-")), "nested", "gates.json");
+    const path = join(await mkdtemp(join(tmpdir(), "bunzai-gates-")), "nested", "gates.json");
     expect(await writeGateMode("full", path)).toBe(true);
     expect(await readGateMode(path)).toBe("full");
   });
@@ -93,7 +93,7 @@ describe("writeGateMode", () => {
      * A setting that silently fails to save is worse than one that cannot save at all: you would
      * believe the asking was turned down and learn otherwise one restart later.
      */
-    const unwritable = join(tmpdir(), "bunraku-gates-file-as-dir");
+    const unwritable = join(tmpdir(), "bunzai-gates-file-as-dir");
     await writeFile(unwritable, "not a directory", "utf8");
     expect(await writeGateMode("full", join(unwritable, "gates.json"))).toBe(false);
   });

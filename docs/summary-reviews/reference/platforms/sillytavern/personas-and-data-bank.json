@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/sillytavern/personas-and-data-bank",
   "sourcePath": "docs/reference/platforms/sillytavern/personas-and-data-bank.md",
-  "sourceHash": "sha256:e247fd94c5f52f17019204a64e4d4b8101fd485213d0f9d1c6c05a36944785ac",
-  "semanticSummaryHash": "sha256:abfc6bcc164c1b5c5624723f9071a5ce934a6b63dd06dfb8eb386fac1a704d61",
+  "sourceHash": "sha256:f8b514c82fc8a543481be49d1c5e73a33ee40116613ffffdccd2db153fd85650",
+  "semanticSummaryHash": "sha256:084d5856cfebaae80397add5f545df1918092c92ef3d6d0c100419cc8dcf283a",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:59.612Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:56.535Z"
 }

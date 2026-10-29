@@ -78,7 +78,7 @@ class Connection {
     void this.readStderr(child.stderr);
     void child.exited.then(() => { this.failAll("the server process exited"); });
 
-    const init = await this.request(initializeRequest(this.nextId, "bunraku", APP_VERSION), this.nextId++, CONNECT_TIMEOUT_MS);
+    const init = await this.request(initializeRequest(this.nextId, "bunzai", APP_VERSION), this.nextId++, CONNECT_TIMEOUT_MS);
     if (init.kind === "error") throw new Error(`initialize failed: ${init.message}${this.stderrNote()}`);
     this.send(initializedNotification());
 

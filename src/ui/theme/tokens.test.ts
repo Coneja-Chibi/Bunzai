@@ -81,7 +81,7 @@ describe("RoleCall chrome tokens (plan 19)", () => {
   const rolecall = block(':root[data-chrome="rolecall"] {');
   const rcNames = (text: string): string[] => [...declaredNames(text)].filter((n) => n.startsWith("--rc-"));
 
-  test("every --rc-* the RoleCall block sets also has a house default, so a bunraku theme resolves each to its own value", () => {
+  test("every --rc-* the RoleCall block sets also has a house default, so a bunzai theme resolves each to its own value", () => {
     expect(rcNames(rolecall).length).toBeGreaterThan(20);
     for (const name of rcNames(rolecall)) expect(declared(house, name), name).toBeDefined();
   });

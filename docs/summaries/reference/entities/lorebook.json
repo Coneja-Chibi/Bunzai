@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/entities/lorebook",
   "sourcePath": "docs/reference/entities/lorebook.md",
-  "sourceHash": "sha256:96c4d8b85c6a2d8b062cf4ce03a2b1055acac1b0a5191ed6b3e8ac209f766b73",
+  "sourceHash": "sha256:7b10023c2f148fce23f3f2596ea4c0eac634684e68535ec864f3013969865081",
   "summary": "Lorebook entity is the field-meaning authority for CanonicalLorebook as CanonicalEntity lorebook LorebookBody, the superset for world info character book and memory formats baselined on RoleCall entry type. schema.ts owns types; this page owns meanings and producers. How to read the field tables repeats generated Field Type Producers Meaning rules from docs-fields. Composition is book settings plus flat LorebookEntry list and optional categories. Book settings covers identity globals budget and LorebookCategory folders. Entries is the large flat roughly 48-field entry with concern groups for identity triggers injection ordering recursion scan filters CharacterFilter side effects ST-lineage toggles NovelAI extensions EntryContextConfig LoreBiasPhrase LoreBiasGroup and metadata. What rides escrow, not a field lists RoleCall in-memory-only fields and wire twins. See also links architecture character character-book RoleCall NovelAI and formats matrix.",
   "topics": [
     "LorebookBody entries",
@@ -80,7 +80,7 @@
       "slug": "entries",
       "title": "Entries",
       "level": 2,
-      "sourceHash": "sha256:06d0b5e72e3a405bda5fdcba0b9fe42071c5749cf229c98d40b9fc793dcf12dd",
+      "sourceHash": "sha256:8d261c566c72b028242d73ecaabff8461feec364b3cb169ffccd7148f457b54e",
       "summary": "A LorebookEntry is one triggerable chunk with stable id referenced by categoryId and escrow twin matching. The full flat field table is followed by concern groups not separate types. Identity and content covers title comment content enabled constant. Triggers and matching plus Trigger shape gate activation with selectiveLogic and null inherit globals. Injection and placement sets position depth role. Ordering timing and grouping separates sortOrder placement priority eviction displayIndex list sticky cooldown delay groups probability. Recursion and budget covers exclude prevent delayUntil ignoreBudget useMemo. Scan sources extend match targets. Filters and side effects plus CharacterFilter EntrySideEffect EntrySideEffects are declarative never executed. ST-lineage toggles first-class vectorized group scoring automationId displayIndex. NovelAI extensions include keyRelative contextConfig and lore bias groups with EntryContextConfig LoreBiasPhrase LoreBiasGroup. Metadata is the open bag.",
       "topics": [
         "LorebookEntry flat fields",
@@ -193,8 +193,8 @@
           "slug": "filters-and-side-effects",
           "title": "Filters and side effects",
           "level": 3,
-          "sourceHash": "sha256:bc3c5d27deeb5ef3a7159953589e241399750f831e8db56f07220b73f3853a01",
-          "summary": "characterFilter whitelists or blacklists the entry to specific characters or character tags. sideEffects lists variable mutations to run when the entry activates. Both are declarative data shapes; Bunraku never executes them. Detailed field shapes follow in CharacterFilter EntrySideEffect and EntrySideEffects children.",
+          "sourceHash": "sha256:e32be2c1c874e6a4758f32cdea5260aeaa711a4a45ee221a6d5fb7287a5db61a",
+          "summary": "characterFilter whitelists or blacklists the entry to specific characters or character tags. sideEffects lists variable mutations to run when the entry activates. Both are declarative data shapes; Bunzai never executes them. Detailed field shapes follow in CharacterFilter EntrySideEffect and EntrySideEffects children.",
           "topics": [
             "characterFilter include exclude",
             "sideEffects declarative",
@@ -234,7 +234,7 @@
           "title": "EntrySideEffects",
           "level": 3,
           "sourceHash": "sha256:a2264dfbba93e2708cd2796cdc69d36f2432e607c15d186259bc010fd04ff4a5",
-          "summary": "EntrySideEffects wraps effects as EntrySideEffect array plus onlyOnFirstTrigger and clearOnDeactivate booleans controlling when mutations apply relative to activation lifecycle. Still declarative never executed by Bunraku.",
+          "summary": "EntrySideEffects wraps effects as EntrySideEffect array plus onlyOnFirstTrigger and clearOnDeactivate booleans controlling when mutations apply relative to activation lifecycle. Still declarative never executed by Bunzai.",
           "topics": [
             "effects array",
             "onlyOnFirstTrigger",
@@ -331,8 +331,8 @@
       "slug": "what-rides-escrow-not-a-field",
       "title": "What rides escrow, not a field",
       "level": 2,
-      "sourceHash": "sha256:588f9dc514e1870a51fee80d9ca7ddaf43ee69e044ed561c837a2435f5effe69",
-      "summary": "Per the superset rule a field needs a real wire serializer. Rides escrow because no serializer emits them: three RoleCall in-memory-only fields allowRecursion scanPreset and probabilityMode (boostIds and boostAmount also fail the gate, but the engine reads them and the World wing authors them, so they have Bunraku-authored slots) verified absent from packages/lorebook serialize and parser with hard-coded defaults and corroborated by this repo RoleCall lorebook codec never naming them. Format-specific wire bytes also ride raw twin for lossless same-format round trip: SillyTavern entry uid derives canonical id then re-emits from twin, RoleCall export envelope tree exportDate unsupportedFields and trigger runtime state. Does NOT ride escrow: ST extra scan sources vectorized groupOverride useGroupScoring automationId and displayIndex which are authored wire fields first-classed by schema-is-editor.",
+      "sourceHash": "sha256:fc9aed5d06bf20f09e96e9a1e0d59f597ea7ac0ec787ae594ba0dff32ab8d468",
+      "summary": "Per the superset rule a field needs a real wire serializer. Rides escrow because no serializer emits them: three RoleCall in-memory-only fields allowRecursion scanPreset and probabilityMode (boostIds and boostAmount also fail the gate, but the engine reads them and the World wing authors them, so they have Bunzai-authored slots) verified absent from packages/lorebook serialize and parser with hard-coded defaults and corroborated by this repo RoleCall lorebook codec never naming them. Format-specific wire bytes also ride raw twin for lossless same-format round trip: SillyTavern entry uid derives canonical id then re-emits from twin, RoleCall export envelope tree exportDate unsupportedFields and trigger runtime state. Does NOT ride escrow: ST extra scan sources vectorized groupOverride useGroupScoring automationId and displayIndex which are authored wire fields first-classed by schema-is-editor.",
       "topics": [
         "RoleCall in-memory five",
         "allowRecursion",

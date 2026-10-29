@@ -3,7 +3,7 @@
  * into the stored value unless stripped. A narrower fix would trim only edge whitespace that
  * includes a line break, and only on an argument's first or last node when that node is plain text, so inline
  * padding the author typed on one line (`{{setvar::x:: - }}` keeps " - ") and whitespace a nested
- * macro produced (`{{join::{{newline}}::...}}` keeps its real newline) both survive. Bunraku's
+ * macro produced (`{{join::{{newline}}::...}}` keeps its real newline) both survive. Bunzai's
  * macro engine (evaluate.ts:198, the non-lazy-handler branch of evaluateNodes) does the blunt
  * version instead: `node.args.map((argNodes) => evaluateNodes(...).trim())` unconditionally calls
  * `.trim()` on every evaluated argument, for every macro, every call - no newline-only carve-out,
@@ -27,8 +27,8 @@ test("a multi-line setvar block strips the structural newline framing", () => {
 // deliberate: "Trim each arg to match old parseMacro behavior (which called .trim() on every
 // arg)". Confirmed at runtime through the rc-copy harness: RC's real `processMacros` on
 // `{{setvar::x:: - }}{{getvar::x}}` also returns "-", not " - ".:176-179
-// documents this as the Bunraku contract too ("each evaluated arg `.trim()`-ed, matching the
-// legacy `parseMacro`'s per-arg trim, EXCEPT for lazy macros"). Bunraku's eager-arg trim is an
+// documents this as the Bunzai contract too ("each evaluated arg `.trim()`-ed, matching the
+// legacy `parseMacro`'s per-arg trim, EXCEPT for lazy macros"). Bunzai's eager-arg trim is an
 // intentional RC-parity choice, not a gap.
 test("RC-parity: eager args are unconditionally trimmed, inline padding included", () => {
   const ctx = createDefaultContext({ randomSeed: 1 });

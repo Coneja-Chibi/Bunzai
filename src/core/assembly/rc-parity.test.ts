@@ -24,7 +24,7 @@ interface Fixture {
   now: string;
   seed: number;
   db: { tables: { characters: Row[]; personas?: Row[] } };
-  /** The SillyTavern preset RoleCall imported into its rows; Bunraku imports the same file. */
+  /** The SillyTavern preset RoleCall imported into its rows; Bunzai imports the same file. */
   stPreset?: Record<string, unknown>;
   input: {
     messages: { role: HistoryMessage["role"]; content: string }[];

@@ -16,7 +16,7 @@ const head = (eyebrow,title,voice,action='')=>`<header class="room-header"><div>
 function entry() {
   const top = `<div class="entry-top"><span>CONEJA-CHIBI · A LOCAL PRODUCTION</span><a href="#home">Skip the opening</a></div>`;
   const copy = `<div class="entry-copy"><div class="entry-mark">${TheaterArt.mark()}</div><p class="eyebrow">${direction==='cinema'?'YOUR NEXT STORY · NOW SHOWING':'A LITTLE THEATER FOR YOUR STORIES'}</p><h1>BUN<em>RAKU</em></h1><p class="voice">${direction==='moon'?'Pull a string. Find another world.':direction==='cinema'?'A cast of your own. A story worth keeping.':'The cast is waiting in the wings.'}</p><div class="entry-actions">${button(direction==='cinema'?'Begin the picture':'Enter the theater','home','primary')}${button('Continue story','scene','ghost')}</div><p class="hint">PRESS <kbd>ENTER</kbd> TO BEGIN</p></div>`;
-  const bottom = `<div class="entry-bottom"><div class="credit">YOUR COMPUTER. YOUR CAST. YOUR STORIES.<br><span class="edition">BUNRAKU · THE PAPER THEATER</span></div><span class="mono">ACT I / THE OPENING</span></div>`;
+  const bottom = `<div class="entry-bottom"><div class="credit">YOUR COMPUTER. YOUR CAST. YOUR STORIES.<br><span class="edition">BUNZAI · THE PAPER THEATER</span></div><span class="mono">ACT I / THE OPENING</span></div>`;
   let scene;
   if(direction==='velvet') scene=`<div class="proscenium"></div><div style="position:absolute;inset:0;opacity:.35">${TheaterArt.landscape()}</div><div class="curtain left"></div><div class="curtain right"></div>${copy}<div class="footlights"></div>`;
   if(direction==='moon') scene=copy+`<div class="shadowbox">${TheaterArt.landscape('portrait')}<div class="box-label">THE WORLD BEYOND THE CURTAIN</div></div>`;
@@ -40,7 +40,7 @@ function render() {
   document.querySelector('#preview').innerHTML=`<div class="frame">${id==='entry'?entry():shell(screens[id]())}</div>`;
   document.querySelector('#direction-name').textContent=directions[direction][0];
   document.querySelector('#direction-note').textContent=directions[direction][1]+' Design studies only. Existing features keep their owning app; all content is sample data.';
-  document.title=`Bunraku · ${directions[direction][0]} · ${id}`;
+  document.title=`Bunzai · ${directions[direction][0]} · ${id}`;
 }
 document.querySelectorAll('button[data-direction]').forEach(b=>b.addEventListener('click',()=>{direction=b.dataset.direction;render();}));
 screenPicker.addEventListener('change',render);

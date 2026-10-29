@@ -109,6 +109,6 @@ can capture connection, prompt preset, agents, tools, translation, memory, and A
 never copy characters, persona, lorebooks, sprites, summary, tags, scene prompt, or Roleplay Scenario
 Override. The built-in Default cannot be renamed, overwritten, or deleted.
 
-## Bunraku
+## Bunzai
 
-Bunraku does not convert Marinara chat JSONL unless an adapter exists.
+Bunzai does not convert Marinara chat JSONL unless an adapter exists.

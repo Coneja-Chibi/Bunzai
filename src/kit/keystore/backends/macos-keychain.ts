@@ -7,7 +7,7 @@
  */
 import { keychainKeyBackend, type Item, type KeyStoreTool } from "./keychain-key";
 
-const SERVICE = "bunraku-kit";
+const SERVICE = "bunzai-kit";
 const ACCOUNT: Record<Item, string> = { key: "vault-key", marker: "vault-key-made" };
 /** `security` exits 44 when the item does not exist, and 45 when adding one that already does. */
 const NOT_FOUND = 44;

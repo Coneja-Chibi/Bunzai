@@ -7,7 +7,7 @@ import type { CanonicalEntity } from "../../core/canonical";
  * the SillyTavern "preset" FAMILY: the chat-completion PROMPT-MANAGER preset (prompt blocks +
  * ordering + samplers + settings groups), the shape all four surveyed engines center on and the one
  * canonical-model.md declares. ST's sampler sets and system prompts import INTO this shape (samplers,
- * a main block); its instruct / context / reasoning templates need a text-completion formatter Bunraku
+ * a main block); its instruct / context / reasoning templates need a text-completion formatter Bunzai
  * lacks, so they are refused, never merged in. Field map +
  * survey: presets-core (the RC parser this canonical shape is distilled from).
  *
@@ -64,7 +64,7 @@ export interface PresetPrompt {
   marker: boolean;
   /**
    * When `marker`, the slot identity: ST-compatible (chatHistory, worldInfoBefore, worldInfoAfter,
-   * dialogueExamples, personaDescription), RC's named marker slots, or a Bunraku feature marker
+   * dialogueExamples, personaDescription), RC's named marker slots, or a Bunzai feature marker
    * (trackers, linkedTrackers, storyboards, skills: core/preset/build.ts FEATURE_MARKER_SLOTS).
    */
   markerSlot?: string;

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/security/archives",
   "sourcePath": "docs/reference/security/archives.md",
-  "sourceHash": "sha256:7d44869d6fcef69ad3534a1d805da5ea0219e1898ee024417267de8aec826f9c",
-  "summary": "Safe archive handling covers how Bunraku bounds .charx and .byaf ZIP bytes as untrusted until parsed with two properties proven to different degrees. Decompression limits against a zip bomb are real shared and unit-tested via unzipBounded and CARD_ARCHIVE_BOUNDS used by every card container through unzipCard: reject before unzip pre-inflate per entry post-inflate backstop fail closed error wrap detection-only selection and module.risum RPack non-expansion. Path-traversal safety on entry names notes fflate does not sanitize names ingestion never turns a name into a filesystem write the one checked BYAF greeting id path via resolveGreetingPath and two unchecked re-export name carriers for BYAF images and Risu assets. What is not yet proven lists the untested lying-header backstop and the two unguarded export name paths so archive handling must not be called fully sandboxed against hostile archives.",
+  "sourceHash": "sha256:97607c6e1c668bede6f788cbc8b305cdb9041e24f89f01e302532dfb03433435",
+  "summary": "Safe archive handling covers how Bunzai bounds .charx and .byaf ZIP bytes as untrusted until parsed with two properties proven to different degrees. Decompression limits against a zip bomb are real shared and unit-tested via unzipBounded and CARD_ARCHIVE_BOUNDS used by every card container through unzipCard: reject before unzip pre-inflate per entry post-inflate backstop fail closed error wrap detection-only selection and module.risum RPack non-expansion. Path-traversal safety on entry names notes fflate does not sanitize names ingestion never turns a name into a filesystem write the one checked BYAF greeting id path via resolveGreetingPath and two unchecked re-export name carriers for BYAF images and Risu assets. What is not yet proven lists the untested lying-header backstop and the two unguarded export name paths so archive handling must not be called fully sandboxed against hostile archives.",
   "topics": [
     "unzipBounded zip bomb",
     "CARD_ARCHIVE_BOUNDS",
@@ -135,7 +135,7 @@
       "slug": "path-traversal-safety-on-entry-names",
       "title": "Path-traversal safety on entry names",
       "level": 2,
-      "sourceHash": "sha256:2e163903cf72eceefc9a6e5868cc81fb847e2ae536bddcc0c93d67d2059db1e7",
+      "sourceHash": "sha256:8373ce60cc0b1a757825614b80d96f9a68534d30c971d824f67198d2d1520e91",
       "summary": "Path-traversal safety on entry names is proven unevenly. fflate does not sanitize names so unzipBounded can return literal ../ keys within size budgets. Ingestion never turns a name into a filesystem write: entries become original twin base64 maps or basename-only sprite labels with no writeFile using zip names. The one place a name becomes a fresh write and it is checked is BYAF greeting ids through resolveGreetingPath byaf prefix no dots no leading slash no backslash plus knownPaths membership with hostile-id tests. Two places that are not checked the same way are BYAF image row paths returned verbatim into pack entry keys and Risu charx asset filenames re-emitted unmodified. Residual risk is downstream tools unzipping re-exports not same-process zip-slip.",
       "topics": [
         "fflate raw names",
@@ -190,7 +190,7 @@
           "slug": "two-places-that-are-not-checked-the-same-way",
           "title": "Two places that are not checked the same way",
           "level": 3,
-          "sourceHash": "sha256:13a6a64926e85bfdd0bf976fadd470d68259de44ef00731892459be2f82f3148",
+          "sourceHash": "sha256:097dca6aeebc8b46d772013fd2e3f23fbbfcf6bab73119bfede931b468069c98",
           "summary": "Two spots carry untrusted archive names into freshly-built output entry tables without resolveGreetingPath or hostile tests. BYAF pathForLabel returns existing image row path verbatim into arc.files then packByaf zips keys unmodified; only fallback filenames are sanitized. Risu charx assetFiles import path is written back unmodified then zipSync. Neither becomes a real filesystem write here; residual risk is a less careful downstream tool unzipping the re-export. Call it verified unguarded and untested not safe by design.",
           "topics": [
             "BYAF image paths",

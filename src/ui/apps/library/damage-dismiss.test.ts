@@ -1,7 +1,7 @@
 /**
  * Putting the unreadable-files notice away.
  *
- * Every test here is about what a dismissal must NOT hide. This banner is the only place Bunraku
+ * Every test here is about what a dismissal must NOT hide. This banner is the only place Bunzai
  * says a file in somebody's studio did not load, so an off switch that outlives its files means the
  * next broken preset arrives in silence and the deck is quietly short by one.
  */

@@ -25,7 +25,7 @@ import { card, realisticSnapshotMedia, reply } from "./perf-gate-data";
 import { measure } from "./perf-measure";
 
 const BUDGET_MS = 100;
-const dir = mkdtempSync(join(tmpdir(), "bunraku-perf-health-"));
+const dir = mkdtempSync(join(tmpdir(), "bunzai-perf-health-"));
 const results: { action: string; freezeMs: number; totalMs: number }[] = [];
 let inlineMs = 0;
 try {

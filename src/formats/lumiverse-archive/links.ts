@@ -1,6 +1,6 @@
 /**
  * Cross-references (spec Behavior step 6). Lumiverse links rows by its own primary keys
- * (`world_book_id`, `character_id`, `preset_id`, `attached_world_book_id`, ...); Bunraku assigns
+ * (`world_book_id`, `character_id`, `preset_id`, `attached_world_book_id`, ...); Bunzai assigns
  * fresh ids on import, so every dispatched row has to be remembered under the Lumiverse id it
  * arrived with before the rows that reference it are read. A link map is exactly that memory: one
  * entry per (table, Lumiverse id) recorded as each row imports, resolved once the referencing row

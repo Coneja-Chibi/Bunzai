@@ -1,6 +1,6 @@
 /**
  * Inclusion groups: when several triggered entries share a `groupName`, only one injects, picked
- * by weighted random draw (`groupWeight`). Ported from RoleCall's selection/groups.ts: the system's ambient random source is replaced by the injected rng (Bunraku change
+ * by weighted random draw (`groupWeight`). Ported from RoleCall's selection/groups.ts: the system's ambient random source is replaced by the injected rng (Bunzai change
  * 2). Groups are compared by
  * the literal `groupName` string across every book, same as RoleCall - not scoped per book.
  */

@@ -12,7 +12,7 @@ related: [reference/architecture, reference/entities/character, reference/entiti
 Lumiverse's character card rides the SillyTavern CCv2/v3 wire shape with its own `extensions` keys, plus
 an optional charx-like ZIP container (`lumiverse_modules.json`) that carries expression images, alternate
 avatars, alternate field text, world-book ids, and archive-embedded regex scripts as separate files
-instead of inline data URIs. bunraku reads and writes both containers through one character adapter, plus
+instead of inline data URIs. bunzai reads and writes both containers through one character adapter, plus
 standalone codecs for Lumiverse's regex export, persona object, and preset wrapper.
 
 The format is one folder, `src/formats/lumiverse/`, whose `index.ts` default-exports four codecs:
@@ -240,7 +240,7 @@ into another app's file (`architecture.md`, "Escrow: lossless round-trips, conta
 - Persona codec (`lumiverse-persona`). Reads one account persona object as exported to JSON: name, title (mapped to
   canonical `identity.tagline`), description, the pronoun TRIPLET
   (`subjective_pronoun`/`objective_pronoun`/`possessive_pronoun` mapped to `identity.pronounSet`, the only
-  wire among bunraku's persona codecs with structured pronouns), `attached_world_book_id` (mapped to
+  wire among bunzai's persona codecs with structured pronouns), `attached_world_book_id` (mapped to
   `knowledgeRefs`), `avatar_path` (mapped to `presentation.imageUrl`) (`persona.ts:40-67`). Lumiverse ships
   no file import/export UI for personas, so the API object dump is the only standalone form; the whole
   object is sealed to `original["lumiverse-persona"].raw` and export overlays only the edited fields back

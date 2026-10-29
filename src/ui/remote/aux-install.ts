@@ -68,7 +68,7 @@ export function readAuxMarker(): SidecarPin | null {
  * Remove a downloaded helper and its marker. Used to recover from a bad or superseded download.
  *
  * NOT re-verified before every spawn, and that is deliberate. This file sits in the user's own
- * per-account support directory, so anyone able to rewrite it can equally rewrite Bunraku.exe itself -
+ * per-account support directory, so anyone able to rewrite it can equally rewrite Bunzai.exe itself -
  * re-hashing 31 MB on each launch would defend against an attacker who already owns the account. The pin
  * is checked where it means something: before the bytes are ever written.
  */

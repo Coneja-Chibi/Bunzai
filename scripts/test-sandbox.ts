@@ -1,10 +1,10 @@
 /**
- * The test sandbox, preloaded before every `bun test` run (bunfig.toml): every place Bunraku keeps
+ * The test sandbox, preloaded before every `bun test` run (bunfig.toml): every place Bunzai keeps
  * per-user files points at one throwaway folder, so no test can write into the person's real home
- * or read their real credentials (a keyring test once left a real ~/.bunraku/computer-id behind).
+ * or read their real credentials (a keyring test once left a real ~/.bunzai/computer-id behind).
  *
  * HOME and USERPROFILE are left alone, because child processes (PowerShell for DPAPI, git) need the
- * real profile. So the run also watches the real locations: a new entry in ~/.bunraku or the real
+ * real profile. So the run also watches the real locations: a new entry in ~/.bunzai or the real
  * app-data folder, or a default studio folder that did not exist before, fails the run and names it.
  * The real Studio app running at the same time can cause a false alarm; rerun with it closed.
  */
@@ -15,19 +15,19 @@ import { join } from "node:path";
 import { appDataDir } from "../src/app-data";
 
 // Read the real locations before pointing anything elsewhere.
-const realBunraku = join(process.env["BUNRAKU_HOME"] ?? homedir(), ".bunraku");
+const realBunzai = join(process.env["BUNZAI_HOME"] ?? homedir(), ".bunzai");
 const realAppData = appDataDir();
-const realStudio = join(homedir(), "Documents", "Bunraku Studio");
+const realStudio = join(homedir(), "Documents", "Bunzai Studio");
 const entries = (dir: string) => (existsSync(dir) ? new Set(readdirSync(dir)) : new Set<string>());
-const before = { bunraku: entries(realBunraku), appData: entries(realAppData), studio: existsSync(realStudio) };
+const before = { bunzai: entries(realBunzai), appData: entries(realAppData), studio: existsSync(realStudio) };
 
-const sandbox = mkdtempSync(join(tmpdir(), "bunraku-test-home-"));
+const sandbox = mkdtempSync(join(tmpdir(), "bunzai-test-home-"));
 const inSandbox = (name: string) => {
   const dir = join(sandbox, name);
   mkdirSync(dir, { recursive: true });
   return dir;
 };
-process.env["BUNRAKU_HOME"] = inSandbox("home");
+process.env["BUNZAI_HOME"] = inSandbox("home");
 process.env["CODEX_HOME"] = inSandbox("codex");
 process.env["CLAUDE_CONFIG_DIR"] = inSandbox("claude");
 process.env["LOCALAPPDATA"] = inSandbox("local-app-data");
@@ -82,7 +82,7 @@ process.env["XDG_STATE_HOME"] = inSandbox("xdg-state");
 /** What a test run added to the person's real folders; empty when the sandbox held. */
 function breaches(): string[] {
   const added = (dir: string, was: Set<string>) => [...entries(dir)].filter((name) => !was.has(name)).map((name) => join(dir, name));
-  const found = [...added(realBunraku, before.bunraku), ...added(realAppData, before.appData)];
+  const found = [...added(realBunzai, before.bunzai), ...added(realAppData, before.appData)];
   if (!before.studio && existsSync(realStudio)) found.push(realStudio);
   return found;
 }
@@ -93,7 +93,7 @@ afterAll(() => {
   if (found.length > 0) {
     throw new Error(
       `test sandbox: the run wrote into the real home folder: ${found.join(", ")}. ` +
-        "Point the test at a temporary folder; the preload already sets BUNRAKU_HOME, CODEX_HOME, CLAUDE_CONFIG_DIR, LOCALAPPDATA, and XDG_STATE_HOME.",
+        "Point the test at a temporary folder; the preload already sets BUNZAI_HOME, CODEX_HOME, CLAUDE_CONFIG_DIR, LOCALAPPDATA, and XDG_STATE_HOME.",
     );
   }
 });

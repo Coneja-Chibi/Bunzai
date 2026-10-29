@@ -3,7 +3,7 @@
  * ({{when_all}}, {{when_any}}, {{whenempty}}, {{ifset}}). Ported verbatim from RoleCall
  * inside ADR-012.
  *
- * Changed from RoleCall: `evaluateConditionExpression` comes from `../conditions` (Bunraku split
+ * Changed from RoleCall: `evaluateConditionExpression` comes from `../conditions` (Bunzai split
  * RoleCall's `processor.ts` into `conditions.ts` plus the evaluator), not `../processor`.
  * `readScopedValue`/`isEmptyValue` still come from `./state`. RoleCall's `valueToString`
  * (variables.ts) is its own duplicate of `listItemToString` (../lists); variables.ts imports it
@@ -11,7 +11,7 @@
  * compare's `matches` runs only when `context.allowRegex` is set (types.ts says why); RoleCall
  * always runs it. `switch`/`and`/`or` gained a `lazyHandler` (bug fix 2026-09-30) so an
  * unselected case or operand never evaluates and never fires a side effect, the same guarantee
- * `when_all`/`when_any`/`ifset` already carried; RoleCall's own switch/and/or stay eager with no lazy precedent, so this is a Bunraku-only hardening
+ * `when_all`/`when_any`/`ifset` already carried; RoleCall's own switch/and/or stay eager with no lazy precedent, so this is a Bunzai-only hardening
  * to flag back to RC, not a divergence from it.
  */
 import { REGEX_OFF, type LazyMacroArg, type MacroContext, type MacroDefinition, type MacroResult } from "../types";
@@ -148,7 +148,7 @@ const compareMacro: MacroDefinition = {
  * {{switch::value::case1:result1::case2:result2::default}} - the last argument without a colon is
  * the default. Lazy (2026-09-30, owner decision): only the matched branch's
  * result evaluates, the same rule when_all/when_any/ifset already keep. RoleCall has no lazy
- * switch to port from (its processor.ts:415-419 only offers eager args); this is a Bunraku-only
+ * switch to port from (its processor.ts:415-419 only offers eager args); this is a Bunzai-only
  * hardening of a macro RC also evaluates eagerly (flagged for Chi to consider porting back).
  *
  * Each case:result pair is split at its first brace-depth-0 colon (`depthZeroColon`), so a `::`
@@ -201,7 +201,7 @@ const switchMacro: MacroDefinition = {
 /**
  * {{and::a::b::...}} - logical AND. Lazy (bug 4): short-circuits on the first falsy operand, so
  * operands after it never evaluate and their side effects never fire. RoleCall's `and` is eager
- * (handlers/conditional.ts, no lazyHandler); Bunraku hardens it the same way when_all already is.
+ * (handlers/conditional.ts, no lazyHandler); Bunzai hardens it the same way when_all already is.
  */
 const andMacro: MacroDefinition = {
   name: "and",
@@ -217,7 +217,7 @@ const andMacro: MacroDefinition = {
 /**
  * {{or::a::b::...}} - logical OR. Lazy (bug 4): short-circuits on the first truthy operand, so
  * operands after it never evaluate and their side effects never fire. RoleCall's `or` is eager
- * (handlers/conditional.ts, no lazyHandler); Bunraku hardens it the same way when_any already is.
+ * (handlers/conditional.ts, no lazyHandler); Bunzai hardens it the same way when_any already is.
  */
 const orMacro: MacroDefinition = {
   name: "or",

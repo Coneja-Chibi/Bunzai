@@ -25,7 +25,7 @@ const NEWLINE = 0x0a;
 export const NDJSON_ROW_BYTES = 8 * 1024 * 1024;
 /**
  * Legacy archives declare no format version, so no row-size promise exists. 96 MiB matches the
- * aggregate budget Bunraku already gives one character container (CARD_ARCHIVE_BOUNDS), a peak
+ * aggregate budget Bunzai already gives one character container (CARD_ARCHIVE_BOUNDS), a peak
  * near 300 MB for the rare row that large.
  */
 export const NDJSON_LEGACY_ROW_BYTES = 96 * 1024 * 1024;

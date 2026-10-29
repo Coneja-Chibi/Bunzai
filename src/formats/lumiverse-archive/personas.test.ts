@@ -1,6 +1,6 @@
 /**
  * The persona slice: a row becomes a real CanonicalPersona through the existing Lumiverse persona
- * codec, its attached lorebook resolves to whatever actually landed in Bunraku (or is dropped, not
+ * codec, its attached lorebook resolves to whatever actually landed in Bunzai (or is dropped, not
  * left dangling), its avatar resolves to a data: URI or is cleared, and a broken metadata column
  * never blocks import since nothing in the codec's mapping reads it.
  */

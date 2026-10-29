@@ -12,7 +12,7 @@ import type { FeatureMarkerSlot } from "../preset/build";
 import type { Block } from "./conversation";
 import type { BlockSource } from "./types";
 
-export const slotPlaceholder = (slot: FeatureMarkerSlot, nonce: string): string => `\uE000bunraku-slot:${nonce}:${slot}\uE001`;
+export const slotPlaceholder = (slot: FeatureMarkerSlot, nonce: string): string => `\uE000bunzai-slot:${nonce}:${slot}\uE001`;
 /** A fresh nonce for one plan, from the platform's random source. */
 export function slotNonce(): string {
   const bytes = new Uint8Array(16);
@@ -21,9 +21,9 @@ export function slotNonce(): string {
 }
 /** A text with this plan's placeholders taken out: what the budget measures, so a random nonce never changes what is cut. */
 export const withoutPlaceholders = (text: string, nonce: string): string =>
-  nonce === "" ? text : text.replace(new RegExp(`\uE000bunraku-slot:${nonce}:[^\uE001]*\uE001`, "g"), "");
+  nonce === "" ? text : text.replace(new RegExp(`\uE000bunzai-slot:${nonce}:[^\uE001]*\uE001`, "g"), "");
 /** Whether a placeholder is still in the request, which the assembler refuses to send. */
-export const leftPlaceholder = (blocks: readonly Block[], nonce: string): boolean => blocks.some((b) => b.content.includes(`\uE000bunraku-slot:${nonce}:`));
+export const leftPlaceholder = (blocks: readonly Block[], nonce: string): boolean => blocks.some((b) => b.content.includes(`\uE000bunzai-slot:${nonce}:`));
 
 /**
  * The request with `slot`'s placeholder block swapped for one message per text; with no texts it leaves nothing. A user or

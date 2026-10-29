@@ -1,6 +1,6 @@
 /** Temporary game-style app launcher over the mounted workspace, using host-owned navigation and import. */
 import { useEffect, useRef, useState, type JSX } from "react";
-import type { AppContext, BunrakuApp } from "../app-contract";
+import type { AppContext, BunzaiApp } from "../app-contract";
 import { Button, Chip, IconButton, ListRow } from "../components/button";
 import { DialogCore } from "../components/dialog-core";
 import { AppMark } from "../components/app-mark";
@@ -14,7 +14,7 @@ import { useShellStore } from "./store";
 import { presentedAppId } from "./store-navigation";
 import styles from "./navigation-overlay.module.css";
 
-function Overlay({ onClose, onNavigate, ctx, Widgets, onSurfaceTarget }: { onClose(): void; onNavigate(): void; ctx?: AppContext; Widgets?: BunrakuApp["OverlayWidgets"]; onSurfaceTarget?: (node: HTMLDivElement | null) => void }): JSX.Element {
+function Overlay({ onClose, onNavigate, ctx, Widgets, onSurfaceTarget }: { onClose(): void; onNavigate(): void; ctx?: AppContext; Widgets?: BunzaiApp["OverlayWidgets"]; onSurfaceTarget?: (node: HTMLDivElement | null) => void }): JSX.Element {
   const manifests = useShellStore((s) => s.manifests);
   const activeAppId = useShellStore(presentedAppId);
   const mountApp = useShellStore((s) => s.mountApp);
@@ -37,7 +37,7 @@ function Overlay({ onClose, onNavigate, ctx, Widgets, onSurfaceTarget }: { onClo
   return <DialogCore placement="fullscreen" ariaLabel="Studio overlay" onDismiss={onClose} portal
     overlayClassName={styles.scrim} className={styles.sheet} dismissOnScrim={false}>
     <div data-part="shell.overlay" className={styles.layout}>
-      <header className={styles.header}><div><h2>Bunraku</h2><p>Overlay menu <kbd>Ctrl+K / Cmd+K</kbd></p></div>
+      <header className={styles.header}><div><h2>Bunzai</h2><p>Overlay menu <kbd>Ctrl+K / Cmd+K</kbd></p></div>
         <StudioUpdate /><Button variant="quiet" onClick={onClose}>Close overlay <kbd>Esc</kbd> <span aria-hidden="true">&times;</span></Button></header>
       <section className={`${styles.panel} ${styles.quick}`} aria-label="Quick actions" data-part="shell.overlay.quick">
         <Chip onClick={() => setPanel("app")} pressed={panel === "app"}>Current app</Chip>
@@ -87,7 +87,7 @@ function Overlay({ onClose, onNavigate, ctx, Widgets, onSurfaceTarget }: { onClo
   </DialogCore>;
 }
 
-export function NavigationOverlay({ onNavigate, ctx, Widgets, onSurfaceTarget }: { onNavigate(): void; ctx?: AppContext; Widgets?: BunrakuApp["OverlayWidgets"]; onSurfaceTarget?: (node: HTMLDivElement | null) => void }): JSX.Element {
+export function NavigationOverlay({ onNavigate, ctx, Widgets, onSurfaceTarget }: { onNavigate(): void; ctx?: AppContext; Widgets?: BunzaiApp["OverlayWidgets"]; onSurfaceTarget?: (node: HTMLDivElement | null) => void }): JSX.Element {
   const open = useShellStore((s) => s.overlayOpen);
   const openOverlay = useShellStore((s) => s.openOverlay);
   const closeOverlay = useShellStore((s) => s.closeOverlay);

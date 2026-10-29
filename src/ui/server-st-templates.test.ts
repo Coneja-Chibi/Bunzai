@@ -33,7 +33,7 @@ async function rig() {
     const headers = new Headers({
       host: "127.0.0.1:8321",
       origin: "http://127.0.0.1:8321",
-      "x-bunraku-token": sec.token,
+      "x-bunzai-token": sec.token,
       "content-type": "application/octet-stream",
       "x-filename": encodeURIComponent(asName),
     });

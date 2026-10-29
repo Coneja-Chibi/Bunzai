@@ -104,7 +104,7 @@ describe("result fingerprinting (roll)", () => {
   });
 });
 
-describe("choices (Bunraku addition: preset preview reroll)", () => {
+describe("choices (Bunzai addition: preset preview reroll)", () => {
   test("{{random}} in text mode offers its options; numeric mode offers none", () => {
     const def = getMacro("random")!;
     expect(def.choices?.(["a", "b", "c"])).toEqual(["a", "b", "c"]);

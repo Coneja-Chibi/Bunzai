@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/extending/new-kind",
   "sourcePath": "docs/reference/extending/new-kind.md",
-  "sourceHash": "sha256:7187a08982dbad4c7e9330900be699f90bc0daefd2d9d94109f3e7e513abe9dc",
+  "sourceHash": "sha256:15f5404ae70fbdb9e14a16aa51e7917f6c29417536f1712484c184c77beb7f2a",
   "summary": "Add a content kind explains that a kind is one folder: src/entities/<kind>/kind.ts describes it once (id, labels, deck color and glyph, Library deck or not, the blank piece New saves, the inspect lines, and when they apply its links, name path, picture paths, heavy flag, libraryNew switch, scene field, editor, and for a family kind its deck and asPreset), and bun run kinds writes two checked seams, src/generated/kinds.ts for identity (KINDS, KIND_IDS, kindOf, isKindId, AnyKindEntity) and src/generated/kind-schemas.ts for every kind's whole-entity decoder and storage parts, both verified by kinds:check in verify:ci. A table names everything that reads the seam so no hand edits are needed. The steps make the folder's schema, runtime schema and kind.ts, optional parts.ts and capabilities, run bun run kinds, name its editor in kind.ts and add the component to workbench/editors.ts under that id (the completeness test fails on either side missing), write the reference page and scale fixture, and run the kind completeness test, which names every missing part or a stated exemption. Behavior that belongs to one kind stays with the code that owns it; scene fields keep their own shapes in the scene store, and the kind-lists guard test fails on a new hand-written kind list.",
   "topics": [
     "kind.ts descriptor",
@@ -17,8 +17,8 @@
       "slug": "what-reads-the-seam-so-you-edit-none-of-it",
       "title": "What reads the seam (so you edit none of it)",
       "level": 2,
-      "sourceHash": "sha256:4e06ce7d23440370351478788a94fda7d158f62b9c820024e90e9ddbec29225f",
-      "summary": "What reads the seam: the studio folder set STUDIO_ENTITY_KINDS, the parse boundary, storage item parts, the generic KindAdapter contracts, deck labels, colors, glyphs and Library decks in decks.ts, Panel, editor head and Press deck colors via deckMeta, search kind words, import receipts, Kit deck counts and name lookup, createBlank and canCreateBlank for every New door, core/links.ts for every link follower (Press riders, export embedding, import renames, Kit delete warnings, node ports, archive caveats), core/piece-name.ts for names, media-reference.ts and ART_KINDS for pictures, the heavy flag in the Press and Library rename, bunraku inspect, first-run deck titles, and the format matrix and field docs scripts.",
+      "sourceHash": "sha256:45824533b09ca2456513e492a5c573541eb14cf69328bc62cec0ba5cdedac0c9",
+      "summary": "What reads the seam: the studio folder set STUDIO_ENTITY_KINDS, the parse boundary, storage item parts, the generic KindAdapter contracts, deck labels, colors, glyphs and Library decks in decks.ts, Panel, editor head and Press deck colors via deckMeta, search kind words, import receipts, Kit deck counts and name lookup, createBlank and canCreateBlank for every New door, core/links.ts for every link follower (Press riders, export embedding, import renames, Kit delete warnings, node ports, archive caveats), core/piece-name.ts for names, media-reference.ts and ART_KINDS for pictures, the heavy flag in the Press and Library rename, bunzai inspect, first-run deck titles, and the format matrix and field docs scripts.",
       "topics": [
         "STUDIO_ENTITY_KINDS",
         "deckMeta",

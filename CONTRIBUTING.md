@@ -6,7 +6,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/media/hoplight-wordmark-dark.png">
-  <img src="docs/media/hoplight-wordmark-light.png" alt="Bunraku" width="320">
+  <img src="docs/media/hoplight-wordmark-light.png" alt="Bunzai" width="320">
 </picture>
 
 </div>
@@ -16,7 +16,7 @@
 
 Contributions are welcome, including bug fixes, format adapters, documentation, and sample files.
 
-I'm glad you're here. Let's all make Bunraku the best it can be!
+I'm glad you're here. Let's all make Bunzai the best it can be!
 
 ## Ground rules
 

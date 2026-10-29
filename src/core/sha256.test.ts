@@ -6,7 +6,7 @@ describe("sha256Hex", () => {
   test.each([
     ["", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"],
     ["abc", "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"],
-    ["Bunraku / こんにちは", "bb21478140228d40810a4987afd4476ab8c92ca82715d454fd6aba35366c7b98"],
+    ["Bunzai / こんにちは", "bb21478140228d40810a4987afd4476ab8c92ca82715d454fd6aba35366c7b98"],
   ])("hashes %j", (value, expected) => expect(sha256Hex(value)).toBe(expected));
 });
 

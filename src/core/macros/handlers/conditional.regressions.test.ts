@@ -2,12 +2,12 @@
  * Regression tests for {{if}}'s condition resolution and for lazy evaluation in switch/and/or.
  *
  * - A condition whose value comes from stored data (e.g. a variable holding raw, unparsed
- *   `{{user}}` text) needs more than one resolve pass. Bunraku's evaluator re-parses every macro's
+ *   `{{user}}` text) needs more than one resolve pass. Bunzai's evaluator re-parses every macro's
  *   own return value one level deeper (evaluateMacro's `containsMacros(value)` branch in
  *   ../evaluate.ts), so this is proven as a PASS here.
  * - The inverse case: when a condition macro FAILS to resolve, the engine reconstructs it as
  *   literal `{{name}}` text in the output (see ../evaluate.ts's `failed` fallback). That literal
- *   brace text counts as a non-empty, therefore truthy, string. MATCHES RC, NOT A BUG: Bunraku's
+ *   brace text counts as a non-empty, therefore truthy, string. MATCHES RC, NOT A BUG: Bunzai's
  *   `isTruthy` in ./conditional.ts has the identical behavior, byte-identical to RoleCall's own
  *   `isTruthy`, and it is DELIBERATE upstream - see the test below.
  * - switch/and/or must not evaluate the branch they did not pick, the same guarantee
@@ -33,7 +33,7 @@ describe("{{if}} condition re-resolves macro text carried in a stored variable",
 
 describe("an unresolved macro call in an {{if}} condition is truthy (matches RC, not a bug)", () => {
   // MATCHES RC, NOT A BUG: RoleCall's `isTruthy` (handlers/conditional.ts) is byte-identical to
-  // Bunraku's, with no special case for literal "{{name}}" text, and RC's processor reconstructs a
+  // Bunzai's, with no special case for literal "{{name}}" text, and RC's processor reconstructs a
   // failed macro the same way (`reconstructMacroText`). Confirmed at runtime through the rc-copy
   // harness: RC's real `processMacros` on `{{if::{{totallyMadeUpMacroXyz}}::YES::NO}}` also returns
   // "YES" with 1 recorded error, not "NO". This is DELIBERATE upstream, not an oversight: an
@@ -65,7 +65,7 @@ describe("switch/and/or must not evaluate the branch they did not pick", () => {
   // lazyHandler, the same guard when_all/when_any/ifset already use, so an unselected case/operand
   // never evaluates and its side effects never fire. RoleCall's switch/and/or
   // are eager with no lazy precedent; this is a
-  // Bunraku-only hardening, not an RC-parity change.
+  // Bunzai-only hardening, not an RC-parity change.
   test("an unselected switch case never fires its side effect", () => {
     const context = sideEffectCtx();
     processMacros("{{switch::a::a:hit::b:{{state.set::session:leak-switch::x}}}}", context);

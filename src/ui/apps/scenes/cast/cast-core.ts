@@ -1,6 +1,6 @@
 /**
  * The Cast wing's pure rules: the tabs, how a failed save reads, the content-rating words RoleCall
- * shows over Bunraku's canonical grades, and the one-line stats and version captions. No React and
+ * shows over Bunzai's canonical grades, and the one-line stats and version captions. No React and
  * no IO, so each is proved by plain tests (cast-core.test.ts).
  */
 import { ApiHttpError } from "../../../_shared/api-fetch";

@@ -7,9 +7,9 @@ import type { CanonicalEntity } from "../../core/canonical";
  * the card, the example separator, the chat start), as ONE piece. ST binds them by name, so a
  * same-named instruct and context are one format, and either half may be absent.
  *
- * NOTHING USES IT YET. Bunraku talks to chat-completion connections only, which take role-tagged
+ * NOTHING USES IT YET. Bunzai talks to chat-completion connections only, which take role-tagged
  * messages and need no hand-written turn markers. A prompt format is for text-completion
- * connections, which Bunraku does not have, so no assembler or request builder reads this piece.
+ * connections, which Bunzai does not have, so no assembler or request builder reads this piece.
  * It is kept whole so the files are not lost and the day that connection exists has its data.
  *
  * Each half keeps ST's own field names and every value ST wrote, with nothing renamed or dropped, so

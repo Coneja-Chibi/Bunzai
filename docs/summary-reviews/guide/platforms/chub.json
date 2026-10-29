@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/platforms/chub",
   "sourcePath": "docs/guide/platforms/chub.md",
-  "sourceHash": "sha256:cffa8f4cd61995a9a4868cfdbb6e616b15df3f5d13e01a784e4682c33456d6ef",
-  "semanticSummaryHash": "sha256:8e8705b751fbc7591ed7fe33cd94d30f519864f6fa6f6a8d2594f55373d25401",
+  "sourceHash": "sha256:5ff537d6f84943a59cc86af077753d2483fdbd0aee7436c6cb843d499c60a91b",
+  "semanticSummaryHash": "sha256:8e4aca4503ce4221e141b2b1fe71ec12a60bac7b2f02ff30c975e8741273b2a4",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:45.958Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:37.373Z"
 }

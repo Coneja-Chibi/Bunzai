@@ -1,7 +1,7 @@
 /**
  * The recall pass's request (RoleCall `pregen-retrieval.ts:89-103,312-327`): its selector prompt word for word, the index and
  * the recent conversation, then one JSON answer in place of RoleCall's `select_entries` tool call (04b F13: a forced tool
- * choice 502'd some providers, so Bunraku asks for plain JSON and parses it once, `recall-parse.ts`). The Guide's text comes
+ * choice 502'd some providers, so Bunzai asks for plain JSON and parses it once, `recall-parse.ts`). The Guide's text comes
  * first and the inline guidance after it (RoleCall `CompendiumSettings.tsx:483`). Guidance cannot widen what the pass may read.
  */
 export const RECALL_SYSTEM = `You are a lorebook retrieval agent. Select knowledge entries for the narrator's next response.

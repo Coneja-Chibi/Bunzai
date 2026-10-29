@@ -6,7 +6,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/media/hoplight-wordmark-dark.png">
-  <img src="docs/media/hoplight-wordmark-light.png" alt="Bunraku" width="320">
+  <img src="docs/media/hoplight-wordmark-light.png" alt="Bunzai" width="320">
 </picture>
 
 </div>
@@ -27,7 +27,7 @@ What to expect:
 
 ## Scope
 
-Bunraku is a local-first app: a loopback-only server plus a CLI, no accounts, no cloud. Reports
+Bunzai is a local-first app: a loopback-only server plus a CLI, no accounts, no cloud. Reports
 most valuable here:
 
 - Path escape from the studio folder (id validation, archive extraction)

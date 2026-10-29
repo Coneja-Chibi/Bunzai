@@ -8,13 +8,13 @@
 <link rel="stylesheet" href="port.css">
 <link rel="stylesheet" href="rc-parts.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
- * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunraku. Every size below was
+ * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunzai. Every size below was
  * read off the running page on 2026-09-24 (computed styles at 1920x945 and 390x844) or from the
  * component source (WingRail, WingItem, WingShell, FoldoutTabs, GreetingSelector,
- * composer-shell-styles). Colors are Bunraku tokens:
+ * composer-shell-styles). Colors are Bunzai tokens:
  *   RC zinc-300 / zinc-400 / zinc-500 / zinc-600  ->  --stage-soft / --stage-text-dim / --stage-mute / --stage-line
  *   RC black/55 bubble, white/8 edge              ->  color-mix of --stage-black and --stage-card
  *   RC user accent (violet)                       ->  --accent
@@ -394,7 +394,7 @@ body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-
 
         <!-- No connection at all -->
         <div data-only="noconn">
-          <div class="ms-empty"><b>No connections yet</b>Bunraku talks to AI models through the connections you save in Kit: a provider, its key, and a model. Add one there, and it shows up here for every scene.<br><span class="go">Open Kit connections</span></div>
+          <div class="ms-empty"><b>No connections yet</b>Bunzai talks to AI models through the connections you save in Kit: a provider, its key, and a model. Add one there, and it shows up here for every scene.<br><span class="go">Open Kit connections</span></div>
         </div>
 
         <div data-only="ready search loading failed sub">
@@ -480,7 +480,7 @@ body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-
   <span>AI wing</span><button data-s="ready">Picked</button><button data-s="search">Search</button><button data-s="loading">Loading</button><button data-s="failed">List failed</button><button data-s="sub">Can't use yet</button><button data-s="noconn">No connections</button>
   <button data-theme-switch>Theme</button><a href="../index.html">All</a>
 </div>
-<div class="wf-note"><b>RoleCall's own Model tab (ModelSelector), part for part:</b> the AI Brain hero, search, the pill row led by a dashed "connect" action and "All", Currently Selected with its Active tag, Favorites with stars, then one group per source. <b>What changes for Bunraku:</b> the pills are your saved Kit connections, not RoleCall's plans and keys; each connection's models come from Kit's model discovery. <b>Connect a provider</b> opens Kit's existing add-a-connection screen; Bunraku keeps keys in one place. <b>Each scene remembers its pick</b> (connection and model), so the scene store needs both, not the connection alone. <b>Kept honest:</b> a connection scenes can't reach yet (Kit's subscription sign-ins) is listed but greyed with the reason; a connection whose model list fails still offers the model saved on it. <b>Left out:</b> RoleCall's Samplers and Memory tabs, which come with presets; no empty tabs.</div>
+<div class="wf-note"><b>RoleCall's own Model tab (ModelSelector), part for part:</b> the AI Brain hero, search, the pill row led by a dashed "connect" action and "All", Currently Selected with its Active tag, Favorites with stars, then one group per source. <b>What changes for Bunzai:</b> the pills are your saved Kit connections, not RoleCall's plans and keys; each connection's models come from Kit's model discovery. <b>Connect a provider</b> opens Kit's existing add-a-connection screen; Bunzai keeps keys in one place. <b>Each scene remembers its pick</b> (connection and model), so the scene store needs both, not the connection alone. <b>Kept honest:</b> a connection scenes can't reach yet (Kit's subscription sign-ins) is listed but greyed with the reason; a connection whose model list fails still offers the model saved on it. <b>Left out:</b> RoleCall's Samplers and Memory tabs, which come with presets; no empty tabs.</div>
 
 <script>
 (function () {

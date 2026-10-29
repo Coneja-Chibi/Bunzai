@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "01-VISION",
   "sourcePath": "docs/01-VISION.md",
-  "sourceHash": "sha256:f496141cf5187a60342135687217a7a063493dba185aed213dc85cfa2712e996",
-  "summary": "Founding product vision for Bunraku covering who it's for, the five pillars, what we are not, and the taste bar. It is the authority for product intent, not as-built implementation detail. Who it's for names four personas: the first-timer needing a five-minute fix, the multi-platform botmaker, the large-worldbook lore architect, and the archivist of uncarded RP logs. The five pillars require lossless multi-format conversion with escrowed platform fields, interview-driven creation, an honest offline Doctor with optional staged AI fixes, local-first privacy with no account or telemetry, and an agent that works on frontier and weak local models with user-chosen personas. What we are not rules out being a chat frontend, card host, community platform, or RoleCall-only funnel; every platform is first-class. The taste bar demands Table Read or Doctor output that beats skilled unaided work, with specific over generic, playable over poetic, and anti-slop as a core mechanic rather than marketing language.",
+  "sourceHash": "sha256:a70d938ac0da78db425690ccef6f72355334e10474e9d1f8f1892c5298f15c54",
+  "summary": "Founding product vision for Bunzai covering who it's for, the five pillars, what we are not, and the taste bar. It is the authority for product intent, not as-built implementation detail. Who it's for names four personas: the first-timer needing a five-minute fix, the multi-platform botmaker, the large-worldbook lore architect, and the archivist of uncarded RP logs. The five pillars require lossless multi-format conversion with escrowed platform fields, interview-driven creation, an honest offline Doctor with optional staged AI fixes, local-first privacy with no account or telemetry, and an agent that works on frontier and weak local models with user-chosen personas. What we are not rules out being a chat frontend, card host, community platform, or RoleCall-only funnel; every platform is first-class. The taste bar demands Table Read or Doctor output that beats skilled unaided work, with specific over generic, playable over poetic, and anti-slop as a core mechanic rather than marketing language.",
   "topics": [
     "product vision",
     "five pillars",
@@ -54,8 +54,8 @@
       "slug": "what-we-are-not",
       "title": "What we are not",
       "level": 2,
-      "sourceHash": "sha256:dca58f5dfd23f556399f8159b93dbdad1183eff6d95377680b93f322b52a5b8e",
-      "summary": "Explicit non-goals that bound the product. Bunraku is not a chat frontend; the Test Stage auditions content and does not replace SillyTavern or RoleCall as play hosts. It is not a card hosting site or community platform; files are the social layer and people share where they already gather. It is not a RoleCall funnel: lineage may be RC-branded, but every platform is a first-class export target, and favoritism toward RoleCall would lose SillyTavern users. Winning is defined as making the content, not hosting the show.",
+      "sourceHash": "sha256:f90f28e0171a93c623decbf2f56baab2df176fb78eb90d75cb9edad72084bff2",
+      "summary": "Explicit non-goals that bound the product. Bunzai is not a chat frontend; the Test Stage auditions content and does not replace SillyTavern or RoleCall as play hosts. It is not a card hosting site or community platform; files are the social layer and people share where they already gather. It is not a RoleCall funnel: lineage may be RC-branded, but every platform is a first-class export target, and favoritism toward RoleCall would lose SillyTavern users. Winning is defined as making the content, not hosting the show.",
       "topics": [
         "not a chat app",
         "Test Stage audition",

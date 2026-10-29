@@ -2,7 +2,7 @@ window.QUIZ_PARTS = window.QUIZ_PARTS || {};
 window.QUIZ_PARTS["design"] = {
 label: "Design",
 title: "How it should work",
-intro: "Not vibes this time, actual screens. Each option below is a small drawn mockup of a real Bunraku layout. Pick the one you would actually want to use, every day. Notes are welcome on any of them.",
+intro: "Not vibes this time, actual screens. Each option below is a small drawn mockup of a real Bunzai layout. Pick the one you would actually want to use, every day. Notes are welcome on any of them.",
 css: `
 /* ---- scoped tokens for this quiz's mockups ---- */
 .qz-design { --d-char: var(--rose); --d-persona: var(--sky); --d-lore: var(--mint); --d-preset: var(--gold); --d-pack: var(--lilac); --ink: var(--floor); }
@@ -166,7 +166,7 @@ qs: [
 
 { id: "landing", t: "What launch shows", kind: "one", o: [
 ["attract", "Attract title screen", "Press any key, then land wherever you pick",
-`<div class="scr col" style="align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%, color-mix(in srgb, var(--d-lore) 18%, transparent), var(--well) 70%)"><div style="width:28px;height:28px;background:var(--rose);margin-bottom:8px"></div><div style="font:800 15px var(--f-title);letter-spacing:.06em">bunraku</div><div style="font:600 7px var(--f-mono);letter-spacing:.2em;color:var(--mute);margin-top:3px">A LITTLE THEATER</div><div style="font:600 8px var(--f-big);color:var(--paper);margin-top:14px;opacity:.8">press any key</div></div>`],
+`<div class="scr col" style="align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%, color-mix(in srgb, var(--d-lore) 18%, transparent), var(--well) 70%)"><div style="width:28px;height:28px;background:var(--rose);margin-bottom:8px"></div><div style="font:800 15px var(--f-title);letter-spacing:.06em">bunzai</div><div style="font:600 7px var(--f-mono);letter-spacing:.2em;color:var(--mute);margin-top:3px">A LITTLE THEATER</div><div style="font:600 8px var(--f-big);color:var(--paper);margin-top:14px;opacity:.8">press any key</div></div>`],
 ["lastscene", "Your last scene", "Straight into The long storm with Vera Lune",
 `<div class="scr col"><div class="mbody"><div class="mchat" style="padding:7px"><div class="mbub them">*She strikes the match, cupping the flame against the wind.*</div><div class="mbub you">Deal. Just don't let it go out this time.</div></div></div></div>`],
 ["library", "Library", "Straight into your shelves",
@@ -356,11 +356,11 @@ qs: [
 
 { id: "kitwindow", t: "Kit agent window", kind: "one", o: [
 ["floating", "Floating window", "A small window you can drag, over whatever you're doing",
-`<div class="scr"><div class="mbody"><div class="mpad"><div class="mgrid"><div class="mcard med" style="--t:var(--d-char)"><div class="ov"><b>Vera Lune</b></div></div></div></div><div class="mfloat"><div class="bar"><span>Kit</span><span>x</span></div><div class="mterm" style="height:48px"><span class="pr">&gt;</span>bunraku scene export --last</div></div></div></div>`],
+`<div class="scr"><div class="mbody"><div class="mpad"><div class="mgrid"><div class="mcard med" style="--t:var(--d-char)"><div class="ov"><b>Vera Lune</b></div></div></div></div><div class="mfloat"><div class="bar"><span>Kit</span><span>x</span></div><div class="mterm" style="height:48px"><span class="pr">&gt;</span>bunzai scene export --last</div></div></div></div>`],
 ["docked", "Docked panel", "Pinned to one side, always there",
-`<div class="scr"><div class="mbody"><div class="mpad"><div class="mgrid"><div class="mcard med" style="--t:var(--d-char)"><div class="ov"><b>Vera Lune</b></div></div></div></div><div class="mrail" style="width:48%;padding:0"><div class="mterm" style="height:100%"><span class="pr">&gt;</span>bunraku scene export --last<br><span class="dim">wrote the-long-storm.json</span></div></div></div></div>`],
+`<div class="scr"><div class="mbody"><div class="mpad"><div class="mgrid"><div class="mcard med" style="--t:var(--d-char)"><div class="ov"><b>Vera Lune</b></div></div></div></div><div class="mrail" style="width:48%;padding:0"><div class="mterm" style="height:100%"><span class="pr">&gt;</span>bunzai scene export --last<br><span class="dim">wrote the-long-storm.json</span></div></div></div></div>`],
 ["fullpage", "Full page", "Its own app, like Scenes or Library",
-`<div class="scr"><nav class="mdock icons"><div class="mi"><i></i></div><div class="mi on"><i></i></div></nav><div class="mbody"><div class="mterm" style="height:100%;padding:8px"><span class="pr">&gt;</span>bunraku scene export --last<br><span class="dim">wrote the-long-storm.json</span><br><br><span class="pr">&gt;</span></div></div></div>`]]},
+`<div class="scr"><nav class="mdock icons"><div class="mi"><i></i></div><div class="mi on"><i></i></div></nav><div class="mbody"><div class="mterm" style="height:100%;padding:8px"><span class="pr">&gt;</span>bunzai scene export --last<br><span class="dim">wrote the-long-storm.json</span><br><br><span class="pr">&gt;</span></div></div></div>`]]},
 
 { id: "mobilescene", t: "Mobile layout of the scene page", kind: "one", o: [
 ["sheet", "Bottom sheet for wings", "Wings slide up from the bottom over the chat",

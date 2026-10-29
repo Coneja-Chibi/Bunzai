@@ -57,13 +57,13 @@ export async function assembleBelt(
   const firstParty = await offerableTools(discovered, studioDir);
   /**
    * NEVER UNDER THE TEST RUNNER unless a test says so by name. Sessions are built in dozens of
-   * tests against the REAL home (~/.bunraku is shared with the real setup - a scratch
+   * tests against the REAL home (~/.bunzai is shared with the real setup - a scratch
    * studio dir does not isolate it), so the day a real server is configured, every `bun test`
-   * would spawn it once per session-building test. BUNRAKU_MCP=on is the explicit override the
+   * would spawn it once per session-building test. BUNZAI_MCP=on is the explicit override the
    * one integration test that WANTS live connections uses.
    */
-  const underTest = process.env["NODE_ENV"] === "test" && process.env["BUNRAKU_MCP"] !== "on";
-  if (underTest || process.env["BUNRAKU_MCP"] === "off") {
+  const underTest = process.env["NODE_ENV"] === "test" && process.env["BUNZAI_MCP"] !== "on";
+  if (underTest || process.env["BUNZAI_MCP"] === "off") {
     return { tools: firstParty, externalAccess: [], notes: [] };
   }
   const config = await readMcpConfig();

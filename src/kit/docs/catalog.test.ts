@@ -1,5 +1,5 @@
 /**
- * Proof for deterministic Bunraku documentation search and bounded section extraction.
+ * Proof for deterministic Bunzai documentation search and bounded section extraction.
  */
 import { describe, expect, test } from "bun:test";
 import type { DocRecord } from "../../docs/types";

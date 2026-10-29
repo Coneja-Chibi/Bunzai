@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/glossary",
   "sourcePath": "docs/reference/glossary.md",
-  "sourceHash": "sha256:3f4c120524fd141aad15224a0fd04951fca57a13236b18b4add6c9c7bdb87773",
-  "semanticSummaryHash": "sha256:264ef73aa3e7d73060f45d5223d8b2f5a8be7573e6eb9cbf83fb15e4c21d97b9",
+  "sourceHash": "sha256:59707f834891231494e007a8bf34b12e53d976363467159b712796de9321ff8c",
+  "semanticSummaryHash": "sha256:d90335a8aece1553ea15482f6fa6e88ec5f2a37743eedc2515f83c16a7542aa3",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Scene state and tracker rows match code; no removed number; sections within band.",
-  "reviewedAt": "2026-10-27T21:14:17.330Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:09.116Z"
 }

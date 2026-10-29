@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
 <link rel="stylesheet" href="port.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
  * Slice S5, fresh look. Behaviour is RoleCall's and unchanged (two blocks, native first, "Reasoned for" and
@@ -161,7 +161,7 @@ code { font-family: var(--bk-font-mono); font-size: 12px; color: var(--z-text); 
   snap();
   for (var k = 0; k < 3; k++) { sw.click(); snap(); }
   while (root.getAttribute("data-theme") !== start) sw.click();
-  try { localStorage.setItem("bunraku-wf-theme", start); } catch (e) {}
+  try { localStorage.setItem("bunzai-wf-theme", start); } catch (e) {}
 
   var NAT = "I read the last three turns. She has deflected twice. The radio is dead and she will not say so, so the honest middle is a partial truth about the boat.\n\nKeep it short and physical: the beam, the brass. End on a question so the player carries the next turn.";
   var TAG = "Plan from the preset: one beat, one line, one question. Do not mention the radio.";

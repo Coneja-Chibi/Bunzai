@@ -3,9 +3,9 @@
   "docId": "reference/platforms/marinara/source-coverage",
   "sourcePath": "docs/reference/platforms/marinara/source-coverage.md",
   "sourceHash": "sha256:d5da9f82d984d46b951bb7e0f6b1a28c0f1cae559bdf3498bfbfd77a6ee2b249",
-  "semanticSummaryHash": "sha256:29faf142b6b958cd481dde6cd9bf3804307ed63b0bbb8a164bd2bb5f8786c933",
+  "semanticSummaryHash": "sha256:ad89f6011c14b0e34f072a2f4b674a1fa7d458f137fe355a2b936c5a9467db27",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:57.712Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:42.548Z"
 }

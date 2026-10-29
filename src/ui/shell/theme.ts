@@ -72,7 +72,7 @@ export function paintTheme(appearance: EffectiveThemeAppearance, houseAccent?: s
   installControlsStyle();
   const themeId = checked.themeId ?? "core";
   if (root.dataset.theme !== themeId) root.dataset.theme = themeId;
-  const chrome = checked.appearance?.shape.chrome ?? "bunraku";
+  const chrome = checked.appearance?.shape.chrome ?? "bunzai";
   if (root.dataset.chrome !== chrome) root.dataset.chrome = chrome;
   const props = checked.appearance ? themeProperties(checked.appearance, houseAccent) : {};
   const view = root.ownerDocument?.defaultView;

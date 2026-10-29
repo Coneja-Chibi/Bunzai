@@ -51,7 +51,7 @@ function Harness({ said }: { said: string[] }): ReactNode {
  * A studio where applying anything saves it somewhere ELSE, the way a foreign edit does.
  *
  * `stage` is asked about `first` and the receipt comes back naming `first-2`, because editing a raw
- * export writes a Bunraku copy under a free id rather than over the original.
+ * export writes a Bunzai copy under a free id rather than over the original.
  */
 const copyingPresets = {
   ...presets,

@@ -1,5 +1,5 @@
 /**
- * Starting the MCP server: `bunraku mcp [studio-dir] [--read-only]`.
+ * Starting the MCP server: `bunzai mcp [studio-dir] [--read-only]`.
  *
  * Nothing here is a hardcoded tool list. The belt comes from discoverTools(), the same folders-as-schema
  * loader Kit's own loop uses, so a tool dropped into src/kit/tools appears to every connected client
@@ -50,7 +50,7 @@ export async function runMcpServer(options: McpRunOptions = {}): Promise<void> {
   const tools = options.readOnly ? readOnlyTools(discovered) : discovered;
 
   const log = (message: string): void => {
-    process.stderr.write(`bunraku mcp: ${message}\n`);
+    process.stderr.write(`bunzai mcp: ${message}\n`);
   };
   log(
     options.readOnly
@@ -58,6 +58,6 @@ export async function runMcpServer(options: McpRunOptions = {}): Promise<void> {
       : `serving ${tools.length} tools from ${bridge.studioDir};`
         + " your client asks before each one runs",
   );
-  if (library?.state === "locked") log("the library is locked: every tool will say so until it is unlocked in Bunraku");
+  if (library?.state === "locked") log("the library is locked: every tool will say so until it is unlocked in Bunzai");
   await serve({ tools: toolSpecs(tools), dispatch: makeDispatch(tools, { bridge }), log });
 }

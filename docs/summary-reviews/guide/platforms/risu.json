@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/platforms/risu",
   "sourcePath": "docs/guide/platforms/risu.md",
-  "sourceHash": "sha256:fbc05cf9866cddb57a6140a6b60515d18b681e0ad6b4c0ad3837111ea0a69831",
-  "semanticSummaryHash": "sha256:820bb40a0942f3d8f341bf260a380807ce63fd532eebad794297a4eb7a79ce42",
+  "sourceHash": "sha256:fb8da60749139d1b56f839cb9f042827358ef66afcc5128e57d5bf3e56f65b22",
+  "semanticSummaryHash": "sha256:96c57d5d0497bb5a061cf14e379578ebed7964ec3a88c0369554bf46a282476d",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:47.275Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:39.223Z"
 }

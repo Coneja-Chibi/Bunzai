@@ -1,5 +1,5 @@
 /**
- * Read-only, catalog-contained access to Bunraku's generated documentation corpus.
+ * Read-only, catalog-contained access to Bunzai's generated documentation corpus.
  */
 import { fileURLToPath } from "node:url";
 import { parseDocsIndex, resolveDocPage } from "../../docs/corpus";
@@ -49,7 +49,7 @@ export interface DocReadOptions {
   offset?: number;
 }
 
-export interface BunrakuDocs {
+export interface BunzaiDocs {
   browse(options?: DocBrowseOptions): Promise<DocBrowseResult | null>;
   outline(id: string): Promise<DocPageOutline | null>;
   search(query: string, options?: DocSearchOptions): Promise<readonly DocMatch[]>;
@@ -89,8 +89,8 @@ const pageAtBoundary = (
   };
 };
 
-/** Bind a docs repository to the checked-in corpus beneath one Bunraku root. */
-export function createBunrakuDocs(root: string = DEFAULT_ROOT): BunrakuDocs {
+/** Bind a docs repository to the checked-in corpus beneath one Bunzai root. */
+export function createBunzaiDocs(root: string = DEFAULT_ROOT): BunzaiDocs {
   let corpusPromise: Promise<{ index: DocsIndex; chunks: DocChunk[] } | null> | null = null;
   const loadIndex = async (): Promise<DocsIndex | null> => {
     try {

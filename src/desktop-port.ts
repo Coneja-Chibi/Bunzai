@@ -1,5 +1,5 @@
 /** Desktop listen-port selection and claim policy. */
-import { runningBunrakuAt } from "./ui/port-owner";
+import { runningBunzaiAt } from "./ui/port-owner";
 
 export const DEFAULT_DESKTOP_PORT = 8321;
 const DEFAULT_PORT_TRIES = 10;
@@ -7,22 +7,22 @@ const DEFAULT_PORT_TRIES = 10;
 /** Parse the opt-in desktop port before any library or server startup effects. */
 export function desktopPortOverride(value: string | undefined): number | null {
   if (value === undefined) return null;
-  if (!/^[0-9]{1,5}$/.test(value)) throw new Error("BUNRAKU_PORT must be a decimal port from 1024 to 65535");
+  if (!/^[0-9]{1,5}$/.test(value)) throw new Error("BUNZAI_PORT must be a decimal port from 1024 to 65535");
   const port = Number(value);
   if (!Number.isInteger(port) || port < 1024 || port > 65535) {
-    throw new Error("BUNRAKU_PORT must be a decimal port from 1024 to 65535");
+    throw new Error("BUNZAI_PORT must be a decimal port from 1024 to 65535");
   }
   return port;
 }
 
-/** An override is an exact, isolated claim; only the default mode may reuse another Bunraku. */
+/** An override is an exact, isolated claim; only the default mode may reuse another Bunzai. */
 export async function claimDesktopPort<T extends { url: string; stop: () => void }>(
   override: number | null,
   start: (port: number) => T,
-  isBunrakuRunning: (port: number) => Promise<string | null> = runningBunrakuAt,
+  isBunzaiRunning: (port: number) => Promise<string | null> = runningBunzaiAt,
 ): Promise<{ server: T; ours: boolean }> {
   if (override !== null) {
-    if (await isBunrakuRunning(override)) throw new Error(`Bunraku is already running on requested port ${override}`);
+    if (await isBunzaiRunning(override)) throw new Error(`Bunzai is already running on requested port ${override}`);
     const server = start(override);
     if (server.url !== `http://127.0.0.1:${override}`) {
       server.stop();
@@ -35,7 +35,7 @@ export async function claimDesktopPort<T extends { url: string; stop: () => void
     try {
       return { server: start(port), ours: true };
     } catch {
-      const existing = await isBunrakuRunning(port);
+      const existing = await isBunzaiRunning(port);
       if (existing) return { server: { url: existing, stop: () => {} } as T, ours: false };
     }
   }

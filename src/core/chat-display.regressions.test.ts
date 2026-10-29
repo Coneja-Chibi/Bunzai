@@ -14,7 +14,7 @@ const baseNoPersona = { character: vera, persona: undefined, messages: [], rando
 test("a reply entirely inside <think> tags shows empty, never the duplicated raw text", () => {
   // A naive fallback ("" || rawContent) would show the raw, unstripped message whenever the
   // stripped result was falsy, so a reply that was 100% reasoning (no visible text outside the
-  // <think> block) would duplicate the hidden reasoning straight into the bubble. Bunraku's
+  // <think> block) would duplicate the hidden reasoning straight into the bubble. Bunzai's
   // stripReasoningTags has no such fallback: chat-display.ts uses `stripped` directly, empty or not.
   const show = chatDisplay(base);
   expect(show("<think>\nonly reasoning, nothing else\n</think>")).toBe("");

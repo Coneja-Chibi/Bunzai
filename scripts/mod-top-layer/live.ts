@@ -1,5 +1,5 @@
 /**
- * Live proof of the protected layer in the real app: a throwaway studio (BUNRAKU_HOME and the library both inside `work`),
+ * Live proof of the protected layer in the real app: a throwaway studio (BUNZAI_HOME and the library both inside `work`),
  * a hostile theme package installed through the real Gate path, and headless Chrome on its own profile, which screenshots the
  * stage door, the Kit Gate and the theme manager under it. Run: bun run scripts/mod-top-layer/live.ts <work folder>
  * A real studio is never touched. The folder is reused between runs; nothing in it is deleted.

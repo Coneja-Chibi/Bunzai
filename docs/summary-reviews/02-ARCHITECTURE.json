@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "02-ARCHITECTURE",
   "sourcePath": "docs/02-ARCHITECTURE.md",
-  "sourceHash": "sha256:29be13635e6a5c41667df4d3e0efcaae439eb81f1e602b382e64a2e022634143",
-  "semanticSummaryHash": "sha256:e676e96388e7285352391efe5c623df3c6c3dad35971eed1fcd9397188a5a8f9",
+  "sourceHash": "sha256:dbfbf6347b695dc636a55db585e8c4071bc5e0f4369c0698233f746ba03d197c",
+  "semanticSummaryHash": "sha256:55243a0c528a50ca391021c9ee4c21cefd5165c50c766e254599e259c697db05",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
-  "reviewedAt": "2026-10-25T01:23:10.912Z"
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:48:06.646Z"
 }

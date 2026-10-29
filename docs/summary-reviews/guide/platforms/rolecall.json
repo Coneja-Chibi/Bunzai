@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/platforms/rolecall",
   "sourcePath": "docs/guide/platforms/rolecall.md",
-  "sourceHash": "sha256:b1c929e7949a01585cade3965495d984279f185dc39ef08e059267f90c857d08",
-  "semanticSummaryHash": "sha256:cdd8a30ff6f097bb89cf37ed42c07d71ff80586b90bd98f107d9565cc6c996a1",
+  "sourceHash": "sha256:5602084638a97dd5508bc9f273c08bb10e8f066c3446d01e77c4de5e4c9d0541",
+  "semanticSummaryHash": "sha256:be9d72ee5b583cc60fd3039149d254517166465fe94bc9ba37f353e95b7278ea",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:47.509Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:39.611Z"
 }

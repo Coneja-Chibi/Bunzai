@@ -5,10 +5,10 @@
  * The impure half of plan-usage.ts. Kept separate so the parsing can be tested exhaustively without
  * a home directory or a network, which is the same split contract.ts and runner.ts already use.
  *
- * BUNRAKU IDENTIFIES ITSELF HONESTLY HERE, and that is a measured claim rather than a hope. Every
+ * BUNZAI IDENTIFIES ITSELF HONESTLY HERE, and that is a measured claim rather than a hope. Every
  * community write-up on Anthropic's usage endpoint says `User-Agent: claude-code/<version>` is
  * required or you are rate-limited into persistent 429s. Tested against the live endpoint from this
- * repo: `Bunraku/<version>` returns 200, no user agent at all returns 200, and `claude-code/...`
+ * repo: `Bunzai/<version>` returns 200, no user agent at all returns 200, and `claude-code/...`
  * returns 200. The advice is about rate-limit bucketing under frequent polling, not about access. So
  * Kit asks under its own name, and polls politely instead.
  */
@@ -91,7 +91,7 @@ export async function claudeUsage(now: number = Date.now()): Promise<UsageOutcom
       headers: {
         Authorization: `Bearer ${login.accessToken}`,
         "anthropic-beta": "oauth-2025-04-20",
-        "User-Agent": `Bunraku/${APP_VERSION}`,
+        "User-Agent": `Bunzai/${APP_VERSION}`,
       },
     });
   } catch (error) {

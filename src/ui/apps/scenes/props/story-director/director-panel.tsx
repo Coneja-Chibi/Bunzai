@@ -1,7 +1,7 @@
 /**
  * The Story Director panel (RoleCall's right wing `story-director`, StoryDirectorWingPanel.tsx:340-538), as the Prop's pop-out kind: docked in the Props wing it opens from the row's gear, floating it
  * stays over the scene. The hero ("Turn n" or "Narrative oversight", "Story Director"), the toolbar (Reset DM), the five tabs (Story, Arcs, Analysis, Activity, Debug) with their glyphs over
- * their names, then the tab. RoleCall's turn-history stepper is drawn (earlier turns are read-only); Unpin is not, because Bunraku's wings have no pin. Every edit goes through the panel's
+ * their names, then the tab. RoleCall's turn-history stepper is drawn (earlier turns are read-only); Unpin is not, because Bunzai's wings have no pin. Every edit goes through the panel's
  * version (use-director-panel.ts), and the controls are off while one is being saved. The first-use strip is RoleCall's DM tour (DMTourOverlay.tsx) as a note, not an overlay.
  * The state it keeps (use-director-view.ts) and the parts that do not depend on the frame (director-shared.tsx) are shared with the Messenger's presentation of the same panel.
  */

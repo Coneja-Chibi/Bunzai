@@ -51,7 +51,7 @@ export function useRailApply(deps: RailApplyDeps): () => void {
       /**
        * FOLLOW WHAT WAS WRITTEN, WHICH IS NOT ALWAYS WHAT WAS OPENED.
        *
-       * A foreign piece is saved as a Bunraku COPY under a free id, deliberately: the original is
+       * A foreign piece is saved as a Bunzai COPY under a free id, deliberately: the original is
        * a raw export and the whole point of that path is never to write over it. But the rail kept
        * pointing at the original, so the header snapped straight back to the untouched source and
        * the rename looked lost. It was not lost - it was in a file the rail had stopped looking at,

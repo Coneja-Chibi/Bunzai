@@ -3,7 +3,7 @@
  * Scene. Auto, Only these, Off. The lists are kept when the mode changes, so going back to Only these finds
  * your tags where you left them. The rules are core/reasoning-capture.ts's, read by every display of a reply.
  * RoleCall's Auto also infers a "Thinking:" heading and untagged thinking and can ask a helper model (Smart
- * Recovery); Bunraku does not, so its help text does not promise them.
+ * Recovery); Bunzai does not, so its help text does not promise them.
  */
 import type { JSX } from "react";
 import { Button, Chip, Segmented } from "../../../components/button";

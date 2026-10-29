@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/importing",
   "sourcePath": "docs/guide/importing.md",
-  "sourceHash": "sha256:ee763f0a9835a18306376eff4938b19e2267e0aedb3b664b3578558576fa7f20",
-  "semanticSummaryHash": "sha256:a214a30c75d6959d928b4e82f965e15c054942025b2880aad3604fede01151bf",
+  "sourceHash": "sha256:a9a70c7652ff472c04774b1ddd4628b2e90b9fd28d00879d2567e64e3f7eeff9",
+  "semanticSummaryHash": "sha256:bf9c4a988764f473ecb120cbbd2f3c07ee41e66432314909d32aa0c3118f589f",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:44.775Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "rename to Bunzai only",
+  "reviewedAt": "2026-10-29T20:47:34.968Z"
 }

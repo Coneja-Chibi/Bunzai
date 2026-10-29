@@ -1,6 +1,6 @@
 // @vitest-environment node
 /**
- * Records RoleCall's prompt assembler on each fixture, as the parity target for Bunraku's port,
+ * Records RoleCall's prompt assembler on each fixture, as the parity target for Bunzai's port,
  * running under RoleCall's own vitest at the recorded commit; run.sh copies this folder in and runs it. For each fixture:
  *
  * - Supabase is the fail-closed double in fake-supabase.ts, answering only what the fixture declares.

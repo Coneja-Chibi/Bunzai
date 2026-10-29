@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/formats/marinara",
   "sourcePath": "docs/reference/formats/marinara.md",
-  "sourceHash": "sha256:63cc089c8e24f33d57081c0b345c620559704256913df28fef3c5a2b4460669a",
+  "sourceHash": "sha256:1dd7fc7e19b4948778b6c0849ee5c6915f998eb919eb2ba03ea6437ecb555dda",
   "summary": "Developer reference for four Marinara adapters: bare API data for regex scripts and personas plus native export envelopes for lorebooks and prompt presets. Tavern-shaped characters use SillyTavern while Marinara-only fields remain in the editor lens. Regex detection rejects overlapping ST rows before bidding 0.95; persona detection requires identity, authored text, and a theming/stat signal; unique lorebook and preset envelopes have structural gates. Field maps cover RegexRule, PersonaBody, native lorebook book/entry/folder semantics, and preset sections/groups/choices/parameters. Regex export rebuilds from canonical rules and extras. Persona, lorebook, and preset export overlay mapped changes onto sealed twins, retaining engine-only data. Empty persona sections are omitted on import, explicit clears survive export, and avatarPath is neither fabricated nor retained after an explicit clear. Lorebook nested folders and native entry exotica remain escrowed; preset string-encoded booleans, JSON fields, and unmapped variables/parameters survive.",
   "topics": [
     "Marinara-Engine API dump",

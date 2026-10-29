@@ -8,13 +8,13 @@
 <link rel="stylesheet" href="port.css">
 <link rel="stylesheet" href="rc-parts.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
- * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunraku. Every size below was
+ * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunzai. Every size below was
  * read off the running page on 2026-09-24 (computed styles at 1920x945 and 390x844) or from the
  * component source (WingRail, WingItem, WingShell, FoldoutTabs, GreetingSelector,
- * composer-shell-styles). Colors are Bunraku tokens:
+ * composer-shell-styles). Colors are Bunzai tokens:
  *   RC zinc-300 / zinc-400 / zinc-500 / zinc-600  ->  --stage-soft / --stage-text-dim / --stage-mute / --stage-line
  *   RC black/55 bubble, white/8 edge              ->  color-mix of --stage-black and --stage-card
  *   RC user accent (violet)                       ->  --accent
@@ -630,10 +630,10 @@ body.vb .side-foot.b-only { display: flex !important; }
 
 <div class="wf-chip" id="wf">
   <span>Lorebook wing</span><button data-s="list">Books and entries</button><button data-s="fired">Last turn (B)</button><button data-s="entry">Editing an entry</button><button data-s="add">Add a book</button><button data-s="empty">None yet</button>
-  <span>|</span><button data-v="a">A: RoleCall</button><button data-v="b">B: with Bunraku touches</button>
+  <span>|</span><button data-v="a">A: RoleCall</button><button data-v="b">B: with Bunzai touches</button>
   <button data-theme-switch>Theme</button><a href="../index.html">All</a>
 </div>
-<div class="wf-note"><b>RoleCall's Lorebook tab (LorebookPanel + EntryPanel), part for part:</b> the World wing on the left, a compact header with the book and token counts, active books on the left (dot, name, entries, switch and remove on hover, Add Lorebook), the selected book's entries on the right split into Constant and Selective, and RoleCall's entry editor with triggers, the seven injection spots, sticky, cooldown, delay, and recursion. Switching or removing a book here is this scene's alone; entry edits save to the book in your library after a pause, like RoleCall. The picker lists your library only (no Plotlight, no forks or drafts: Bunraku's library already keeps versions).
+<div class="wf-note"><b>RoleCall's Lorebook tab (LorebookPanel + EntryPanel), part for part:</b> the World wing on the left, a compact header with the book and token counts, active books on the left (dot, name, entries, switch and remove on hover, Add Lorebook), the selected book's entries on the right split into Constant and Selective, and RoleCall's entry editor with triggers, the seven injection spots, sticky, cooldown, delay, and recursion. Switching or removing a book here is this scene's alone; entry edits save to the book in your library after a pause, like RoleCall. The picker lists your library only (no Plotlight, no forks or drafts: Bunzai's library already keeps versions).
 <br><br><b>B adds two touches:</b> each book says where it came from (the character's own books arrive switched on, your persona's too, and you can switch them off here without unlinking them), and <b>Last turn</b> marks which entries went into the last reply and why (always on, the word that matched, still sticky, or matched but cut by the budget). RoleCall keeps that in a separate debug wing.</div>
 
 <script>

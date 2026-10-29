@@ -19,7 +19,7 @@ the same shape as character to lorebook and preset to regex. The canonical body 
 label and the message); every other per-button switch rides `extras` on the reply, and the source file rides
 `original` on the envelope, untouched, so export writes it back.
 
-A reply's message is usually a slash-command script. It is data: nothing in Bunraku executes it.
+A reply's message is usually a slash-command script. It is data: nothing in Bunzai executes it.
 
 ## Fields
 

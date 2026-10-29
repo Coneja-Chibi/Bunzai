@@ -53,7 +53,7 @@ test("a different note restarts the toast", async () => {
 test("the lean status line retains Browser Studio's lifetime warning and approved theme slot content", async () => {
   jest.useFakeTimers();
   const meta = dom.window.document.createElement("meta");
-  meta.name = "bunraku-runtime"; meta.content = "browser"; dom.window.document.head.append(meta);
+  meta.name = "bunzai-runtime"; meta.content = "browser"; dom.window.document.head.append(meta);
   dom.window.document.documentElement.setAttribute("data-theme-slots", JSON.stringify({ assets: {}, slots: { "shell.status.end": [{ kind: "text", text: "Theme credit" }] } }));
   try {
     root = createRoot(dom.window.document.getElementById("root")!);

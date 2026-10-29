@@ -41,7 +41,7 @@ export function AiWing({ ctx, chat, onPicked, onClose }: { ctx: AppContext; chat
     return (
       <div className="wbody ms" data-part="scene.ai.models">
         {hero}
-        <div className="ms-empty"><b>No connections yet</b>Bunraku talks to AI models through the connections you save in Kit: a provider, its key, and a model. Add one there, and it shows up here for every scene.<br />
+        <div className="ms-empty"><b>No connections yet</b>Bunzai talks to AI models through the connections you save in Kit: a provider, its key, and a model. Add one there, and it shows up here for every scene.<br />
           <Button variant="primary" size="sm" onClick={() => openKitConnections(ctx)}>Open Kit connections</Button></div>
       </div>
     );

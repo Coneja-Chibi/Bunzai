@@ -1,5 +1,5 @@
 /*
- * Landing concepts: a simplified Bunraku shell (the dock, the top bar) shared by all ten, plus the
+ * Landing concepts: a simplified Bunzai shell (the dock, the top bar) shared by all ten, plus the
  * wireframe chrome. Each concept fills .main with its own layout. Tokens and the bundled fonts only
  * (src/ui/theme/tokens.css). These are app screens: aligned, readable, one clear primary action.
  */

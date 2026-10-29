@@ -2,7 +2,7 @@
  * The Final Cut wing's Final Cut tab (RoleCall's PostProductionPanel.tsx, 2,614 lines, in the order it draws them): the hero, the stats
  * strip, the On-demand editing tools, the Output Safety Check, the Anti-Slop Engine with Custom Banks, the Scene Editor and Translator
  * side by side, Your Department full width, the Pipeline Prompt Contract and the footer. RoleCall hides the whole wing until the Props
- * row "Final Cut" is on; Bunraku keeps the wing on the rail (the Regex tab lives there), so the switch that decides whether new replies
+ * row "Final Cut" is on; Bunzai keeps the wing on the rail (the Regex tab lives there), so the switch that decides whether new replies
  * run the passes is the card under the hero, off until it is turned on.
  */
 import type { CSSProperties, JSX } from "react";

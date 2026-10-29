@@ -7,7 +7,7 @@ import { Button } from "../../components/button";
 import { OverlayWidgets } from "./overlay";
 import { useEffect } from "react";
 import type { JSX } from "react";
-import type { AppContext, AppManifestEntry, BunrakuApp } from "../../app-contract";
+import type { AppContext, AppManifestEntry, BunzaiApp } from "../../app-contract";
 import { AppMark } from "../../components/app-mark";
 import { Panel } from "../../components/panel";
 import { RoomHeader } from "../../components/room-header";
@@ -18,7 +18,7 @@ import { icSvg } from "../../_shared/ic-svg";
 const MARK_SVG = icSvg("lucide:layout-grid", 18);
 
 const descriptionFor = (app: AppManifestEntry): string =>
-  app.agentSurface?.describe ?? `${app.title} is included with this build of Bunraku.`;
+  app.agentSurface?.describe ?? `${app.title} is included with this build of Bunzai.`;
 
 function AppCard({ app, ctx }: { app: AppManifestEntry; ctx: AppContext }): JSX.Element {
   return (
@@ -49,8 +49,8 @@ export function AppCatalog({ ctx }: { ctx: AppContext }): JSX.Element {
       <RoomHeader
         data-part="app-catalog.header"
         kicker="Apps in this build"
-        title="Official Bunraku apps"
-        lede="Everything here shipped with this copy of Bunraku. Open a room when you need it; compact specialist tools stay here instead of crowding your everyday Dock."
+        title="Official Bunzai apps"
+        lede="Everything here shipped with this copy of Bunzai. Open a room when you need it; compact specialist tools stay here instead of crowding your everyday Dock."
       />
 
       <section className={styles.grid} aria-label="Official packaged apps">
@@ -60,7 +60,7 @@ export function AppCatalog({ ctx }: { ctx: AppContext }): JSX.Element {
   );
 }
 
-const app: BunrakuApp = {
+const app: BunzaiApp = {
   OverlayWidgets,
   manifest: {
     id: "app-catalog",
@@ -70,7 +70,7 @@ const app: BunrakuApp = {
     order: 80,
     catalogOnly: true,
     appCatalog: true,
-    agentSurface: { describe: "Catalog of official applications packaged with this build of Bunraku." },
+    agentSurface: { describe: "Catalog of official applications packaged with this build of Bunzai." },
   },
   Component: AppCatalog,
 };

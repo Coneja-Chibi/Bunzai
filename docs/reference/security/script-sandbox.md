@@ -2,7 +2,7 @@
 id: reference/security/script-sandbox
 title: The Lua script sandbox
 audience: dev
-summary: How bunraku runs an untrusted card script in a terminable worker on a distinct loopback origin, behind a versioned value-only wire protocol and resource budgets that clamp downward only, with an honest account of what is enforced versus what is not yet measured.
+summary: How bunzai runs an untrusted card script in a terminable worker on a distinct loopback origin, behind a versioned value-only wire protocol and resource budgets that clamp downward only, with an honest account of what is enforced versus what is not yet measured.
 tags: [security, sandbox, lua, worker, isolation, protocol, resource-limits, adr-009]
 related: [reference/concepts/safe-rendering, reference/entities/character, reference/formats/risu, reference/architecture]
 ---
@@ -10,7 +10,7 @@ related: [reference/concepts/safe-rendering, reference/entities/character, refer
 # The Lua script sandbox
 
 Character cards can carry executable content: Risu trigger scripts, virtual scripts, and low-level
-Lua. bunraku ingests those from untrusted files and never runs them on import. In the installed app,
+Lua. bunzai ingests those from untrusted files and never runs them on import. In the installed app,
 a script executes only when the operator deliberately puts it on the Workshop Test Bench, inside a
 layered sandbox: a terminable worker, on a distinct loopback origin, behind a value-only wire
 protocol, under resource budgets that can only be tightened, not loosened.
@@ -167,7 +167,7 @@ fetch, filesystem, or network global; those were explicitly out of scope for the
 
 ## The privileged flag (a warning, not a trigger)
 
-A Risu card can request Risu's low-level script API (`lowLevelAccess`). bunraku surfaces that request as
+A Risu card can request Risu's low-level script API (`lowLevelAccess`). bunzai surfaces that request as
 a boolean and does nothing else with it. The canonical field documents its exact status: it is `a
 warning marker for the UI and a sandbox gating input, never an execution trigger`
 (`src/entities/character/schema.ts:312-314`). The reader that sets it is explicit that `its scripts

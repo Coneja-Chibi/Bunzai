@@ -1,6 +1,6 @@
 # Design
 
-Design studies for Bunraku. Nothing here ships; the app is `src/ui/`.
+Design studies for Bunzai. Nothing here ships; the app is `src/ui/`.
 
 ## Layout
 

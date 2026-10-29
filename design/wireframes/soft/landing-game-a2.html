@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="tokens-soft.css">
 <link rel="stylesheet" href="soft-parts.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
  * Concept A2: landing-game-a's title screen (wordmark, ticket bun, drifting backdrop, vertical
@@ -221,7 +221,7 @@ body:not([data-state="attract"]) .kbdlegend { display: flex; }
 
 <div class="app">
   <nav class="s-dock" id="dock">
-    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunzai</span></div>
     <div class="s-app c-scenes on"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
     <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
     <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
@@ -343,7 +343,7 @@ body:not([data-state="attract"]) .kbdlegend { display: flex; }
           </div>
           <div class="pitem" data-p="kit">
             <div class="pv-term" style="--c: var(--deck-lorebook)">
-              <div><span class="pv-prompt">&gt;</span>bunraku scene export --last</div>
+              <div><span class="pv-prompt">&gt;</span>bunzai scene export --last</div>
               <div class="pv-termdim">wrote scenes/the-long-storm.json</div>
             </div>
           </div>
@@ -410,9 +410,9 @@ body:not([data-state="attract"]) .kbdlegend { display: flex; }
     workbench: { c: 'var(--deck-character)', chip: 'WORKBENCH', title: 'Every piece, always open', desc: "Workbench: everything you're writing stays open where you left it.", open: 'Open Workbench' },
     library: { c: 'var(--deck-regex)', chip: 'LIBRARY', title: 'Everything you keep', desc: 'Library: everything you own lives here.', open: 'Open Library' },
     press: { c: 'var(--deck-persona)', chip: 'PRESS', title: 'Ready to share', desc: 'Press: get your work ready to share.', open: 'Open Press' },
-    agent: { c: 'var(--deck-preset)', chip: 'AGENT', title: 'Ask anything', desc: 'Agent: ask anything about Bunraku.', open: 'Open Agent' },
+    agent: { c: 'var(--deck-preset)', chip: 'AGENT', title: 'Ask anything', desc: 'Agent: ask anything about Bunzai.', open: 'Open Agent' },
     kit: { c: 'var(--deck-lorebook)', chip: 'KIT', title: 'The terminal', desc: 'Kit: the terminal for anyone who wants one.', open: 'Open Kit' },
-    settings: { c: 'var(--text-dim)', chip: 'SETTINGS', title: 'The switches', desc: 'Settings: the switches that shape how Bunraku behaves.', open: 'Open Settings' },
+    settings: { c: 'var(--text-dim)', chip: 'SETTINGS', title: 'The switches', desc: 'Settings: the switches that shape how Bunzai behaves.', open: 'Open Settings' },
     empty: { c: 'var(--accent)', chip: 'STUDIO', title: "Here's what each app is for", desc: 'Nothing lives here yet. Import a card, or start a new scene.', open: '' }
   };
   var DEFAULTS = { attract: null, menu: 'scenes', library: 'library', workbench: 'workbench', empty: 'empty' };

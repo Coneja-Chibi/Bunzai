@@ -1,6 +1,6 @@
-# Bunraku design system
+# Bunzai design system
 
-The look of Bunraku as a set of tokens, a small set of HUD primitives, and a named-parts contract
+The look of Bunzai as a set of tokens, a small set of HUD primitives, and a named-parts contract
 that UI mods target. G3 "Arcade HUD" is the default look. C1 (JRPG + HUD) and C3 (Persona + HUD)
 ship as example themes on the same names. Paper is G3 in daylight.
 
@@ -136,7 +136,7 @@ them with `accentVars()` in `src/ui/_shared/decks.ts`.
 
 ## The named-parts contract (v1)
 
-A mod restyles Bunraku by targeting **parts**, never class names. Classes are implementation and
+A mod restyles Bunzai by targeting **parts**, never class names. Classes are implementation and
 can change in any release; part names are a public, versioned API.
 
 - Every meaningful element carries `data-part`, a space-separated list of names, so a library card

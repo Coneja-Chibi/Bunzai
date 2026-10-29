@@ -9,7 +9,7 @@ import { SURFACES, type SurfaceId } from "./surface-registry";
 const inputs = [...(await themeInventory()), ...(await exampleThemeInventory())];
 const previews = await Promise.all(inputs.map((input) => {
   const id = (input.manifest as { id: string }).id;
-  return inspectThemePackage(input, id.startsWith("bunraku.") ? undefined : id);
+  return inspectThemePackage(input, id.startsWith("bunzai.") ? undefined : id);
 }));
 const surfaces = previews.map((p) => p.appearance.surfaces);
 const exempt = previews.map((p) => COLOUR_ONLY_THEMES.includes(p.id));

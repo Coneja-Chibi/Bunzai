@@ -1,7 +1,7 @@
 /*
  * The floating agent panel. Tokens only.
  *
- * Orison's structure in Bunraku's ink: a heavy border, a hard offset shadow, a header band that is
+ * Orison's structure in Bunzai's ink: a heavy border, a hard offset shadow, a header band that is
  * also the grab handle. The z-index sits above the canvas and below the shell's own dialogs, which
  * matters because a Gate answer inside this panel must never be covered by something it opened.
  */

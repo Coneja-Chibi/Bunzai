@@ -10,7 +10,7 @@ related: [reference/entities/README, reference/architecture, reference/extending
 # Add a content kind
 
 A kind is one folder. `src/entities/<kind>/kind.ts` describes it once (its id, labels, deck color and glyph, whether it
-is a Library deck, the blank piece "New" saves, the lines `bunraku inspect` prints), plus, when they apply, the
+is a Library deck, the blank piece "New" saves, the lines `bunzai inspect` prints), plus, when they apply, the
 pieces it links by id (`links`), where its name lives (`namePath`), where it keeps pictures (`media`), whether it is
 too heavy to read whole (`heavy`), whether the Library offers "New" for it (`libraryNew`), which scene field
 points at it (`sceneField`), which list in a scene's prompting links it (`promptingList`), the Workbench `editor` it opens in, and, for a kind in a family, the deck it joins (`deck`,
@@ -43,7 +43,7 @@ Both are checked by `bun run kinds:check` in `verify:ci`; never edit them by han
 | A piece's name, read and written | `src/core/piece-name.ts` (from `namePath`) |
 | Which paths are pictures, which kinds carry art | `src/entities/_shared/media-reference.ts` (from `media`; Kit's gallery and art tools read `ART_KINDS`) |
 | Duplicate, rename and the Press on heavy pieces | `src/ui/apps/press`, `src/ui/apps/library/delete-flow.tsx` (from `heavy`) |
-| `bunraku inspect` | `src/cli-inspect.ts` (`describe`) |
+| `bunzai inspect` | `src/cli-inspect.ts` (`describe`) |
 | First-run deck titles | `src/ui/setup/steps/first-deck` |
 | Format matrix and field docs | `scripts/format-matrix.ts`, `scripts/docs-fields.ts` |
 

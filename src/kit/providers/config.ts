@@ -28,8 +28,8 @@ export interface ProviderConfig {
   name?: string;
 }
 
-/** The Bunraku home dir; BUNRAKU_HOME overrides it for portable installs and tests. */
-export const configDir = (): string => join(process.env.BUNRAKU_HOME ?? homedir(), ".bunraku");
+/** The Bunzai home dir; BUNZAI_HOME overrides it for portable installs and tests. */
+export const configDir = (): string => join(process.env.BUNZAI_HOME ?? homedir(), ".bunzai");
 
 /** Where the encrypted vault lives (About/setup show it; keys never leave it in the clear). */
 export const vaultPath = (): string => join(configDir(), "kit-vault.json");

@@ -79,6 +79,6 @@ Documented non-transfer / non-scan:
 - Any item that fails conversion is skipped (listed in warnings).
 - Secrets and non-selected categories do not come over.
 
-## Bunraku
+## Bunzai
 
-Bunraku hub-and-spoke conversion is not this wizard.
+Bunzai hub-and-spoke conversion is not this wizard.

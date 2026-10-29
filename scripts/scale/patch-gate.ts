@@ -16,9 +16,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 // Every per-user location this run could touch, redirected before any module that reads them loads
-// (scripts/test-sandbox.ts's own list). This script never opens the real studio or BUNRAKU_HOME.
-const sandbox = mkdtempSync(join(tmpdir(), "bunraku-scale-patch-"));
-process.env["BUNRAKU_HOME"] = join(sandbox, "home");
+// (scripts/test-sandbox.ts's own list). This script never opens the real studio or BUNZAI_HOME.
+const sandbox = mkdtempSync(join(tmpdir(), "bunzai-scale-patch-"));
+process.env["BUNZAI_HOME"] = join(sandbox, "home");
 process.env["LOCALAPPDATA"] = join(sandbox, "local-app-data");
 process.env["CODEX_HOME"] = join(sandbox, "codex");
 process.env["CLAUDE_CONFIG_DIR"] = join(sandbox, "claude");

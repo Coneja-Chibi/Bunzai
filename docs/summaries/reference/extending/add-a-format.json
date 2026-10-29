@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/extending/add-a-format",
   "sourcePath": "docs/reference/extending/add-a-format.md",
-  "sourceHash": "sha256:8cdda31455ef2806865536f58d76dbb17755ec90d7ed4e986946d1e43bd4481e",
+  "sourceHash": "sha256:8e081eff7aba2144c6402e83c67f7ed5340c49318722a777fcf5dc84b08d13fb",
   "summary": "Developer how-to for adding one format adapter under hub-and-spoke: every format converts through the canonical model, never format to format; one new adapter touches no other format and no core. A format is a folder under src/formats name; the loader scans the filesystem and skips underscore-prefixed folders such as _template and _shared; index.ts default-exports one adapter or an array for multi-codec families like SillyTavern. The contract in adapter.ts defines AdapterBase id label outputExtensions detect optional native generic coverage lens, then CharacterAdapter LorebookAdapter PersonaAdapter RegexAdapter with toCanonical fromCanonical and optional extractLorebook, discriminated as FormatAdapter on kind; AdapterInput and AdapterOutput are plain bytes text filename data not streams. Steps: copy _template so name is folder id and original escrow key; implement detect returning 0..1 with registry highest at or above 0.5 and reject sibling markers first; implement toCanonical with canonicalId and original raw or sourceMedia under the superset rule; implement fromCanonical clone-overlay twin or minimal object plus extractLorebook and context.lorebooks; declare coverage; done with loadFormats register and matrix regeneration. Declaring coverage explains CoverageDecl carries notes and path-prefix matching for honest platform lenses. Testing copies the Pygmalion suite shape. Non-negotiables ban core edits, demand the cross-kind firewall, escrow not blind-copy, and underscore only for inert folders. Source of truth tables the key core and template files.",
   "topics": [
     "add format adapter",
@@ -21,8 +21,8 @@
       "slug": "the-contract",
       "title": "The contract",
       "level": 2,
-      "sourceHash": "sha256:e67cb3946234ab3dadcdf5b59bdf1c5b08c577ff812872b13881a2089bd76213",
-      "summary": "src/core/adapter.ts defines every format plugin. AdapterBase carries id as FormatId and escrow key, label, outputExtensions without dots, detect returning 0..1 confidence, optional native for bunraku storage never a publish target, optional generic for the plain family reader shown as Default, optional CoverageDecl, and optional lens false to hide from the editor platform strip. CharacterAdapter extends with kind character, toCanonical to CanonicalCharacter, fromCanonical with optional EmitContext, and optional extractLorebook. LorebookAdapter PersonaAdapter and RegexAdapter mirror the same shape for their kinds; FormatAdapter is the kind-discriminated union. AdapterInput is optional bytes text filename; AdapterOutput is optional bytes text plus suggestedExtension. Binary formats read bytes; text or JSON read text; fromCanonical returns what it writes plus an extension normally from its outputExtensions list.",
+      "sourceHash": "sha256:73ba92cbd1f91aa399dcd9307bead689475fe9ab74954b5ecb57982fbb5b4cc3",
+      "summary": "src/core/adapter.ts defines every format plugin. AdapterBase carries id as FormatId and escrow key, label, outputExtensions without dots, detect returning 0..1 confidence, optional native for bunzai storage never a publish target, optional generic for the plain family reader shown as Default, optional CoverageDecl, and optional lens false to hide from the editor platform strip. CharacterAdapter extends with kind character, toCanonical to CanonicalCharacter, fromCanonical with optional EmitContext, and optional extractLorebook. LorebookAdapter PersonaAdapter and RegexAdapter mirror the same shape for their kinds; FormatAdapter is the kind-discriminated union. AdapterInput is optional bytes text filename; AdapterOutput is optional bytes text plus suggestedExtension. Binary formats read bytes; text or JSON read text; fromCanonical returns what it writes plus an extension normally from its outputExtensions list.",
       "topics": [
         "AdapterBase fields",
         "CharacterAdapter hooks",
@@ -36,8 +36,8 @@
       "slug": "steps",
       "title": "Steps",
       "level": 2,
-      "sourceHash": "sha256:8fb41c3f56d6638bfca1630e5141569f79dfc93cc18896d2473b1891faa0eeee",
-      "summary": "Six steps complete an adapter. Copy src/formats/_template to src/formats name so name is folder, adapter id, and original name escrow key; pick kind default character. Implement detect 0..1: registry keeps the single highest score at or above 0.5 so specifics must outrank generics; reject sibling known markers before positive signals as Pygmalion does; wrong shape returns 0 never throws. Implement toCanonical: map to canonical body, mint id with canonicalId, stash parsed source at original name raw and PNG pixels in sourceMedia; only first-class wire-serialized fields under the superset rule. Implement fromCanonical: clone escrow twin when present, overlay edited body, fall back to minimal object for cross-format; optional extractLorebook for non-shared embedded books; re-embed via context.lorebooks. Declare coverage in a later section. Done with no core edits: loadFormats globs index.ts files and registers exports; bun run bunraku formats lists it; bun run matrix and matrix:check keep FORMAT-SUPPORT.md honest.",
+      "sourceHash": "sha256:17c2e65f87b7e114e46381f0baa1efdfba1c34c49a35b286c0d9539f608d14e3",
+      "summary": "Six steps complete an adapter. Copy src/formats/_template to src/formats name so name is folder, adapter id, and original name escrow key; pick kind default character. Implement detect 0..1: registry keeps the single highest score at or above 0.5 so specifics must outrank generics; reject sibling known markers before positive signals as Pygmalion does; wrong shape returns 0 never throws. Implement toCanonical: map to canonical body, mint id with canonicalId, stash parsed source at original name raw and PNG pixels in sourceMedia; only first-class wire-serialized fields under the superset rule. Implement fromCanonical: clone escrow twin when present, overlay edited body, fall back to minimal object for cross-format; optional extractLorebook for non-shared embedded books; re-embed via context.lorebooks. Declare coverage in a later section. Done with no core edits: loadFormats globs index.ts files and registers exports; bun run bunzai formats lists it; bun run matrix and matrix:check keep FORMAT-SUPPORT.md honest.",
       "topics": [
         "copy _template folder",
         "detect score 0.5",
@@ -96,8 +96,8 @@
       "slug": "source-of-truth",
       "title": "Source of truth",
       "level": 2,
-      "sourceHash": "sha256:c5833479d983f7897525a2000b1919c98746d289e5dc4b0d650da9b31b241ffa",
-      "summary": "Authoritative files: _template/index.ts as starting copy; adapter.ts for contract kinds input output EmitContext; loader.ts for folders-as-schema discovery; registry.ts for detection 0.5 threshold and lookup; coverage.ts for CoverageDecl; canonical.ts for wrapper escrow and canonicalId; pygmalion index coverage and test as smallest worked example; format-matrix.ts for matrix and matrix:check; cli.ts for bunraku formats; architecture.md for whole-engine hub-and-spoke escrow and detection context.",
+      "sourceHash": "sha256:993f1cfe9d81dce08b7fe17e8d7b1f636382e88dca4da228155aa420ca7a7ab2",
+      "summary": "Authoritative files: _template/index.ts as starting copy; adapter.ts for contract kinds input output EmitContext; loader.ts for folders-as-schema discovery; registry.ts for detection 0.5 threshold and lookup; coverage.ts for CoverageDecl; canonical.ts for wrapper escrow and canonicalId; pygmalion index coverage and test as smallest worked example; format-matrix.ts for matrix and matrix:check; cli.ts for bunzai formats; architecture.md for whole-engine hub-and-spoke escrow and detection context.",
       "topics": [
         "template and adapter.ts",
         "loader registry coverage",

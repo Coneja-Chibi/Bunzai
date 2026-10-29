@@ -3,8 +3,8 @@ import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const root = mkdtempSync(join(tmpdir(), "bunraku-scale-patch-"));
-process.env["BUNRAKU_HOME"] = join(root, "home");
+const root = mkdtempSync(join(tmpdir(), "bunzai-scale-patch-"));
+process.env["BUNZAI_HOME"] = join(root, "home");
 process.env["LOCALAPPDATA"] = join(root, "local-app-data");
 process.env["CODEX_HOME"] = join(root, "codex");
 process.env["CLAUDE_CONFIG_DIR"] = join(root, "claude");

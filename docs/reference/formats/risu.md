@@ -11,7 +11,7 @@ related: [reference/architecture, reference/entities/character, reference/entiti
 
 RisuAI is a roleplay client whose native character export is a `.charx`: a ZIP archive containing a
 `card.json` (an ordinary Character Card V3) plus an `assets/` tree, and optionally a `module.risum`
-bundle. bunraku reads and writes `.charx`, plus RisuAI's standalone lorebook export and its `customscript`
+bundle. bunzai reads and writes `.charx`, plus RisuAI's standalone lorebook export and its `customscript`
 regex rows, wherever they live (card-embedded, a bare JSON array, or packed inside a `.risum` module).
 
 The format is one folder, `src/formats/risu/`, whose `index.ts` default-exports three codecs
@@ -188,7 +188,7 @@ paths, `module.risum` is re-emitted (unedited bytes verbatim, an edited module r
 [Quirks](#quirks)), and the set is re-zipped (`index.ts:167-181`). Every mapped field, every asset byte,
 and `module.risum` survive, but the output `.charx` bytes are not guaranteed to equal the input: the JSON
 is re-serialized and the zip is regenerated, so indentation, compression, entry order, and archive
-metadata are reproduced by bunraku, not preserved from the source.
+metadata are reproduced by bunzai, not preserved from the source.
 
 The native lorebook codec follows the same twin-overlay rule. The whole raw envelope rides
 `original["risu-lorebook"].raw` (`lorebook.ts:314`). `fromCanonical` walks the twin's rows in original
@@ -229,7 +229,7 @@ an entry without suppressing either row. Rows that had no source id remain witho
 - `module.risum` is opened, not opaque, but re-encoding an edit is safe-blocked. A `.risum` is Risu's
   RPack container: magic byte `111`, version byte `0`, a length-prefixed main JSON block byte-substituted
   through a fixed 256-entry table (no compression, no key), zero or more length-prefixed asset blocks, and
-  a terminator (`rpack/container.ts:15-18,42-76`, `rpack/codec.ts:9-19`). bunraku reimplements the container
+  a terminator (`rpack/container.ts:15-18,42-76`, `rpack/codec.ts:9-19`). bunzai reimplements the container
   walk and the table clean-room in `src/formats/risu/rpack/`, and `openRisumModule` decodes it into a
   structured `RisuModule` (name, `trigger[]`, `regex[]`, `lorebook[]`, an open `extras` bag, plus a listing
   of every `triggerlua`/`cjs`/`triggercode` script body without reading its meaning), landing at

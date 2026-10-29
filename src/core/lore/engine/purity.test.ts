@@ -1,5 +1,5 @@
 /**
- * Purity gate (Bunraku change 2 + AGENTS.md rule 1): no Math.random, Date.now, or console.* in any
+ * Purity gate (Bunzai change 2 + AGENTS.md rule 1): no Math.random, Date.now, or console.* in any
  * non-test source file under engine/. Every random draw takes the injected rng; every clock read
  * takes LoreScan.now. This is a source grep, not a runtime mock check, so it also blocks the
  * literal tokens showing up in comments - write around them if you need to name what RoleCall did.

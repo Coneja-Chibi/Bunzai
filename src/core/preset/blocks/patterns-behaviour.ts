@@ -74,7 +74,7 @@ export const BEHAVIOUR_PATTERNS: readonly BlockPattern[] = [
       "Distinguished from a content ceiling by mechanism rather than topic: it addresses the model's"
       + " willingness rather than the story's limits, and the surveyed implementations lean on role"
       + " and placement to do it. Catalogued here because someone importing a stranger's preset should"
-      + " be able to find out whether it contains one; Bunraku ships no starting block for it.",
+      + " be able to find out whether it contains one; Bunzai ships no starting block for it.",
     emits: "text",
     macros: [],
     prevalence: 6,

@@ -2,7 +2,7 @@
 id: reference/kit/tools
 title: Kit content tools
 audience: dev
-summary: Kit's shared workflow discovery, traversable results, semantic drafts, and Bunraku docs query.
+summary: Kit's shared workflow discovery, traversable results, semantic drafts, and Bunzai docs query.
 tags: [kit, tools, capabilities, character, lorebook, drafts, results, documentation]
 related: [reference/kit, reference/architecture, reference/ui]
 ---
@@ -80,7 +80,7 @@ session:
   block. `preset_verify` renders a preset through the real engine and reports what did not resolve.
   It is offered only where an engine lives: the checkout is the one pointed at in the studio
   window's Settings > Studio (`engines.json` in the studio folder, read when the session is built)
-  or named by `BUNRAKU_ST_ROOT` / `BUNRAKU_MARINARA_ROOT`, which outranks it.
+  or named by `BUNZAI_ST_ROOT` / `BUNZAI_MARINARA_ROOT`, which outranks it.
 - `rail_open` puts a preset where this app shows presets, and a name that is a real piece of ANOTHER
   kind now gets told which kind it is and where that kind opens, instead of a roll-call of every
   preset in the studio. Asked to put a drawing on the rail it used to answer "no preset matches" and
@@ -155,7 +155,7 @@ session:
 - `change_apply` pauses at the Gate, compares the stored canonical revision, saves exactly once,
   re-reads the piece, and returns an applied, stale, or failed receipt. Denying the draft review
   dispatches `change_discard` without another model round.
-- `docs_query` searches the generated Bunraku documentation catalog, then reads only a
+- `docs_query` searches the generated Bunzai documentation catalog, then reads only a
   catalog-declared page or heading section. It cannot accept filesystem paths.
 - `studio_read` returns one complete normal canonical piece by default. Outline, JSON Pointer paths,
   offsets, and bounded continuation remain available for genuinely oversized content.
@@ -424,7 +424,7 @@ cannot be introduced by adding an engine and forgetting to declare a meaning.
   same character means different things per engine, so stripping it would trade a false negative for
   a false positive.
 
-## Bunraku documentation query
+## Bunzai documentation query
 
 `docs_query` is one direct read-only meta-tool with four actions:
 
@@ -475,16 +475,16 @@ network call. The Studio docs reader and Kit use the same path-containment imple
 
 ## Serving the belt to another client
 
-`bunraku mcp [studio-dir] [--read-only]` serves the same tools over MCP on stdio, so any client that
+`bunzai mcp [studio-dir] [--read-only]` serves the same tools over MCP on stdio, so any client that
 speaks it (Claude Code, Cursor, Zed, Codex) can read and edit the studio. Register it once with the
 client's own command; for Claude Code that is:
 
 ```
-claude mcp add bunraku -- bunraku mcp
+claude mcp add bunzai -- bunzai mcp
 ```
 
 An explicit studio directory is the first non-flag argument; without one the server resolves the same
-studio the CLI would. The subcommand exists so nothing has to know where Bunraku's source lives: a
+studio the CLI would. The subcommand exists so nothing has to know where Bunzai's source lives: a
 compiled binary has no `src/mcp/main.ts` to point at, and a path that worked from a checkout failed
 silently for anyone who installed rather than cloned, with the turn simply answering without tools.
 
@@ -509,8 +509,8 @@ transitive dependencies serving HTTP transport and OAuth that this never uses.
 
 The other direction: MCP servers configured in Settings > Connections join Kit's own belt. Saving,
 disabling, or removing a server synchronizes the live connections and invalidates the cached Kit
-session, so the next turn rebuilds the exact tool catalog without restarting Bunraku. The config is
-`~/.bunraku/mcp.json` - home-keyed beside the vault, because an entry names a COMMAND
+session, so the next turn rebuilds the exact tool catalog without restarting Bunzai. The config is
+`~/.bunzai/mcp.json` - home-keyed beside the vault, because an entry names a COMMAND
 THIS MACHINE EXECUTES at the next session build, which is a fact about the machine and not about any
 studio. It is written only through the host-only `/api/mcp/*` routes (a tailed-in device offered
 that surface would hold remote code execution wearing a settings screen), parsed fail-closed per
@@ -522,7 +522,7 @@ reuses it across sessions, restarts it when its recipe changes, and kills every 
 sessions must never each spawn their own copy. A server that fails to connect is a named failure in
 Settings, never a broken session; a tool call that hangs is an error result the model reads, not a
 dead turn; and under the test runner nothing connects at all unless a test opts in by name
-(`BUNRAKU_MCP=on`), because session-building tests share the real `~/.bunraku`.
+(`BUNZAI_MCP=on`), because session-building tests share the real `~/.bunzai`.
 
 External tools wear the name `mcp_<server>_<tool>` (folded to the belt's alphabet, collisions
 dropped and counted) and carry the server's own JSON Schema to the model via `schemaOverride` -
@@ -533,7 +533,7 @@ drift): the danger tier that confirms at the Gate and can at most be allowed for
 `CatalogToolAccess` seam deliberately cannot grant `write`, `delete` or `exec`, and an external
 name that was never enumerated stays on the unknown floor - deny by absence. Effect is `apply`,
 because "we cannot know what it does" must never skip an ask. The serving side never re-exports
-them: `bunraku mcp` builds from `discoverTools()` alone, so two Bunrakus pointed at each other do
+them: `bunzai mcp` builds from `discoverTools()` alone, so two Bunzais pointed at each other do
 not echo. External results cross the same bounded store as first-party observations: large values
 return an opaque handle and peek, while values beyond the store cap are omitted with a named error.
 

@@ -1,7 +1,7 @@
 /**
  * The Logit Bias manager (RoleCall's LogitBiasManager.tsx, from SillyTavern): type a word or phrase, give
  * it a bias from -100 to 100, reorder, remove, import and export the list. Words become token ids with the
- * exact tokenizer of the scene's model (core/tokens/bias.ts); where Bunraku has none for the model this
+ * exact tokenizer of the scene's model (core/tokens/bias.ts); where Bunzai has none for the model this
  * says so and does not send a guessed bias. `[1234, 5678]` raw ids always work, and the raw JSON box is
  * the advanced path: token id to bias, replacing the list.
  */
@@ -114,7 +114,7 @@ export function LogitBiasManager({ entries, model, onChange }: { entries: BiasEn
         </div>
       </div>
       {note && <div className="gp-hint bad" role="alert">{note}</div>}
-      {noTokenizer && hasWords && <div className="gp-hint bad" role="alert" data-part="scene.generation.bias-note">Bunraku has no exact tokenizer for {m || "this model"}, so words cannot be turned into token ids and none of these entries is sent. Write token ids as [1234, 5678].</div>}
+      {noTokenizer && hasWords && <div className="gp-hint bad" role="alert" data-part="scene.generation.bias-note">Bunzai has no exact tokenizer for {m || "this model"}, so words cannot be turned into token ids and none of these entries is sent. Write token ids as [1234, 5678].</div>}
       {entries.map((e, i) => (
         <div key={e.id} className={`gp-bias-row${drag === i ? " drag" : ""}`} draggable onDragStart={() => setDrag(i)} onDragOver={(ev) => { ev.preventDefault(); move(i); }} onDragEnd={() => setDrag(null)}>
           <span className="gp-bias-grip" aria-hidden="true"><Ic name="mdi:drag-vertical" size={16} /></span>
@@ -134,7 +134,7 @@ export function LogitBiasManager({ entries, model, onChange }: { entries: BiasEn
         <div><code>[1234,5678]</code> - raw token ids</div>
         <p><b>Bias values:</b> -100 (suppress) to +100 (boost). Use -50 to discourage, +25 to encourage.</p>
         <p><b>Import/Export:</b> Save your logit bias configurations as JSON files and share them or reuse them across different presets.</p>
-        <p><b>Provider support:</b> OpenAI, OpenRouter, llama.cpp, Ollama, and OpenAI-compatible APIs. Not supported by Anthropic (Claude) or Google (Gemini). Words are tokenized only for models whose tokenizer Bunraku carries (OpenAI&apos;s).</p>
+        <p><b>Provider support:</b> OpenAI, OpenRouter, llama.cpp, Ollama, and OpenAI-compatible APIs. Not supported by Anthropic (Claude) or Google (Gemini). Words are tokenized only for models whose tokenizer Bunzai carries (OpenAI&apos;s).</p>
       </div>
       <Button variant="quiet" size="sm" aria-expanded={raw} onClick={() => setRaw(!raw)}>Raw JSON (advanced)<Ic name={raw ? "mdi:chevron-up" : "mdi:chevron-down"} size={14} /></Button>
       {raw && <RawJson entries={entries} model={m} onChange={onChange} />}

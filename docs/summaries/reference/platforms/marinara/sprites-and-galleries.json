@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/platforms/marinara/sprites-and-galleries",
   "sourcePath": "docs/reference/platforms/marinara/sprites-and-galleries.md",
-  "sourceHash": "sha256:a0ae259249ff934692ca7e84a70226e073ef1917fae518f9452811fe7ca047af",
+  "sourceHash": "sha256:441000177b934e560250ce27cb0ac0f08128815e86d12a0af50fe54d53f6b476",
   "summary": "Documents Marinara sprites, galleries, exact color fields, and roleplay statistics at the pinned Engine revision. Sprites distinguish Facial Expressions, Full-body poses, and call Clips, then cover single and folder upload naming, AI generation prerequisites, transparent-background cleanup, replacement, download, deletion, and arrangement. Galleries are ordered character or persona media with image or optional video lifecycle plus scoped custom-emoji and sticker tagging and validation limits. Color fields are Name Display Color with gradient support, Dialogue Highlight Color, and semi-transparent Message Box Color, including where each renders. Character stats define HP or MP pools and six RPG attributes; persona stats add four status bars and optional RPG attributes, with defaults, visibility, prompt injection, and Character Tracker versus Persona Stats agent ownership. Compatible exports omit these Marinara-only surfaces unless a native package or proven adapter carries them.",
   "topics": [
     "expression full-body clips",
@@ -72,11 +72,11 @@
       "children": []
     },
     {
-      "slug": "bunraku",
-      "title": "Bunraku",
+      "slug": "bunzai",
+      "title": "Bunzai",
       "level": 2,
-      "sourceHash": "sha256:0c5eeec8cf16496bbba33baee183eaceb4175ec56144b0f4f4b7136555c58e8f",
-      "summary": "Bunraku: cross-format cards usually lose sprites, galleries, colors, and stats unless a native Marinara pack is used. Report those losses honestly during conversion. Do not invent PNG or CCv2 fidelity for Marinara-only media grids, emoji scopes, color fields, or game stats that only travel in native packages.",
+      "sourceHash": "sha256:6e13a8dc93d93489c549b645508a875ef2ea69f6b48a8a5b2932c10055c7a16e",
+      "summary": "Bunzai: cross-format cards usually lose sprites, galleries, colors, and stats unless a native Marinara pack is used. Report those losses honestly during conversion. Do not invent PNG or CCv2 fidelity for Marinara-only media grids, emoji scopes, color fields, or game stats that only travel in native packages.",
       "topics": [
         "cross-format loss",
         "native Marinara pack",

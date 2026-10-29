@@ -1,5 +1,5 @@
 /**
- * A guide in the library: RoleCall's `guided_responses` row as Bunraku keeps it (RoleCall
+ * A guide in the library: RoleCall's `guided_responses` row as Bunzai keeps it (RoleCall
  * `lib/content/types.ts` GuideContent, `app/api/content/guides/route.ts`). The Prompting wing's Guides tab
  * lists, makes and edits them; a scene switches some on (ChatStore rule 37) and assembly places them
  * (assembly/guides.ts). `parseGuideInput` is the one place untrusted guide fields are read.

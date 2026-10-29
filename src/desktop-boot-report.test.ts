@@ -1,7 +1,7 @@
 /**
  * Contract for the boot-failure reporter: the packaged app must SAY why it could not start.
  *
- * The defect these cover: Bunraku.exe compiles with --windows-hide-console, which leaves a
+ * The defect these cover: Bunzai.exe compiles with --windows-hide-console, which leaves a
  * console-subsystem binary whose console is hidden at startup, so a boot crash printed its stack into a
  * window that vanished ("pops up the Terminal for a second, then closes without a message").
  *
@@ -41,18 +41,18 @@ function spyNotifier(): { calls: { title: string; body: string; level: string }[
   return { calls, notify: (title, body, level) => calls.push({ title, body, level }) };
 }
 
-const scratch = (): string => join(mkdtempSync(join(tmpdir(), "bunraku-bootlog-")), "boot-error.log");
+const scratch = (): string => join(mkdtempSync(join(tmpdir(), "bunzai-bootlog-")), "boot-error.log");
 
 /**
  * Point bootLogPath() at a throwaway directory for the tests that exercise the real write path. Without
- * this the suite would append to the developer's own %LOCALAPPDATA%\Bunraku\boot-error.log on every run,
+ * this the suite would append to the developer's own %LOCALAPPDATA%\Bunzai\boot-error.log on every run,
  * seeding a diagnostic file with failures that never happened.
  */
 function withScratchHome<T>(run: () => T): T {
-  const home = mkdtempSync(join(tmpdir(), "bunraku-boothome-"));
+  const home = mkdtempSync(join(tmpdir(), "bunzai-boothome-"));
   // HOME included (B28): appDataDir()'s darwin branch reads HOME, not LOCALAPPDATA/XDG_STATE_HOME,
   // and bootLogPath() now calls appDataDir() on every platform - without this, a run on a real Mac
-  // would append to the developer's actual ~/Library/Application Support/Bunraku/boot-error.log.
+  // would append to the developer's actual ~/Library/Application Support/Bunzai/boot-error.log.
   const keys = ["LOCALAPPDATA", "XDG_STATE_HOME", "HOME"] as const;
   const saved = keys.map((k) => [k, process.env[k]] as const);
   for (const k of keys) process.env[k] = home;
@@ -105,8 +105,8 @@ describe("boot log", () => {
   test("the log never lives under the studio folder", () => {
     // Resolving the studio folder is itself a boot step that can throw (resolve-dir renames
     // directories), so a report written there would be lost in exactly the case it is needed.
-    expect(bootLogPath()).not.toContain("Bunraku Studio");
-    expect(bootLogPath()).toContain("Bunraku");
+    expect(bootLogPath()).not.toContain("Bunzai Studio");
+    expect(bootLogPath()).toContain("Bunzai");
   });
 
   // B28: bootLogPath() re-derived appDataDir()'s win32/else split by hand and dropped the darwin
@@ -131,7 +131,7 @@ describe("fatal boot failure", () => {
     expect(title).toContain("could not start");
     expect(body).toContain("no free port");
     // The one instruction that works even when nothing of ours ran: an inherited console persists.
-    expect(body).toContain("Bunraku.exe");
+    expect(body).toContain("Bunzai.exe");
     expect(body).toContain("PowerShell");
   });
 

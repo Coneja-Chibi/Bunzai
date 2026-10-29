@@ -1,8 +1,8 @@
 /*
- * Bunraku design system: scenes.html ("scenes.list"). The cast rail + stage panel beside the
+ * Bunzai design system: scenes.html ("scenes.list"). The cast rail + stage panel beside the
  * stage, Fan Favorites, recent rows, folders, the Continue hero + preview, the scene grid, the
  * character and folder header states, the empty stage, the card menu and cut confirm, and the
- * attract overlay. Prefix: scn-. No tabs (Bunraku has no group scenes). Tokens only.
+ * attract overlay. Prefix: scn-. No tabs (Bunzai has no group scenes). Tokens only.
  */
 .scn-root { position: relative; display: flex; flex-direction: column; min-height: 100%; container-type: inline-size; }
 .scn-body { flex: 1; min-height: 0; display: flex; align-items: stretch; }

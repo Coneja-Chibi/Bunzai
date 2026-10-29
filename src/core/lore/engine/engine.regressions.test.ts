@@ -49,7 +49,7 @@ describe("an excludeRecursion entry can never be woken by recursion", () => {
 describe("a vectorized entry and recursion", () => {
   // FIXED: wake.ts (read by the Workbench lorebook editor's entry-rail wake map and web-view
   // recursion graph) hardcoded "vectorized entries never take part in recursion", while the real
-  // runtime engine (engine.ts/recursion.ts) let them fire unconditionally - the two Bunraku
+  // runtime engine (engine.ts/recursion.ts) let them fire unconditionally - the two Bunzai
   // modules disagreed with no written tie-breaker. The owner's call: support BOTH as a user choice
   // (LorebookBody.vectorizedRecursion, entities/lorebook/
   // schema.ts), defaulting to true - today's ENGINE behavior, unchanged for every existing book.

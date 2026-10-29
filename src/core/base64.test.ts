@@ -4,7 +4,7 @@ import { base64ToBytes, base64ToUtf8, bytesToBase64, utf8ToBase64 } from "./base
 
 describe("base64", () => {
   test("round-trips UTF-8 without Buffer", () => {
-    expect(base64ToUtf8(utf8ToBase64("Bunraku / こんにちは"))).toBe("Bunraku / こんにちは");
+    expect(base64ToUtf8(utf8ToBase64("Bunzai / こんにちは"))).toBe("Bunzai / こんにちは");
   });
 
   test("round-trips bytes across chunk boundaries", () => {

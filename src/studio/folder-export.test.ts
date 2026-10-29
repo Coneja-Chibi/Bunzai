@@ -48,7 +48,7 @@ const bodies: Record<StudioEntityKind, (name: string) => unknown> = {
 };
 const piece = (kind: StudioEntityKind, id: string, name: string) => ({ schemaVersion: CANONICAL_SCHEMA_VERSION, kind, id, body: bodies[kind](name) });
 
-const temp = (): string => tempDirSync("bunraku-export-");
+const temp = (): string => tempDirSync("bunzai-export-");
 const library = (): { content: ContentStore; state: StateStore } => ({ content: createContentStore(memoryDocumentBackend()), state: memoryStateStore() });
 const roomy = { freeSpace: () => Number.MAX_SAFE_INTEGER };
 

@@ -1,5 +1,5 @@
 /**
- * The World wing's Lorebook tab: RoleCall's LorebookPanel on Bunraku's library, drawn to its
+ * The World wing's Lorebook tab: RoleCall's LorebookPanel on Bunzai's library, drawn to its
  * layout (scene-lore-books.tsx, scene-lore-entries.tsx, scene-lore-entry.tsx). Switching a book
  * on/off, adding one, or removing one this scene added is this scene's own choice (ChatStore rule 20)
  * and saves at once through use-scene-lore.ts, the one writer the Control Booth shares, one write

@@ -6,7 +6,7 @@
  * fail in the field: a server that works, a tool that errors, a command that does not exist, and the
  * belt assembly that turns all of it into exact-name egress entries.
  *
- * BUNRAKU_HOME points at a temporary directory throughout so tests never modify a developer's
+ * BUNZAI_HOME points at a temporary directory throughout so tests never modify a developer's
  * actual MCP configuration or leak the fake server into later sessions.
  */
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
@@ -39,15 +39,15 @@ let home = "";
 let savedHome: string | undefined;
 
 beforeAll(async () => {
-  savedHome = process.env["BUNRAKU_HOME"];
-  home = await mkdtemp(join(tmpdir(), "bunraku-mcp-"));
-  process.env["BUNRAKU_HOME"] = home;
+  savedHome = process.env["BUNZAI_HOME"];
+  home = await mkdtemp(join(tmpdir(), "bunzai-mcp-"));
+  process.env["BUNZAI_HOME"] = home;
 });
 
 afterAll(async () => {
   stopAllMcp();
-  if (savedHome === undefined) delete process.env["BUNRAKU_HOME"];
-  else process.env["BUNRAKU_HOME"] = savedHome;
+  if (savedHome === undefined) delete process.env["BUNZAI_HOME"];
+  else process.env["BUNZAI_HOME"] = savedHome;
   await rm(home, { recursive: true, force: true });
 });
 

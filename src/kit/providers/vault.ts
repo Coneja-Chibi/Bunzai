@@ -30,7 +30,7 @@ export interface Vault {
 
 const EMPTY: Vault = { providers: [], activeId: null };
 
-// In-memory cache of the decrypted vault, keyed by path so a changed BUNRAKU_HOME (tests, portable
+// In-memory cache of the decrypted vault, keyed by path so a changed BUNZAI_HOME (tests, portable
 // installs) invalidates it. This keeps the key unlocked once per process rather than spawning the
 // OS keystore (a PowerShell DPAPI call) on every turn; the plaintext lives in process memory only.
 let cache: { path: string; vault: Vault } | null = null;
@@ -42,7 +42,7 @@ let cache: { path: string; vault: Vault } | null = null;
  * Recovery can be triggered by ANY caller - a provider-backed turn calling resolveProviderConfig
  * just as easily as the settings screen - and writeVault replaces the cached Vault wholesale on the
  * next save. Carrying the notice only on that one object meant the single account of where a user's
- * keys went could be overwritten before they ever saw it. Keyed by path so a relocated BUNRAKU_HOME
+ * keys went could be overwritten before they ever saw it. Keyed by path so a relocated BUNZAI_HOME
  * cannot inherit the previous location's incident.
  */
 let recovery: { path: string; notice: string } | null = null;

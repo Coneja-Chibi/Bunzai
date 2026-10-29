@@ -28,7 +28,7 @@ export const vera = testCharacter("vera", [], {
 });
 
 export async function chatRouteRig() {
-  const root = await mkdtemp(join(tmpdir(), "bunraku-chats-route-"));
+  const root = await mkdtemp(join(tmpdir(), "bunzai-chats-route-"));
   roots.push(root);
   const library = createLibrary(root, { vault: fakeComputer(), sessionsDir: join(root, "sessions") });
   libraries.push(library);

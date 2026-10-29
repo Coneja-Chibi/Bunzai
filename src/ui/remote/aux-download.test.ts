@@ -23,7 +23,7 @@ import {
 } from "./aux-download";
 import { installAuxSidecar, auxSidecarPath, removeAuxSidecar, auxSidecarInstalled, readAuxMarker } from "./aux-install";
 
-const REPO = "Coneja-Chibi/Bunraku";
+const REPO = "Coneja-Chibi/Bunzai";
 const payload = new TextEncoder().encode("pretend this is 31MB of Go");
 const digest = createHash("sha256").update(payload).digest("hex");
 const pin = (over: Partial<SidecarPin> = {}): SidecarPin => ({
@@ -46,7 +46,7 @@ const ASSET_HOST = "https://release-assets.githubusercontent.com/x/y?sig=abc";
 describe("the URL is built, never interpolated blindly", () => {
   test("points at the release asset on github.com", () => {
     expect(auxAssetUrl(REPO, pin())).toBe(
-      "https://github.com/Coneja-Chibi/Bunraku/releases/download/v0.1.26/sidecar-windows-x64.exe",
+      "https://github.com/Coneja-Chibi/Bunzai/releases/download/v0.1.26/sidecar-windows-x64.exe",
     );
   });
 
@@ -191,7 +191,7 @@ describe("size is bounded", () => {
 describe("installing is atomic", () => {
   /** Redirect appDataDir() at a throwaway folder so tests never touch the real install location. */
   async function withScratchHome<T>(run: () => Promise<T>): Promise<T> {
-    const home = mkdtempSync(join(tmpdir(), "bunraku-aux-"));
+    const home = mkdtempSync(join(tmpdir(), "bunzai-aux-"));
     const keys = ["LOCALAPPDATA", "XDG_STATE_HOME", "HOME"] as const;
     const saved = keys.map((k) => [k, process.env[k]] as const);
     for (const k of keys) process.env[k] = home;

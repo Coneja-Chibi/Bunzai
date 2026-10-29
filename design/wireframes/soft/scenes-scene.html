@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="tokens-soft.css">
 <link rel="stylesheet" href="soft-parts.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
  * The scene page (src/ui/apps/scenes/scene-page.tsx, scene-bubble.tsx, scene-cuts.tsx, scene-takes.tsx,
@@ -272,7 +272,7 @@ textarea.editbox { display: block; width: 100%; min-height: 90px; background: va
 
 <div id="app">
   <nav class="s-dock" style="--pink: var(--deck-pack); --ink: var(--stage-ink)">
-    <div class="brand"><svg width="28" height="28"><use href="#bun"/></svg>bunraku</div>
+    <div class="brand"><svg width="28" height="28"><use href="#bun"/></svg>bunzai</div>
     <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-wand"/></svg></i><b>Workbench</b></div>
     <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-globe"/></svg></i><b>Library</b></div>
     <div class="s-app c-scenes on"><i><svg width="16" height="16"><use href="#i-chat"/></svg></i><b>Scenes</b></div>
@@ -406,7 +406,7 @@ textarea.editbox { display: block; width: 100%; min-height: 90px; background: va
                 <button type="button" class="del" title="Delete"><svg><use href="#i-trash"/></svg></button>
               </div>
             </div>
-            <div class="cutoff" data-only="resumed"><svg><use href="#i-alert"/></svg><span>Cut off when Bunraku closed. <small>What arrived is kept.</small></span><button type="button">Regenerate</button></div>
+            <div class="cutoff" data-only="resumed"><svg><use href="#i-alert"/></svg><span>Cut off when Bunzai closed. <small>What arrived is kept.</small></span><button type="button">Regenerate</button></div>
             <div class="meta"><span class="mdl">claude-opus-5-5 &middot; 2.9s</span><span class="swc"><button type="button" disabled title="No previous version"><svg><use href="#i-left"/></svg></button><span class="ct"><span class="n">1</span><span class="sl">/</span><span>1</span></span><button type="button" title="Regenerate"><svg><use href="#i-redo"/></svg></button></span></div>
           </div>
         </div>
@@ -525,7 +525,7 @@ textarea.editbox { display: block; width: 100%; min-height: 90px; background: va
   <button data-s="noconn">No connection</button><button data-s="regen">Regenerating</button><button data-s="newswipe">New version landed</button><button data-s="browse">Browsing versions</button>
   <button data-theme-switch>Theme</button>
 </div>
-<div class="wf-note" id="wfnote">The scene page (scene-page.tsx, scene-bubble.tsx, scene-cuts.tsx, scene-takes.tsx, scene-card.tsx, scene-turn-parts.tsx, use-scene-turn.ts). Header: back, name, tagline, the take pill (opens Scene Takes), the Update badge when the Library holds a newer card. No gear, no live dot, no Compendium book, no /BTW: the source does not build them. Message actions: Edit, Copy, Regenerate (last reply only), More &rarr; Branch from here (n&gt;1), Delete &rarr; Delete this message (instant, leaves a restore line) or Delete this &amp; all after (confirms first, Shift skips). Composer: textarea and Send/Stop only; no + tools button (not built). Turn states: Starting chip, the reply glowing in with a caret, Stop (keeps what arrived), the SwipeCounter (back/count/Regenerate-or-next, a "new" badge when a version landed while you looked away), the failure card (draft shown, not saved, Retry), Bunraku's "scene changed while it answered" card (Discard or Add it at the end), and a crash cut-off line with Regenerate. No connection points the capsule at the AI wing.</div>
+<div class="wf-note" id="wfnote">The scene page (scene-page.tsx, scene-bubble.tsx, scene-cuts.tsx, scene-takes.tsx, scene-card.tsx, scene-turn-parts.tsx, use-scene-turn.ts). Header: back, name, tagline, the take pill (opens Scene Takes), the Update badge when the Library holds a newer card. No gear, no live dot, no Compendium book, no /BTW: the source does not build them. Message actions: Edit, Copy, Regenerate (last reply only), More &rarr; Branch from here (n&gt;1), Delete &rarr; Delete this message (instant, leaves a restore line) or Delete this &amp; all after (confirms first, Shift skips). Composer: textarea and Send/Stop only; no + tools button (not built). Turn states: Starting chip, the reply glowing in with a caret, Stop (keeps what arrived), the SwipeCounter (back/count/Regenerate-or-next, a "new" badge when a version landed while you looked away), the failure card (draft shown, not saved, Retry), Bunzai's "scene changed while it answered" card (Discard or Add it at the end), and a crash cut-off line with Regenerate. No connection points the capsule at the AI wing.</div>
 
 <script>
 (function () {

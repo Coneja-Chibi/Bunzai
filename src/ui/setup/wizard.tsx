@@ -112,7 +112,7 @@ const CSS = `
 function Lockup(): JSX.Element {
   return (
     <span className="lock">
-      <svg viewBox="0 0 184 171" aria-label="Bunraku">
+      <svg viewBox="0 0 184 171" aria-label="Bunzai">
         {/* hardcode-ok: locked brand mark, always rose, not a themed surface */}
         <g fill="var(--rose)">
           <path d="M0 12 51 0 117 171 82 136Z" />
@@ -123,7 +123,7 @@ function Lockup(): JSX.Element {
           <path d="m140 29 11 4-38 68-8 10Z" />
         </g>
       </svg>
-      <span className="txt">Bunraku</span>
+      <span className="txt">Bunzai</span>
       <span className="quad" />
     </span>
   );
@@ -290,7 +290,7 @@ function FinalScreen({ steps, draft, onOpen }: { steps: LoadedStep[]; draft: Set
           ))}
         </div>
         <Button variant="primary" onClick={onOpen}>
-          Open Bunraku
+          Open Bunzai
           <span className="q2" />
         </Button>
         <p className="change">Everything here can change later, whenever you want.</p>

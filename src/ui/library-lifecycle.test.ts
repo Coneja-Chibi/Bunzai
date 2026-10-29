@@ -24,9 +24,9 @@ afterEach(async () => {
   await Promise.all(dirs.splice(0).map(removeTempDir));
 });
 const studio = (): string => {
-  const d = mkdtempSync(join(tmpdir(), "bunraku-library-life-"));
+  const d = mkdtempSync(join(tmpdir(), "bunzai-library-life-"));
   dirs.push(d);
-  return join(d, "Bunraku Studio");
+  return join(d, "Bunzai Studio");
 };
 const card = (id: string) =>
   JSON.stringify({ schemaVersion: CANONICAL_SCHEMA_VERSION, kind: "character", id, body: { identity: { name: id }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {} } });

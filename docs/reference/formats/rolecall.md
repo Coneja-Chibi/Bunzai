@@ -13,7 +13,7 @@ RoleCall is Vaudeville Studios' own roleplay client. It has no wire-distinct "RC
 character serializes as an ordinary Character Card V2/V3 (PNG `chara`/`ccv3` chunk or bare JSON), with
 every RC-native field riding inside `data.extensions.rolecall`. Its lorebook is a dedicated v1 export
 envelope. Its persona, regex-script, and preset exports are separate JSON shapes. Because RoleCall is Vaudeville's
-own product, its source can be read and ported freely, unlike the GPL-licensed formats bunraku treats as
+own product, its source can be read and ported freely, unlike the GPL-licensed formats bunzai treats as
 interop-facts-only.
 
 One folder, `src/formats/rolecall/`, default-exports seven codecs:
@@ -69,7 +69,7 @@ structurally. `exportDate` is optional for detection and import. This envelope s
 collide with the SillyTavern worldbook, which has a top-level `entries` object and no `lorebook` wrapper at
 all - no firewall is needed between the two lorebook codecs.
 
-The compendium export (`rolecall-compendium`, `compendium.ts`) is a different, flat file: `format: "rolecall-compendium"` or a `compendium-` schemaVersion, a `lorebook` object, and the entries as raw database rows at the top level beside `categories`, `tree` and `nodeConstraints`. `detect()` returns `1` for it and `0` for anything else; the v1 lorebook codec returns `0` for it (it has no nested `lorebook.entries`). Reading maps each row's snake_case columns to the canonical entry (a cell of the wrong kind falls back to the field's default, an unknown position or role word too), restores `is_featured` as `metadata.featured`, and keeps the parsed file as the original; writing back overwrites only the columns that changed, so RoleCall-only columns, the tree and the node constraints survive. A Bunraku export carries `tree: null`. Bunraku's Dashboard EXPORT streams this file entry by entry.
+The compendium export (`rolecall-compendium`, `compendium.ts`) is a different, flat file: `format: "rolecall-compendium"` or a `compendium-` schemaVersion, a `lorebook` object, and the entries as raw database rows at the top level beside `categories`, `tree` and `nodeConstraints`. `detect()` returns `1` for it and `0` for anything else; the v1 lorebook codec returns `0` for it (it has no nested `lorebook.entries`). Reading maps each row's snake_case columns to the canonical entry (a cell of the wrong kind falls back to the field's default, an unknown position or role word too), restores `is_featured` as `metadata.featured`, and keeps the parsed file as the original; writing back overwrites only the columns that changed, so RoleCall-only columns, the tree and the node constraints survive. A Bunzai export carries `tree: null`. Bunzai's Dashboard EXPORT streams this file entry by entry.
 
 ## Field map
 
@@ -198,9 +198,9 @@ serializer, not this codec, and code wins.
   twin already used; only a from-scratch background (no prior slot on either) falls back to sniffing the
   ref string itself via `isUrlOrDataRef` (`index.ts:204-206,311-327`).
 - Real RC sprites emit `type:"expression"`, not `type:"emotion"`; the shared asset-role map accepts both
-  spellings and reads either to canonical role `"emotion"` (`assets.ts:69-78,147-148`). bunraku's own test
+  spellings and reads either to canonical role `"emotion"` (`assets.ts:69-78,147-148`). bunzai's own test
   fixtures (as opposed to the samples under `samples/rolecall/`) use the unrealistic `"emotion"` spelling -
-  see `samples/rolecall/SOURCES.md`, "Why these differ from the in-repo bunraku fixtures".
+  see `samples/rolecall/SOURCES.md`, "Why these differ from the in-repo bunzai fixtures".
 - Persona codec (`rolecall-persona`, kind `persona`). The USER-identity entity: `{{user}}`'s voice, first
   person. Two shapes, both claimed at `1.0` (`persona.ts:254-256`): the native `rcpersona` envelope
   (`{ spec: "rolecall_persona", spec_version, data }`, `personaRcExt`/`detectShape` at `persona.ts:48-62`)
@@ -219,7 +219,7 @@ serializer, not this codec, and code wins.
     linkage (`lorebook_id`), and `is_after_dark` - OMITTED, never written `false`, when the rating is not
     explicit or mature (`persona.ts:164-242,238-239`).
   - The load-bearing rule across both shapes: `brief` and `content` never swap - that exact swap was a live
-    RC production bug, fixed and pinned by RC's own persona-roundtrip suite; bunraku replicates the fixed
+    RC production bug, fixed and pinned by RC's own persona-roundtrip suite; bunzai replicates the fixed
     behavior (`persona.ts:1-11`). Legacy library-export wrappers (`{ exportedAt, type, data }` then
     `{ persona }`) unwrap outer-first before shape matching (`unwrapPersonaJson`, `persona.ts:35-41`). A
     missing name fails the parse - never synthesized (`persona.ts:264`).

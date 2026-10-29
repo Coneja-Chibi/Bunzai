@@ -1,7 +1,7 @@
 /**
  * The chat layout the person picked once for every scene (RoleCall's chat appearance, lib/scene/chat-appearance.ts): Full Chat
  * (the wings around the chat) or Messenger (DiscordChrome.tsx). Studio-wide, saved in the app preferences; unset until the
- * chooser saves it, so a scene opened before then shows the chooser instead of the chat. A saved value Bunraku cannot read is
+ * chooser saves it, so a scene opened before then shows the chooser instead of the chat. A saved value Bunzai cannot read is
  * treated as unset (the chooser asks again) rather than guessed.
  */
 

@@ -18,7 +18,7 @@ export interface BiasEntry {
 
 export type BiasTokenizer = "o200k_base" | "cl100k_base";
 
-/** The exact tokenizer for a model, or null when Bunraku has none for it. */
+/** The exact tokenizer for a model, or null when Bunzai has none for it. */
 export function exactTokenizer(model: string): BiasTokenizer | null {
   const family = classifyModelId(model);
   return family === "openai" ? "o200k_base" : family === "openai-legacy" ? "cl100k_base" : null;

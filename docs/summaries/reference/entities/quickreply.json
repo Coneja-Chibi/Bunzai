@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/entities/quickreply",
   "sourcePath": "docs/reference/entities/quickreply.md",
-  "sourceHash": "sha256:424d68d21f61b4114abe2843765dc40a7b524a87286e345840b728e2a48f10bc",
-  "summary": "Quick-reply set entity is the canonical piece for SillyTavern quick-reply sets: CanonicalEntity quickreply with a named list of buttons, each a label and the message pressing it sends, usually a slash-command script that nothing in Bunraku executes. It is a kind so a preset can link one through quickReplyRefs and the Press can print them together. The body keeps what a person authors; every other per-button switch rides extras and the source file rides original, so export writes it back. Its descriptor is kind.ts. It shows as the Quick replies deck with a New quick reply action, the Workbench quick-reply editor, and Kit's create tool; Kit has no editing capabilities for it by design. The sillytavern-quickreply codec reads and writes the files.",
+  "sourceHash": "sha256:e95369a8c94dee37dcdba86bd16ce0caee3872f4ee18404e8a8177a8504bf78c",
+  "summary": "Quick-reply set entity is the canonical piece for SillyTavern quick-reply sets: CanonicalEntity quickreply with a named list of buttons, each a label and the message pressing it sends, usually a slash-command script that nothing in Bunzai executes. It is a kind so a preset can link one through quickReplyRefs and the Press can print them together. The body keeps what a person authors; every other per-button switch rides extras and the source file rides original, so export writes it back. Its descriptor is kind.ts. It shows as the Quick replies deck with a New quick reply action, the Workbench quick-reply editor, and Kit's create tool; Kit has no editing capabilities for it by design. The sillytavern-quickreply codec reads and writes the files.",
   "topics": [
     "CanonicalQuickReplySet",
     "quickReplyRefs",

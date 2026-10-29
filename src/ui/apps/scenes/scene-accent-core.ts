@@ -1,7 +1,7 @@
 /**
  * The scene accent source (RoleCall's stageSettings.accentColorSource, page.tsx:2887-2910): which colour the replies and
  * the scene chrome wear. Character is the default; persona, profile (the user's house accent) and a custom colour are the
- * others. RoleCall's preset source is left out: no Bunraku preset stores an accent. A source is available when it HAS a
+ * others. RoleCall's preset source is left out: no Bunzai preset stores an accent. A source is available when it HAS a
  * colour (RoleCall hid a source whose colour equalled a sentinel hex), and a missing colour paints nothing, so the theme shows.
  */
 import { normalizeHex } from "../../_shared/color-math";

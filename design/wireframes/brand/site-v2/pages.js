@@ -32,7 +32,7 @@
         '<div class="reveal"><span class="eyebrow pink">✦ Now showing · Free forever ✦</span>' +
         '<h1 class="marquee-title t-xxl">Your cast.<br>Your <em class="p">stage.</em></h1>' +
         '<p class="whisper">A little stage for your AI characters, living right on your own computer.</p>' +
-        '<div class="cta-row"><a class="btn btn-rose btn-big" href="#/download"><span class="spark">✦</span> <span data-os-cta>Get Bunraku for Windows</span></a><a class="btn btn-big" href="#/tour">Take the Tour</a></div>' +
+        '<div class="cta-row"><a class="btn btn-rose btn-big" href="#/download"><span class="spark">✦</span> <span data-os-cta>Get Bunzai for Windows</span></a><a class="btn btn-big" href="#/tour">Take the Tour</a></div>' +
         '<p class="os-note" style="margin-top:16px" data-os-note>Also for Mac and Linux · no account needed</p></div>' +
         '<div class="stage reveal" id="stage"><div class="spot"></div><div class="floor"></div>' + window.bunny({ bow: true, cls: "hero-bun" }) +
         '<span class="spark-float" style="left:8%;top:18%">✦</span><span class="spark-float" style="right:6%;top:30%;animation-delay:1.1s">✧</span><span class="spark-float" style="left:18%;top:52%;animation-delay:2s">✶</span></div>' +
@@ -55,7 +55,7 @@
       '<section class="curtain paper" id="c-paper"><div class="wrap"><div class="reveal"><span class="eyebrow">Programme notes</span><h2 class="marquee-title t-xl">Before the <em>lights go down.</em></h2></div><div class="faq reveal">' + faq + "</div></div></section>" +
       // Curtain VI: the finale ticket
       '<section class="curtain finale"><div class="wrap"><div class="reveal"><span class="eyebrow pink">✦ Admit one ✦</span><h2 class="marquee-title t-xl">Take your <em class="p">seat.</em></h2></div>' +
-        '<div class="big-ticket reveal"><div class="main"><div class="adm">ADMIT ONE · FREE FOREVER</div><h3>BUNRAKU</h3><ul><li>Chat with any character, using your own AI.</li><li>Import cards from the apps you already use.</li><li>Everything stays private on your computer.</li></ul></div>' +
+        '<div class="big-ticket reveal"><div class="main"><div class="adm">ADMIT ONE · FREE FOREVER</div><h3>BUNZAI</h3><ul><li>Chat with any character, using your own AI.</li><li>Import cards from the apps you already use.</li><li>Everything stays private on your computer.</li></ul></div>' +
         '<div class="stub"><svg><use href="#tk"/></svg><a class="btn btn-rose" href="#/download">Download</a><span class="serial" data-serial>No. 000142</span></div></div></div></section>' +
       "</div>" + foot;
   };
@@ -104,9 +104,9 @@
 
   P.download = function () {
     return '<div class="wrap"><div class="hero-panel reveal"><div class="bloom"></div><span class="eyebrow">Download</span><h1 class="marquee-title t-xl">Grab your <em>ticket.</em></h1><p class="whisper">Free, open source, and yours to keep.</p></div>' +
-      '<div class="dl-grid"><div class="reveal"><div class="big-ticket" style="margin:0;transform:rotate(-1deg)"><div class="main"><div class="adm" data-dl-adm>ADMIT ONE · WINDOWS</div><h3 data-dl-title>BUNRAKU</h3><ul><li data-dl-ver>Latest version</li><li data-dl-size>One file</li><li>Your library lives in Documents, in Bunraku Studio.</li></ul></div>' +
+      '<div class="dl-grid"><div class="reveal"><div class="big-ticket" style="margin:0;transform:rotate(-1deg)"><div class="main"><div class="adm" data-dl-adm>ADMIT ONE · WINDOWS</div><h3 data-dl-title>BUNZAI</h3><ul><li data-dl-ver>Latest version</li><li data-dl-size>One file</li><li>Your library lives in Documents, in Bunzai Studio.</li></ul></div>' +
       '<div class="stub"><svg><use href="#tk"/></svg><a class="btn btn-rose" data-dl-btn>Download</a><span class="serial">Free forever</span></div></div>' +
-      '<div class="warn-card"><span class="eyebrow">First time opening it</span><p class="explain" style="margin-top:10px">Windows may say it does not recognize Bunraku, because it is new and not signed yet. Choose <b>More info</b>, then <b>Run anyway</b>. Bunraku adds itself to your Start menu the first time it opens.</p></div></div>' +
+      '<div class="warn-card"><span class="eyebrow">First time opening it</span><p class="explain" style="margin-top:10px">Windows may say it does not recognize Bunzai, because it is new and not signed yet. Choose <b>More info</b>, then <b>Run anyway</b>. Bunzai adds itself to your Start menu the first time it opens.</p></div></div>' +
       '<div class="reveal"><span class="eyebrow violet">Every platform</span><div id="plats" style="margin-top:16px"></div><p class="source" data-dl-source></p></div></div></div>' + foot;
   };
 

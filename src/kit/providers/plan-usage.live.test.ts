@@ -1,10 +1,10 @@
 /**
  * Plan usage against the real services.
  *
- * Opt-in only, via BUNRAKU_LIVE_PLAN_USAGE=1, and skipped without a login. This reads somebody's
+ * Opt-in only, via BUNZAI_LIVE_PLAN_USAGE=1, and skipped without a login. This reads somebody's
  * own subscription state. The parsing is
  * covered exhaustively in plan-usage.test.ts; what only a live run can establish is that the shapes
- * this repo parses are still the shapes the services send, and that Bunraku is still allowed to ask
+ * this repo parses are still the shapes the services send, and that Bunzai is still allowed to ask
  * under its own name.
  *
  * That last one is the point. Every community write-up on Anthropic's usage endpoint insists on
@@ -19,7 +19,7 @@ import { guardedFetch } from "./egress";
 import { claudeCredentialsPath, claudeUsage, readClaudeLogin, resetUsageCaches } from "./plan-usage-sources";
 
 const HAVE_CLAUDE = existsSync(claudeCredentialsPath());
-const RUN_LIVE = process.env.BUNRAKU_LIVE_PLAN_USAGE === "1";
+const RUN_LIVE = process.env.BUNZAI_LIVE_PLAN_USAGE === "1";
 
 describe.skipIf(!HAVE_CLAUDE || !RUN_LIVE)("Claude plan usage, live", () => {
   test("reports real windows for the plan on this machine", async () => {
@@ -36,7 +36,7 @@ describe.skipIf(!HAVE_CLAUDE || !RUN_LIVE)("Claude plan usage, live", () => {
     expect(outcome.source).toBe("endpoint");
   }, 60_000);
 
-  test("Bunraku may ask under its OWN name; impersonation is not required", async () => {
+  test("Bunzai may ask under its OWN name; impersonation is not required", async () => {
     const login = await readClaudeLogin();
     if (!login) return;
     const response = await guardedFetch("api.anthropic.com")(
@@ -45,7 +45,7 @@ describe.skipIf(!HAVE_CLAUDE || !RUN_LIVE)("Claude plan usage, live", () => {
         headers: {
           Authorization: `Bearer ${login.accessToken}`,
           "anthropic-beta": "oauth-2025-04-20",
-          "User-Agent": `Bunraku/${APP_VERSION}`,
+          "User-Agent": `Bunzai/${APP_VERSION}`,
         },
       },
     );

@@ -37,14 +37,14 @@ describe("groupPlatforms", () => {
     const platforms = groupPlatforms([
       fmt({ id: "sillytavern", friendly: "SillyTavern", kind: "character" }),
       fmt({ id: "sillytavern-lorebook", friendly: "SillyTavern", kind: "lorebook" }),
-      fmt({ id: "vaud-json", friendly: "Bunraku", native: true }),
+      fmt({ id: "vaud-json", friendly: "Bunzai", native: true }),
       fmt({ id: "novelai-lorebook", friendly: "NovelAI", kind: "lorebook" }),
     ]);
     expect(platforms.map((p) => p.friendly)).toEqual(["NovelAI", "SillyTavern"]);
     const st = platforms.find((p) => p.friendly === "SillyTavern")!;
     expect(st.byKind.character?.id).toBe("sillytavern");
     expect(st.byKind.lorebook?.id).toBe("sillytavern-lorebook");
-    expect(platforms.find((p) => p.friendly === "Bunraku")).toBeUndefined();
+    expect(platforms.find((p) => p.friendly === "Bunzai")).toBeUndefined();
   });
 });
 

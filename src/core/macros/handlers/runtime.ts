@@ -3,7 +3,7 @@
  * ADR-012. System and environment information: max prompt size, mobile flag, last generation type,
  * the chat input field, banned-text and lorebook-outlet markers.
  *
- * `RuntimeContext` fields RoleCall's assembler supplies are not on Bunraku's MacroContext; RoleCall
+ * `RuntimeContext` fields RoleCall's assembler supplies are not on Bunzai's MacroContext; RoleCall
  * reaches them through a cast, kept here as in stats.ts, for the same reason (plain values, not a
  * host surface).
  *

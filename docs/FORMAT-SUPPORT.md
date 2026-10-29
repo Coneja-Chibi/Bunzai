@@ -7,10 +7,10 @@ Generated: 2026-10-29.
 ## How to use
 
 ```bash
-bun run bunraku formats
-bun run bunraku inspect path/to/card.png
-bun run bunraku convert in.png out.json --to sillytavern
-bun run bunraku validate path/to/card.json
+bun run bunzai formats
+bun run bunzai inspect path/to/card.png
+bun run bunzai convert in.png out.json --to sillytavern
+bun run bunzai validate path/to/card.json
 ```
 
 Default portable character shape for thin hosts (C.AI Tools dumps, Crushon import, etc.):
@@ -28,7 +28,7 @@ Default portable character shape for thin hosts (C.AI Tools dumps, Crushon impor
 | `risu` | character | .charx | RisuAI .charx (zip: card.json + assets) |
 | `rolecall` | character | .json | RoleCall character card (v3, png/json) |
 | `sillytavern` | character | .json, .png | SillyTavern character card (v2/v3, png/json) |
-| `vaud-json` | character | .json | Bunraku native (.json) |
+| `vaud-json` | character | .json | Bunzai native (.json) |
 
 ## Lorebooks (7)
 
@@ -132,7 +132,7 @@ Default portable character shape for thin hosts (C.AI Tools dumps, Crushon impor
 
 ## Notes
 
-- Detection is content-sniff, not only extension. Prefer `bunraku label` when unsure.
+- Detection is content-sniff, not only extension. Prefer `bunzai label` when unsure.
 - Same-format round-trips aim for lossless where fixtures prove it (see adapter tests + samples/).
 - Cross-format convert keeps what the target can express; use export honesty in the studio UI for drop notes.
 - Dropped/skipped host-native bags (Character.AI, Crushon): use Default CCv3 via `sillytavern`.

@@ -1,7 +1,7 @@
 /**
  * One Final Cut pass as a scene stores it, and the defaults a pass starts from (RoleCall's PostGenActionConfig and createDefaultPostGenAction,
  * rc lib/post-gen-actions/types.ts:50-175 and profiles.ts:349-501). A flat record with the fields of its own type; the five types are
- * singletons, so a scene holds at most one of each. RoleCall's pre-2026.05 anti-slop fields are not carried (Bunraku has no old data), a
+ * singletons, so a scene holds at most one of each. RoleCall's pre-2026.05 anti-slop fields are not carried (Bunzai has no old data), a
  * model is a Kit connection and model (`connection`, as the Compendium's) where RoleCall keeps a provider id and a model id, and a pass
  * turned Off keeps its settings (`enabled: false`) where RoleCall removes them.
  */

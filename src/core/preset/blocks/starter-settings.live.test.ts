@@ -12,7 +12,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { starterSettings } from "./starter-settings";
 
-const ST_ROOT = process.env.BUNRAKU_ST_ROOT ?? "";
+const ST_ROOT = process.env.BUNZAI_ST_ROOT ?? "";
 const DEFAULT_PRESET = join(ST_ROOT, "default", "content", "presets", "openai", "Default.json");
 const HAVE_ST = existsSync(DEFAULT_PRESET);
 

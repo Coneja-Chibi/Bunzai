@@ -52,7 +52,7 @@ export function ConfirmSwitch({
           </div>
         )}
         <div className={styles.cardBody}>
-          Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunraku
+          Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunzai
           restarts itself when it is ready.
         </div>
         <div className={styles.actions}>
@@ -78,7 +78,7 @@ export function SwitchProgress({ message }: { message: string }): JSX.Element {
           <span className={`${styles.dot} ${styles.busy}`} />
           {message || "Working..."}
         </span>
-        <div className={styles.cardBody}>Do not close Bunraku. It restarts itself when the switch is ready.</div>
+        <div className={styles.cardBody}>Do not close Bunzai. It restarts itself when the switch is ready.</div>
       </>
     </Modal>
   );

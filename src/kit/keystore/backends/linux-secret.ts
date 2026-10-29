@@ -7,7 +7,7 @@
  */
 import { keychainKeyBackend, type Item, type KeyStoreTool } from "./keychain-key";
 
-const attributes = (item: Item) => ["service", "bunraku-kit", "account", item === "key" ? "vault-key" : "vault-key-made"] as const;
+const attributes = (item: Item) => ["service", "bunzai-kit", "account", item === "key" ? "vault-key" : "vault-key-made"] as const;
 
 export const linuxSecretTool: KeyStoreTool = {
   platform: "linux",
@@ -23,7 +23,7 @@ export const linuxSecretTool: KeyStoreTool = {
   async create(run, item, value) {
     // `store` replaces silently, so this runs only under the shared lock file, after a fresh read
     // found nothing (keychain-key.ts).
-    const r = await run("secret-tool", ["store", `--label=Bunraku vault ${item}`, ...attributes(item)], value);
+    const r = await run("secret-tool", ["store", `--label=Bunzai vault ${item}`, ...attributes(item)], value);
     if (r.code !== 0) throw new Error(`keystore: secret-tool store exited ${r.code}: ${r.stderr.trim()}`);
     return "created";
   },

@@ -23,11 +23,11 @@ const reasonText = (reason: StudioDamagedEntry["reason"]): string => {
     case "unreadable-json": return "is not readable JSON";
     case "part-unreadable": return "has a stored part that could not be opened";
     /**
-     * Not "damaged". By the time this shows, every format Bunraku ships has been offered the file
+     * Not "damaged". By the time this shows, every format Bunzai ships has been offered the file
      * and declined it - so the honest statement is that nothing here recognises it, which is a fact
-     * about Bunraku rather than an accusation about somebody's preset.
+     * about Bunzai rather than an accusation about somebody's preset.
      */
-    case "schema-mismatch": return "is not in a format Bunraku recognises";
+    case "schema-mismatch": return "is not in a format Bunzai recognises";
     case "kind-mismatch": return "holds a different kind of piece than this folder is for";
     case "id-mismatch": return "holds a different piece id than its filename";
     case "unusable-filename":
@@ -67,7 +67,7 @@ export function DamageNotice(props: {
           Dismiss
         </Button>
       )}
-      <p>The files are still on disk and Bunraku did not change them.</p>
+      <p>The files are still on disk and Bunzai did not change them.</p>
       <details>
         <summary>Show files and recovery details</summary>
         <VirtualRows pick={false} className="dn-list" rowClassName="dn-row" items={props.entries} keyOf={(entry) => `${entry.kind}:${entry.id}`} estimate={ENTRY_ROW_PX} render={(entry) => (

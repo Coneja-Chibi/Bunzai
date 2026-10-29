@@ -3,7 +3,7 @@
  * character's scenes (the open one marked, with its takes as thread rows and a Scene settings gear) and "New scene", the Active features category (live Prop panels and Regex) with a "+" to the
  * Props program, and the user panel (persona, AI connection, switch persona, Your settings). Loading, failure and the empty copy of the recents are RoleCall's. A scene with unread messages is bold with a count pip (shell/read-marks.ts).
  * The character menu carries Notification settings (this character's choice and the desktop notice) and Hide muted scenes; a scene row has a More button and a right-click menu (use-scene-manage.tsx), and a muted
- * scene wears a ban mark (unread still counts). Swap persona opens the Casting Call above the user panel. Invite participants needs data Bunraku does not have and is not drawn.
+ * scene wears a ban mark (unread still counts). Swap persona opens the Casting Call above the user panel. Invite participants needs data Bunzai does not have and is not drawn.
  */
 import { useState, type JSX, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
 import { Button, IconButton, ListRow } from "../../../../components/button";

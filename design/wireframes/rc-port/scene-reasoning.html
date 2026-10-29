@@ -8,11 +8,11 @@
 <link rel="stylesheet" href="port.css">
 <link rel="stylesheet" href="rc-parts.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
 /*
  * Slice S5: RoleCall's ThinkBlock ("Behind the Scene", ThinkBlock.tsx) in
- * Bunraku's soft tokens. Square corners everywhere, 12px type floor, no glow, no offset shadow.
+ * Bunzai's soft tokens. Square corners everywhere, 12px type floor, no glow, no offset shadow.
  * RC zinc / purple accent -> --z-* aliases below, which resolve from the active theme's --bk-* tokens.
  * A .pane re-points those tokens so two themes can sit side by side on one page.
  */
@@ -95,7 +95,7 @@ body { font-size: 14px; }
 
 /*
  * RC's two cards, matched to ThinkBlock.tsx (both take the character's accent; they differ in weight and material).
- * Mapping (RC -> Bunraku token): character accentColor -> --tone (deck-character); accent used as TEXT (label, icon, chevron,
+ * Mapping (RC -> Bunzai token): character accentColor -> --tone (deck-character); accent used as TEXT (label, icon, chevron,
  * dots) -> --tone mixed 55% toward --bk-text, so it stays readable on paper (RC's text is the raw accent on a dark floor);
  * rgba(accent, n) fills and borders -> color-mix(--tone n%, transparent); rgba(20,18,26,.96) and rgba(10,10,12,.96) native
  * gradient ends -> --bk-surface-ink; rgba(0,0,0,.75) hard shadow -> --bk-surface-ink; zinc-300 / zinc-500 text -> --bk-text-soft / --bk-text-dim;
@@ -166,7 +166,7 @@ body { font-size: 14px; }
 
 <div class="page">
   <h1>Reasoning block, slice S5</h1>
-  <p class="lede">Today Bunraku strips <code>&lt;think&gt;</code> text from the bubble (<span class="cite">src/core/chat-display.ts:83</span>) and stores <code>Generation.reasoning</code> but draws it nowhere. This is RoleCall's "Behind the Scene" block, ported at parity: collapsed-by-default blocks above the reply (native thinking first, tag thinking second, never merged), click to open, a duration line, live while the model is still thinking. Click any block header on this page to open and close it. Use the Theme chip (bottom) to cycle paper, stage and theater.</p>
+  <p class="lede">Today Bunzai strips <code>&lt;think&gt;</code> text from the bubble (<span class="cite">src/core/chat-display.ts:83</span>) and stores <code>Generation.reasoning</code> but draws it nowhere. This is RoleCall's "Behind the Scene" block, ported at parity: collapsed-by-default blocks above the reply (native thinking first, tag thinking second, never merged), click to open, a duration line, live while the model is still thinking. Click any block header on this page to open and close it. Use the Theme chip (bottom) to cycle paper, stage and theater.</p>
 
   <h2>1. Collapsed and expanded</h2>
   <p class="sub">Default is collapsed with a one-line snippet (first sentence, 60 characters, then "..."). The header is the whole click target. Copy shows on hover and while open. The block sits above the reply bubble, inside the same message.</p>
@@ -187,7 +187,7 @@ body { font-size: 14px; }
         <div class="bub"><div class="prose"><p><em>The beam swings out over the water and back.</em> <q>It turned round at noon.</q></p></div></div>
         <div class="meta"><span>Today at 2:42 PM</span><span>claude-opus-5-5 &middot; 6.2s</span></div>
       </div></div>
-      <div class="why"><b>RC:</b> glowing divider then plain-text, italic, pre-wrapped body (<span class="cite">ThinkBlock.tsx:379-420</span>). Bunraku drops the glow; the divider stays as a 1px accent rule. The choice is remembered per block (next section).</div>
+      <div class="why"><b>RC:</b> glowing divider then plain-text, italic, pre-wrapped body (<span class="cite">ThinkBlock.tsx:379-420</span>). Bunzai drops the glow; the divider stays as a 1px accent rule. The choice is remembered per block (next section).</div>
     </div>
   </div>
 
@@ -207,7 +207,7 @@ body { font-size: 14px; }
         <div data-think='{"open":true,"dur":"Thought for 6.2s","src":"Native","text":"The player is waiting on an answer about the boat. She would deflect first, then give a half truth. Start with the lamp, not the words. Her hands are busy, so she does not look up."}'></div>
         <div class="bub"><div class="prose"><p><em>The beam swings out over the water</em><span class="cursor"></span></p></div></div>
       </div></div>
-      <div class="why"><b>RC flaw F11:</b> RC passes the duration only while streaming (<span class="cite">StreamingText.tsx:212</span>); the finished block (<span class="cite">MarkdownMessage.tsx:815-835</span>) never gets it and falls back to a bare "Thought". Bunraku stores it so it survives: new optional <code>Generation.reasoningMs</code>.</div>
+      <div class="why"><b>RC flaw F11:</b> RC passes the duration only while streaming (<span class="cite">StreamingText.tsx:212</span>); the finished block (<span class="cite">MarkdownMessage.tsx:815-835</span>) never gets it and falls back to a bare "Thought". Bunzai stores it so it survives: new optional <code>Generation.reasoningMs</code>.</div>
     </div>
   </div>
   <div class="grid" style="margin-top:16px">
@@ -242,7 +242,7 @@ body { font-size: 14px; }
         <div data-think='{"open":true,"dur":"Thought for 94.3s","src":"Native","text":"Step 1. Re-read the last three turns. The player has now asked about the boat twice, and both times Marguerite changed the subject to the lamp. A third deflection will read as a tic, not a character.\n\nStep 2. What does she know? The relief boat was due on Tuesday. The radio has been dead since the storm front. She has not told the player either fact, and the player has only her word that the supplies are fine.\n\nStep 3. What does she want? She wants the player to stay calm and keep working the rail, because a frightened player leaves the tower, and she cannot keep the light alone through the night.\n\nStep 4. So she cannot lie flatly and cannot confess. The honest middle is a partial truth: the boat is late, but boats are always late in this weather. That is true and it hides the radio.\n\nStep 5. Tone. Clipped, practical, a little dry. No speeches. One physical beat first, one line of speech, then a question handed back so the player carries the next turn.\n\nStep 6. Check against the established facts: kerosene smell, wet wool, brass fittings on the chart table, the beam period of eleven seconds. Use one of them, not all four.\n\nStep 7. Length. Two short paragraphs at most. The player writes one line at a time, so match that rhythm.\n\nStep 8. Draft one: she wipes the glass and says the boat will come when the sea lets it. Too glib. Draft two: she counts the beam aloud, once, and says it is the only clock she trusts. Better, it shows the dead radio without saying it.\n\nStep 9. Final shape: beam beat, the line about the clock, then ask whether the player has eaten. Done."}'></div>
         <div class="bub"><div class="prose"><p><em>She counts the beam under her breath, once, and does not look away from the glass.</em> <q>It is the only clock I trust tonight. Have you eaten?</q></p></div></div>
       </div></div>
-      <div class="why"><b>Setting off.</b> <b>RC:</b> no height limit; the body is <code>whitespace-pre-wrap</code> with no max-height (<span class="cite">ThinkBlock.tsx:391-419</span>), so a 90 second pass pushes the reply off screen. The default stays RC's; the cap is an opt-in Bunraku addition, flagged for approval.</div>
+      <div class="why"><b>Setting off.</b> <b>RC:</b> no height limit; the body is <code>whitespace-pre-wrap</code> with no max-height (<span class="cite">ThinkBlock.tsx:391-419</span>), so a 90 second pass pushes the reply off screen. The default stays RC's; the cap is an opt-in Bunzai addition, flagged for approval.</div>
     </div>
   </div>
 
@@ -256,7 +256,7 @@ body { font-size: 14px; }
         <div class="bub"><div class="nothing">No reply text. The model returned only its thinking, and stopped at the token limit.</div></div>
         <div class="meta"><span>Oct 4, 9:16 PM</span><span>gpt-5.1 &middot; 41.0s</span><span style="color:var(--z-warn)">length</span></div>
       </div></div>
-      <div class="why"><b>Bunraku:</b> Regenerate and the version arrows work as on any reply. The block opens by default here, since it is the only content. <b>RC:</b> code-read only. The reasoning panel and the body are independent (<span class="cite">MarkdownMessage.tsx:815-860</span>); I found no placeholder, so an RC reply like this shows a block over an empty bubble. Not live-checked.</div>
+      <div class="why"><b>Bunzai:</b> Regenerate and the version arrows work as on any reply. The block opens by default here, since it is the only content. <b>RC:</b> code-read only. The reasoning panel and the body are independent (<span class="cite">MarkdownMessage.tsx:815-860</span>); I found no placeholder, so an RC reply like this shows a block over an empty bubble. Not live-checked.</div>
     </div>
     <div class="ex"><div class="tag"><b>Imported chat, no timing</b><span>SillyTavern history</span></div>
       <div class="stage"><div class="msg">
@@ -277,7 +277,7 @@ body { font-size: 14px; }
         <div class="bub"><div class="prose"><p><em>The keeper does not answer.</em></p></div></div>
         <div class="meta"><span>Today at 3:05 PM</span><span>some-model &middot; 1.3s</span></div>
       </div></div>
-      <div class="why"><b>RC:</b> the native block needs <code>nativeReasoning?.trim()</code> (<span class="cite">MarkdownMessage.tsx:815</span>); the tag block needs a non-null merge (<span class="cite">:826</span>, <span class="cite">thinking-tags.ts:587-591</span>). User messages can carry a block too (<span class="cite">ImmersiveMessage.tsx:1095</span>); Bunraku shows it on both roles.</div>
+      <div class="why"><b>RC:</b> the native block needs <code>nativeReasoning?.trim()</code> (<span class="cite">MarkdownMessage.tsx:815</span>); the tag block needs a non-null merge (<span class="cite">:826</span>, <span class="cite">thinking-tags.ts:587-591</span>). User messages can carry a block too (<span class="cite">ImmersiveMessage.tsx:1095</span>); Bunzai shows it on both roles.</div>
     </div>
     <div class="ex"><div class="tag"><b>Both kinds at once</b><span>native first, then the tagged thinking</span></div>
       <div class="stage"><div class="msg">

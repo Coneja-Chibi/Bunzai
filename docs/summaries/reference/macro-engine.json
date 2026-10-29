@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/macro-engine",
   "sourcePath": "docs/reference/macro-engine.md",
-  "sourceHash": "sha256:030bce50eec1ed40b40741541f8b69184a565ef415466be3f823b4fb0ea45aef",
+  "sourceHash": "sha256:03917009ae2660ebbe7901503d8dde828461262e68a9461d292fb97b0f93b130",
   "summary": "RoleCall's macro engine, ported under src/core/macros/ inside the closed world ADR-012 allows. It parses macro templates and evaluates them against a value-only context, producing expanded text plus segments that trace each rendered span back to the authored characters behind it, the contract the editable preview stands on. It behaves as RoleCall's engine does at the pinned commit, proven by a parity test over all 179 entries of RoleCall's own characterization corpus, recorded from RoleCall, plus RoleCall's ported processor and handler tests. Where ADR-012 requires, it differs: the clock, randomness, locale and time zone come from the context, and evaluation is bounded so no cut-off value is stored; four RoleCall families and its interceptors are left out. Callers are the ADR-012 list, now including chat display; codecs and adapters never evaluate, and macro text stays opaque payload at every import and conversion boundary.",
   "topics": [
     "rolecall engine port",
@@ -19,8 +19,8 @@
       "slug": "what-it-does",
       "title": "What it does",
       "level": 2,
-      "sourceHash": "sha256:3a590bef9ded5813953fef71f0e2a78af4b6dde0d56e28068af8a1b6b50671dc",
-      "summary": "It behaves as RoleCall's engine at VAUDEVILLE 68afe385, and rc-parity.test.ts proves it on all 179 entries of RoleCall's recorded corpus: same parse tree, text, errors, variable changes, reads and expansions. RoleCall's processor and handler tests are ported, and unknown macros render as text with an error. Normalization applies RoleCall's rewrites through an offset map. Twenty-five RoleCall families register in RoleCall's order from one closed table, since order decides who owns a shared name; one family of Bunraku's own, registered last, adds read-only mentions, lastmention, tally and seeded odds, matched from escaped words, never author regex, plus tracker for linked trackers. Lazy macros take unevaluated arguments; phases span a preset's prompts. ADR-012 differences: clock, randomness, locale and time zone come from the context; strings, writes, runs and node counts are capped, callers may hand in a deadline (soft for a prompt build, with a Settings box), and after a cap trips nothing runs or is stored cut off; a scan checks every file for ambient reads. Author regex is off unless a caller opts in.",
+      "sourceHash": "sha256:116b2e9eac472c280956793c66b0fbed749031a0948e955d5de75bdbfcb9c1c5",
+      "summary": "It behaves as RoleCall's engine at VAUDEVILLE 68afe385, and rc-parity.test.ts proves it on all 179 entries of RoleCall's recorded corpus: same parse tree, text, errors, variable changes, reads and expansions. RoleCall's processor and handler tests are ported, and unknown macros render as text with an error. Normalization applies RoleCall's rewrites through an offset map. Twenty-five RoleCall families register in RoleCall's order from one closed table, since order decides who owns a shared name; one family of Bunzai's own, registered last, adds read-only mentions, lastmention, tally and seeded odds, matched from escaped words, never author regex, plus tracker for linked trackers. Lazy macros take unevaluated arguments; phases span a preset's prompts. ADR-012 differences: clock, randomness, locale and time zone come from the context; strings, writes, runs and node counts are capped, callers may hand in a deadline (soft for a prompt build, with a Settings box), and after a cap trips nothing runs or is stored cut off; a scan checks every file for ambient reads. Author regex is off unless a caller opts in.",
       "topics": [
         "corpus parity proof",
         "offset mapped rewrites",

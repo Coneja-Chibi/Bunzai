@@ -19,7 +19,7 @@ export const THUMBNAILS_PREFIX = "files/thumbnails/";
 
 /** Never read: the AES key lives only in the user's separate ticket, which we never ask for. */
 export const SECRETS_PREFIX = "secrets/";
-/** Never read: vector rows are raw Float32 bytes and nothing in Bunraku consumes them. */
+/** Never read: vector rows are raw Float32 bytes and nothing in Bunzai consumes them. */
 export const VECTORS_PREFIX = "lancedb/";
 
 /** The table an entry name carries, or null when the entry is not a table dump. */

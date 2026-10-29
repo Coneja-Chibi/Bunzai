@@ -1,7 +1,7 @@
 /**
  * Custom Banks (RoleCall's UserBanksCard.tsx): the banks you wrote for the Anti-Slop pass, kept in your library. Each row has its switch
  * (off keeps the bank, on fires it in every scene's Anti-Slop pass), a view, an edit and a delete that asks twice; "+ New Bank" opens the same
- * form. RoleCall's copy offers asking Orison in /btw to draft one; Bunraku has no such agent, so the line stops at "Author your own bank below."
+ * form. RoleCall's copy offers asking Orison in /btw to draft one; Bunzai has no such agent, so the line stops at "Author your own bank below."
  * Delete is soft: the bank leaves the list and the prompt and the library keeps the record.
  */
 import { useState, type JSX } from "react";

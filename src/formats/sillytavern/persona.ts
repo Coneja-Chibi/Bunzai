@@ -71,7 +71,7 @@ function pickAvatarId(b: StBackup): string {
 }
 
 /**
- * The name Bunraku shows for a persona. ST keys personas by avatar file, so several may share one
+ * The name Bunzai shows for a persona. ST keys personas by avatar file, so several may share one
  * display name ("Chi" x3); the shelf keys on name, so a clash is told apart by the avatar stem.
  * Display only: the sealed backup keeps ST's own names.
  */

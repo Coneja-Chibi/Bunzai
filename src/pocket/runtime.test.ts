@@ -22,11 +22,11 @@ class MemoryStorage implements Storage {
 const themePackage = (id: string, name: string): Promise<ThemePackageInput> => fixtureThemePackage(id, name);
 
 describe("temporary browser studio", () => {
-  const KEYS = ["document", "window", "localStorage", "sessionStorage", "CustomEvent", "__BUNRAKU_POCKET_DATA__"];
+  const KEYS = ["document", "window", "localStorage", "sessionStorage", "CustomEvent", "__BUNZAI_POCKET_DATA__"];
   const original = KEYS.map((k) => [k, Object.getOwnPropertyDescriptor(globalThis, k)] as const);
   let dispose: (() => void) | undefined;
-  const dom = new JSDOM('<!doctype html><meta name="bunraku-runtime" content="browser">', {
-    url: "https://example.test/Bunraku/",
+  const dom = new JSDOM('<!doctype html><meta name="bunzai-runtime" content="browser">', {
+    url: "https://example.test/Bunzai/",
   });
 
   beforeAll(async () => {
@@ -37,13 +37,13 @@ describe("temporary browser studio", () => {
       CustomEvent: dom.window.CustomEvent,
       localStorage: new MemoryStorage(),
       sessionStorage: new MemoryStorage(),
-      __BUNRAKU_POCKET_DATA__: {
+      __BUNZAI_POCKET_DATA__: {
         manifests: [{ id: "library" }],
         setupSteps: ["theme"],
         docsIndex,
         docFigures: [],
         themePackages: { theater: await themePackage("theater", "Theater") },
-        exampleThemePackages: { "bunraku.theme.encore": await themePackage("bunraku.theme.encore", "Encore") },
+        exampleThemePackages: { "bunzai.theme.encore": await themePackage("bunzai.theme.encore", "Encore") },
       },
     });
     globalThis.localStorage.setItem("native-sentinel", "untouched");
@@ -73,19 +73,19 @@ describe("temporary browser studio", () => {
     const packages = await (await fetch("/api/themes/packages")).json() as { id: string; builtIn: boolean }[];
     expect(packages).toEqual([expect.objectContaining({ id: "theater", builtIn: true })]);
     expect(await (await fetch("/api/themes/examples")).json()).toEqual([
-      expect.objectContaining({ id: "bunraku.theme.encore", name: "Encore" }),
+      expect.objectContaining({ id: "bunzai.theme.encore", name: "Encore" }),
     ]);
-    expect(await (await fetch("/api/themes/examples/bunraku.theme.encore/package")).json()).toMatchObject({
-      manifest: { id: "bunraku.theme.encore" }, licenseText: "Test fixture license",
+    expect(await (await fetch("/api/themes/examples/bunzai.theme.encore/package")).json()).toMatchObject({
+      manifest: { id: "bunzai.theme.encore" }, licenseText: "Test fixture license",
     });
     await fetch("/api/settings", {
       method: "PATCH",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ theme: "bunraku.theme.encore" }),
+      body: JSON.stringify({ theme: "bunzai.theme.encore" }),
     });
     expect(await (await fetch("/api/themes/effective")).json()).toMatchObject({ themeId: null, appearance: null, fallbackReason: "not-installed" });
 
-    const inspect = async () => await (await fetch("/api/themes/examples/bunraku.theme.encore/inspect", {
+    const inspect = async () => await (await fetch("/api/themes/examples/bunzai.theme.encore/inspect", {
       method: "POST", headers: { "content-type": "application/json" }, body: "{}",
     })).json() as { preview: { digest: string }; challenge: string };
     const denied = await inspect();
@@ -101,9 +101,9 @@ describe("temporary browser studio", () => {
       body: JSON.stringify({ challenge: approved.challenge, digest: approved.preview.digest, decision: "approve" }),
     });
     expect(installed.status).toBe(200);
-    expect(await (await fetch("/api/themes/effective")).json()).toMatchObject({ themeId: "bunraku.theme.encore", appearance: expect.objectContaining({ shape: expect.any(Object) }) });
+    expect(await (await fetch("/api/themes/effective")).json()).toMatchObject({ themeId: "bunzai.theme.encore", appearance: expect.objectContaining({ shape: expect.any(Object) }) });
     expect(await (await fetch("/api/themes/revoke", {
-      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: "bunraku.theme.encore" }),
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: "bunzai.theme.encore" }),
     })).json()).toEqual({ ok: true });
     expect(await (await fetch("/api/themes/effective")).json()).toMatchObject({ themeId: null, appearance: null, fallbackReason: "revoked" });
     window.removeEventListener(BROWSER_THEME_REVISION_EVENT, onRevision);
@@ -200,7 +200,7 @@ describe("temporary browser studio", () => {
     const unavailableResponse = await fetch("/api/remote/status");
     expect(unavailableResponse.status).toBe(501);
     expect(await unavailableResponse.json()).toEqual({
-      error: "This control needs the installed Bunraku app and is unavailable in the temporary browser studio.",
+      error: "This control needs the installed Bunzai app and is unavailable in the temporary browser studio.",
     });
 
     dispose?.();

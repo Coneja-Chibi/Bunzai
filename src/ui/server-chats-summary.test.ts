@@ -14,7 +14,7 @@ import { apiReq } from "./server-test-rig";
 import type { ChatSummaryState } from "./app-contract-scenes";
 
 setDefaultTimeout(30_000);
-const HOME = join(tmpdir(), `bunraku-summary-route-${randomUUID()}`);
+const HOME = join(tmpdir(), `bunzai-summary-route-${randomUUID()}`);
 const UNLOCK = { passphrase: "summary-route-test" };
 let server: ReturnType<typeof Bun.serve>;
 let localId = "";
@@ -23,7 +23,7 @@ let hold: Promise<void> | null = null;
 let answer: { status: number; content: string } = { status: 200, content: "They watched the storm." };
 
 beforeAll(async () => {
-  process.env.BUNRAKU_HOME = HOME;
+  process.env.BUNZAI_HOME = HOME;
   server = Bun.serve({
     port: 0,
     async fetch(req) {
@@ -42,7 +42,7 @@ beforeAll(async () => {
 });
 afterAll(async () => {
   server.stop(true);
-  delete process.env.BUNRAKU_HOME;
+  delete process.env.BUNZAI_HOME;
   await rm(HOME, { recursive: true, force: true });
 });
 afterEach(cleanupChatRouteRigs);

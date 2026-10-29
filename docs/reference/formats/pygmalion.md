@@ -154,7 +154,7 @@ Pygmalion-to-SillyTavern conversion carries the prose fields into a fresh CCv2 e
 - `metadata` rides raw untouched. Tool provenance (`{ tool: { name, version } }` in community exports) is
   not mapped to any canonical slot. It survives a round-trip only because export clones `raw` and sets
   just the five known keys onto the clone, never touching unknown keys (`index.ts:187-188`).
-- PNG output is deliberately narrow. Only a validated inline PNG portrait becomes a carrier. Bunraku
+- PNG output is deliberately narrow. Only a validated inline PNG portrait becomes a carrier. Bunzai
   does not fetch remote portraits, resolve archive-private references, or transcode JPEG/WebP/GIF for
   this legacy format; JSON export names that loss in its report.
 - One codec, no siblings. There is no Pygmalion lorebook, persona, or regex format: the classic wire never

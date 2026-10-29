@@ -39,7 +39,7 @@ import type { JsonObject } from "../src/stage/contracts/chat-store";
 
 const BUDGET_MS = 100;
 
-const dir = mkdtempSync(join(tmpdir(), "bunraku-perf-"));
+const dir = mkdtempSync(join(tmpdir(), "bunzai-perf-"));
 const results: { action: string; freezeMs: number; totalMs: number }[] = [];
 try {
   const d = openStageDatabase(join(dir, "perf.db"), MIGRATIONS);

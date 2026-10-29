@@ -18,7 +18,7 @@ import { createBridge } from "../../kit/bridge";
 import { createSession } from "../../kit/session";
 import { systemPrompt } from "./server-agent";
 
-const root = mkdtempSync(join(tmpdir(), "bunraku-collections-belt-"));
+const root = mkdtempSync(join(tmpdir(), "bunzai-collections-belt-"));
 afterAll(() => rmSync(root, { recursive: true, force: true }));
 
 test("the session the window runs offers studio_collections to the model", async () => {

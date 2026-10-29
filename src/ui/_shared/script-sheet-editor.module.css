@@ -1,4 +1,4 @@
-/* RoleCall's ScriptSheetEditor.tsx look on Bunraku tokens; the header is the shared RoomHeader. The accent is the
+/* RoleCall's ScriptSheetEditor.tsx look on Bunzai tokens; the header is the shared RoomHeader. The accent is the
    wing's tone (--w) inside a wing and the theme accent anywhere else. */
 .root { --sheet-accent: var(--w, var(--accent)); display: flex; flex: 1; min-height: 0; flex-direction: column; overflow-y: auto; padding: 20px; gap: 12px; color: var(--ink); }
 .discard, .nameRow, .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }

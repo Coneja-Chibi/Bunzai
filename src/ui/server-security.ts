@@ -266,7 +266,7 @@ function refuseForeignRead(req: Request, browsersMustDeclareSite = false): Respo
 /** Requires the per-launch session token on a state-changing method; shared by the gates that have
  *  no richer story to tell about a wrong token (checkApiRequest's own is deliberately richer). */
 function checkToken(req: Request, expected: string): Response | null {
-  const token = req.headers.get("x-bunraku-token") ?? "";
+  const token = req.headers.get("x-bunzai-token") ?? "";
   if (!tokensEqual(token, expected)) return err("forbidden", 403);
   return null;
 }
@@ -288,7 +288,7 @@ export function checkApiRequest(
     const origin = req.headers.get("origin");
     // Same-origin mutations from the app should send Origin. Missing Origin fails closed.
     if (!originAllowed(origin, sec.expectedOrigin)) return err("forbidden", 403);
-    const token = req.headers.get("x-bunraku-token") ?? "";
+    const token = req.headers.get("x-bunzai-token") ?? "";
     /**
      * A PRESENTED-BUT-WRONG TOKEN IS ALMOST ALWAYS A RESTARTED SERVER, and saying so is the whole
      * fix for a trap that cost a full evening. The token is minted per launch and baked into the
@@ -324,7 +324,7 @@ export function checkRemoteApiRequest(
   secret: string,
 ): Response | null {
   if (!sec.token || !secret) return err("server not ready", 503);
-  const presented = req.headers.get("x-bunraku-sidecar-secret") ?? "";
+  const presented = req.headers.get("x-bunzai-sidecar-secret") ?? "";
   if (!tokensEqual(presented, secret)) return err("forbidden", 403);
 
   if (req.method === "GET" || req.method === "HEAD") return refuseForeignRead(req);

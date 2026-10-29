@@ -155,7 +155,7 @@ export function createHandler(
 
     // Trusted loopback listener must never accept sidecar-proxied (remote) traffic; refuse the secret
     // header on ANY path, before routing (not just /api).
-    if (!isRemote && req.headers.get("x-bunraku-sidecar-secret")) return err("refused", 403);
+    if (!isRemote && req.headers.get("x-bunzai-sidecar-secret")) return err("refused", 403);
 
     // Untrusted remote listener: NOTHING is served without the sidecar secret (only the sidecar, which
     // has already gated the caller down to the studio owner, carries it). This replaces the loopback

@@ -181,7 +181,7 @@ describe("the MCP config file is a security boundary", () => {
   test("the file it writes is the config the CLI will read", async () => {
     const path = (await writeMcpConfig("bun", ["a.ts"]))!;
     const written = JSON.parse(await Bun.file(path).text());
-    expect(written.mcpServers.bunraku).toEqual({ command: "bun", args: ["a.ts"] });
+    expect(written.mcpServers.bunzai).toEqual({ command: "bun", args: ["a.ts"] });
   });
 });
 
@@ -191,7 +191,7 @@ describe("the tool allowlist bounds what bypassPermissions grants", () => {
     // prefix means the reachable set cannot grow underneath us.
     const args = cliArgs("sonnet", "SYS", "C:/tmp/mcp.json");
     expect(args[args.indexOf("--allowedTools") + 1]).toBe(`${MCP_TOOL_PREFIX}*`);
-    expect(MCP_TOOL_PREFIX).toBe("mcp__bunraku__");
+    expect(MCP_TOOL_PREFIX).toBe("mcp__bunzai__");
   });
 
   test("a text-only turn grants nothing at all", () => {

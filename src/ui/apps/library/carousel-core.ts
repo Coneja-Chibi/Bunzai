@@ -148,7 +148,7 @@ export interface CardFacts {
 /** A prompt format's card line: what it holds, and the honest note that nothing applies it yet. */
 export function promptFormatWords(parts: readonly string[] | undefined): string {
   const held = parts?.length ? `${parts.join(" and ")}. ` : "";
-  return `${held.charAt(0).toUpperCase()}${held.slice(1)}Used by text-completion connections, which Bunraku does not have yet.`;
+  return `${held.charAt(0).toUpperCase()}${held.slice(1)}Used by text-completion connections, which Bunzai does not have yet.`;
 }
 
 export function cardFacts(e: StudioEntitySummary, meta: ShelfMeta): CardFacts {

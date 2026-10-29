@@ -1,5 +1,5 @@
 /**
- * LeavingGate - the full-window "you are leaving Bunraku" interstitial. Mounted once at the shell so it
+ * LeavingGate - the full-window "you are leaving Bunzai" interstitial. Mounted once at the shell so it
  * covers the dock, tabs, and footer (a hard stop, not a modal). It listens to the link-gate bus: when a
  * rendered external link is clicked, it takes over the window, shows the REAL destination host + url
  * (and warns when the link's visible text named a different host), and only on Continue hands the url
@@ -69,14 +69,14 @@ export function LeavingGate(): JSX.Element | null {
   return (
     <DialogCore
       placement="center"
-      ariaLabel="Leaving Bunraku"
+      ariaLabel="Leaving Bunzai"
       onDismiss={dismiss}
       overlayClassName={styles.scrim}
       className={styles.card}
       dismissOnScrim={false}
     >
-        <div className={styles.kicker}>You are leaving Bunraku</div>
-        <p className={styles.lede}>This link opens in your web browser. Bunraku does not vouch for where it goes.</p>
+        <div className={styles.kicker}>You are leaving Bunzai</div>
+        <p className={styles.lede}>This link opens in your web browser. Bunzai does not vouch for where it goes.</p>
         <div className={styles.badge}>
           {platform ? (
             <span className={styles.tile} style={{ background: platform.color, color: readableInk(platform.color) }}>

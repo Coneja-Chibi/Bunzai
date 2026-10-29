@@ -67,7 +67,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   };
   const [first, ...rest] = input.history;
   // Section 7: the greeting is the opening assistant message. RoleCall rebuilds it from the card by
-  // its stored index; Bunraku stores the chosen greeting as that message, so it reads it back.
+  // its stored index; Bunzai stores the chosen greeting as that message, so it reads it back.
   const greetingSource = first?.role === "assistant" ? first : undefined;
   const history = greetingSource ? rest : input.history;
 

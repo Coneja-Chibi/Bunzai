@@ -37,7 +37,7 @@ describe("ScenePage: the reply notice", () => {
   test("a reply that finishes while the window is away shows New reply from the character, with no message text", async () => {
     const flushSync = await mount(endsOnYou());
     await finish(flushSync, "reply");
-    expect(shown).toEqual([{ title: "Bunraku", options: { body: "New reply from Vera", tag: "chat1" } }]);
+    expect(shown).toEqual([{ title: "Bunzai", options: { body: "New reply from Vera", tag: "chat1" } }]);
     unmount(flushSync);
   });
 

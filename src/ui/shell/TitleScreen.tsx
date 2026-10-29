@@ -29,7 +29,7 @@ export interface TitleScreenProps {
 function ProsceniumTitle({ state, pieces }: { state: TitleState; pieces?: PieceStore }): JSX.Element {
   const { sheetRef, closing, recent, sceneState, enter, continueStory, importPiece, startStory, browseStories } = state;
   return (
-    <section ref={sheetRef} tabIndex={-1} data-part="shell.title" aria-label="Bunraku title screen" className={`${styles.stage} ${closing ? styles.closing : ""}`}>
+    <section ref={sheetRef} tabIndex={-1} data-part="shell.title" aria-label="Bunzai title screen" className={`${styles.stage} ${closing ? styles.closing : ""}`}>
       <div className={styles.scene} style={{
         "--theater-wide": `url("${docAssetUrl("docs/media/velvet-premiere-wide-unlit.png")}")`,
         "--theater-tablet": `url("${docAssetUrl("docs/media/velvet-premiere-tablet-unlit.png")}")`,

@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
 <link rel="stylesheet" href="port.css">
 <script src="../theme.js"></script>
-<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<script>try { if (!localStorage.getItem("bunzai-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
 <style>
   /* ConversationsSidebar */
   .side { width: 300px; background: var(--bg); border-right: 2px solid var(--hard); display: flex; flex-direction: column; min-height: 100vh; }
@@ -171,7 +171,7 @@
 </div>
 <div class="fab" title="New scene">+</div>
 
-<div class="wf-note"><b>Ported from RoleCall /scenes</b>, component by component: ChatCard (4:5 art, signature-color border and offset shadow, corner brackets that grow on hover, the black fade, world and genre line, title, summary, stats, the Alternate Takes rail), StageCard with its curtain bars, RecentChatsList with Recent / This week / Earlier, Smart Folders and Folders, SceneTabNav with accent count badges, the Your Stage placard with its glow eyebrow and brackets, the filter segments, and the column slider (2 to 6). Changed for Bunraku: its dock replaces RC's character rail and floating dock, colors are its tokens (a character's signature color is its deck tone), and body text is Archivo where RC uses Inter. Characters with art show the art where the glyph is. Needs Bunraku's chat loop to have real data.</div>
+<div class="wf-note"><b>Ported from RoleCall /scenes</b>, component by component: ChatCard (4:5 art, signature-color border and offset shadow, corner brackets that grow on hover, the black fade, world and genre line, title, summary, stats, the Alternate Takes rail), StageCard with its curtain bars, RecentChatsList with Recent / This week / Earlier, Smart Folders and Folders, SceneTabNav with accent count badges, the Your Stage placard with its glow eyebrow and brackets, the filter segments, and the column slider (2 to 6). Changed for Bunzai: its dock replaces RC's character rail and floating dock, colors are its tokens (a character's signature color is its deck tone), and body text is Archivo where RC uses Inter. Characters with art show the art where the glyph is. Needs Bunzai's chat loop to have real data.</div>
 
 <script>
   document.getElementById("cols").addEventListener("input", (e) => document.getElementById("grid").style.setProperty("--cols", e.target.value));

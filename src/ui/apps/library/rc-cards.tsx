@@ -18,7 +18,7 @@
  * no button role, so its tool buttons are never controls nested inside another control.
  *
  * WHAT A CARD SAYS IT MUST KNOW. RC's cards carried likes, forks, authors, drafts and edit dates
- * from a cloud. Bunraku has none of that, so those slots say what the studio does know: when the
+ * from a cloud. Bunzai has none of that, so those slots say what the studio does know: when the
  * piece was imported, its source format, the facts the shelves already loaded, and the piece's own
  * words once a peek arrives. Nothing here is a placeholder dressed as data.
  *

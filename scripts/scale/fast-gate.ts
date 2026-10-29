@@ -1,7 +1,7 @@
 /**
  * S0's fast gate: COUNTS ONLY, no timings,
  * CPU-independent, meant to run under 60 s. Wires the measures that exist TODAY, against a
- * throwaway `BUNRAKU_HOME` and studio folder (never the real ones):
+ * throwaway `BUNZAI_HOME` and studio folder (never the real ones):
  *
  * 1. body/cell opens for the Library list, via the counting cipher `scripts/perf-count-cipher.ts`
  *    already ships (`perf-gate-summaries.ts`'s own pattern).
@@ -22,9 +22,9 @@ import { join } from "node:path";
 
 // Every per-user location this run could touch, redirected before any module that reads them loads
 // (the same list `scripts/test-sandbox.ts` and `scripts/perf-browser.ts` use). This script never
-// opens the real studio or the real BUNRAKU_HOME.
-const sandbox = mkdtempSync(join(tmpdir(), "bunraku-scale-fast-"));
-process.env["BUNRAKU_HOME"] = join(sandbox, "home");
+// opens the real studio or the real BUNZAI_HOME.
+const sandbox = mkdtempSync(join(tmpdir(), "bunzai-scale-fast-"));
+process.env["BUNZAI_HOME"] = join(sandbox, "home");
 process.env["LOCALAPPDATA"] = join(sandbox, "local-app-data");
 process.env["CODEX_HOME"] = join(sandbox, "codex");
 process.env["CLAUDE_CONFIG_DIR"] = join(sandbox, "claude");

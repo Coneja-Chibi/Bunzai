@@ -25,12 +25,12 @@ tests are ported too; each test file's header names any RoleCall case it leaves 
   RoleCall's order from one closed table (`catalog.ts`, `registry.ts`), because the order decides
   which family owns a name two of them claim. Lazy macros (`{{foreach}}`, `{{when_all}}`,
   `{{when_any}}`, `{{whenempty}}`, `{{ifset}}`, `{{switch}}`, `{{and}}`, `{{or}}`) receive
-  their arguments unevaluated; the last three gained this in Bunraku only (bug fix 2026-09-30,
+  their arguments unevaluated; the last three gained this in Bunzai only (bug fix 2026-09-30,
   worth porting back to RC, which still evaluates them eagerly).
   Phases (`{{phase::post_render::...}}`, `{{defer::...}}`) are
   orchestrated across a preset's prompts by `processPhasedBlocks`. RoleCall's game, mechanics,
   visual novel, and off-band families are not ported; their names are unknown macros here.
-- **Bunraku's own macros.** One family of Bunraku's (`handlers/chat-watch.ts`), registered last so it never takes a
+- **Bunzai's own macros.** One family of Bunzai's (`handlers/chat-watch.ts`), registered last so it never takes a
   RoleCall name, reads the run's messages and changes nothing: `{{mentions::word::N}}` counts a word or phrase in the
   last N messages (all without N), `{{lastmention::word}}` says how many messages ago it was last said (1 is the
   latest, empty when never), `{{tally::a,b,c::N}}` names the one mentioned most (the first listed on a tie, empty when
@@ -49,7 +49,7 @@ tests are ported too; each test file's header names any RoleCall case it leaves 
   trackers to the context (`MacroContext.trackers`, by lowercased name); a tracker that is not linked, or an unknown field or
   row, is a macro error that names it.
 - **Unknown macros** render as their reconstructed text plus an error entry, never silence and never
-  a throw. RoleCall's prompt assembler strips whatever is left from the prompt; Bunraku's assembler
+  a throw. RoleCall's prompt assembler strips whatever is left from the prompt; Bunzai's assembler
   is not ported yet.
 - **Variables.** Local and global maps with RoleCall's scopes (`session:`, `char:`, `arc:`, `scene:`,
   `global:`); changes apply at once and are listed as side effects. `readOnly` turns writes into

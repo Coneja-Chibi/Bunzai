@@ -2,31 +2,31 @@
 id: guide/platforms/rolecall
 title: RoleCall
 audience: user
-summary: Bringing RoleCall character cards and lorebooks into Bunraku and back out.
+summary: Bringing RoleCall character cards and lorebooks into Bunzai and back out.
 tags: [platform, rolecall, import, export, convert]
 related: [guide/converting, guide/importing, reference/formats/rolecall]
 ---
 
 # RoleCall
 
-RoleCall is Vaudeville's own roleplay client, and its card carries more than a plain character sheet: a casting card of identity details, a full presentation layer (colors, background, spoilers), and a sprite pack ride alongside the usual fields. This page shows you how to bring RoleCall cards and lorebooks into Bunraku, edit them, and send them back out, whether to RoleCall again or to another app.
+RoleCall is Vaudeville's own roleplay client, and its card carries more than a plain character sheet: a casting card of identity details, a full presentation layer (colors, background, spoilers), and a sprite pack ride alongside the usual fields. This page shows you how to bring RoleCall cards and lorebooks into Bunzai, edit them, and send them back out, whether to RoleCall again or to another app.
 
 @fig journey
 
-## What Bunraku reads
+## What Bunzai reads
 
-Bunraku reads the two file types RoleCall gives you:
+Bunzai reads the two file types RoleCall gives you:
 
 - **Character cards**, as a `.png` (RoleCall tucks the card text inside the image) or as a plain `.json` file. Both hold a Character Card v2 or v3 with an extra block that carries the casting card, the presentation layer, and the sprite pack.
 - **Lorebooks**, as a `.json` file (RoleCall's own export format).
 
-To bring one in, drag the file onto the Library and drop it anywhere in the room. Bunraku reads the file and shows you a plain-words receipt: what it read, and what it kept. It tells a RoleCall character card apart from a RoleCall persona card even though the two are shaped almost identically, because it reads inside the file for what marks a card as a character, not the filename or a guess. For the full walkthrough, see [the importing guide](../importing.md).
+To bring one in, drag the file onto the Library and drop it anywhere in the room. Bunzai reads the file and shows you a plain-words receipt: what it read, and what it kept. It tells a RoleCall character card apart from a RoleCall persona card even though the two are shaped almost identically, because it reads inside the file for what marks a card as a character, not the filename or a guess. For the full walkthrough, see [the importing guide](../importing.md).
 
 ![Importing a card](../../media/shot-import-drop.png)
 
 ## What comes across cleanly
 
-Importing loses nothing. Bunraku keeps a complete copy of the original card, then lifts the parts you actually work with into fields you can see and edit directly:
+Importing loses nothing. Bunzai keeps a complete copy of the original card, then lifts the parts you actually work with into fields you can see and edit directly:
 
 - Name, tagline, and description
 - Casting card details: full name, title, age, and pronouns
@@ -41,13 +41,13 @@ Importing loses nothing. Bunraku keeps a complete copy of the original card, the
 - The sprite / expression pack
 - An embedded lorebook, if the card carries one, with its entries, keywords, and placement
 
-The card's picture is kept too, and Bunraku shows it as the piece's portrait. So after an import, everything that was in the card is still there: the fields above are ready to edit, and the rest is held safely in the background.
+The card's picture is kept too, and Bunzai shows it as the piece's portrait. So after an import, everything that was in the card is still there: the fields above are ready to edit, and the rest is held safely in the background.
 
 ## What changes when you convert to another app
 
 This is the honest part, and it is simple once you see the rule.
 
-A same-app round-trip keeps everything. Import a RoleCall card, edit it, and export it back to RoleCall, and you get everything back, down to the byte, because Bunraku kept the original card and only re-wrote the fields you changed.
+A same-app round-trip keeps everything. Import a RoleCall card, edit it, and export it back to RoleCall, and you get everything back, down to the byte, because Bunzai kept the original card and only re-wrote the fields you changed.
 
 Converting to a different app is where things drop. Only the shared character crosses over. RoleCall's private extras, the casting card and the presentation layer built for RoleCall's own casting-card view, are left behind on purpose.
 
@@ -62,11 +62,11 @@ Converting to a different app is where things drop. Only the shared character cr
 | Linked lorebook | Kept | Comes across if that app has lorebooks |
 | Internal ids, and anything else RoleCall stores that has no shared home | Kept | Dropped |
 
-"Another app" here means a genuinely different app such as SillyTavern, Agnai, Backyard, Risu, or Pygmalion. The drop is deliberate: Bunraku never blind-copies RoleCall's private casting and presentation layer into another app's file. Where the other app simply has fewer slots than RoleCall, whatever it cannot hold is dropped on its side, not yours.
+"Another app" here means a genuinely different app such as SillyTavern, Agnai, Backyard, Risu, or Pygmalion. The drop is deliberate: Bunzai never blind-copies RoleCall's private casting and presentation layer into another app's file. Where the other app simply has fewer slots than RoleCall, whatever it cannot hold is dropped on its side, not yours.
 
 ## Editing on the Workbench
 
-Send a piece from the Library to the Workbench and it opens as a tab. There you can edit the name, description, personality, scenario, first message, and example messages. When you save, Bunraku writes the whole card back, so the parts you did not touch stay exactly as they were.
+Send a piece from the Library to the Workbench and it opens as a tab. There you can edit the name, description, personality, scenario, first message, and example messages. When you save, Bunzai writes the whole card back, so the parts you did not touch stay exactly as they were.
 
 ![The Workbench](../../media/shot-workbench.png)
 
@@ -74,14 +74,14 @@ Send a piece from the Library to the Workbench and it opens as a tab. There you 
 
 When a piece is ready to leave, stage it for the Press: right-click it and choose "Stage for the Press," or drop it in from the Press's own rail. The Press works only the pieces you staged, and each run exports to one target format that you pick.
 
-Bunraku writes RoleCall cards as `.json`. RoleCall reads a `.json` card the same as a `.png` one, so it will import fine. If a piece carries a linked lorebook, it rides along with the character automatically. You can also ask for a plain `.txt` or `.md` copy when you just want to read the text. Choosing a different app as the target applies the drop story above.
+Bunzai writes RoleCall cards as `.json`. RoleCall reads a `.json` card the same as a `.png` one, so it will import fine. If a piece carries a linked lorebook, it rides along with the character automatically. You can also ask for a plain `.txt` or `.md` copy when you just want to read the text. Choosing a different app as the target applies the drop story above.
 
 ![The Press](../../media/shot-press.png)
 
 ## Common questions
 
 - **Will my card come back exactly as it was?** Yes, if you export it back to RoleCall. Same app in, same app out, nothing lost.
-- **I imported a `.png`. Do I get a `.png` back?** Bunraku writes cards as `.json`. RoleCall reads a `.json` card the same as a picture, so it loads fine, you just get a file instead of an image.
-- **Does my character's picture come with it?** Bunraku keeps the card art and shows it as the piece's portrait, and it holds onto the original file you imported.
-- **What about my casting card and presentation colors?** They stay with the RoleCall card and are not copied into another app's file, because Bunraku does not move one app's private layer into another.
-- **My lorebook was inside the card. Is it still there?** Yes. Bunraku pulls the embedded lorebook out so you can edit it on its own, and puts it back when you export to an app that supports lorebooks.
+- **I imported a `.png`. Do I get a `.png` back?** Bunzai writes cards as `.json`. RoleCall reads a `.json` card the same as a picture, so it loads fine, you just get a file instead of an image.
+- **Does my character's picture come with it?** Bunzai keeps the card art and shows it as the piece's portrait, and it holds onto the original file you imported.
+- **What about my casting card and presentation colors?** They stay with the RoleCall card and are not copied into another app's file, because Bunzai does not move one app's private layer into another.
+- **My lorebook was inside the card. Is it still there?** Yes. Bunzai pulls the embedded lorebook out so you can edit it on its own, and puts it back when you export to an app that supports lorebooks.

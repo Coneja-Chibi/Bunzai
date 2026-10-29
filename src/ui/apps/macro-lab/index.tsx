@@ -25,7 +25,7 @@ import {
   type CSSProperties,
   type JSX,
 } from "react";
-import type { AppContext, BunrakuApp, MacroEngineInfo } from "../../app-contract";
+import type { AppContext, BunzaiApp, MacroEngineInfo } from "../../app-contract";
 import { toErrorMessage } from "../../../error-message";
 import { apiStatusIs } from "../../_shared/api-fetch";
 import { MACRO_DIALECT_LABELS, type MacroDialect } from "../../../core/preset/macros";
@@ -294,7 +294,7 @@ export function MacroLab({ ctx }: { ctx: AppContext }): JSX.Element {
   );
 }
 
-const app: BunrakuApp = {
+const app: BunzaiApp = {
   OverlayWidgets,
   manifest: {
     id: "macro-lab",

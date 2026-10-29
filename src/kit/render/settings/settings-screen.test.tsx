@@ -1,7 +1,7 @@
 /** @jsxImportSource @opentui/react */
 /**
  * Settings render: prove the real state-to-pixels wiring, not just that it mounts. Against an empty
- * throwaway BUNRAKU_HOME, the screen must load the spokes and vault and draw the Panel Deck, the
+ * throwaway BUNZAI_HOME, the screen must load the spokes and vault and draw the Panel Deck, the
  * sections rail, and the "add a provider" row. The navigation logic itself is covered in model.test.
  */
 import { afterAll, beforeAll, expect, setDefaultTimeout, test } from "bun:test";
@@ -21,12 +21,12 @@ const HOME = join(tmpdir(), `kit-settings-test-${randomUUID()}`);
 setDefaultTimeout(30000);
 
 beforeAll(async () => {
-  process.env.BUNRAKU_HOME = HOME;
+  process.env.BUNZAI_HOME = HOME;
   await loadChoices(); // warm the spoke registry so the component's async load resolves fast
 });
 
 afterAll(async () => {
-  delete process.env.BUNRAKU_HOME;
+  delete process.env.BUNZAI_HOME;
   await rm(HOME, { recursive: true, force: true });
 });
 

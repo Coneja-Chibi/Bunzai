@@ -68,7 +68,7 @@ export { RISU_MACRO_GROUPS } from "./risu";
 export { SILLYTAVERN_NEW_MACRO_GROUPS } from "./sillytavern-new";
 
 /**
- * The catalog each Write-for lens exposes. `full` (Bunraku) carries the superset dialect, mirroring
+ * The catalog each Write-for lens exposes. `full` (Bunzai) carries the superset dialect, mirroring
  * placementsForProfile("full") which likewise returns every stop RoleCall carries: vaud has no
  * runtime of its own, so the canonical lens shows the richest engine we model rather than inventing
  * a dialect nothing runs.
@@ -111,7 +111,7 @@ export const MACRO_DIALECTS: readonly MacroDialect[] = [
 ];
 
 export const MACRO_DIALECT_LABELS: Record<MacroDialect, string> = {
-  full: "Bunraku",
+  full: "Bunzai",
   rolecall: "RoleCall",
   sillytavern: "SillyTavern",
   "sillytavern-new": "SillyTavern (new engine)",

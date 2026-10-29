@@ -6,7 +6,7 @@
  * something usable on a machine with no OS keystore, without anyone supplying anything, or Kit is
  * back to failing every save on Linux and macOS.
  *
- * Every case here points BUNRAKU_HOME at a scratch directory, so the real key file is never read,
+ * Every case here points BUNZAI_HOME at a scratch directory, so the real key file is never read,
  * written, or replaced by a test run.
  */
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
@@ -30,14 +30,14 @@ let home = "";
 let priorHome: string | undefined;
 
 beforeEach(async () => {
-  priorHome = process.env["BUNRAKU_HOME"];
+  priorHome = process.env["BUNZAI_HOME"];
   home = await mkdtemp(join(tmpdir(), "kit-identity-"));
-  process.env["BUNRAKU_HOME"] = home;
+  process.env["BUNZAI_HOME"] = home;
 });
 
 afterEach(async () => {
-  if (priorHome === undefined) delete process.env["BUNRAKU_HOME"];
-  else process.env["BUNRAKU_HOME"] = priorHome;
+  if (priorHome === undefined) delete process.env["BUNZAI_HOME"];
+  else process.env["BUNZAI_HOME"] = priorHome;
   await rm(home, { recursive: true, force: true });
 });
 
@@ -99,7 +99,7 @@ describe("identity-file backend", () => {
   test("a damaged key file is set aside and replaced, never left blocking", async () => {
     // The key inside a file that fails its integrity check is already gone, so refusing to continue
     // protects nothing and leaves the user unable to save a provider ever again. Recover and report.
-    await mkdir(join(home, ".bunraku"), { recursive: true });
+    await mkdir(join(home, ".bunzai"), { recursive: true });
     const damaged = Buffer.alloc(FILE_SIZE);
     MAGIC.copy(damaged, 0);
     damaged[4] = 0x01;
@@ -119,7 +119,7 @@ describe("identity-file backend", () => {
   });
 
   test("a file of the wrong size or magic is recovered the same way", async () => {
-    await mkdir(join(home, ".bunraku"), { recursive: true });
+    await mkdir(join(home, ".bunzai"), { recursive: true });
     await writeFile(identityPath(), Buffer.alloc(50));
     expect(await identityFileBackend.open(await identityFileBackend.seal("ok", {}), {})).toBe("ok");
     expect(identityStatus()?.reason).toMatch(/104/);

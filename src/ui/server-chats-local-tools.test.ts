@@ -19,7 +19,7 @@ import { apiReq } from "./server-test-rig";
 afterEach(cleanupChatRouteRigs);
 setDefaultTimeout(30_000);
 
-const HOME = join(tmpdir(), `bunraku-local-tools-${randomUUID()}`);
+const HOME = join(tmpdir(), `bunzai-local-tools-${randomUUID()}`);
 const UNLOCK = { passphrase: "local-tools-test" };
 const health: TrackerBody = { name: "Health", description: "", layout: "record", note: "", fields: [{ name: "hp", description: "", type: "number", min: 0, default: 20 }] };
 const REFUSAL = '{"error":"registry.ollama.ai/library/qwen3 does not support tools"}';
@@ -31,7 +31,7 @@ let localId = "";
 const sse = (...chunks: unknown[]) => new Response(chunks.map((c) => `data: ${JSON.stringify(c)}\n\n`).join("") + "data: [DONE]\n\n", { headers: { "content-type": "text/event-stream" } });
 
 beforeAll(async () => {
-  process.env.BUNRAKU_HOME = HOME;
+  process.env.BUNZAI_HOME = HOME;
   server = Bun.serve({
     port: 0,
     async fetch(req) {
@@ -51,7 +51,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   server.stop(true);
-  delete process.env.BUNRAKU_HOME;
+  delete process.env.BUNZAI_HOME;
   await rm(HOME, { recursive: true, force: true });
 });
 

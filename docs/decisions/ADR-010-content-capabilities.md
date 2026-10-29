@@ -8,7 +8,7 @@ Kit will eventually need more than one hundred content-editing operations. Adver
 on every model request wastes context and makes tool selection less reliable. Implementing the same
 mutation separately in Kit and the Workbench would also allow their behavior to drift.
 
-The filesystem is already Bunraku's registry for formats and UI extensions. Content edits need the
+The filesystem is already Bunzai's registry for formats and UI extensions. Content edits need the
 same drop-in property, while canonical validation and escrow preservation remain mandatory.
 
 ## Decision

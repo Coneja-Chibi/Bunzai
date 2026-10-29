@@ -63,7 +63,7 @@ export function parseLaunchArgs(argv: readonly string[]): LaunchArgs {
 
 /** What `--help` prints. Short on purpose: the app explains itself once it is open. */
 export const LAUNCH_USAGE = [
-  "kit - your Bunraku studio, in the terminal",
+  "kit - your Bunzai studio, in the terminal",
   "",
   "  kit                 open a fresh session",
   "  kit -r              pick up the most recent session, rail and all",

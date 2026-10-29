@@ -15,7 +15,7 @@
  *
  * The codec's own file has no name of its own (`body.name = setNameFromFilename(...)`, never a wire
  * field), so the filename this module hands it IS the set's name: the resolved scope target's name
- * for a scoped set, a stable neutral name for the account bucket. The resolved target's Bunraku id
+ * for a scoped set, a stable neutral name for the account bucket. The resolved target's Bunzai id
  * has nowhere honest to live on RegexSetBody (no cross-reference field exists there), so it rides
  * the archive escrow's own `unmapped.links`, never the codec's twin (the M4 principle: resolution is
  * an import-time fact about this archive, not something to inject into what the codec itself parsed).

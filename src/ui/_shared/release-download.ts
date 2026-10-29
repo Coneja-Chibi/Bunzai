@@ -6,8 +6,8 @@
  */
 
 /**
- * Which release asset matches the running binary. Exact basename match: the desktop app is "Bunraku.exe",
- * the CLIs are "bunraku-<os>-<arch>[.exe]", and each release ships those exact names. No match (a dev
+ * Which release asset matches the running binary. Exact basename match: the desktop app is "Bunzai.exe",
+ * the CLIs are "bunzai-<os>-<arch>[.exe]", and each release ships those exact names. No match (a dev
  * `bun` binary, or an arch with no build) -> null, and the caller fails closed to "download manually".
  */
 export function resolveAsset(assetNames: readonly string[], execBasename: string): string | null {
