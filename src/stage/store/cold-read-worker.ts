@@ -47,13 +47,13 @@ async function holdOpen(handle: Database, cipher: ReturnType<typeof cellCipher>,
   });
   handle.exec("COMMIT");
   const actualCharge = coldReadCharge(partBytes + cellBytes, texts.length, refs);
-  if (texts.length > 20_000 || refs > 100_000 || !Number.isSafeInteger(actualCharge) || actualCharge > data.maxCharge || actualCharge > COLD_READ_LIMIT) {
+  if (!Number.isSafeInteger(actualCharge) || actualCharge > data.maxCharge || actualCharge > COLD_READ_LIMIT) {
     self.postMessage({ ok: false, error: { kind: "read", reason: "this piece exceeds the bounded cold-read memory limit" } });
     return;
   }
   const parts: PartText[] = [];
   for (const [index, text] of texts.entries()) parts.push({ name: text.name, text: text.text, blobs: await openLightBlobSnapshot(cipher, snapshots[index]!) });
-  const filled = await coldFillParts(parts, { charge: data.maxCharge - actualCharge, parts: 20_000, refs: 100_000 }, { kind: data.kind, id: data.id }, true);
+  const filled = await coldFillParts(parts, { charge: data.maxCharge - actualCharge }, { kind: data.kind, id: data.id }, true);
   if (filled && (!Number.isSafeInteger(filled.usedCharge) || actualCharge + filled.usedCharge > data.maxCharge || actualCharge + filled.usedCharge > COLD_READ_LIMIT)) {
     self.postMessage({ ok: false, error: { kind: "read", reason: "the opened piece exceeds the bounded cold-read memory limit" } });
     return;
@@ -80,14 +80,14 @@ self.onmessage = async ({ data }: MessageEvent<Job>) => {
       (SELECT coalesce(sum(octet_length(b.cell)), 0) FROM blob_refs r JOIN piece_parts p ON p.id = r.part_id JOIN blobs b ON b.key = r.blob WHERE p.kind = ? AND p.doc = ? AND p.to_version IS NULL) AS blob_bytes`)
       .get(data.kind, data.docKey, data.kind, data.docKey, data.kind, data.docKey, data.kind, data.docKey) as { parts: number; part_bytes: number; refs: number; blob_bytes: number };
     const actualCharge = coldReadCharge(bound.part_bytes + bound.blob_bytes, bound.parts, bound.refs);
-    if (bound.parts > 20_000 || bound.refs > 100_000 || !Number.isSafeInteger(actualCharge) || actualCharge > data.maxCharge || actualCharge > COLD_READ_LIMIT) {
+    if (!Number.isSafeInteger(actualCharge) || actualCharge > data.maxCharge || actualCharge > COLD_READ_LIMIT) {
       handle.exec("ROLLBACK"); self.postMessage({ ok: false, error: { kind: "read", reason: "this piece exceeds the bounded cold-read memory limit" } }); return;
     }
     const snapshot = snapshotLiveParts((sql) => handle.query(sql), data.kind, data.docKey);
     handle.exec("COMMIT");
     const parts = await openPartSnapshot(cipher, snapshot);
     const resultBudget = data.maxCharge - actualCharge;
-    const filled = await coldFillParts(parts, { charge: resultBudget, parts: 20_000, refs: 100_000 }, { kind: data.kind, id: data.id });
+    const filled = await coldFillParts(parts, { charge: resultBudget }, { kind: data.kind, id: data.id });
     if (filled && (!Number.isSafeInteger(filled.usedCharge) || actualCharge + filled.usedCharge > data.maxCharge || actualCharge + filled.usedCharge > COLD_READ_LIMIT)) {
       self.postMessage({ ok: false, error: { kind: "read", reason: "the opened piece exceeds the bounded cold-read memory limit" } }); return;
     }

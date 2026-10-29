@@ -1,4 +1,5 @@
 /** History reads and restores, pinned to the live row's monotonic write identity. */
+import { COLD_READ_LIMIT } from "./cold-read-budget";
 import type { ParsedCanonicalEntity } from "../../entities/runtime-schema";
 import { StudioConflictError } from "../../studio/atomic-file";
 import { StudioReadError } from "../../studio/errors";
@@ -52,7 +53,7 @@ export async function restoreStoredVersion(
     // only the entity (for its summary) and its revision, never a big pack's pictures.
     const { rows: versions } = await backend.versions(kind, id);
     if (!versions.some((entry) => entry.version === version)) return null;
-    const loaded = await holdFill(backend, kind, current, 8 * 1024 * 1024, version);
+    const loaded = await holdFill(backend, kind, current, COLD_READ_LIMIT, version);
     if ("status" in loaded) { if (loaded.status === "missing") return null; continue; }
     loaded.release();
     const old = loaded.filled.entity;

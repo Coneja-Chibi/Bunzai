@@ -5,6 +5,7 @@
  * exists to avoid), and writes one conditional transaction. Split from content-store.ts for the
  * line-cap.
  */
+import { COLD_READ_LIMIT } from "./cold-read-budget";
 import { revisionFromParts } from "../../entities/canonical-revision";
 import { decompose, encodeNamePart, kindPartsFor, partNames, type PartRecord } from "../../entities/piece-parts";
 import { decodeAuthorizedBlobs, decodeAuthorizedBlobsHolding, isActiveMediaBlobReference, type KnownBlobs } from "../../entities/piece-parts-blob";
@@ -396,7 +397,7 @@ export async function patchPiece(
     if (!cached || cached.writeId !== row.writeId || cached.version !== row.version || cached.revision !== row.revision) {
       // Pictures stay references in the cache ("hold"): a save costs the piece's head, never its pictures.
       const loaded = coldFill ? await coldFill(assertStudioEntityKind(row.kind), row.id, row.writeId, "hold") : await (async () => {
-        try { return await holdFill(backend, kind, row, 8 * 1024 * 1024); }
+        try { return await holdFill(backend, kind, row, COLD_READ_LIMIT); }
         catch (error) {
           if (error instanceof ColdReadDamageError) throw new StudioReadError(`${kind} ${id} is damaged`, error.reason);
           throw error;

@@ -10,8 +10,6 @@ import { StudioBusyError, StudioReadError, type StudioDamageReason } from "../..
 import { COLD_READ_LIMIT, coldReadCharge } from "./cold-read-budget";
 
 const WAITING = 2;
-const MAX_PARTS = 20_000;
-const MAX_REFS = 100_000;
 const COLD_WORKER_IDLE_MS = 30_000;
 type Filled = { entity: ParsedCanonicalEntity; parts: PartRecord[]; usedCharge: number };
 type ColdFill = { writeId: number; filled: Filled; valid(): boolean; release(): void } | { status: "missing" | "stale" };
@@ -138,7 +136,7 @@ export function createColdReadService(input: {
       // A held fill never opens a picture's cell, so its bytes are not part of the admission; the worker
       // charges the text blobs it does open against the same ceiling.
       const charge = coldReadCharge(size.parts.bytes + (hold ? 0 : size.refs.bytes), size.parts.rows, size.refs.rows);
-      if (size.parts.rows > MAX_PARTS || size.refs.rows > MAX_REFS || !Number.isSafeInteger(charge) || charge > COLD_READ_LIMIT) throw new Error("this piece exceeds the bounded cold-read memory limit");
+      if (!Number.isSafeInteger(charge) || charge > COLD_READ_LIMIT) throw new Error("this piece exceeds the bounded cold-read memory limit");
       if (active && queue.length >= WAITING) throw new StudioBusyError();
       if (reservedBytes - activeSlack + charge > COLD_READ_LIMIT) throw new StudioBusyError();
       reservedBytes += charge;

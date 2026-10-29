@@ -54,15 +54,16 @@ test("the unchanged 3,000-block preset fits snapshot plus bounded cold-fill acco
   const snapshotCharge = coldReadCharge(partCellBytes + blobRefBytes, parts.length, refs);
   const resultBudget = COLD_READ_LIMIT - snapshotCharge;
   expect(snapshotCharge).toBeLessThan(COLD_READ_LIMIT);
-  const filled = await coldFillParts(parts, { charge: resultBudget, parts: 20_000, refs: 100_000 }, { kind: entity.kind, id: entity.id });
+  const filled = await coldFillParts(parts, { charge: resultBudget }, { kind: entity.kind, id: entity.id });
   expect(filled).not.toBeNull();
   expect(snapshotCharge + filled!.usedCharge).toBeLessThanOrEqual(COLD_READ_LIMIT);
 });
 
 test("oversized scalar snapshots and token-heavy JSON refuse before canonical decode", async () => {
   expect(coldReadCharge(COLD_READ_LIMIT + 1, 1, 0)).toBeGreaterThan(COLD_READ_LIMIT);
-  const text = `[${Array.from({ length: 1_000_001 }, () => "0").join(",")}]`;
-  const failure = await coldFillParts([{ name: "h", text, blobs: [] }], { charge: COLD_READ_LIMIT, parts: 20_000, refs: 100_000 })
+  // Each JSON value is charged before decoding, so enough of them pass the one budget with no separate count of nodes.
+  const text = `[${Array.from({ length: Math.ceil(COLD_READ_LIMIT / 128) + 1 }, () => "0").join(",")}]`;
+  const failure = await coldFillParts([{ name: "h", text, blobs: [] }], { charge: COLD_READ_LIMIT })
     .then(() => null, (error: unknown) => error);
   expect(failure).toBeInstanceOf(Error);
   expect((failure as Error).message).toContain("bounded cold-read memory limit");
@@ -73,7 +74,7 @@ test("repeated large sentinels are charged per occurrence before decoded expansi
   const count = 80;
   const text = JSON.stringify(Array.from({ length: count }, () => `${SENTINEL_PREFIX}b:${key}`));
   const blob = { key, payload: { kind: "bytes" as const, bytes: new Uint8Array(1_000_000) } };
-  const failure = await coldFillParts([{ name: "h", text, blobs: [blob] }], { charge: COLD_READ_LIMIT, parts: 20_000, refs: 100_000 })
+  const failure = await coldFillParts([{ name: "h", text, blobs: [blob] }], { charge: COLD_READ_LIMIT })
     .then(() => null, (error: unknown) => error);
   expect(failure).toBeInstanceOf(Error);
   expect((failure as Error).message).toContain("bounded cold-read memory limit");

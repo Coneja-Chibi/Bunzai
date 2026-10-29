@@ -12,5 +12,8 @@ export const SANITY_TEXT = 1_000_000;
 /** The largest whole number a decoder takes (a die's sides, a weight, a range end): a hostile-input guard, not a design limit. */
 export const SANITY_NUMBER = Number.MAX_SAFE_INTEGER;
 
+/** Bytes one stored piece may take in memory when it is opened (its text, its pictures, what it decodes to): a guard against a hostile or damaged library, not a design limit. A lorebook of any real size opens; one past this is refused as unusually large. */
+export const SANITY_PIECE_BYTES = 256 * 1024 * 1024;
+
 /** What a refusal says when a value passes a ceiling. */
 export const SANITY_REFUSAL = "unusually large";

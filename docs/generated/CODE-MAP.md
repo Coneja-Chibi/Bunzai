@@ -1722,7 +1722,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 - `chat-history-rules.ts`: The input check for a scene's imported history, shared by the memory and SQLite stores like chat-rules.ts: everything is checked before anything is written, and what comes back is a fresh copy built from exactly the f...
 - `chat-rules.ts`: The input checks every ChatStore implementation applies before touching anything (cases 8 to 11).
 - `chat-store.ts`: Runtime-neutral memory ChatStore composition for tests and the browser-only Stage.
-- `cold-read-budget.ts`: One fill's hard logical budget, shared by admission and its worker.
+- `cold-read-budget.ts`: The one memory budget for opening a stored piece: what admitting it and decoding it may charge together, on the worker and in process alike.
 - `cold-read-service.ts`: One bounded, cancellable cold-fill lane per opened SQLite library.
 - `cold-read-worker.ts`: Open one admitted piece on the worker: snapshot rows in SQL, then decrypt, hash, decode and validate there.
 - `compendium-rules.ts`: The input check and the merge for a scene's Compendium choices, applied by every ChatStore implementation so they cannot refuse or keep different things.

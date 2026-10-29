@@ -17,6 +17,7 @@
  * needed by both an ordinary read (content-store.ts's `decode`) and the patch path's cold cache fill
  * (`coldFillParts`, S5), so it lives here rather than being duplicated in each.
  */
+import { COLD_READ_LIMIT } from "./cold-read-budget";
 import { revisionFromParts } from "../../entities/canonical-revision";
 import { assemble, decodePart, decodePartHolding, decompose, kindPartsFor, type PartRecord } from "../../entities/piece-parts";
 import { parseCanonicalEntity, type ParsedCanonicalEntity } from "../../entities/runtime-schema";
@@ -61,7 +62,8 @@ export class ColdReadDamageError extends Error {
 }
 class ColdReadLimitError extends Error {}
 
-function jsonTokenCount(text: string): number {
+/** The JSON values in a part's text, counted only until `stopAt`: past that the part is refused anyway, so a hostile part is not scanned to its end. */
+function jsonTokenCount(text: string, stopAt: number): number {
   let count = 0;
   for (let i = 0; i < text.length; i++) {
     const char = text[i]!;
@@ -76,7 +78,7 @@ function jsonTokenCount(text: string): number {
       count++;
       while (i + 1 < text.length && !/[\s,}\]]/.test(text[i + 1]!)) i++;
     }
-    if (count > 1_000_000) return count;
+    if (count > stopAt) return count;
   }
   return count;
 }
@@ -97,7 +99,7 @@ function graphBytes(value: unknown): number {
       continue;
     }
     const item = frame.value;
-    if (++nodes > 1_000_000 || stack.length > 1_000_000) return Infinity;
+    nodes++;
     bytes += 128;
     if (typeof item === "string") bytes += Buffer.byteLength(item, "utf8");
     else if (item && typeof item === "object") {
@@ -106,7 +108,7 @@ function graphBytes(value: unknown): number {
       if (item instanceof Uint8Array) bytes += item.byteLength;
       else stack.push({ object: item, iterator: (function* () { for (const key in item) if (Object.prototype.hasOwnProperty.call(item, key)) yield key; })() });
     }
-    if (bytes > 256 * 1024 * 1024) return bytes;
+    if (bytes > COLD_READ_LIMIT) return bytes;
   }
   return bytes;
 }
@@ -169,7 +171,7 @@ export function decodeParts(kind: string, id: string, parts: readonly PartText[]
  */
 export async function coldFillParts(
   parts: readonly PartText[] | null,
-  limits: { charge: number; parts: number; refs: number } = { charge: 8 * 1024 * 1024, parts: 1000, refs: 1000 },
+  limits: { charge: number } = { charge: COLD_READ_LIMIT },
   expected?: { kind: string; id: string },
   hold = false,
   keepValues = false,
@@ -191,12 +193,12 @@ export async function coldFillParts(
   let nodes = 0;
   for (const part of parts) {
     inputBytes += Buffer.byteLength(part.text, "utf8");
-    nodes += jsonTokenCount(part.text);
+    nodes += jsonTokenCount(part.text, Math.ceil(limits.charge / 128) - nodes);
     references += part.blobs.length + (part.refs?.length ?? 0);
     for (const blob of part.blobs) {
       inputBytes += blob.payload.kind === "bytes" ? blob.payload.bytes.byteLength : Buffer.byteLength(blob.payload.text, "utf8");
     }
-    if (references > limits.refs || parts.length > limits.parts || nodes > 1_000_000 || inputBytes * 2 + (parts.length + references) * 2048 + nodes * 128 > limits.charge) {
+    if (inputBytes * 2 + (parts.length + references) * 2048 + nodes * 128 > limits.charge) {
       throw new Error("this piece exceeds the bounded cold-read memory limit");
     }
   }

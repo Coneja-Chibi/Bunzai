@@ -28,7 +28,7 @@ export async function holdFill(backend: DocumentBackend, kind: EntityKind, row: 
   const current = await backend.get(kind, row.id);
   if (!current) return { status: "missing" };
   if (current.writeId !== row.writeId) return { status: "stale" };
-  const filled = await coldFillParts(parts, { charge, parts: 1000, refs: 1000 }, { kind, id: row.id }, true);
+  const filled = await coldFillParts(parts, { charge }, { kind, id: row.id }, true);
   // No worker, so no reservation to hold or release: the fill is already in this process.
   return filled ? { writeId: row.writeId, filled, valid: () => true, release: () => {} } : { status: "missing" };
 }

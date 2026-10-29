@@ -37,7 +37,7 @@ export function documentPartReads(input: { database: StageDatabase; cipher: Cell
       });
       return snapshot ? { writeId: snapshot.writeId, parts: await openPartSnapshot(cipher, snapshot.parts) } : null;
     },
-    async livePartsBounded(kind: string, id: string, expectedWriteId: number, maxCharge: number, maxParts: number, maxRefs: number): Promise<LivePartSnapshot | { status: "missing" | "stale" | "too-large" }> {
+    async livePartsBounded(kind: string, id: string, expectedWriteId: number, maxCharge: number): Promise<LivePartSnapshot | { status: "missing" | "stale" | "too-large" }> {
       const docKey = input.key(kind, id);
       const captured = await readSnapshot<{ status: "missing" | "stale" | "too-large" } | { writeId: number; snapshot: ReturnType<typeof snapshotLiveParts> }>(() => {
         const row = database.statement("SELECT write_id FROM documents WHERE kind = ? AND id = ?").get(kind, docKey) as { write_id: number } | null;
@@ -45,7 +45,7 @@ export function documentPartReads(input: { database: StageDatabase; cipher: Cell
         if (row.write_id !== expectedWriteId) return { status: "stale" as const };
         const parts = database.statement("SELECT count(*) AS n, coalesce(sum(octet_length(cell)), 0) AS bytes FROM piece_parts WHERE kind = ? AND doc = ? AND to_version IS NULL").get(kind, docKey) as { n: number; bytes: number };
         const refs = database.statement("SELECT count(*) AS n, coalesce(sum(octet_length(b.cell)), 0) AS bytes FROM blob_refs r JOIN piece_parts p ON p.id = r.part_id JOIN blobs b ON b.key = r.blob WHERE p.kind = ? AND p.doc = ? AND p.to_version IS NULL").get(kind, docKey) as { n: number; bytes: number };
-        if (parts.n > maxParts || refs.n > maxRefs || coldReadCharge(parts.bytes + refs.bytes, parts.n, refs.n) > maxCharge) return { status: "too-large" as const };
+        if (coldReadCharge(parts.bytes + refs.bytes, parts.n, refs.n) > maxCharge) return { status: "too-large" as const };
         return { writeId: row.write_id, snapshot: snapshotLiveParts(database.statement, kind, docKey) };
       });
       if ("status" in captured) return captured;

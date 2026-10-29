@@ -244,7 +244,7 @@ export function memoryDocumentBackend(): DocumentBackend {
       return { writeId: row.writeId, parts: await materializeParts(snapshot) };
     },
 
-    async livePartsBounded(kind, id, expectedWriteId, maxCharge, maxParts, maxRefs) {
+    async livePartsBounded(kind, id, expectedWriteId, maxCharge) {
       const key = keyOf(kind, id);
       const row = rows.get(key);
       if (!row) return { status: "missing" };
@@ -255,7 +255,6 @@ export function memoryDocumentBackend(): DocumentBackend {
         count++;
         bytes += Buffer.byteLength(part.text, "utf8");
         refs += part.blobKeys.length;
-        if (count > maxParts || refs > maxRefs) return { status: "too-large" };
         for (const blobKey of part.blobKeys) {
           const payload = blobs.get(blobKey);
           if (!payload) throw new Error("a part references a blob that no longer exists");

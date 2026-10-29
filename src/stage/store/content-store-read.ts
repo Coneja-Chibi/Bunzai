@@ -3,9 +3,10 @@ import type { ParsedCanonicalEntity } from "../../entities/runtime-schema";
 import { StudioConflictError } from "../../studio/atomic-file";
 import { StudioReadError } from "../../studio/errors";
 import { assertStudioEntityKind } from "../../studio/path-policy";
-import type { DocumentBackend, DocumentRow, EntityKind } from "../contracts/content-store";
+import type { DocumentBackend, DocumentRow, EntityKind, PartText } from "../contracts/content-store";
 import type { PartRecord } from "../../entities/piece-parts";
 import { coldFillParts, ColdReadDamageError } from "./content-store-write";
+import { COLD_READ_LIMIT, coldReadCharge } from "./cold-read-budget";
 
 export type ColdFillResult =
   | { writeId: number; filled: { entity: ParsedCanonicalEntity; parts: PartRecord[] }; valid(): boolean; release(): void }
@@ -38,7 +39,7 @@ export async function readContentEntity(
         loaded.release();
       }
     }
-    const snapshot = await backend.livePartsBounded?.(kind, id, row.writeId, 8 * 1024 * 1024, 1000, 1000);
+    const snapshot = await backend.livePartsBounded?.(kind, id, row.writeId, COLD_READ_LIMIT);
     if (!snapshot) throw new Error("the backend cannot safely bound a cold read");
     if ("status" in snapshot) {
       if (snapshot.status === "stale") continue;
@@ -47,7 +48,10 @@ export async function readContentEntity(
     }
     if (!snapshot.parts.length) return null;
     let filled: Awaited<ReturnType<typeof coldFillParts>>;
-    try { filled = await coldFillParts(snapshot.parts, { charge: 8 * 1024 * 1024, parts: 1000, refs: 1000 }, { kind: row.kind, id: row.id }); }
+    // The snapshot is held while it decodes, so the decode gets what the budget has left after it, as the worker does.
+    const payloadBytes = (p: PartText) => Buffer.byteLength(p.text, "utf8") + p.blobs.reduce((n, b) => n + (b.payload.kind === "bytes" ? b.payload.bytes.byteLength : Buffer.byteLength(b.payload.text, "utf8")), 0);
+    const snapshotCharge = coldReadCharge(snapshot.parts.reduce((n, p) => n + payloadBytes(p), 0), snapshot.parts.length, snapshot.parts.reduce((n, p) => n + p.blobs.length, 0));
+    try { filled = await coldFillParts(snapshot.parts, { charge: COLD_READ_LIMIT - snapshotCharge }, { kind: row.kind, id: row.id }); }
     catch (error) {
       if (error instanceof ColdReadDamageError) throw new StudioReadError(`${kind} ${id} is damaged`, error.reason);
       throw error;

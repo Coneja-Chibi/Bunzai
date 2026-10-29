@@ -3,6 +3,7 @@
  * so every picture stays a link to its existing blob and nothing is expanded, re-hashed or resealed. A
  * pack of 40 pictures duplicates for the price of its head. Keep-both ids, like `save`: `<id>-2`, `<id>-3`.
  */
+import { COLD_READ_LIMIT } from "./cold-read-budget";
 import { revisionFromParts } from "../../entities/canonical-revision";
 import { decompose } from "../../entities/piece-parts";
 import type { KnownBlobs } from "../../entities/piece-parts-blob";
@@ -29,7 +30,7 @@ export async function duplicateHeld(
   for (let attempt = 0; attempt < 3; attempt++) {
     const row = await backend.get(kind, id);
     if (!row) return null;
-    const loaded = coldFill ? await coldFill(kind, row.id, row.writeId, "hold") : await holdFill(backend, kind, row, 8 * 1024 * 1024);
+    const loaded = coldFill ? await coldFill(kind, row.id, row.writeId, "hold") : await holdFill(backend, kind, row, COLD_READ_LIMIT);
     if ("status" in loaded) {
       if (loaded.status === "missing") return null;
       continue; // changed while opening: read it again
@@ -76,7 +77,7 @@ export async function readHeldPiece(
   for (let attempt = 0; attempt < 3; attempt++) {
     const row = await backend.get(kind, id);
     if (!row) return null;
-    const loaded = coldFill ? await coldFill(kind, row.id, row.writeId, "hold") : await holdFill(backend, kind, row, 8 * 1024 * 1024);
+    const loaded = coldFill ? await coldFill(kind, row.id, row.writeId, "hold") : await holdFill(backend, kind, row, COLD_READ_LIMIT);
     if ("status" in loaded) {
       if (loaded.status === "missing") return null;
       continue;

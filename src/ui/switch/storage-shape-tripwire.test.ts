@@ -451,7 +451,8 @@ async function shapeFiles(): Promise<string[]> {
 // fold skips a shared slot. Migration 45 (migration-45-global-ops.ts) adds only a partial index on that slot. ADDITIVE: an older build ignores the slot's rows. The pin was recomputed.
 // 2026-10-28 (phase 4 review fixes): scene-state-rules.ts (pinned) re-exports GLOBAL_SLOT for the backends; a stored global row records the operation as the macro or lore Side Effect made it. No stored key changes. The pin was recomputed.
 // 2026-10-28, permissions for scene state (phase 5): core/scene-state/types.ts (pinned) gains SlotWriter (turn, background, person, import; no extension writer until an extension runtime exists) and SlotDef.writers, and scene-state-rules.ts (pinned) refuses a delta whose slot does not name the writer of the door it came through (a turn's checkpoint, recordDeltas, recordMessageDeltas, setBranchBase). No stored key or shape changes. The pin was recomputed.
-const PINNED_SHAPE_HASH = "9abac65333dc12f4a339d1c01cc61b4735ee38567ee8ff6718a9a6618f25ad0e";
+// 2026-10-28, one ceiling on opening a piece: the cold-read budget is SANITY_PIECE_BYTES (entities/_shared/sanity.ts) on every read path, and the separate caps on parts (1,000 in process, 20,000 in the worker), references and JSON values are gone (each is charged against the budget). DocumentBackend.livePartsBounded takes only the charge. No stored key or shape changes. The pin was recomputed.
+const PINNED_SHAPE_HASH = "f24729022f9a74cf006de4b48f9a1c926dead669bc0df22cc7110cc7ae860267";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");
