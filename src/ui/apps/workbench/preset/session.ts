@@ -6,7 +6,7 @@
  */
 import { newUiId } from "../../../_shared/new-id";
 import { deepEq } from "../editor-core";
-import { MARKER_LABELS } from "../../../../core/preset";
+import { slotLabel } from "../../../../core/preset";
 import type { PresetBody, PresetPrompt, PresetSamplers } from "../../../../entities/preset";
 import {
   addPresetBlock,
@@ -67,7 +67,7 @@ export const setSampler = (
 /* ---------- marker slots ---------- */
 
 /**
- * Append a marker block for an ST-compatible slot. A marker carries NO authored content - the engine
+ * Append a marker block for a slot (ST-compatible or a Bunraku feature marker). A marker carries NO authored content - the engine
  * splices the real thing in at build - so it gets the slot's plain-language name and an empty body,
  * and the row renders it as a slot rather than handing anyone a textarea.
  *
@@ -77,9 +77,12 @@ export const setSampler = (
  */
 export const addMarker = (body: PresetBody, slot: string): PresetBody => {
   if (placedMarkerSlots(body).has(slot)) return body;
+  // Its id is the slot when free, as SillyTavern's own markers are: that is how a SillyTavern import knows the slot again.
+  const idFree = !body.prompts.some((p) => p.id === slot);
   return addBlock(
     body,
     newBlock({
+      ...(idFree ? { id: slot } : {}),
       name: markerSlotName(slot),
       marker: true,
       markerSlot: slot,
@@ -93,9 +96,9 @@ export const placedMarkerSlots = (body: PresetBody): ReadonlySet<string> => {
   return placedPresetMarkerSlots(body);
 };
 
-/** Sentence-cased from core's own MARKER_LABELS ("the chat history" -> "Chat history"), never new copy. */
+/** Sentence-cased from core's own slot labels ("the chat history" -> "Chat history"), never new copy. */
 export const markerSlotName = (slot: string): string => {
-  const label = MARKER_LABELS[slot];
+  const label = slotLabel(slot);
   if (!label) return slot;
   const bare = label.replace(/^the /i, "");
   return bare.charAt(0).toUpperCase() + bare.slice(1);

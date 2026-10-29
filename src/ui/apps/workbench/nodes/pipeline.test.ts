@@ -3,7 +3,7 @@ import { expect, test } from "bun:test";
 import type { PresetPrompt } from "../../../../entities/preset";
 import { emptyPresetBody } from "../../../../entities/preset/schema";
 import type { StudioEntitySummary } from "../../../app-contract";
-import { contextOf, dryRequest, loreIdsOf, markerWires, pipelineModel, pipelineRows, requestView, slotTexts } from "./pipeline";
+import { contextOf, dryRequest, featureRows, loreIdsOf, markerWires, pipelineModel, pipelineRows, requestView, slotTexts } from "./pipeline";
 
 export const block = (id: string, over: Partial<PresetPrompt> = {}): PresetPrompt => ({
   id, name: id, content: `text of ${id}`, role: "system", enabled: true, systemPrompt: false, marker: false,
@@ -99,4 +99,9 @@ test("the request builds from the picked scene's preset when it is on the canvas
   expect(pipelineModel({ ...input, scenePresetId: undefined, chosenPresetId: "b" }).active?.piece.id).toBe("b");
   expect(pipelineModel({ ...input, scenePresetId: "a", chosenPresetId: "b" }).active?.piece.id).toBe("a");
   expect(pipelineModel({ ...input, presets: [{ piece: a, body: undefined }], scenePresetId: undefined }).presets).toHaveLength(0);
+});
+
+test("each feature lands at the row of its first switched-on marker, or keeps its own spot (the assembler's own rule)", () => {
+  const { rows } = pipelineRows(presetOf(block("main"), marker("t1", "trackers", { enabled: false }), marker("t2", "trackers"), marker("t3", "trackers"), marker("sb", "storyboards")), none);
+  expect(featureRows(rows)).toEqual({ trackers: 2, linkedTrackers: null, storyboards: 4 });
 });

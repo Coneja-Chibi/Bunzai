@@ -1,0 +1,320 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt Layout Options</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Page-only rules, tokens only. An option book: four ways one scene's prompt could be laid out, all drawn on the same scene
+   (Vera, two lorebooks, a sword-fight skill, the Health tracker, the summary, a scene note, the Story Director). Each option
+   shows how you arrange it, how one piece picks its own spot, and how it converts to SillyTavern and RoleCall presets. */
+body { padding-bottom: 40px; }
+.wrap { max-width: 1480px; margin: 0 auto; padding: 18px 24px 0; display: grid; gap: 22px; }
+.muted { color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.lead { max-width: 980px; font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 78%, transparent); }
+.tabs { display: flex; flex-wrap: wrap; }
+.tabs button { font: 700 13px var(--font-ui); padding: 9px 16px; background: var(--premiere-hard); color: var(--premiere-text); border: 2px solid color-mix(in srgb, var(--premiere-text) 30%, transparent); cursor: pointer; }
+.tabs button + button { border-left: 0; }
+.tabs button[aria-pressed="true"] { background: color-mix(in srgb, var(--premiere-rose) 24%, var(--premiere-hard)); box-shadow: inset 0 -3px 0 var(--premiere-rose); }
+.view { display: none; }
+.view.on { display: grid; gap: 18px; }
+.cap { font: 600 12px var(--font-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--premiere-gold); margin-bottom: 8px; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 0; border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); background: var(--premiere-hard); }
+@media (max-width: 1000px) { .split { grid-template-columns: 1fr; } }
+.main { padding: 14px 16px 18px; min-width: 0; }
+.side { background: var(--premiere-panel); border-left: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); padding: 14px 16px; font-size: 13px; display: grid; gap: 12px; align-content: start; }
+.side h3 { font: 700 18px var(--font-fancy); letter-spacing: .02em; }
+.side .fl { font: 600 12px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 65%, transparent); margin-bottom: 5px; }
+.side .hint { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 58%, transparent); margin-top: 4px; }
+.headrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.headrow b { font: 700 16px var(--font-fancy); letter-spacing: .02em; }
+.grow { flex: 1; }
+.cost { display: flex; height: 10px; border: 1px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); margin: 4px 0 2px; }
+.cost i { display: block; height: 100%; }
+.costkey { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; }
+.costkey span::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 5px; background: var(--c); vertical-align: -1px; }
+
+/* a piece: one row shape everywhere (kind color edge, name, kind, when, budget) */
+.pc { display: flex; align-items: center; gap: 8px; padding: 6px 8px; background: var(--premiere-panel); border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); border-left: 5px solid var(--c, var(--sig-3)); font-size: 13px; min-width: 0; }
+.pc .k { font: 700 10px var(--font-ui); letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+.pc .tag { font: 600 11px var(--font-ui); padding: 1px 6px; border: 1px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); white-space: nowrap; }
+.pc .tag.when { border-color: var(--premiere-gold); color: var(--premiere-gold); }
+.pc .tag.fixed { border-color: var(--bk-role-select); color: var(--bk-role-select-text); }
+.pc .grip { width: 10px; align-self: stretch; background-image: radial-gradient(color-mix(in srgb, var(--premiere-text) 40%, transparent) 1px, transparent 1px); background-size: 4px 4px; opacity: .8; }
+.pc.sel { outline: 2px solid var(--premiere-rose); outline-offset: -1px; }
+.pc.off { opacity: .45; }
+.lore { --c: var(--deck-lorebook, var(--sig-2)); } .skill { --c: var(--sig-5); } .trk { --c: var(--sig-4); } .card { --c: var(--deck-character, var(--sig-1)); }
+.mem { --c: var(--sig-6, var(--sig-3)); } .dir { --c: var(--premiere-gold); } .pre { --c: var(--deck-preset, var(--sig-1)); } .note { --c: var(--sig-3); }
+
+/* A: zones */
+.zones { display: grid; gap: 10px; }
+.zone { border: 1px solid color-mix(in srgb, var(--premiere-text) 16%, transparent); background: color-mix(in srgb, var(--premiere-text) 3%, transparent); }
+.zone > header { display: flex; align-items: baseline; gap: 10px; padding: 7px 10px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.zone > header b { font: 700 14px var(--font-ui); letter-spacing: .04em; }
+.zone > header small { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+.zone > header .tok { margin-left: auto; font: 600 11px var(--font-mono); color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.zone .items { display: grid; gap: 5px; padding: 8px 10px; }
+.story { display: grid; gap: 4px; padding: 8px 10px; }
+.msg { font-size: 12px; padding: 4px 8px; border: 1px dashed color-mix(in srgb, var(--premiere-text) 22%, transparent); color: color-mix(in srgb, var(--premiere-text) 62%, transparent); display: flex; gap: 8px; }
+.msg b { color: var(--premiere-text); font-weight: 600; }
+.msg .back { margin-left: auto; font: 600 11px var(--font-mono); }
+
+/* B: nodes */
+.canvas { position: relative; min-height: 600px; overflow: hidden; background-color: var(--premiere-hard);
+  background-image: radial-gradient(color-mix(in srgb, var(--premiere-text) 14%, transparent) 1px, transparent 1px); background-size: 22px 22px; }
+.world { position: absolute; left: 0; top: 0; width: 1060px; height: 600px; }
+svg.wires { position: absolute; left: 0; top: 0; width: 1060px; height: 600px; pointer-events: none; }
+svg.wires path { fill: none; stroke-width: 2.5; }
+.nd { position: absolute; width: 220px; background: var(--premiere-panel); border: 2px solid color-mix(in srgb, var(--premiere-text) 16%, transparent); border-left: 6px solid var(--c); box-shadow: 4px 4px 0 var(--premiere-hard); padding: 8px 10px; font-size: 12px; }
+.nd .k { font: 700 10px var(--font-ui); letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+.nd b { display: block; font-size: 14px; margin: 2px 0; }
+.req { width: 250px; --c: var(--premiere-rose); }
+.req ol { margin: 6px 0 0 18px; display: grid; gap: 3px; }
+.req li::marker { color: var(--premiere-rose); font-weight: 700; }
+.nd.sel { border-color: var(--premiere-rose); }
+
+/* C: by purpose */
+.purposes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.pur { border: 1px solid color-mix(in srgb, var(--premiere-text) 16%, transparent); background: color-mix(in srgb, var(--premiere-text) 3%, transparent); }
+.pur > header { padding: 8px 10px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.pur > header b { display: block; font: 700 15px var(--font-ui); }
+.pur > header small { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 58%, transparent); }
+.pur .items { display: grid; gap: 5px; padding: 8px 10px; }
+.result { display: grid; gap: 3px; }
+.result div { font-size: 12px; padding: 3px 8px; border-left: 4px solid var(--c, var(--sig-3)); background: color-mix(in srgb, var(--premiere-text) 4%, transparent); }
+
+/* D: hybrid steps strip */
+.steps { display: flex; gap: 14px; align-items: stretch; flex-wrap: wrap; }
+.step { flex: 1 1 200px; border: 2px solid color-mix(in srgb, var(--premiere-text) 16%, transparent); background: var(--premiere-panel); padding: 10px 12px; box-shadow: 4px 4px 0 var(--premiere-hard); position: relative; }
+.step .k { font: 700 10px var(--font-ui); letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+.step b { display: block; font: 700 15px var(--font-ui); margin: 2px 0 6px; }
+.step.sel { border-color: var(--premiere-rose); }
+.step + .step::before { content: "\2192"; position: absolute; left: -14px; top: 40%; color: var(--premiere-rose); font-weight: 700; }
+.mini { display: grid; gap: 3px; font-size: 11px; }
+.mini span { padding: 2px 6px; border-left: 3px solid var(--c, var(--sig-3)); background: color-mix(in srgb, var(--premiere-text) 5%, transparent); }
+
+/* comparison and research */
+table.cmp { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.cmp th, table.cmp td { text-align: left; padding: 8px 10px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); vertical-align: top; }
+table.cmp th { font: 700 12px var(--font-ui); letter-spacing: .08em; text-transform: uppercase; color: var(--premiere-gold); }
+table.cmp td.y { color: var(--stage-ok); } table.cmp td.n { color: var(--stage-danger-text); }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.notes .panel { padding: 12px 14px; font-size: 13px; }
+.notes .panel b { display: block; margin-bottom: 4px; }
+.co { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; font: 700 11px var(--font-ui); background: var(--premiere-rose); color: var(--premiere-hard); }
+.legend ol { margin: 8px 0 0 18px; } .legend li { margin: 6px 0; font-size: 13px; }
+</style></head>
+<body>
+<div class="wf-note">WIREFRAME. Option book: four ways a scene's prompt could be laid out, all on the same scene. Not approved. Pick one (or parts) and the chosen one gets its full wireframe. <span class="wf-accent"></span></div>
+<div class="wrap">
+  <div>
+    <div class="section-title">How things get into the prompt</div>
+    <p class="lead">Today eleven parts each have their own way in (preset blocks, lore positions, depth notes, the scene note, guides, the trackers block, the Director, recall, recaps, persona, impersonation). Each option below gives every part one shared way. The same scene throughout: Vera, two lorebooks, a "Sword fight" skill, the Health tracker, the chat summary, a scene note and the Story Director.</p>
+  </div>
+
+  <div class="tabs" role="group" aria-label="Option">
+    <button data-v="a" aria-pressed="true">A. Sections</button><button data-v="b" aria-pressed="false">B. Nodes</button><button data-v="c" aria-pressed="false">C. By purpose</button><button data-v="d" aria-pressed="false">D. Sections + steps (hybrid)</button><button data-v="x" aria-pressed="false">Compare + research</button>
+  </div>
+
+  <!-- ===================== A. SECTIONS ===================== -->
+  <section class="view on" id="a">
+    <div class="split">
+      <div class="main">
+        <div class="headrow"><b>Prompt layout</b><span class="muted">Vera, this scene</span><span class="grow"></span><span class="seg" data-seg><span aria-pressed="true">Sections</span><span>Board</span><span>Preview</span></span></div>
+        <div class="cap">Cost of the next reply <span class="co">1</span></div>
+        <div class="cost"><i style="width:16%;background:var(--premiere-gold)"></i><i style="width:12%;background:var(--deck-character, var(--sig-1))"></i><i style="width:14%;background:var(--deck-lorebook, var(--sig-2))"></i><i style="width:8%;background:var(--sig-6, var(--sig-3))"></i><i style="width:42%;background:color-mix(in srgb, var(--premiere-text) 30%, transparent)"></i><i style="width:8%;background:var(--sig-5)"></i></div>
+        <div class="costkey" style="margin-bottom:12px"><span style="--c:var(--premiere-gold)">Rules 1.9k</span><span style="--c:var(--deck-character, var(--sig-1))">Cast 1.4k</span><span style="--c:var(--deck-lorebook, var(--sig-2))">World 1.7k</span><span style="--c:var(--sig-6, var(--sig-3))">Memory 0.9k</span><span style="--c:color-mix(in srgb, var(--premiere-text) 30%, transparent)">Story 5.1k</span><span style="--c:var(--sig-5)">Right now 0.9k</span></div>
+        <div class="zones">
+          <div class="zone"><header><b>Rules</b> <span class="co">2</span><small>how to write: the preset's instructions</small><span class="tok">1.9k</span></header>
+            <div class="items">
+              <div class="pc pre"><span class="grip"></span><span class="k">Preset</span> Main prompt<span class="grow"></span><span class="tag fixed">fixed</span></div>
+              <div class="pc pre"><span class="grip"></span><span class="k">Preset</span> Writing style<span class="grow"></span><span class="tag fixed">fixed</span></div>
+              <div class="pc dir"><span class="grip"></span><span class="k">Director</span> Contract<span class="grow"></span><span class="tag fixed">fixed</span></div>
+            </div></div>
+          <div class="zone"><header><b>Cast</b><small>who is in the scene</small><span class="tok">1.4k</span></header>
+            <div class="items">
+              <div class="pc card"><span class="grip"></span><span class="k">Character</span> Vera: description, personality<span class="grow"></span><span class="tag fixed">fixed</span></div>
+              <div class="pc card"><span class="grip"></span><span class="k">Persona</span> You<span class="grow"></span><span class="tag fixed">fixed</span></div>
+            </div></div>
+          <div class="zone"><header><b>World</b><small>what is true here</small><span class="tok">1.7k</span></header>
+            <div class="items">
+              <div class="pc lore"><span class="grip"></span><span class="k">Lorebook</span> Harbor town (3 entries fired)<span class="grow"></span><span class="tag when">on keywords</span><span class="tag">shared</span></div>
+              <div class="pc lore"><span class="grip"></span><span class="k">Compendium</span> Recall (2 entries)<span class="grow"></span><span class="tag">shared</span></div>
+            </div></div>
+          <div class="zone"><header><b>Memory</b><small>what happened before</small><span class="tok">0.9k</span></header>
+            <div class="items">
+              <div class="pc mem"><span class="grip"></span><span class="k">Summary</span> Chat summary<span class="grow"></span><span class="tag fixed">fixed</span></div>
+            </div></div>
+          <div class="zone"><header><b>Story</b> <span class="co">3</span><small>the chat itself; a part can sit between messages</small><span class="tok">5.1k</span></header>
+            <div class="story">
+              <div class="msg"><b>Vera</b> The lantern swings wild above the black water...<span class="back">4 back</span></div>
+              <div class="pc note"><span class="grip"></span><span class="k">Scene note</span> Keep it tense<span class="grow"></span><span class="tag when">every 3 turns</span><span class="tag">3 back, system</span></div>
+              <div class="msg"><b>You</b> I hold my ground.<span class="back">3 back</span></div>
+              <div class="msg"><b>Vera</b> The wight's claw catches her shoulder...<span class="back">2 back</span></div>
+              <div class="pc skill sel"><span class="grip"></span><span class="k">Skill</span> Sword fight<span class="grow"></span><span class="tag when">mentioned: sword</span><span class="tag">1 back, system</span></div>
+              <div class="msg"><b>You</b> I draw my sword.<span class="back">1 back</span></div>
+            </div></div>
+          <div class="zone"><header><b>Right now</b><small>last thing before the reply</small><span class="tok">0.9k</span></header>
+            <div class="items">
+              <div class="pc trk"><span class="grip"></span><span class="k">Tracker</span> Health<span class="grow"></span><span class="tag fixed">fixed</span></div>
+              <div class="pc dir"><span class="grip"></span><span class="k">Director</span> This turn's direction<span class="grow"></span><span class="tag fixed">fixed</span></div>
+            </div></div>
+        </div>
+      </div>
+      <aside class="side">
+        <div class="cap">Selected part</div>
+        <h3>Sword fight</h3>
+        <div><div class="fl">Section <span class="co">4</span></div><span class="seg" data-seg><span>Rules</span><span>Cast</span><span>World</span><span>Memory</span><span aria-pressed="true">Story</span><span>Right now</span></span></div>
+        <div><div class="fl">In the story</div><div class="row" style="gap:8px;align-items:center"><span class="field" style="width:60px">1</span> messages back, as <span class="seg" data-seg><span aria-pressed="true">System</span><span>Narrator</span><span>You</span></span></div>
+          <p class="hint">Closer to the reply weighs more with the model.</p></div>
+        <div><div class="fl">When</div><span class="seg" data-seg><span>Always</span><span aria-pressed="true">Mentioned</span><span>Picked</span></span><p class="hint">Mentioned: "sword", "blade" in the last 4 messages.</p></div>
+        <div><div class="fl">If the prompt is full</div><span class="seg" data-seg><span aria-pressed="true">Always send</span><span>Can be cut</span></span></div>
+        <div><div class="fl">Order in its section</div><span class="field" style="width:60px">10</span></div>
+        <div class="hint">Default for every skill: World, shared. This one is set by hand.</div>
+      </aside>
+    </div>
+    <div class="legend panel" style="padding:12px 14px"><b>Callouts</b><ol>
+      <li><span class="co">1</span> One cost bar for the whole prompt, by section. What you see is what the model gets (the Prompt Inspector shows the same sections).</li>
+      <li><span class="co">2</span> Six sections in a fixed order, named for what they hold. Any part of any kind (a preset block, a lore entry, a skill, a tracker, a note) sits in one, with an order inside it. Drag between sections.</li>
+      <li><span class="co">3</span> Story is the chat itself. A part placed in it sits between messages, counted back from the reply, with a voice. This one setting replaces depth, role, in-chat and append.</li>
+      <li><span class="co">4</span> One part's own settings: section, where in the story, when, whether it can be cut, order. Every kind has a default section; a part only needs settings when you move it.</li>
+      <li>SillyTavern and RoleCall presets convert: Rules and Cast map to their prompt order and markers, World to world info before/after, Story placements to in-chat depth and role, Right now to the last in-chat depth. A part with no match exports as a plain block.</li>
+    </ol></div>
+  </section>
+
+  <!-- ===================== B. NODES ===================== -->
+  <section class="view" id="b">
+    <div class="split">
+      <div class="canvas"><div class="world">
+        <svg class="wires" viewBox="0 0 1060 600" aria-hidden="true">
+          <path d="M240 60 C 420 60, 520 150, 700 150" stroke="var(--deck-preset, var(--sig-1))"/>
+          <path d="M240 150 C 420 150, 520 180, 700 180" stroke="var(--deck-character, var(--sig-1))"/>
+          <path d="M240 240 C 420 240, 520 210, 700 210" stroke="var(--deck-lorebook, var(--sig-2))"/>
+          <path d="M240 330 C 420 330, 520 240, 700 240" stroke="var(--sig-6, var(--sig-3))"/>
+          <path d="M240 420 C 420 420, 520 300, 700 300" stroke="var(--sig-5)"/>
+          <path d="M240 510 C 420 510, 520 330, 700 330" stroke="var(--sig-4)"/>
+          <path d="M460 470 C 560 470, 600 270, 700 270" stroke="color-mix(in srgb, var(--premiere-text) 45%, transparent)"/>
+        </svg>
+        <div class="nd pre" style="left:20px;top:30px"><span class="k">Preset</span><b>Main prompt, Writing style</b>2 blocks</div>
+        <div class="nd card" style="left:20px;top:120px"><span class="k">Cast</span><b>Vera, You</b></div>
+        <div class="nd lore" style="left:20px;top:210px"><span class="k">Lorebook</span><b>Harbor town</b>on keywords, shared</div>
+        <div class="nd mem" style="left:20px;top:300px"><span class="k">Summary</span><b>Chat summary</b></div>
+        <div class="nd skill sel" style="left:20px;top:390px"><span class="k">Skill</span><b>Sword fight</b>mentioned: sword</div>
+        <div class="nd trk" style="left:20px;top:480px"><span class="k">Tracker</span><b>Health</b></div>
+        <div class="nd" style="left:250px;top:440px;width:200px;--c:color-mix(in srgb, var(--premiere-text) 45%, transparent)"><span class="k">Chat</span><b>History</b>last 40 messages</div>
+        <div class="nd req" style="left:700px;top:110px"><span class="k">Request <span class="co">1</span></span><b>What the model gets</b>
+          <ol><li>Preset</li><li>Cast</li><li>World</li><li>Summary</li><li>History</li><li>Skill (1 back)</li><li>Tracker</li></ol>
+          <p class="muted" style="margin-top:6px">The order of the sockets is the order of the prompt. Drag a wire to another socket to move it.</p></div>
+      </div></div>
+      <aside class="side">
+        <div class="cap">Selected wire <span class="co">2</span></div>
+        <h3>Sword fight into Request</h3>
+        <div><div class="fl">Socket</div><span class="select">6: inside History, 1 back</span></div>
+        <div><div class="fl">As</div><span class="seg" data-seg><span aria-pressed="true">System</span><span>Narrator</span><span>You</span></span></div>
+        <div><div class="fl">When (on the wire) <span class="co">3</span></div><span class="seg" data-seg><span>Always</span><span aria-pressed="true">Mentioned</span><span>Picked</span></span></div>
+        <div><div class="fl">If the prompt is full</div><span class="seg" data-seg><span aria-pressed="true">Always send</span><span>Can be cut</span></span></div>
+        <p class="hint">Conditions and budgets live on wires, so one skill can feed two places with different rules.</p>
+      </aside>
+    </div>
+    <div class="legend panel" style="padding:12px 14px"><b>Callouts</b><ol>
+      <li><span class="co">1</span> One Request node: its numbered sockets are the prompt order. Every part is a node wired into a socket.</li>
+      <li><span class="co">2</span> Selecting a wire edits where that part lands and how.</li>
+      <li><span class="co">3</span> Most power: conditions and budgets per wire. Most to learn, and a graph has to be flattened to export to SillyTavern or RoleCall (a part wired twice exports twice).</li>
+    </ol></div>
+  </section>
+
+  <!-- ===================== C. BY PURPOSE ===================== -->
+  <section class="view" id="c">
+    <div class="split">
+      <div class="main">
+        <div class="headrow"><b>What each part is for</b><span class="muted">Bunraku places them; you only override when you care</span></div>
+        <div class="purposes">
+          <div class="pur"><header><b>Background</b><small>who and what is true; placed early</small></header><div class="items">
+            <div class="pc card">Vera, You</div><div class="pc lore">Harbor town</div><div class="pc mem">Chat summary</div></div></div>
+          <div class="pur"><header><b>Instructions</b><small>how to write; placed first</small></header><div class="items">
+            <div class="pc pre">Main prompt, Writing style</div><div class="pc dir">Director contract</div></div></div>
+          <div class="pur"><header><b>Reminders</b><small>steer this reply; placed close to it</small></header><div class="items">
+            <div class="pc skill sel">Sword fight <span class="grow"></span><span class="tag when">mentioned</span></div><div class="pc note">Keep it tense</div><div class="pc dir">This turn's direction</div></div></div>
+          <div class="pur"><header><b>State</b><small>current numbers; placed last</small></header><div class="items">
+            <div class="pc trk">Health</div></div></div>
+        </div>
+        <div class="cap" style="margin-top:14px">Where that puts them <span class="co">1</span></div>
+        <div class="result">
+          <div class="pre">Instructions: Main prompt, Writing style, Director contract</div>
+          <div class="card">Background: Vera, You, Harbor town, Chat summary</div>
+          <div style="--c:color-mix(in srgb, var(--premiere-text) 40%, transparent)">The chat (5.1k)</div>
+          <div class="skill">Reminders: Sword fight, Keep it tense, This turn's direction (1 back)</div>
+          <div class="trk">State: Health</div>
+        </div>
+      </div>
+      <aside class="side">
+        <div class="cap">Selected part</div><h3>Sword fight</h3>
+        <div><div class="fl">Purpose</div><span class="seg" data-seg><span>Background</span><span>Instructions</span><span aria-pressed="true">Reminder</span><span>State</span></span></div>
+        <div><div class="fl">Exact spot <span class="co">2</span></div><span class="switch"></span> <span class="muted">Off: placed by its purpose</span></div>
+        <div><div class="fl">When</div><span class="seg" data-seg><span>Always</span><span aria-pressed="true">Mentioned</span><span>Picked</span></span></div>
+      </aside>
+    </div>
+    <div class="legend panel" style="padding:12px 14px"><b>Callouts</b><ol>
+      <li><span class="co">1</span> You pick a purpose; the order comes from it. Simplest to use, least obvious where a part actually lands (the preview shows it).</li>
+      <li><span class="co">2</span> An override for an exact spot, which falls back to option A's settings. Exports by writing out the placed order.</li>
+    </ol></div>
+  </section>
+
+  <!-- ===================== D. HYBRID ===================== -->
+  <section class="view" id="d">
+    <div class="panel" style="padding:12px 14px">
+      <div class="cap">Steps of a turn (Board, for promptbooks) <span class="co">1</span></div>
+      <div class="steps">
+        <div class="step"><span class="k">Step 1, private</span><b>Think</b><div class="mini"><span class="card">Cast</span><span style="--c:color-mix(in srgb, var(--premiere-text) 40%, transparent)">Story, last 10</span><span class="skill">Rules: plan the beat</span></div></div>
+        <div class="step sel"><span class="k">Step 2, reply</span><b>Write</b><div class="mini"><span class="pre">Rules</span><span class="card">Cast</span><span class="lore">World</span><span class="mem">Memory</span><span style="--c:color-mix(in srgb, var(--premiere-text) 40%, transparent)">Story</span><span class="trk">Right now</span></div></div>
+        <div class="step"><span class="k">Step 3, after</span><b>Tidy</b><div class="mini"><span class="note">Final Cut agent</span></div></div>
+      </div>
+    </div>
+    <div class="split">
+      <div class="main">
+        <div class="headrow"><b>Inside "Write": its sections</b> <span class="co">2</span><span class="grow"></span><span class="muted">the same six sections as option A</span></div>
+        <div class="zones">
+          <div class="zone"><header><b>Rules</b><span class="tok">1.9k</span></header><div class="items"><div class="pc pre">Main prompt</div><div class="pc dir">Director contract</div></div></div>
+          <div class="zone"><header><b>Cast</b><span class="tok">1.4k</span></header><div class="items"><div class="pc card">Vera, You</div></div></div>
+          <div class="zone"><header><b>World</b><span class="tok">1.7k</span></header><div class="items"><div class="pc lore">Harbor town</div><div class="pc lore">From step Think: notes</div></div></div>
+          <div class="zone"><header><b>Story</b><span class="tok">5.1k</span></header><div class="story"><div class="msg"><b>You</b> I draw my sword.<span class="back">1 back</span></div><div class="pc skill sel">Sword fight<span class="grow"></span><span class="tag">1 back</span></div></div></div>
+          <div class="zone"><header><b>Right now</b><span class="tok">0.9k</span></header><div class="items"><div class="pc trk">Health</div></div></div>
+        </div>
+      </div>
+      <aside class="side">
+        <div class="cap">Why both</div>
+        <p>Steps are a flow (what runs, in what order, who runs it): a graph fits. One prompt is a page: sections fit. The industry splits the same way (pipeline builders for flows, ordered context for one call).</p>
+        <p class="hint">A scene without a promptbook has one step and only ever sees option A.</p>
+      </aside>
+    </div>
+    <div class="legend panel" style="padding:12px 14px"><b>Callouts</b><ol>
+      <li><span class="co">1</span> The Board shows the turn's steps (the promptbook phases already wireframed in promptbook-board.html). An agent sits in a step's "run by" seat.</li>
+      <li><span class="co">2</span> Opening a step shows option A's sections for that step's prompt. One way to lay out a prompt everywhere; nodes only for the flow.</li>
+    </ol></div>
+  </section>
+
+  <!-- ===================== COMPARE + RESEARCH ===================== -->
+  <section class="view" id="x">
+    <div class="panel" style="padding:12px 14px">
+      <div class="cap">Compare</div>
+      <table class="cmp"><thead><tr><th></th><th>A. Sections</th><th>B. Nodes</th><th>C. By purpose</th><th>D. Hybrid</th></tr></thead><tbody>
+        <tr><td>Simple to start</td><td class="y">yes: six names</td><td class="n">no: wiring</td><td class="y">yes: four purposes</td><td class="y">yes: A unless you add steps</td></tr>
+        <tr><td>Exact control</td><td class="y">yes</td><td class="y">most</td><td>with override</td><td class="y">yes</td></tr>
+        <tr><td>SillyTavern / RoleCall in and out</td><td class="y">clean mapping</td><td class="n">has to flatten</td><td>writes the order out</td><td class="y">clean (per step)</td></tr>
+        <tr><td>Where it lands is obvious</td><td class="y">yes</td><td>yes, on the canvas</td><td class="n">needs the preview</td><td class="y">yes</td></tr>
+        <tr><td>Handles multi-step turns</td><td class="n">no</td><td class="y">yes</td><td class="n">no</td><td class="y">yes</td></tr>
+      </tbody></table>
+    </div>
+    <div class="notes">
+      <div class="panel"><b>Context engineering</b>The field moved from "write a good prompt" to "decide what the model sees each call": assembled fresh every call, ordered, trimmed, and visible afterwards. Less is more: stuffing the window makes answers worse. Every option keeps one cost bar and the Inspector.</div>
+      <div class="panel"><b>Progressive disclosure (Agent Skills)</b>Skills load in tiers: names and one-liners always, the body when it applies, extra files only when opened. Our "picked" skills already work this way; all options keep it.</div>
+      <div class="panel"><b>Roleplay frontends</b>SillyTavern and RisuAI use an ordered prompt list plus lore positions; NovelAI adds per-entry insertion order, reserved tokens and trim direction (the richest budget controls). Option A keeps their mapping and NovelAI's "can it be cut" idea.</div>
+      <div class="panel"><b>Node builders</b>Langflow and Flowise use canvases for pipelines (model, memory, tools, steps), not for ordering one prompt. That is why option D puts nodes on steps and sections on the page.</div>
+    </div>
+  </section>
+</div>
+<script>
+document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('.tabs button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  document.querySelectorAll('.view').forEach((v) => v.classList.toggle('on', v.id === b.dataset.v));
+}));
+</script><script src="kit.js"></script>
+</body></html>

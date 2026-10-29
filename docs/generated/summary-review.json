@@ -359,8 +359,8 @@
       "status": "APPROVED",
       "verdict": "APPROVE",
       "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:a58ac1000a7363ec6254e4120c7f0a87662df62cce77d66494b945733de35c11",
-      "semanticSummaryHash": "sha256:53c5361e13a0df33fe1468828ba7e49a35e00d20602de004dd96a0591ea13aa2"
+      "sourceHash": "sha256:535b794c14e889087038e6daf686fd32f833a659292ff429361363d4bd117415",
+      "semanticSummaryHash": "sha256:e4eb7f0d232b0dffb941895685c54dfcbf374474b823f8a7b34884295aa2d6b7"
     },
     {
       "docId": "reference/concepts/bundles",
@@ -503,8 +503,8 @@
       "status": "APPROVED",
       "verdict": "APPROVE",
       "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:b2d6c636a57e54f72c840ad79e2c46c22f51662e52644bb91074efc001eafcc8",
-      "semanticSummaryHash": "sha256:4a224ebc89960ad573e61eebdf18daabb7bcbc5b9ee004b5188ea2a25f3bfa77"
+      "sourceHash": "sha256:9ea1fc2c4a01c26603ae6b522176389a15f05aa7327a419ee2a24f9509074b71",
+      "semanticSummaryHash": "sha256:1c0975638711a1200c63bf7218fbfd936a35230105fb65952eae2670d058c271"
     },
     {
       "docId": "reference/entities/promptformat",
@@ -559,8 +559,8 @@
       "status": "APPROVED",
       "verdict": "APPROVE",
       "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:a8456d2f23cfcfe85c760bb42be1dc45c5112564fffe446537360cd918c6b510",
-      "semanticSummaryHash": "sha256:a86f0b3b82229110978354e7ee2636b781341bfd2b1b7f10edc5b9c0134381ed"
+      "sourceHash": "sha256:76e8564fe93e112640c07fea520e294dbc463d7c5e4536a9f8099d4fb7c30183",
+      "semanticSummaryHash": "sha256:24367d473e6269e1ce9856fe8d656e16de8866157fbdaafab95492700705a149"
     },
     {
       "docId": "reference/extending/add-a-format",
@@ -1007,8 +1007,8 @@
       "status": "APPROVED",
       "verdict": "APPROVE",
       "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:d81469acd0929356cc32127158557cf32a3e0dfc958bc8c1cdd2ad4135f1564a",
-      "semanticSummaryHash": "sha256:4dcf48f60cfd9b1ce2f666db2435c3d9c87f99fab40c90631081e69a94b75bb6"
+      "sourceHash": "sha256:b65faa0a9351ef749a0971ccb0ab774f2ff246a80b279bf6d5ce7c08a5042bc9",
+      "semanticSummaryHash": "sha256:0d7e4f1a72fa98e27dc3893a6b76e5cdc615dee7a410c8742ab0be7347e53b72"
     },
     {
       "docId": "reference/updates",

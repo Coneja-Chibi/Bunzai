@@ -309,6 +309,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | FavoriteModels | src/ui/apps/scenes/messenger/settings/scene/models-page.tsx | ({ env }: { env: SceneEnv }) |  |  |
 | FavoriteRow | src/ui/apps/scenes/messenger/settings/scene/overview-rows.tsx | ({ a }: { a: WingArgs }) | The star on the scene: shown in the Scenes list's Fan Favorites shelf. |  |
 | FeaturedCast | src/ui/apps/scenes/compendium/cells/cells-featured.tsx | ({ m, onOpen }: { m: BookModel } & Open) |  |  |
+| FeatureNode | src/ui/apps/workbench/nodes/EngineNodes.tsx | (p: FeatureNodeProps) | A feature that splices into the request (trackers, library trackers, storyboards): drag it onto a block to put its marker there. | .view .head .grow .addWrap .addMenu .area .canvas .world ... |
 | Field | src/ui/apps/scenes/context/memory-controls.tsx | ({ label, hint, children }: { label: string; hint?: ReactNode; children: ReactNode }) |  |  |
 | Field | src/ui/apps/scenes/stage-controls.tsx | ({ icon, label, help, children }: { icon: IconName; label: string; help?: string; children: ReactNode }) |  |  |
 | FieldBlock | src/ui/apps/scenes/compendium/fields/blocks.tsx | ({ label, children, tile }: { label: string; children: ReactNode; tile?: boolean }) |  |  |
@@ -438,7 +439,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | LinkOut | src/ui/components/link-out/index.tsx | ({ icon, title, meta, action, onAction, empty, emptyLabel }: LinkOutProps) |  | .row .ic .body .title .meta .pending .empty |
 | ListEditor | src/ui/components/list-editor/index.tsx | ({ items, fields, onChange, addLabel, itemTitle, makeItem }: ListEditorProps) |  | .wrap .item .ihead .ititle |
 | ListRow | src/ui/components/button/rows.tsx | ({ label, subtitle, leading, meta, trailing, variant = "plain", selected, depth = 0, accent, wrap, vars, "data-part":... |  | .row .item .fold .lead .text .clip .sub .meta ... |
-| ListToolbar | src/ui/apps/workbench/preset/list-toolbar.tsx | ({ counts, query, onQuery, tab, onTab, onExpandAll, onCollapseAll, onAdd, onAddCategory, }: ListToolbarProps) |  | .toolbar .topRow .searchWrap .searchIcon .search .stats .statNum .actions ... |
+| ListToolbar | src/ui/apps/workbench/preset/list-toolbar.tsx | ({ counts, query, onQuery, tab, onTab, onExpandAll, onCollapseAll, onAdd, onAddCategory, placedSlots, onAddMarker, }:... |  | .toolbar .topRow .searchWrap .searchIcon .search .stats .statNum .actions ... |
 | LiveBubble | src/ui/apps/scenes/scene-turn-parts.tsx | ({ n, who, tone, art, live, format, prefs, speakers }: { speakers?: readonly Speaker[] \| undefined; n: number; who: s... | The reply being written, in its own bubble: no message id yet, so none of Bubble's edit/branch/cut |  |
 | LiveBuild | src/ui/apps/workbench/preset/live-build.tsx | ({ body, onSelect }: LiveBuildProps) |  | .wrap .head .headline .module .css .weight .empty .list ... |
 | LivePreview | src/ui/apps/scenes/cast/cast-injection.tsx | ({ body, character, scan }: { body: PersonaBody; character: CharacterBody; scan: PresetScan }) | RoleCall's Live Preview: the eye, where it lands, the block as sent, and the token count. |  |
@@ -485,6 +486,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | Macros | src/ui/apps/scenes/context/tab-macros.tsx | ({ trace }: { trace: SceneTrace }) |  |  |
 | MapBody | src/ui/apps/scenes/compendium/storyboards/dossier-views.tsx | ({ d, open, ai }: { d: MapDossier; open: Open; ai: JSX.Element }) |  |  |
 | MarinaraFolderToc | src/ui/apps/workbench/lore/folder-toc.tsx | ({ entries, categories, edges, focusedId, selectedFolderId, collapsed, writeFor, styles, bookName, onSelectEntry, onS... |  |  |
+| MarkerMenu | src/ui/apps/workbench/preset/marker-menu.tsx | ({ placed, onAdd }: { placed: ReadonlySet<string>; onAdd(slot: string): void }) |  | .toolbar .topRow .searchWrap .searchIcon .search .stats .statNum .actions ... |
 | MasterSection | src/ui/apps/scenes/compendium/tabs/settings/master.tsx | ({ compendium, set }: SectionProps) |  |  |
 | MemberFace | src/ui/apps/scenes/messenger/panels/cast/member-face.tsx | ({ row, big }: { row: RosterRow; big?: boolean }) |  |  |
 | MemberRow | src/ui/apps/scenes/messenger/panels/cast/member-row.tsx | ({ chatId, row, onProfile, onChange }: MemberRowProps) |  |  |

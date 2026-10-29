@@ -17,7 +17,8 @@ import { keyOf } from "../../../_shared/piece-key";
 import { boundsOf, fitView, nodeRect, type Pt, type Rect } from "./geometry";
 import { writeLink } from "./link-write";
 import type { GraphEdge, GraphNode, RefField } from "./links";
-import { ENGINE_W, LORE_H, LORE_KEY, PIPE_W, REQUEST_H, REQUEST_KEY, pipeHeight, pipeKey, pipelineModel, type PipelineModel } from "./pipeline";
+import { ENGINE_W, FEATURE_H, LORE_H, LORE_KEY, PIPE_W, REQUEST_H, REQUEST_KEY, featureKey, pipeHeight, pipeKey, pipelineModel, type PipelineModel } from "./pipeline";
+import { FEATURE_MARKER_SLOTS } from "../../../../core/preset";
 import { writePreset, type BlockEdit } from "./preset-write";
 import { usePipeline } from "./use-pipeline";
 import { useCanvasState } from "./use-canvas-state";
@@ -172,6 +173,8 @@ export function NodesView({ ctx, pieces, onView }: { ctx: AppContext; pieces: re
               drag={drag}
               onToggle={(piece, id, enabled) => void writeBlock(piece, { t: "set", id, enabled })}
               onMove={(piece, from, to, seen) => void writeBlock(piece, { t: "move", from, to, seen })}
+              onPlace={(piece, slot, to, seen) => void writeBlock(piece, { t: "place", slot, to, seen })}
+              onOwnSpot={(piece, slot, seen) => void writeBlock(piece, { t: "unplace", slot, seen })}
               onOpen={openPiece}
             />
           )}
@@ -211,13 +214,14 @@ function useStable<T>(next: readonly T[]): readonly T[] {
   return last.current;
 }
 
-/** The Pipeline layer's rectangles: each expanded preset, the Lore pass and the Request. */
+/** The Pipeline layer's rectangles: each expanded preset, the Lore pass, the feature nodes and the Request. */
 function pipelineRects(model: PipelineModel, at: (key: string) => Pt): Rect[] {
   if (model.presets.length === 0) return [];
   const box = (key: string, w: number, h: number): Rect => { const [x, y] = at(key); return { x, y, w, h }; };
   return [
     box(LORE_KEY, ENGINE_W, LORE_H),
     ...model.presets.map((p) => box(pipeKey(p.key), PIPE_W, pipeHeight(p.summary.blocks))),
+    ...FEATURE_MARKER_SLOTS.map((slot) => box(featureKey(slot), ENGINE_W, FEATURE_H)),
     box(REQUEST_KEY, ENGINE_W, REQUEST_H),
   ];
 }

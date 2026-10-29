@@ -2,7 +2,7 @@
   "generated": "2026-10-29",
   "targetChars": 90000,
   "totalPages": 127,
-  "totalSourceChars": 1613545,
+  "totalSourceChars": 1615977,
   "batches": [
     {
       "id": "batch-001",
@@ -498,7 +498,7 @@
     },
     {
       "id": "batch-007",
-      "sourceChars": 86871,
+      "sourceChars": 87752,
       "pages": [
         {
           "docId": "reference/entities/formula",
@@ -545,7 +545,7 @@
           "sourcePath": "docs/reference/entities/preset.md",
           "sidecarPath": "docs/summaries/reference/entities/preset.json",
           "sectionCount": 18,
-          "sourceChars": 22294,
+          "sourceChars": 23175,
           "status": "APPROVED"
         },
         {
@@ -576,7 +576,7 @@
     },
     {
       "id": "batch-008",
-      "sourceChars": 84707,
+      "sourceChars": 84788,
       "pages": [
         {
           "docId": "reference/entities/regex",
@@ -607,7 +607,7 @@
           "sourcePath": "docs/reference/entities/tracker.md",
           "sidecarPath": "docs/summaries/reference/entities/tracker.json",
           "sectionCount": 7,
-          "sourceChars": 20410,
+          "sourceChars": 20491,
           "status": "APPROVED"
         },
         {
@@ -1102,14 +1102,14 @@
     },
     {
       "id": "batch-017",
-      "sourceChars": 279136,
+      "sourceChars": 280606,
       "pages": [
         {
           "docId": "reference/ui",
           "sourcePath": "docs/reference/ui.md",
           "sidecarPath": "docs/summaries/reference/ui.json",
           "sectionCount": 34,
-          "sourceChars": 279136,
+          "sourceChars": 280606,
           "status": "APPROVED"
         }
       ]

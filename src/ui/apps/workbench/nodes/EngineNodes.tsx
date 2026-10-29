@@ -1,13 +1,15 @@
 /**
- * The two engine steps on the canvas (dashed, not pieces): the Lore pass, and the Request with its
- * scene picker and Preview. Both only report; neither writes anything.
+ * The engine steps on the canvas (dashed, not pieces): the Lore pass, and the Request with its scene picker and
+ * Preview, which only report; and the feature nodes, whose drag places a feature's marker (the caller writes it).
  */
 import { useState } from "react";
 import type { CSSProperties, JSX, PointerEvent } from "react";
 import type { SceneSummary } from "../../../../studio/scenes";
 import { InkDialog } from "../../../components/ink-dialog";
 import { Button } from "../../../components/button";
-import { ENGINE_W, LORE_H, REQUEST_H, tokLabel, type LoreStats, type RequestView } from "./pipeline";
+import type { FeatureMarkerSlot } from "../../../../core/preset";
+import { markerSlotName } from "../preset/session";
+import { ENGINE_W, FEATURE_H, LORE_H, REQUEST_H, featureColor, tokLabel, type LoreStats, type RequestView } from "./pipeline";
 import css from "./nodes.module.css";
 
 export interface LoreNodeProps {
@@ -91,6 +93,47 @@ export function RequestNode(p: RequestNodeProps): JSX.Element {
           </div>
         </InkDialog>
       )}
+    </div>
+  );
+}
+
+export interface FeatureNodeProps {
+  at: readonly [number, number];
+  slot: FeatureMarkerSlot;
+  /** where its marker stands in the request's preset, or null for its own spot */
+  placedAt: string | null;
+  locked: boolean;
+  onDown(e: PointerEvent): void;
+  /** the feature is being dragged toward a block (null when the drag ends) */
+  onDrag(slot: FeatureMarkerSlot | null): void;
+  onOwnSpot(): void;
+}
+
+/** A feature that splices into the request (trackers, library trackers, storyboards): drag it onto a block to put its marker there. */
+export function FeatureNode(p: FeatureNodeProps): JSX.Element {
+  return (
+    <div
+      className={css.eng}
+      style={{ left: p.at[0], top: p.at[1], width: ENGINE_W, height: FEATURE_H, "--k": featureColor(p.slot) } as CSSProperties}
+      data-feature={p.slot}
+      onPointerDown={p.onDown}
+    >
+      <div className={css.engKind}>Feature</div>
+      <div className={css.engName}>{markerSlotName(p.slot)}</div>
+      <div className={css.engMeta}>{p.placedAt ? `Marker: ${p.placedAt}` : "Own spot: after the leading system messages"}</div>
+      <div className={css.engAct} onPointerDown={(e) => e.stopPropagation()}>
+        <span
+          className={css.featurePort}
+          role="button"
+          tabIndex={-1}
+          aria-label={`Drag ${markerSlotName(p.slot)} onto a block`}
+          title={p.locked ? "Save or discard the preset's Desk edits first" : "Drag onto a block to put its marker there"}
+          draggable={!p.locked}
+          onDragStart={(e) => { e.dataTransfer?.setData("text/plain", p.slot); p.onDrag(p.slot); }}
+          onDragEnd={() => p.onDrag(null)}
+        >Drag to place</span>
+        {p.placedAt && <Button size="sm" variant="quiet" disabled={p.locked} onClick={p.onOwnSpot}>Own spot</Button>}
+      </div>
     </div>
   );
 }

@@ -1,0 +1,241 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill Pieces</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Page-only rules, tokens only. Editor construction copied from piece-editors.html (the approved piece editors); the
+   skill uses the lorebook deck color (text that fires on words, like a lore entry). Additions are marked below. */
+.room { max-width: 1560px; padding-top: 20px; }
+.muted { color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.views { display: flex; flex-wrap: wrap; margin-bottom: 14px; }
+.views button { font: 700 13px var(--font-ui); padding: 9px 16px; background: var(--premiere-hard); color: var(--premiere-text); border: 2px solid color-mix(in srgb, var(--premiere-text) 30%, transparent); cursor: pointer; }
+.views button + button { border-left: 0; }
+.views button[aria-pressed="true"] { background: color-mix(in srgb, var(--premiere-rose) 24%, var(--premiere-hard)); box-shadow: inset 0 -3px 0 var(--premiere-rose); }
+.view { display: none; flex-direction: column; gap: 14px; } .view.on { display: flex; }
+.ehead { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px 18px; align-items: center; padding: 14px 18px; }
+.mark { width: 48px; height: 48px; display: grid; place-items: center; font: 700 24px var(--font-fancy); color: var(--premiere-hard); background: var(--deck); }
+.nameField { font: 700 24px/1.2 var(--font-fancy); letter-spacing: .02em; }
+.ehead .meta { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 65%, transparent); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.ehead .ctl { display: flex; gap: 10px; align-items: center; }
+.saved { display: inline-flex; align-items: center; gap: 8px; font: 600 13px var(--font-ui); padding: 7px 12px; border: 1px solid color-mix(in srgb, var(--premiere-gold) 50%, transparent); }
+.saved::before { content: ""; width: 8px; height: 8px; background: var(--premiere-gold); }
+.btn.sm { min-height: 32px; padding: 5px 12px; font-size: 13px; }
+.fl { font: 600 13px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 80%, transparent); display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.field.block, .select.block { display: block; width: 100%; }
+.field.tall { min-height: 96px; line-height: 1.5; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) 380px; padding: 0; min-height: 520px; }
+.cols > * { min-width: 0; }
+.cols > .rail { border-left: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); background: color-mix(in srgb, var(--premiere-hard) 35%, transparent); }
+.pad { padding: 16px 18px; }
+.stack { display: grid; gap: 16px; align-content: start; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tabs { display: flex; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.tabs button { flex: 1; min-height: 44px; font: 700 14px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 70%, transparent); background: none; border: 0; border-bottom: 3px solid transparent; cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--premiere-text); border-bottom-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 12%, transparent); }
+.railview { display: none; } .railview.on { display: block; }
+.hint { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); margin-top: 4px; }
+.sub { font: 700 15px var(--font-ui); padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.codebox { font: 14px/1.6 var(--font-mono); padding: 14px; min-height: 150px; white-space: pre-wrap; background: color-mix(in srgb, var(--premiere-hard) 60%, transparent); border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); }
+.codebox .m { color: var(--premiere-gold); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip.code { font-family: var(--font-mono); }
+.sw { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
+.chip .x { font-weight: 400; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); margin-left: 2px; }
+.prose { white-space: pre-wrap; line-height: 1.6; font-size: 13px; padding: 12px 14px; background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.tokcard { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border: 1px solid color-mix(in srgb, var(--premiere-gold) 40%, transparent); background: color-mix(in srgb, var(--premiere-gold) 8%, transparent); }
+.tokcard b { font: 700 20px var(--font-mono); }
+.result { padding: 12px 14px; font-size: 14px; background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.result.on { border-left: 4px solid var(--stage-ok); }
+.wview { display: none; } .wview.on { display: grid; gap: 12px; }
+.sentence { font-size: 14px; line-height: 2.1; }
+.sentence .field, .sentence .select { display: inline-block; min-height: 30px; padding: 2px 10px; vertical-align: middle; }
+.co { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; font: 700 11px var(--font-ui); background: var(--premiere-rose); color: var(--premiere-hard); }
+
+/* Library: portrait cards (library-redesign.html's piece card, reduced) */
+.deckhead { display: flex; align-items: baseline; gap: 12px; }
+.deckhead .num { font: 700 28px var(--font-fancy); color: var(--premiere-gold); }
+.deckhead h2 { font: 700 22px var(--font-fancy); color: var(--deck-lorebook); }
+.flow { display: flex; flex-wrap: wrap; gap: 14px; }
+.pcard { width: 168px; height: 236px; display: flex; flex-direction: column; background: var(--premiere-panel); border: 2px solid color-mix(in srgb, var(--premiere-text) 16%, transparent); box-shadow: 4px 4px 0 var(--premiere-hard); }
+.pcard .cover { flex: 1; display: grid; place-items: center; font: 700 44px var(--font-fancy); color: var(--premiere-hard); background: var(--deck-lorebook); position: relative; }
+.pcard .flag { position: absolute; top: 8px; left: 8px; font: 700 10px var(--font-ui); letter-spacing: .12em; text-transform: uppercase; padding: 2px 6px; background: var(--premiere-hard); color: var(--deck-lorebook); }
+.pcard .body { padding: 8px 10px; font-size: 12px; display: grid; gap: 3px; }
+.pcard .body b { font-size: 14px; }
+.ghost { width: 168px; height: 236px; display: grid; place-items: center; text-align: center; border: 2px dashed color-mix(in srgb, var(--deck-lorebook) 60%, transparent); color: var(--deck-lorebook); font: 700 14px var(--font-ui); }
+
+/* Scene side: Props panel rows, open rows with a colored edge (no boxes in boxes) */
+.scene { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 0; border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.chatcol { padding: 16px 18px; display: grid; gap: 10px; align-content: start; background: var(--premiere-hard); }
+.bubble { font-size: 13px; padding: 8px 12px; max-width: 80%; background: var(--premiere-panel); border: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+.bubble.me { justify-self: end; border-color: color-mix(in srgb, var(--premiere-rose) 40%, transparent); }
+.toolchip { justify-self: start; font: 600 12px var(--font-ui); padding: 3px 8px; border-left: 3px solid var(--deck-lorebook); background: color-mix(in srgb, var(--deck-lorebook) 10%, transparent); }
+.props { background: var(--premiere-panel); border-left: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); padding: 14px 16px; display: grid; gap: 10px; align-content: start; font-size: 13px; }
+.props h3 { font: 700 18px var(--font-fancy); }
+.srow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; padding: 8px 0 8px 10px; border-left: 3px solid color-mix(in srgb, var(--premiere-text) 20%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 8%, transparent); }
+.srow.on { border-left-color: var(--stage-ok); }
+.srow.open { border-left-color: var(--premiere-rose); }
+.srow b { font-weight: 700; }
+.srow small { grid-column: 1 / -1; color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.warn { font-size: 12px; padding: 8px 10px; border-left: 3px solid var(--premiere-gold); background: color-mix(in srgb, var(--premiere-gold) 8%, transparent); }
+
+/* Prompt: legacy row + nodes card, reduced from prompt-placement-nodes.html */
+.ppl { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.lr { display: flex; align-items: center; gap: 8px; padding: 6px 10px; font-size: 13px; background: var(--premiere-panel); border: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); margin-bottom: 4px; }
+.lr.mk { border-left: 4px solid var(--deck-lorebook); }
+.lr .m { font: 700 10px var(--font-ui); letter-spacing: .1em; text-transform: uppercase; padding: 1px 5px; border: 1px solid var(--premiere-rose); color: var(--premiere-rose); }
+.lr .grow { flex: 1; }
+.nd { width: 260px; background: var(--premiere-panel); border: 2px solid color-mix(in srgb, var(--premiere-text) 16%, transparent); border-left: 6px solid var(--deck-lorebook); box-shadow: 4px 4px 0 var(--premiere-hard); padding: 6px 10px; font-size: 12px; }
+.nd .item { display: flex; gap: 6px; padding: 4px 0 4px 8px; border-top: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.nd .item span:last-child { margin-left: auto; color: var(--premiere-gold); font-size: 11px; }
+.legend { padding: 18px 0 40px; }
+.legend li { margin: 8px 0 8px 18px; font-size: 13px; }
+@media (max-width: 1100px) { .cols, .scene, .ppl { grid-template-columns: 1fr; } .cols > .rail, .props { border: 0; border-top: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); } }
+@media (max-width: 720px) { .two { grid-template-columns: 1fr; } .ehead { grid-template-columns: auto 1fr; } .ehead .ctl { grid-column: 1 / -1; } }
+</style></head>
+<body><div class="wf-note">WIREFRAME. The Skill kind: a prompt that fires like a lore entry. Its editor, its Library deck, how a scene shows it, and where it sits in the prompt. Switch views at the top; click the "When" segments and rail tabs. <span class="wf-accent"></span></div>
+<div class="stage"><main class="room">
+<div class="views" role="group" aria-label="View">
+  <button data-v="editor" aria-pressed="true">Editor</button><button data-v="library" aria-pressed="false">Library</button><button data-v="scene" aria-pressed="false">In a scene</button><button data-v="prompt" aria-pressed="false">In the prompt</button>
+</div>
+
+<!-- ===================== EDITOR ===================== -->
+<section class="view on" id="editor">
+  <header class="panel ehead" data-deck="lorebook">
+    <div class="mark">S</div>
+    <div><div class="nameField">Sword fight</div><div class="meta"><span>Skill</span><span>when the chat mentions it</span><span>rides the Skills marker</span><span>linked in <span class="num">2</span> scenes</span></div></div>
+    <div class="ctl"><span class="saved">Saved</span><span class="co">1</span></div>
+  </header>
+  <div class="panel cols" data-deck="lorebook">
+    <div class="pad stack">
+      <div><div class="fl">What it is for <span class="co">2</span></div><div class="field block">How to run a sword fight: footwork, one exchange per reply.</div>
+        <p class="hint">One line. The AI reads it when it may pick this skill, so say what it is for.</p></div>
+      <div><div class="fl">Instructions <span class="co">3</span></div>
+        <div class="codebox">When swords cross, describe footwork first, then the strike.
+One exchange per reply. Let {{user}} answer each blow.
+If <span class="m">{{tracker::Health::hp}}</span> is under 5, {{char}} fights to escape, not to win.</div>
+        <div class="chips" style="margin-top:8px"><span class="chip code">{{char}}</span><span class="chip code">{{user}}</span><span class="chip code">{{tracker::name::field}}</span><span class="chip code">{{getvar::name}}</span><button class="btn sm quiet">All macros...</button></div></div>
+
+      <div class="sub">When it turns on <span class="co">4</span></div>
+      <span class="seg" id="when" data-seg><span data-w="always">Always</span><span data-w="mention" aria-pressed="true">When the chat mentions...</span><span data-w="pick">When the AI picks it</span></span>
+      <div class="wview" data-w="always"><p class="hint" style="margin:0">In the prompt every turn while a scene links it.</p></div>
+      <div class="wview on" data-w="mention">
+        <div class="sentence">When <span class="select">any</span> of these
+          <span class="chips" style="display:inline-flex;vertical-align:middle"><span class="chip">sword <b class="x">&times;</b></span><span class="chip">blade <b class="x">&times;</b></span><span class="chip">parry <b class="x">&times;</b></span></span>
+          appear in <span class="select">the last 4 messages</span>.</div>
+        <div class="chips"><span class="sw"><span class="switch"></span> Match case</span><span class="sw"><span class="switch on"></span> Whole words</span><span class="sw"><span class="switch"></span> Pattern (regex)</span></div>
+        <p class="hint">Checked before the reply with the lorebook's own matcher, so it works the way a lore entry's keywords do.</p>
+      </div>
+      <div class="wview" data-w="pick">
+        <p class="hint" style="margin:0">The AI sees this skill's name and "What it is for" in a list, and opens it with the open_skill tool when it needs it. It stays open on later replies until closed.</p>
+        <div><div class="fl">Also close it when</div><span class="seg" data-seg><span aria-pressed="true">Only the AI or you close it</span><span>The chat stops mentioning...</span></span></div>
+        <div class="warn">Needs tools on: with Narrator Tool Access off, or a connection that takes no tools, a picked skill never opens.</div>
+      </div>
+
+      <div class="sub">Where it goes <span class="co">5</span></div>
+      <span class="seg" data-seg><span aria-pressed="true">With the other skills (the Skills marker)</span><span>Its own spot</span></span>
+      <div class="sentence muted">Its own spot: <span class="field">1</span> messages back, as <span class="select">System</span>.</div>
+      <p class="hint">Always sent while it is on: the chat gets shorter to make room, it is never dropped.</p>
+    </div>
+    <aside class="rail">
+      <div class="tabs" id="rtabs"><button data-r="try" aria-selected="true">Try</button><button data-r="sees" aria-selected="false">The AI sees</button></div>
+      <div class="railview on" id="r-try"><div class="pad stack">
+        <div class="fl">Check against <span class="co">6</span></div><div class="select block">Harbor at night (scene)</div>
+        <button class="btn primary sm" style="justify-self:start">Check</button>
+        <div class="result on"><b>On this turn.</b><span class="hint" style="display:block">"sword" in your message: "I draw my sword."</span></div>
+        <div class="fl">It adds</div>
+        <div class="prose">When swords cross, describe footwork first, then the strike.
+One exchange per reply. Let You answer each blow.
+If 12 is under 5, Vera fights to escape, not to win.</div>
+        <div class="tokcard"><span>Adds when on</span><b>~<span class="tnum">48</span></b></div>
+        <p class="hint">Reads a copy of the scene; nothing changes.</p></div></div>
+      <div class="railview" id="r-sees"><div class="pad stack">
+        <div class="fl">In the Skills marker</div>
+        <div class="prose"><span class="muted">### Skills</span>
+Sword fight: How to run a sword fight: footwork, one exchange per reply.
+When swords cross, describe footwork first...</div>
+        <div class="fl">As a pickable skill (When the AI picks it)</div>
+        <div class="prose">Skills you can open with open_skill:
+- Sword fight: How to run a sword fight: footwork, one exchange per reply.</div>
+        <p class="hint">Only the name and line cost anything until it opens.</p></div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ===================== LIBRARY ===================== -->
+<section class="view" id="library">
+  <div class="panel" data-deck="lorebook" style="padding:16px 18px;display:grid;gap:14px">
+    <div class="deckhead"><span class="num">VII</span><h2>Skills</h2><span class="muted">3</span><span class="grow"></span><span class="seg" data-seg><span aria-pressed="true">Cards</span><span>List</span></span><button class="btn sm">+ New skill</button><span class="co">7</span></div>
+    <div class="flow">
+      <div class="pcard"><div class="cover">S<span class="flag">Skill</span></div><div class="body"><b>Sword fight</b><span class="muted">When mentioned: sword, blade, parry</span><span class="muted">in 2 scenes</span></div></div>
+      <div class="pcard"><div class="cover">L<span class="flag">Skill</span></div><div class="body"><b>Lying tells</b><span class="muted">Always</span><span class="muted">in 1 scene</span></div></div>
+      <div class="pcard"><div class="cover">H<span class="flag">Skill</span></div><div class="body"><b>Haggling</b><span class="muted">When the AI picks it</span><span class="muted">not linked</span></div></div>
+      <div class="ghost">+ New skill<br><span class="muted" style="font-weight:400;font-size:12px">Opens on the Workbench</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== IN A SCENE ===================== -->
+<section class="view" id="scene">
+  <div class="scene">
+    <div class="chatcol">
+      <div class="bubble">The wight lunges from the black water.</div>
+      <div class="bubble me">I draw my sword.</div>
+      <div class="toolchip">Opened skill: Haggling <span class="muted">(the AI)</span></div>
+      <div class="bubble">Vera plants her feet, steel singing free... <span class="co">8</span></div>
+    </div>
+    <aside class="props">
+      <h3>Skills</h3>
+      <div class="srow on"><b>Sword fight</b><span class="muted">on</span><small>On this turn: "sword" in your message.</small></div>
+      <div class="srow on"><b>Lying tells</b><span class="muted">on</span><small>Always.</small></div>
+      <div class="srow open"><b>Haggling</b><button class="btn sm">Close</button><small>Opened by the AI after reply 14.</small></div>
+      <div class="srow"><b>Night watch</b><span class="muted">off</span><small>Waiting for: watch, patrol.</small></div>
+      <div class="warn">1 skill can only open when tools are on. <button class="btn sm quiet">Turn on Tool Access</button></div>
+      <button class="btn sm" style="justify-self:start">Link skills...</button>
+      <p class="hint">Linking works like trackers and tools. <span class="co">9</span></p>
+    </aside>
+  </div>
+</section>
+
+<!-- ===================== IN THE PROMPT ===================== -->
+<section class="view" id="prompt">
+  <div class="ppl">
+    <div class="panel" style="padding:14px 16px"><div class="fl">Legacy: the preset's order <span class="co">10</span></div>
+      <div class="lr">Main prompt</div>
+      <div class="lr">World info before</div>
+      <div class="lr mk"><span class="m">marker</span> Skills<span class="grow"></span><span class="muted">Sword fight, Lying tells, Haggling</span></div>
+      <div class="lr">Chat history</div>
+      <p class="hint">A skill with its own spot is listed where it lands, under Chat history.</p></div>
+    <div class="panel" style="padding:14px 16px"><div class="fl">Nodes: the Skills node opened into its skills</div>
+      <div class="nd"><b>Skills</b> <span class="muted">3 linked, 2 on</span>
+        <div class="item"><span>Sword fight</span><span>marker</span></div>
+        <div class="item"><span>Lying tells</span><span>marker</span></div>
+        <div class="item"><span>Haggling</span><span>own spot: 1 back</span></div></div>
+      <p class="hint">Drag one skill's wire to give it its own spot; unwire it to send it back. Same as the approved placement wireframe.</p></div>
+  </div>
+</section>
+</main></div>
+<ol class="legend">
+  <li><span class="co">1</span> The approved piece-editor header, on the lorebook's color: monogram, name, one meta line (when it turns on, where it goes, where it is linked), save state.</li>
+  <li><span class="co">2</span> "What it is for" is the one line the AI reads when it may pick the skill, and the line the Library card and the scene show.</li>
+  <li><span class="co">3</span> Instructions are plain prompt text with macros, like a preset block, with the same macro chips.</li>
+  <li><span class="co">4</span> When it turns on: Always; When the chat mentions (keywords or a pattern over the last N messages, any or all, case and whole words), checked with the lorebook's matcher; When the AI picks it (opened with open_skill, stays open until the AI, you, or the close rule closes it). Click the segments.</li>
+  <li><span class="co">5</span> Where it goes: with the other skills at the preset's Skills marker, or its own spot (messages back and a voice). Always sent while on, never dropped.</li>
+  <li><span class="co">6</span> Try checks a real scene: whether it is on this turn and why, the exact text it adds with macros filled, and its cost.</li>
+  <li><span class="co">7</span> Skills get their own Library deck with portrait cards: name, when, where linked. New opens on the Workbench.</li>
+  <li><span class="co">8</span> When the AI opens or closes a skill, the reply shows a small line, like a tool call.</li>
+  <li><span class="co">9</span> The scene's Skills panel (Props, like Trackers): every linked skill, whether it is on this turn and why, open ones with Close, and the tools note when a picked skill cannot open.</li>
+  <li><span class="co">10</span> In the prompt it uses the approved placement: the Skills marker in the Legacy list, the Skills node in Nodes.</li>
+</ol>
+<script src="kit.js"></script>
+<script>
+document.querySelectorAll(".views button").forEach((b) => b.addEventListener("click", () => {
+  document.querySelectorAll(".views button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  document.querySelectorAll(".view").forEach((v) => v.classList.toggle("on", v.id === b.dataset.v));
+}));
+document.querySelectorAll("[data-seg]").forEach((seg) => seg.querySelectorAll("span").forEach((s) => s.addEventListener("click", () => seg.querySelectorAll(":scope > span").forEach((x) => x.setAttribute("aria-pressed", String(x === s))))));
+document.querySelectorAll("#when span").forEach((s) => s.addEventListener("click", () => document.querySelectorAll(".wview").forEach((v) => v.classList.toggle("on", v.dataset.w === s.dataset.w))));
+document.querySelectorAll("#rtabs button").forEach((b) => b.addEventListener("click", () => {
+  document.querySelectorAll("#rtabs button").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
+  document.querySelectorAll(".railview").forEach((v) => v.classList.toggle("on", v.id === "r-" + b.dataset.r));
+}));
+</script></body></html>

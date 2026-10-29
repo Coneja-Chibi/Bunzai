@@ -63,8 +63,9 @@ export interface PresetPrompt {
   /** structural placeholder (chat history / world info / examples) with no content of its own. */
   marker: boolean;
   /**
-   * When `marker`, the ST-compatible slot identity (chatHistory, worldInfoBefore, worldInfoAfter,
-   * dialogueExamples, personaDescription). RC surfaces these as its named marker slots.
+   * When `marker`, the slot identity: ST-compatible (chatHistory, worldInfoBefore, worldInfoAfter,
+   * dialogueExamples, personaDescription), RC's named marker slots, or a Bunraku feature marker
+   * (trackers, linkedTrackers, storyboards: core/preset/build.ts FEATURE_MARKER_SLOTS).
    */
   markerSlot?: string;
   placement: PromptPlacement;

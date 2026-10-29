@@ -1,11 +1,13 @@
 /**
  * A preset opened up into its blocks in build order. Click a block to switch it on or off, drag one
- * onto another to move it; both are single preset writes made by the caller. Marker blocks are inputs
+ * onto another to move it, or drop a feature node on one to place that feature's marker there; each is a single
+ * preset write made by the caller. Marker blocks are inputs
  * (a port dot in the source's color); off blocks are struck through.
  */
 import { ListRow } from "../../../components/button";
 import { useRef } from "react";
 import type { CSSProperties, JSX, PointerEvent } from "react";
+import type { FeatureMarkerSlot } from "../../../../core/preset";
 import { dirtyTitle } from "./link-write";
 import { BLOCK_H, PIPE_FOOT_H, PIPE_HEAD_H, PIPE_W, ownerColor, tokLabel, type PipelineContext, type PipelineRow, type PipelineSummary } from "./pipeline";
 import css from "./nodes.module.css";
@@ -25,6 +27,9 @@ export interface PipelineNodeProps {
   /** switch a block to the state its button offers (the opposite of what is shown) */
   onToggle(blockId: string, enabled: boolean): void;
   onMove(fromId: string, toId: string): void;
+  /** the feature being dragged from its node, if any: a drop on a block places its marker there */
+  feature(): FeatureMarkerSlot | null;
+  onPlace(slot: FeatureMarkerSlot, toId: string): void;
 }
 
 function sourceOf(row: PipelineRow, context: PipelineContext, sceneName: string | null): string {
@@ -75,7 +80,10 @@ export function PipelineNode(p: PipelineNodeProps): JSX.Element {
               e.preventDefault();
               const from = drag.current;
               drag.current = null;
-              if (!locked && from && from !== row.id) p.onMove(from, row.id);
+              const slot = p.feature();
+              if (locked) return;
+              if (slot) p.onPlace(slot, row.id);
+              else if (from && from !== row.id) p.onMove(from, row.id);
             }}
           >
             <span className={css.grip} aria-hidden="true">::</span>

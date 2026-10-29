@@ -13,6 +13,7 @@ import {
   type PromptCounts,
   type PromptFilterTab,
 } from "../../../../core/preset";
+import { MarkerMenu } from "./marker-menu";
 import s from "./toolbar.module.css";
 
 export interface ListToolbarProps {
@@ -25,6 +26,9 @@ export interface ListToolbarProps {
   onCollapseAll: () => void;
   onAdd: () => void;
   onAddCategory: () => void;
+  /** The marker slots already in the preset (greyed in the + Marker menu). */
+  placedSlots: ReadonlySet<string>;
+  onAddMarker: (slot: string) => void;
 }
 
 const tabCount = (counts: PromptCounts, tab: PromptFilterTab): number =>
@@ -40,6 +44,8 @@ export function ListToolbar({
   onCollapseAll,
   onAdd,
   onAddCategory,
+  placedSlots,
+  onAddMarker,
 }: ListToolbarProps): JSX.Element {
   return (
     <div className={s.toolbar}>
@@ -64,6 +70,7 @@ export function ListToolbar({
           <IconButton label="Collapse all" size="sm" icon="lucide:chevrons-down-up" onClick={onCollapseAll} />
           <IconButton label="New category" size="sm" icon="lucide:folder-plus" onClick={onAddCategory} />
           <Button size="sm" icon="lucide:plus" onClick={onAdd}>Add</Button>
+          <MarkerMenu placed={placedSlots} onAdd={onAddMarker} />
         </div>
       </div>
 

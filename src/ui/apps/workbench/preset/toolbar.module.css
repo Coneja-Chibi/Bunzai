@@ -107,3 +107,32 @@
   align-self: stretch;
   background: color-mix(in srgb, var(--pa) 30%, transparent);
 }
+
+/* ---------- + Marker menu (marker-menu.tsx) ---------- */
+
+.menuWrap {
+  position: relative;
+  flex: none;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  right: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  min-width: 14rem;
+  max-height: min(24rem, 60dvh);
+  overflow: auto;
+  border: 2px solid var(--stage-black, var(--edge));
+  background: var(--stage-panel, var(--panel));
+  box-shadow: 6px 6px 0 0 var(--stage-black, var(--edge));
+  padding: 0.35rem 0;
+}
+
+.menuNote {
+  padding: 0.25rem 0.75rem 0.35rem;
+  font: 500 var(--text-meta) var(--font-ui);
+  color: var(--text-dim);
+}

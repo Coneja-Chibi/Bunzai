@@ -3,7 +3,7 @@
  * what feeds each marker slot, the lore pass counts, the dry-run request, the derived (non-editable)
  * wires, and the geometry the canvas needs to land those wires on ports.
  */
-import { blockTokens, buildOrder, markerLabel, MARKER_LABELS } from "../../../../core/preset";
+import { blockTokens, buildOrder, FEATURE_MARKER_SLOTS, isFeatureMarkerSlot, markerLabel, slotLabel, type FeatureMarkerSlot } from "../../../../core/preset";
 import { estimateEntryTokens, loreSummary } from "../../../../core/lore";
 import { roughTokenCount } from "../../../../core/tokens/estimate";
 import type { LorebookBody } from "../../../../entities/lorebook/schema";
@@ -110,11 +110,17 @@ export interface PipelineRow {
   role: string;
   /** what the dry run sends for this block */
   text: string;
+  /** the feature this block's marker is filled with: the slot's first switched-on marker in the preset's own order, as the assembler picks */
+  fills?: FeatureMarkerSlot;
 }
 
 export interface PipelineSummary { rows: PipelineRow[]; blocks: number; off: number; tokens: number }
 
 export function pipelineRows(body: PresetBody, src: PipelineSources): PipelineSummary {
+  const fills = new Map<string, FeatureMarkerSlot>();
+  for (const p of body.prompts) {
+    if (p.marker && p.enabled && isFeatureMarkerSlot(p.markerSlot) && ![...fills.values()].includes(p.markerSlot)) fills.set(p.id, p.markerSlot);
+  }
   const rows: PipelineRow[] = buildOrder(body).map((b) => {
     const owner = b.marker && b.markerSlot ? MARKER_OWNER[b.markerSlot] : undefined;
     const fromSlot = b.marker && b.markerSlot ? src.texts[b.markerSlot] : undefined;
@@ -124,7 +130,7 @@ export function pipelineRows(body: PresetBody, src: PipelineSources): PipelineSu
       : null;
     return {
       id: b.id,
-      name: b.name || (b.markerSlot ? (MARKER_LABELS[b.markerSlot] ?? b.markerSlot) : "Untitled block"),
+      name: b.name || (b.markerSlot ? (slotLabel(b.markerSlot) ?? b.markerSlot) : "Untitled block"),
       on: b.enabled,
       marker: b.marker,
       ...(b.markerSlot ? { slot: b.markerSlot } : {}),
@@ -132,6 +138,7 @@ export function pipelineRows(body: PresetBody, src: PipelineSources): PipelineSu
       tokens,
       role: b.role,
       text: b.marker ? (fromSlot ?? markerLabel(b.markerSlot)) : b.content,
+      ...(fills.has(b.id) ? { fills: fills.get(b.id)! } : {}),
     };
   });
   return {
@@ -309,6 +316,30 @@ export function pipelineModel(input: {
     presets,
     active,
     request: requestView(input.hasScene, input.forecast, active ? dryRequest(active.summary) : null),
-    defaults: pipelineLayout(presets.map((p) => ({ key: p.key, blocks: p.summary.blocks }))),
+    defaults: { ...pipelineLayout(presets.map((p) => ({ key: p.key, blocks: p.summary.blocks }))), ...featureLayout() },
   };
+}
+
+/* ---------- feature markers (.claude/plans/prompt-placement.md section 2: Nodes edits the preset's markers) ---------- */
+
+export const FEATURE_H = 112;
+export const featureKey = (slot: FeatureMarkerSlot): string => `feature:${slot}`;
+const FEATURE_COLOR: Readonly<Record<FeatureMarkerSlot, string>> = {
+  trackers: "var(--deck-persona)",
+  linkedTrackers: "var(--deck-persona)",
+  storyboards: "var(--deck-lorebook)",
+};
+export const featureColor = (slot: FeatureMarkerSlot): string => FEATURE_COLOR[slot];
+
+/** The row each feature's marker stands at in one preset's build order, or null where the feature keeps its own spot. */
+export function featureRows(rows: readonly PipelineRow[]): Record<FeatureMarkerSlot, number | null> {
+  const out = Object.fromEntries(FEATURE_MARKER_SLOTS.map((slot) => [slot, null])) as Record<FeatureMarkerSlot, number | null>;
+  rows.forEach((row, i) => { if (row.fills) out[row.fills] = i; });
+  return out;
+}
+
+/** Default spots for the feature nodes: a column under the Lore pass. */
+export function featureLayout(): Record<string, Pt> {
+  const x0 = 40 + 3 * COL_W;
+  return Object.fromEntries(FEATURE_MARKER_SLOTS.map((slot, i) => [featureKey(slot), [x0, 60 + LORE_H + 24 + i * (FEATURE_H + 16)] as Pt]));
 }

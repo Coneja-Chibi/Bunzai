@@ -28,6 +28,7 @@ import {
   systemPromptSchema,
   templateSchema,
 } from "../../entities/preset/runtime-schema";
+import { isFeatureMarkerSlot } from "../../core/preset/build";
 import { isRecord, optStr, presentNum, type Rec, strArray } from "../../core/guards";
 const bool = (v: unknown): boolean | undefined => (typeof v === "boolean" ? v : undefined);
 
@@ -262,7 +263,7 @@ function parseRealPrompt(r: Rec): PresetPrompt {
     injectionOrder: presentNum(r.injection_order) ?? 100,
     forbidOverrides: r.forbid_overrides === true,
   };
-  if (marker && DEFAULT_MARKER_IDENTIFIERS.has(id)) p.markerSlot = id;
+  if (marker && (DEFAULT_MARKER_IDENTIFIERS.has(id) || isFeatureMarkerSlot(id))) p.markerSlot = id;
   const trigger = strArray(r.injection_trigger);
   if (trigger.length > 0) p.injectionTrigger = trigger;
   if (DEFAULT_PROMPT_IDENTIFIERS.has(id) && !UUID_RE.test(id)) p.isDefault = true;

@@ -88,8 +88,15 @@ and per-platform legality lives in `core/preset/platform-fields.ts`, never a UI 
 are `relative` (in preset order), `in_chat` (own message at depth), `append` (glue onto the message at
 depth), `append_preset` (very bottom), and `prepend_preset` (very top); the type is an open union so a
 platform-specific stop can still pass through unclaimed. When `marker` is true the block is a structural
-placeholder with no content of its own, and `markerSlot` names which ST-compatible slot it fills, for
-example `chatHistory` or `worldInfoBefore`.
+placeholder with no content of its own, and `markerSlot` names which slot it fills, for example
+`chatHistory` or `worldInfoBefore`. Bunraku's feature markers (`FEATURE_MARKER_SLOTS` in `core/preset/build.ts`:
+`trackers`, `linkedTrackers`, `storyboards`) put that feature's messages where the block stands, with the block's
+role, before the guides are placed (`core/assembly/feature-slots.ts`); the block's own text is not sent, an `append`
+marker becomes its own message at that depth (glued on, the feature would ride a history message the budget may
+drop), and a second marker of the same slot sends nothing. A preset without one keeps the feature's own spot, so
+today's request is unchanged until someone places a marker. SillyTavern stores no slot, so its import reads a feature
+marker's slot from its id: a marker whose id is its slot survives a SillyTavern export and import, one with any other
+id comes back as a plain marker.
 
 `groupId` links a block to a `PresetGroup.id`; absent means the block is top-level or uncategorized.
 
@@ -102,7 +109,7 @@ example `chatHistory` or `worldInfoBefore`.
 | `enabled` | `boolean` | - |  |
 | `systemPrompt` | `boolean` | ST | ST `system_prompt`: rendered as a system-role prompt-manager entry. |
 | `marker` | `boolean` | - | structural placeholder (chat history / world info / examples) with no content of its own. |
-| `markerSlot?` | `string` | RC, ST | When `marker`, the ST-compatible slot identity (chatHistory, worldInfoBefore, worldInfoAfter, dialogueExamples, personaDescription). RC surfaces these as its named marker slots. |
+| `markerSlot?` | `string` | RC, ST | When `marker`, the slot identity: ST-compatible (chatHistory, worldInfoBefore, worldInfoAfter, dialogueExamples, personaDescription), RC's named marker slots, or a Bunraku feature marker (trackers, linkedTrackers, storyboards: core/preset/build.ts FEATURE_MARKER_SLOTS). |
 | `placement` | `PromptPlacement` | - |  |
 | `injectionDepth` | `number` | ST | message depth for in_chat/append placements (0 = most recent; ST `injection_depth`, def 4). |
 | `injectionOrder` | `number` | ST | relative-order weight; lower appears first (ST `injection_order`, default 100). |

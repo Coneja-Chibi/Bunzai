@@ -22,7 +22,7 @@ import { placeLore } from "./lore-place";
 import { loreShareTokens, placeRecall, RECALL_NO_WINDOW_TOKENS } from "./recall-place";
 import { hideCovered } from "./chat-summary";
 import { cutSummarized, summaryText } from "./summary-cut";
-import { personaMacroBlock, presetPlan } from "./preset";
+import { personaMacroBlock, presetPlan, PresetPlanError } from "./preset";
 import { HISTORY_MARKER, macroPass } from "./macro-pass";
 import { macroSink, variableChanges } from "./macro-report";
 import { stripToolCallLeaks, stripUnresolvedMacros } from "./sanitize";
@@ -34,6 +34,8 @@ import { noteDue, placeNote } from "./note";
 import { injectionTexts, linkedTrackersText, placeBlock, trackersText } from "./trackers";
 import { refreshTrackerTexts, trackerViews } from "../tracker";
 import { storyboardsBlock } from "./storyboards";
+import { fillSlot, leftPlaceholder } from "./feature-slots";
+import type { FeatureMarkerSlot } from "../preset/build";
 import { placeDirector } from "./director";
 import { DEFAULT_LORE_SHARE, type AssemblyInput, type HistoryMessage, type AssemblyResult, type AssembledMessage, type AssemblyLoreHit, type VariableDiff } from "./types";
 import { resolveSelections } from "../macros/choice-groups";
@@ -380,16 +382,23 @@ export function assemble(input: AssemblyInput): AssemblyResult {
     overflow = over === true;
   }
 
+  // The trackers' state (trackers.ts), measured and never dropped, as RoleCall's rides on top of the budget. A feature with a marker in the preset
+  // fills it now (feature-slots.ts), so the guides below count its real messages; one without goes after the guides, after the leading system messages.
+  const turn = history.filter((m) => m.role === "user").length + (currentText === "" ? 0 : 1);
+  const tracked = trackersText(input.trackers, turn);
+  const boards = storyboardsBlock(input.storyboards, turn);
+  const features: [FeatureMarkerSlot, string[], "trackers" | "storyboards"][] = [
+    ["trackers", [...(tracked ? [tracked] : []), ...injectionTexts(input.trackers, turn)], "trackers"],
+    ["linkedTrackers", linkedText ? [linkedText] : [], "trackers"],
+    ["storyboards", boards ? [boards] : [], "storyboards"],
+  ];
+  for (const [slot, texts, kind] of features) if (plan.slots.has(slot)) blocks = fillSlot(blocks, slot, texts, { kind });
+  if (plan.slots.size > 0 && leftPlaceholder(blocks)) throw new PresetPlanError("A feature marker in the preset could not be filled, so the turn was stopped rather than send its placeholder.");
+
   // The worker's steps after assembly (guides.ts): the system guide block and the depth and append guides.
   blocks = applyGuides(blocks, guides, macros.write);
 
-  // The trackers' state (trackers.ts): one system message after the guides, measured and never dropped, as RoleCall's rides on top of the budget.
-  const tracked = trackersText(input.trackers, history.filter((m) => m.role === "user").length + (currentText === "" ? 0 : 1));
-  if (tracked) blocks = placeBlock(blocks, tracked, "trackers");
-  for (const note of injectionTexts(input.trackers, history.filter((m) => m.role === "user").length + (currentText === "" ? 0 : 1))) blocks = placeBlock(blocks, note, "trackers");
-  if (linkedText) blocks = placeBlock(blocks, linkedText, "trackers");
-  const boards = storyboardsBlock(input.storyboards, history.filter((m) => m.role === "user").length + (currentText === "" ? 0 : 1));
-  if (boards) blocks = placeBlock(blocks, boards, "storyboards");
+  for (const [slot, texts, kind] of features) if (!plan.slots.has(slot)) for (const text of texts) blocks = placeBlock(blocks, text, kind);
   // The Story Director (director.ts): this turn's directive at depth 1 and its contract at the top, after the budget so neither is ever dropped.
   blocks = placeDirector(blocks, input.director);
 

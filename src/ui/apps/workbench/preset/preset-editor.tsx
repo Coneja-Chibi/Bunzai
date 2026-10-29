@@ -44,6 +44,8 @@ import { AUTOSAVE_TRIES, autosaveStoppedNote } from "../autosave-core";
 import {
   addBlock,
   addGroup,
+  addMarker,
+  placedMarkerSlots,
   bulkDelete,
   bulkDuplicate,
   bulkSetEnabled,
@@ -286,6 +288,8 @@ export function PresetEditorView({ entity, revision, ctx, piece, topRight }: Pre
   // block" needs every prop a row receives, callbacks included, to hold its identity across a
   // keystroke elsewhere - a fresh closure per render defeats React.memo before it gets to compare).
   const onAddBlock = useCallback((): void => editPreset((b) => addBlock(b)), [editPreset]);
+  const onAddMarker = useCallback((slot: string): void => editPreset((b) => addMarker(b, slot)), [editPreset]);
+  const placedSlots = useMemo(() => placedMarkerSlots(body), [body]);
   const onAddCategory = useCallback((): void => editPreset((b) => addGroup(b)), [editPreset]);
   const onToggleGroupId = useCallback((id: string): void => setCollapsedGroups((prev) => flip(prev, id)), []);
   const onToggleBlock = useCallback((id: string): void => editPreset((b) => toggleBlock(b, id), promptTouch(id, promptIndex.current)), [editPreset]);
@@ -326,6 +330,8 @@ export function PresetEditorView({ entity, revision, ctx, piece, topRight }: Pre
       onCollapseAll={() => setExpandedIds(new Set())}
       onAdd={onAddBlock}
       onAddCategory={onAddCategory}
+      placedSlots={placedSlots}
+      onAddMarker={onAddMarker}
     />
     <BulkBar
       count={selectedChecks.size}

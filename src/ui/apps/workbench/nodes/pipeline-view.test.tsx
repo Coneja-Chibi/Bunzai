@@ -50,7 +50,7 @@ const character = (id: string, name: string, description: string) => ({
 const SCENE = { id: "ch1", title: "Rooftop", characterName: "Iris", cast: { character: { id: "c2", version: 1, name: "Iris" } } };
 const FORECAST = { messages: [{ role: "system", content: "FORECAST TEXT", tokens: 9 }], tokens: 9, window: { context: 8000, reply: 500, stated: true }, model: "m1", notes: [] };
 
-interface Harness { ctx: AppContext; prefs: Record<string, unknown>; patches: unknown[][]; status: string[]; open: StudioEntitySummary[]; dirty: Record<string, boolean>; forecasts: string[][] }
+interface Harness { prompts?: PresetPrompt[]; ctx: AppContext; prefs: Record<string, unknown>; patches: unknown[][]; status: string[]; open: StudioEntitySummary[]; dirty: Record<string, boolean>; forecasts: string[][] }
 
 function harness(open: StudioEntitySummary[], opts: { scenes?: unknown[]; forecastError?: Error } = {}): Harness {
   const h: Harness = { prefs: {}, patches: [], status: [], open, dirty: {}, forecasts: [], ctx: null as unknown as AppContext };
@@ -60,7 +60,7 @@ function harness(open: StudioEntitySummary[], opts: { scenes?: unknown[]; foreca
     pieces: store,
     api: {
       getEditableEntity: async (a: string) => ({ entity: idOf(a) === "c2" ? character("c2", "Iris", "IRIS TEXT") : character("c1", "Vera", "VERA TEXT"), revision: "r1" }),
-      getLightEditableEntity: async () => ({ entity: { schemaVersion: CANONICAL_SCHEMA_VERSION, kind: "preset", id: "s1", body: { ...emptyPresetBody("Cut"), prompts: PROMPTS } }, revision: "r1", version: 1, assets: {} }),
+      getLightEditableEntity: async () => ({ entity: { schemaVersion: CANONICAL_SCHEMA_VERSION, kind: "preset", id: "s1", body: { ...emptyPresetBody("Cut"), prompts: h.prompts ?? PROMPTS } }, revision: "r1", version: 1, assets: {} }),
       patchEditedEntity: async (...args: unknown[]) => { h.patches.push(args); return { revision: "r2" }; },
       listScenes: async () => opts.scenes ?? [],
       getSceneForecast: async (...args: string[]) => { h.forecasts.push(args.slice(0, 2)); if (opts.forecastError) throw opts.forecastError; return FORECAST; },
@@ -208,4 +208,33 @@ test("the pipeline's node positions persist with the rest of the canvas", async 
   root.unmount();
   const saved = h.prefs["workbench.nodes"] as { pos: Record<string, [number, number]> };
   expect(saved.pos["engine:lore"]).toEqual([940 + 30, 60 + 20]);
+});
+
+test("a feature node keeps its own spot until dropped on a block, which places its marker there in one patch", async () => {
+  const h = harness([cut]);
+  await mountView(h);
+  const node = q<HTMLElement>('[data-feature="trackers"]')!;
+  expect(node.textContent).toContain("Own spot");
+  fire(node.querySelector<HTMLElement>("[draggable]")!, "dragstart");
+  fire(blockEl("cd"), "drop");
+  await flush();
+  expect(h.patches).toHaveLength(1);
+  const sent = h.patches[0]![3] as { order: string[]; items: Record<string, PresetPrompt> };
+  expect(sent.order).toEqual(["i/main", "i/trackers", "i/cd", "i/hist", "i/jb"]);
+  expect(sent.items["i/trackers"]).toMatchObject({ marker: true, markerSlot: "trackers" });
+  root.unmount();
+});
+
+test("a placed feature's node names its block and Own spot takes the marker out", async () => {
+  const h = harness([cut]);
+  h.prompts = [...PROMPTS, slot("tk", "storyboards")];
+  await mountView(h);
+  const node = q<HTMLElement>('[data-feature="storyboards"]')!;
+  expect(node.textContent).toContain("Marker: tk in Cut");
+  const own = [...node.querySelectorAll("button")].find((b) => b.textContent === "Own spot")!;
+  fire(own, "click");
+  await flush();
+  expect(h.patches).toHaveLength(1);
+  expect((h.patches[0]![3] as { items: Record<string, PresetPrompt> }).items["i/tk"]).toMatchObject({ enabled: false });
+  root.unmount();
 });

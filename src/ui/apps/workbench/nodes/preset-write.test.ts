@@ -92,3 +92,62 @@ test("a move against an order that changed since it was drawn is refused and wri
   expect(calls.patch).toHaveLength(0);
   expect(calls.status[0]).toContain("changed since they were drawn");
 });
+
+const marker = (id: string, markerSlot: string, over: Partial<PresetPrompt> = {}): PresetPrompt => block(id, { content: "", marker: true, markerSlot, ...over });
+
+test("placing a feature's marker on a block adds it there in one patch, its id the slot", async () => {
+  const { ctx, calls } = harness({ entity: entity(block("a"), block("b")) });
+  expect(await writePreset(ctx, cut, { t: "place", slot: "trackers", to: "b", seen: ["a", "b"] })).toBe("saved");
+  expect(calls.patch).toHaveLength(1);
+  const sent = calls.patch[0]![3] as Sent;
+  expect(sent.order).toEqual(["i/a", "i/trackers", "i/b"]);
+  expect(sent.items!["i/trackers"]).toMatchObject({ marker: true, markerSlot: "trackers", content: "" });
+});
+
+test("placing a marker the preset already has moves it, and onto itself changes nothing", async () => {
+  const { ctx, calls } = harness({ entity: entity(block("a"), block("b"), marker("trackers", "trackers")) });
+  expect(await writePreset(ctx, cut, { t: "place", slot: "trackers", to: "a", seen: ["a", "b", "trackers"] })).toBe("saved");
+  expect((calls.patch[0]![3] as Sent).order).toEqual(["i/trackers", "i/a", "i/b"]);
+  const again = harness({ entity: entity(block("a"), marker("trackers", "trackers")) });
+  expect(await writePreset(again.ctx, cut, { t: "place", slot: "trackers", to: "trackers", seen: ["a", "trackers"] })).toBe("unchanged");
+  expect(again.calls.patch).toHaveLength(0);
+});
+
+test("own spot switches the marker off, keeping it for the next place; a preset with none on is left alone", async () => {
+  const { ctx, calls } = harness({ entity: entity(block("a"), marker("m1", "storyboards")) });
+  expect(await writePreset(ctx, cut, { t: "unplace", slot: "storyboards", seen: ["a", "m1"] })).toBe("saved");
+  const sent = calls.patch[0]![3] as Sent;
+  expect(sent.items!["i/m1"]).toMatchObject({ marker: true, enabled: false });
+  expect(sent.order).toBeUndefined();
+  const none = harness({ entity: entity(block("a"), marker("m1", "storyboards", { enabled: false })) });
+  expect(await writePreset(none.ctx, cut, { t: "unplace", slot: "storyboards", seen: ["a", "m1"] })).toBe("unchanged");
+  expect(none.calls.patch).toHaveLength(0);
+  const stale = harness({ entity: entity(block("a"), marker("m1", "storyboards")) });
+  expect(await writePreset(stale.ctx, cut, { t: "unplace", slot: "storyboards", seen: ["m1", "a"] })).toBe("unchanged");
+  expect(stale.calls.patch).toHaveLength(0);
+});
+
+test("a marker dropped on an in-chat or pinned block takes that block's placement, so it is built where it was dropped", async () => {
+  const chat = block("note", { placement: "in_chat", injectionDepth: 2, injectionOrder: 50 });
+  const { ctx, calls } = harness({ entity: entity(block("a"), chat) });
+  expect(await writePreset(ctx, cut, { t: "place", slot: "trackers", to: "note", seen: ["a", "note"] })).toBe("saved");
+  expect((calls.patch[0]![3] as Sent).items!["i/trackers"]).toMatchObject({ placement: "in_chat", injectionDepth: 2, injectionOrder: 50, enabled: true });
+  const pin = harness({ entity: entity(block("a"), block("pin", { placement: "append_preset" })) });
+  expect(await writePreset(pin.ctx, cut, { t: "place", slot: "trackers", to: "pin", seen: ["a", "pin"] })).toBe("saved");
+  expect((pin.calls.patch[0]![3] as Sent).items!["i/trackers"]).toMatchObject({ placement: "append_preset" });
+});
+
+test("placing a feature whose marker is switched off switches it on where it is dropped", async () => {
+  const { ctx, calls } = harness({ entity: entity(block("a"), block("b"), marker("tk", "trackers", { enabled: false })) });
+  expect(await writePreset(ctx, cut, { t: "place", slot: "trackers", to: "a", seen: ["a", "b", "tk"] })).toBe("saved");
+  const sent = calls.patch[0]![3] as Sent;
+  expect(sent.items!["i/tk"]).toMatchObject({ enabled: true });
+  expect(sent.order).toEqual(["i/tk", "i/a", "i/b"]);
+});
+
+test("a place against a build order that changed underneath is refused and writes nothing", async () => {
+  const { ctx, calls } = harness({ entity: entity(block("a"), block("b")) });
+  expect(await writePreset(ctx, cut, { t: "place", slot: "trackers", to: "b", seen: ["b", "a"] })).toBe("unchanged");
+  expect(calls.patch).toHaveLength(0);
+  expect(calls.status[0]).toContain("changed since they were drawn");
+});

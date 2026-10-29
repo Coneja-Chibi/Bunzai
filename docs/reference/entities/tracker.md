@@ -67,7 +67,8 @@ A scene links trackers by id in its prompting (`ChatPrompting.trackers`, in orde
 tracker that is gone or fails the decoder is left out, and so is one whose name another linked tracker already has (a name
 means one tracker). The Messenger's Trackers panel links and unlinks them (a check per library tracker, written through `setScenePrompting`), draws each one's value at the take's tip and lets the person edit it ([ui.md](../ui.md)). The read is `GET /api/chats/library-trackers` (`studio/scene-trackers.ts`: one read for every linked tracker, with the reply that last changed each). The person's edit is `POST /api/chats/tracker-edit` (`studio/tracker-edit.ts`): the tool's own update shape through `applyTrackerUpdates` (the same clamps and top rule, a number out of range is held inside it, never refused), written as message-level deltas on the take's tip message so it wins on that message and survives swiping and regenerating it; it is refused whole for a tracker the scene does not link or a turn would leave out (a same name as another linked tracker), a reply being written in the scene, or a take that moved on since it was read (the version is the write's own guard, so the check and the write are one step).
 
-- **The prompt.** One system block headed `### Trackers`, right after the Props trackers' block, holds each linked
+- **The prompt.** One system block headed `### Trackers`, right after the Props trackers' block (or where the preset's
+  `linkedTrackers` marker stands, [preset.md](preset.md)), holds each linked
   tracker's text, every turn, whether or not Narrator Tool Access is on. A tracker's text is its `template` run
   through the macro engine read-only on the turn's macro context (so it reads state and writes none), or, with no
   template, the default rendering: a record as `Name: field=value, ...`, a list as `Name:` and one line per row

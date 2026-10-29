@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/components",
   "sourcePath": "docs/reference/components.md",
-  "sourceHash": "sha256:a58ac1000a7363ec6254e4120c7f0a87662df62cce77d66494b945733de35c11",
-  "semanticSummaryHash": "sha256:53c5361e13a0df33fe1468828ba7e49a35e00d20602de004dd96a0591ea13aa2",
+  "sourceHash": "sha256:535b794c14e889087038e6daf686fd32f833a659292ff429361363d4bd117415",
+  "semanticSummaryHash": "sha256:e4eb7f0d232b0dffb941895685c54dfcbf374474b823f8a7b34884295aa2d6b7",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Regenerated rows (BudgetRows, ChangeBlock, ChangesRow, FieldEdit, FieldIcon, FieldRead, ItemTiles, LibraryCard/Detail/Pick, OutOfTimeLine, ToolTiles now with accessOn, ToolAccessRows with windowTokens, TrackerFace) match source; summary unchanged and accurate; bands ok.",
-  "reviewedAt": "2026-10-28T16:06:03.202Z"
+  "notes": "New rows match source: FeatureNode (p: FeatureNodeProps) in nodes/EngineNodes.tsx with its doc comment, MarkerMenu ({ placed, onAdd }) in preset/marker-menu.tsx, and ListToolbar's destructured props now end with placedSlots and onAddMarker as in list-toolbar.tsx. The sidecar summary names none of these rows and makes no contradicting claim; bands ok. Catalog quirk, not a summary error: the Styles column for FeatureNode and MarkerMenu lists classes from other CSS modules (.view .head .addWrap ... and .toolbar .topRow ...), the same generator artefact noted before for composed or shared stylesheets.",
+  "reviewedAt": "2026-10-29T09:07:47.214Z"
 }

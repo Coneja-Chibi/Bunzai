@@ -58,9 +58,28 @@ export const MARKER_LABELS: Record<string, string> = {
   scenario: "the scenario",
 };
 
+/**
+ * Bunraku's feature markers: a feature's content splices in where the preset's marker for it stands, and a preset
+ * without one keeps the feature's own spot (core/assembly/feature-slots.ts). The block id is the slot, as SillyTavern's
+ * own markers are, so the marker survives a SillyTavern export and import when its id is the slot (the import reads the slot from the id).
+ */
+export const FEATURE_MARKER_SLOTS = ["trackers", "linkedTrackers", "storyboards"] as const;
+export type FeatureMarkerSlot = (typeof FEATURE_MARKER_SLOTS)[number];
+export const isFeatureMarkerSlot = (slot: string | undefined): slot is FeatureMarkerSlot =>
+  (FEATURE_MARKER_SLOTS as readonly string[]).includes(slot ?? "");
+/** Kept apart from MARKER_LABELS, whose slots a dead macro can be promoted into on import (macros/promote-markers.ts). */
+export const FEATURE_MARKER_LABELS: Readonly<Record<FeatureMarkerSlot, string>> = {
+  trackers: "the trackers",
+  linkedTrackers: "the library trackers",
+  storyboards: "the storyboards",
+};
+/** A marker slot's plain name, either family. */
+export const slotLabel = (slot: string): string | undefined =>
+  MARKER_LABELS[slot] ?? (isFeatureMarkerSlot(slot) ? FEATURE_MARKER_LABELS[slot] : undefined);
+
 /** What a marker line reads as in the built preview (plain, self-describing, no macro fakery). */
 export const markerLabel = (slot: string | undefined): string =>
-  `${MARKER_LABELS[slot ?? ""] ?? slot ?? "a placeholder"} splices in here`;
+  `${slotLabel(slot ?? "") ?? slot ?? "a placeholder"} splices in here`;
 
 /** Build-order rank; within a rank, injectionOrder ascending (lower first - the ST rule). */
 const PLACEMENT_RANK: Record<string, number> = {

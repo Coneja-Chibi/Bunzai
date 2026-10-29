@@ -1,0 +1,226 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt Placement</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Page-only rules, tokens only. Prompt placement in two editors over one store: Legacy (the preset's order list with the
+   new feature markers) and Nodes (the Workbench Pipeline layer with editable wires). Same Vera scene as the option book. */
+body { padding-bottom: 40px; }
+.wrap { max-width: 1480px; margin: 0 auto; padding: 18px 24px 0; display: grid; gap: 18px; }
+.muted { color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.lead { max-width: 980px; font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 78%, transparent); }
+.tabs { display: flex; flex-wrap: wrap; }
+.tabs button { font: 700 13px var(--font-ui); padding: 9px 16px; background: var(--premiere-hard); color: var(--premiere-text); border: 2px solid color-mix(in srgb, var(--premiere-text) 30%, transparent); cursor: pointer; }
+.tabs button + button { border-left: 0; }
+.tabs button[aria-pressed="true"] { background: color-mix(in srgb, var(--premiere-rose) 24%, var(--premiere-hard)); box-shadow: inset 0 -3px 0 var(--premiere-rose); }
+.view { display: none; } .view.on { display: grid; gap: 18px; }
+.cap { font: 600 12px var(--font-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--premiere-gold); margin-bottom: 8px; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) 340px; border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); background: var(--premiere-hard); }
+@media (max-width: 1000px) { .split { grid-template-columns: 1fr; } }
+.side { background: var(--premiere-panel); border-left: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); padding: 14px 16px; font-size: 13px; display: grid; gap: 12px; align-content: start; }
+.side h3 { font: 700 18px var(--font-fancy); letter-spacing: .02em; }
+.side .fl { font: 600 12px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 65%, transparent); margin-bottom: 5px; }
+.hint { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 58%, transparent); }
+.quote { font-size: 12px; padding: 8px 10px; border-left: 3px solid var(--sig-5); background: color-mix(in srgb, var(--premiere-text) 5%, transparent); }
+.co { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; font: 700 11px var(--font-ui); background: var(--premiere-rose); color: var(--premiere-hard); vertical-align: 1px; }
+.legend ol { margin: 8px 0 0 18px; } .legend li { margin: 6px 0; font-size: 13px; }
+.lore { --c: var(--deck-lorebook); } .skill { --c: var(--sig-5); } .trk { --c: var(--sig-4); } .card { --c: var(--deck-character); }
+.per { --c: var(--deck-persona); } .mem { --c: var(--sig-6); } .dir { --c: var(--premiere-gold); } .note { --c: var(--sig-3); } .chat { --c: var(--stage-soft); }
+
+/* canvas */
+.canvas { position: relative; height: 660px; overflow: auto; background-color: var(--premiere-hard);
+  background-image: radial-gradient(color-mix(in srgb, var(--premiere-text) 14%, transparent) 1px, transparent 1px); background-size: 22px 22px; }
+.world { position: relative; width: 1000px; height: 650px; }
+svg.wires { position: absolute; inset: 0; width: 1000px; height: 650px; pointer-events: none; }
+svg.wires path { fill: none; stroke-width: 2.5; }
+svg.wires path.sel { stroke-width: 4; }
+.nd { position: absolute; left: 20px; width: 220px; background: var(--premiere-panel); border: 2px solid color-mix(in srgb, var(--premiere-text) 16%, transparent); border-left: 6px solid var(--c); box-shadow: 4px 4px 0 var(--premiere-hard); padding: 5px 9px; font-size: 12px; }
+.nd .k { font: 700 10px var(--font-ui); letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+.nd b { font-size: 13px; }
+.nd .top { display: flex; align-items: center; gap: 6px; }
+.nd .top .grow { flex: 1; }
+.nd .off { width: 22px; height: 12px; border: 1px solid color-mix(in srgb, var(--premiere-text) 40%, transparent); background: var(--stage-ok); }
+.nd .item { display: flex; gap: 6px; padding: 3px 0 3px 8px; border-top: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.nd .item.sel { outline: 2px solid var(--premiere-rose); outline-offset: -1px; }
+.nd .item .tag { margin-left: auto; font-size: 10px; color: var(--premiere-gold); }
+.pipe { position: absolute; left: 330px; top: 20px; width: 300px; background: var(--premiere-panel); border: 2px solid color-mix(in srgb, var(--premiere-text) 16%, transparent); border-left: 6px solid var(--deck-preset); box-shadow: 4px 4px 0 var(--premiere-hard); }
+.pipe header { height: 55px; padding: 7px 10px; box-sizing: border-box; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.pipe header b { display: block; font: 700 15px var(--font-fancy); }
+.pipe .r { height: 28px; box-sizing: border-box; display: flex; align-items: center; gap: 6px; padding: 0 10px; font-size: 12px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 7%, transparent); }
+.pipe .r .t { margin-left: auto; font: 600 11px var(--font-mono); color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+.pipe .r .m { font: 700 9px var(--font-ui); letter-spacing: .1em; text-transform: uppercase; padding: 1px 4px; border: 1px solid color-mix(in srgb, var(--premiere-text) 30%, transparent); }
+.pipe .r .new { border-color: var(--premiere-rose); color: var(--premiere-rose); }
+.pipe .r.sock { padding-left: 26px; background: color-mix(in srgb, var(--stage-soft) 10%, transparent); color: color-mix(in srgb, var(--premiere-text) 75%, transparent); }
+.pipe footer { height: 32px; padding: 0 10px; display: flex; align-items: center; font-size: 12px; }
+.req { position: absolute; left: 700px; top: 40px; width: 270px; background: var(--premiere-panel); border: 2px solid color-mix(in srgb, var(--premiere-text) 16%, transparent); border-left: 6px solid var(--premiere-rose); box-shadow: 4px 4px 0 var(--premiere-hard); padding: 8px 10px; font-size: 12px; display: grid; gap: 6px; }
+.req b { font: 700 15px var(--font-fancy); }
+.cost { display: flex; height: 10px; border: 1px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); }
+.cost i { display: block; height: 100%; background: var(--c); }
+.costkey { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; font-size: 11px; }
+.costkey span::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 5px; background: var(--c); }
+
+/* legacy list */
+.list { padding: 14px 16px; display: grid; gap: 4px; }
+.lr { display: flex; align-items: center; gap: 8px; padding: 6px 10px; font-size: 13px; background: var(--premiere-panel); border: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+.lr .grip { width: 10px; align-self: stretch; background-image: radial-gradient(color-mix(in srgb, var(--premiere-text) 40%, transparent) 1px, transparent 1px); background-size: 4px 4px; }
+.lr .m { font: 700 10px var(--font-ui); letter-spacing: .1em; text-transform: uppercase; padding: 1px 5px; border: 1px solid color-mix(in srgb, var(--premiere-text) 30%, transparent); }
+.lr .new { border-color: var(--premiere-rose); color: var(--premiere-rose); }
+.lr .grow { flex: 1; }
+.lr .pl { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.lr.marker { border-left: 4px solid var(--c, var(--deck-preset)); }
+.inchat { margin: 0 0 0 28px; display: grid; gap: 3px; }
+.inchat div { font-size: 12px; padding: 4px 10px; border-left: 3px solid var(--c); background: color-mix(in srgb, var(--premiere-text) 4%, transparent); display: flex; gap: 8px; }
+.inchat div span:last-child { margin-left: auto; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+</style></head>
+<body>
+<div class="wf-note">WIREFRAME. Prompt placement: Legacy (default) and Nodes (advanced) edit the same preset and the same items. Not approved. <span class="wf-accent"></span></div>
+<div class="wrap">
+  <div>
+    <div class="section-title">Prompt placement</div>
+    <p class="lead">Every feature (lore, skills, trackers, summary, scene note, Director) has a marker in the preset, so its spot is one block you can move. One item can take its own spot instead, the way a lore entry can today. Legacy edits this as the order list people know; Nodes edits the same thing as wires. Nothing is stored twice.</p>
+  </div>
+  <div class="tabs" role="group" aria-label="Editor">
+    <button data-v="n" aria-pressed="true">Nodes (advanced)</button><button data-v="l" aria-pressed="false">Legacy (default)</button>
+  </div>
+
+  <!-- ===================== NODES ===================== -->
+  <section class="view on" id="n">
+    <div class="split">
+      <div class="canvas"><div class="world">
+        <svg class="wires" viewBox="0 0 1000 650" aria-hidden="true">
+          <path d="M240 110 C 290 110, 280 145, 330 145" stroke="var(--deck-character)"/>
+          <path d="M240 170 C 290 170, 280 173, 330 173" stroke="var(--deck-persona)"/>
+          <path d="M240 230 C 290 230, 280 201, 330 201" stroke="var(--deck-lorebook)"/>
+          <path d="M240 290 C 290 290, 280 229, 330 229" stroke="var(--sig-5)"/>
+          <path class="sel" d="M240 342 C 300 342, 270 369, 330 369" stroke="var(--premiere-rose)"/>
+          <path d="M240 420 C 290 420, 280 257, 330 257" stroke="var(--sig-6)"/>
+          <path d="M240 475 C 290 475, 280 285, 330 285" stroke="var(--sig-4)"/>
+          <path d="M240 530 C 290 530, 280 341, 330 341" stroke="var(--sig-3)"/>
+          <path d="M240 580 C 300 580, 270 117, 330 117" stroke="var(--premiere-gold)"/>
+          <path d="M240 590 C 300 590, 270 369, 330 369" stroke="var(--premiere-gold)" stroke-dasharray="6 4"/>
+          <path d="M240 630 C 290 630, 280 313, 330 313" stroke="var(--stage-soft)"/>
+          <path d="M630 427 C 670 427, 660 150, 700 150" stroke="var(--premiere-rose)"/>
+        </svg>
+
+        <div class="nd card" style="top:90px"><div class="top"><span class="k">Character</span><span class="grow"></span><span class="off" title="On"></span></div><b>Vera</b></div>
+        <div class="nd per" style="top:150px"><div class="top"><span class="k">Persona</span><span class="grow"></span><span class="off"></span></div><b>You</b></div>
+        <div class="nd lore" style="top:210px"><div class="top"><span class="k">Lore pass</span><span class="grow"></span><span class="off"></span></div><b>2 books, 3 fired</b></div>
+        <div class="nd skill" style="top:270px"><div class="top"><span class="k">Skills <span class="co">2</span></span><span class="grow"></span><span class="muted">collapse</span><span class="off"></span></div><b>2 linked</b>
+          <div class="item sel">Sword fight<span class="tag">own spot</span></div>
+          <div class="item">Lying tells<span class="tag">rides marker</span></div></div>
+        <div class="nd mem" style="top:400px"><div class="top"><span class="k">Summary</span><span class="grow"></span><span class="off"></span></div><b>Chat summary</b></div>
+        <div class="nd trk" style="top:455px"><div class="top"><span class="k">Trackers</span><span class="grow"></span><span class="off"></span></div><b>Health</b></div>
+        <div class="nd note" style="top:510px"><div class="top"><span class="k">Scene note</span><span class="grow"></span><span class="off"></span></div><b>Keep it tense</b></div>
+        <div class="nd dir" style="top:565px"><div class="top"><span class="k">Director</span><span class="grow"></span><span class="off"></span></div><b>contract + direction</b></div>
+        <div class="nd chat" style="top:615px;padding:3px 9px"><div class="top"><span class="k">Chat</span> <b>the scene's messages</b></div></div>
+
+        <div class="pipe">
+          <header><span class="k muted" style="font:700 10px var(--font-ui);letter-spacing:.12em;text-transform:uppercase">Preset <span class="co">1</span></span><b>Harbor Noir</b></header>
+          <div class="r">Main prompt<span class="t">640</span></div>
+          <div class="r"><span class="m new">marker</span> Director contract<span class="t">310</span></div>
+          <div class="r"><span class="m">marker</span> Character<span class="t">1.1k</span></div>
+          <div class="r"><span class="m">marker</span> Persona<span class="t">180</span></div>
+          <div class="r"><span class="m">marker</span> World info before<span class="t">1.7k</span></div>
+          <div class="r"><span class="m new">marker</span> Skills<span class="t">90</span></div>
+          <div class="r"><span class="m">marker</span> Summary<span class="t">900</span></div>
+          <div class="r"><span class="m new">marker</span> Trackers<span class="t">160</span></div>
+          <div class="r"><span class="m">marker</span> Chat history <span class="co">3</span><span class="t">5.1k</span></div>
+          <div class="r sock">3 back, system<span class="t">40</span></div>
+          <div class="r sock">1 back, system<span class="t">420</span></div>
+          <div class="r">Writing style<span class="t">380</span></div>
+          <footer class="muted">12 blocks, 4 new markers</footer>
+        </div>
+
+        <div class="req">
+          <span class="k muted" style="font:700 10px var(--font-ui);letter-spacing:.12em;text-transform:uppercase">Request <span class="co">4</span></span>
+          <b>~11.0k of 32k</b>
+          <span class="muted">scene: Harbor at night, as a send would build it now</span>
+          <div class="cost"><i style="width:9%;--c:var(--deck-preset)"></i><i style="width:13%;--c:var(--deck-character)"></i><i style="width:15%;--c:var(--deck-lorebook)"></i><i style="width:5%;--c:var(--sig-5)"></i><i style="width:8%;--c:var(--sig-6)"></i><i style="width:46%;--c:var(--stage-soft)"></i><i style="width:4%;--c:var(--premiere-gold)"></i></div>
+          <div class="costkey"><span style="--c:var(--deck-preset)">Preset 1.0k</span><span style="--c:var(--deck-character)">Cast 1.3k</span><span style="--c:var(--deck-lorebook)">Lore 1.7k</span><span style="--c:var(--sig-5)">Skills 0.5k</span><span style="--c:var(--sig-6)">Summary 0.9k</span><span style="--c:var(--stage-soft)">Chat 5.1k</span><span style="--c:var(--premiere-gold)">Director 0.5k</span></div>
+          <span class="hint">Cut this turn: nothing.</span>
+          <span><button class="btn" type="button">Preview</button> <button class="btn" type="button">Inspector</button></span>
+        </div>
+      </div></div>
+
+      <aside class="side">
+        <div class="cap">Selected wire <span class="co">5</span></div>
+        <h3>Sword fight to Chat history</h3>
+        <div><div class="fl">Lands</div><span class="select">1 back</span> as <span class="seg" data-seg><span aria-pressed="true">System</span><span>Narrator</span><span>You</span></span></div>
+        <div><div class="fl">When</div><span class="seg" data-seg><span>Always</span><span aria-pressed="true">Mentioned</span><span>Picked</span></span><p class="hint">"sword", "blade" in the last 4 messages. Set on the skill.</p></div>
+        <div><div class="fl">If the prompt is full</div><span class="seg" data-seg><span aria-pressed="true">Always send</span><span>Can be cut</span></span></div>
+        <div><div class="fl">Carries this turn</div><div class="quote">When swords cross, describe footwork first, then the strike. One exchange per reply...</div><p class="hint">212 tokens. On because you wrote "I draw my sword."</p></div>
+        <div><button class="btn" type="button">Back to the Skills marker</button></div>
+        <p class="hint">Saves the skill's own spot. The preset does not change.</p>
+      </aside>
+    </div>
+    <div class="legend panel" style="padding:12px 14px"><b>Callouts</b><ol>
+      <li><span class="co">1</span> The Workbench Pipeline layer as it is today (blocks in build order, tokens per block), with the four new feature markers. Dragging a wire's end to another row moves that marker: one preset save, the same one the list makes.</li>
+      <li><span class="co">2</span> A feature node opens into its items. "Lying tells" rides the Skills marker; "Sword fight" has its own wire, so it has its own spot, saved on the skill. Unwire it and it rides the marker again. The switch on each node is Off (the block's on/off).</li>
+      <li><span class="co">3</span> Chat history shows a socket for each depth something lands at. Drop a wire on the row's edge to make a new depth.</li>
+      <li><span class="co">4</span> The Request node: the scene's real request (the forecast), cost by source, and what was cut and why. Preview and the Prompt Inspector show the same labels.</li>
+      <li><span class="co">5</span> Select any wire to see what it carries this turn and its cost (from Rivet's live node outputs). When and budget belong to the piece; the wire only shows them.</li>
+      <li>Nodes keeps nothing of its own: canvas positions and Board notes are workbench settings, every placement edit is a preset save or an item save.</li>
+    </ol></div>
+  </section>
+
+  <!-- ===================== LEGACY ===================== -->
+  <section class="view" id="l">
+    <div class="split">
+      <div class="list">
+        <div class="cap">Harbor Noir: prompt order <span class="co">1</span></div>
+        <div class="row" style="gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
+          <span class="muted" style="font-size:12px">The list's toolbar, as today, plus:</span>
+          <span style="position:relative;display:inline-block"><button class="btn" type="button">+ Marker</button> <span class="co">4</span>
+            <span class="panel" style="position:absolute;left:0;top:110%;z-index:2;display:grid;gap:2px;padding:6px;min-width:230px;font-size:13px">
+              <span class="muted" style="font-size:11px;padding:2px 6px">Places where a feature splices in</span>
+              <span style="padding:4px 6px;opacity:.45">Chat history (placed)</span>
+              <span style="padding:4px 6px;opacity:.45">World info before (placed)</span>
+              <span style="padding:4px 6px">World info after</span>
+              <span style="padding:4px 6px">Example messages</span>
+              <span style="padding:4px 6px;opacity:.45">Trackers (placed)</span>
+              <span style="padding:4px 6px">Library trackers</span>
+              <span style="padding:4px 6px">Storyboards</span>
+            </span></span>
+        </div>
+        <div style="height:190px"></div>
+        <div class="lr"><span class="grip"></span>Main prompt<span class="grow"></span><span class="pl">top</span></div>
+        <div class="lr marker dir"><span class="grip"></span><span class="m new">marker</span> Director contract<span class="grow"></span><span class="pl">top</span></div>
+        <div class="lr marker card"><span class="grip"></span><span class="m">marker</span> Character<span class="grow"></span></div>
+        <div class="lr marker per"><span class="grip"></span><span class="m">marker</span> Persona<span class="grow"></span></div>
+        <div class="lr marker lore"><span class="grip"></span><span class="m">marker</span> World info before<span class="grow"></span></div>
+        <div class="lr marker skill"><span class="grip"></span><span class="m new">marker</span> Skills<span class="grow"></span><span class="pl">1 skill here, 1 has its own spot <span class="co">2</span></span></div>
+        <div class="lr marker mem"><span class="grip"></span><span class="m">marker</span> Summary<span class="grow"></span></div>
+        <div class="lr marker trk"><span class="grip"></span><span class="m new">marker</span> Trackers<span class="grow"></span></div>
+        <div class="lr marker chat"><span class="grip"></span><span class="m">marker</span> Chat history<span class="grow"></span></div>
+        <div class="inchat">
+          <div class="note"><span>Scene note marker</span><span>in chat, 3 back, system</span></div>
+          <div class="skill"><span>Sword fight (its own spot, set on the skill)</span><span>1 back, system</span></div>
+          <div class="dir"><span>Director direction marker</span><span>in chat, 1 back, system</span></div>
+        </div>
+        <div class="lr"><span class="grip"></span>Writing style<span class="grow"></span></div>
+        <p class="hint" style="margin-top:8px">Drag to reorder; a block's placement (in order, in chat at a depth, top, bottom) is set in its row as today.</p>
+      </div>
+      <aside class="side">
+        <div class="cap">Selected block</div>
+        <h3>Skills marker</h3>
+        <div><div class="fl">Placement</div><span class="seg" data-seg><span aria-pressed="true">In order</span><span>In chat</span><span>Top</span><span>Bottom</span></span></div>
+        <div><div class="fl">Fills with</div><p>Every linked skill that is on this turn and has no spot of its own: Lying tells.</p></div>
+        <p class="hint">A preset without this marker gets it where skills went before, so old presets build exactly as they did. <span class="co">3</span></p>
+        <div><button class="btn" type="button">Open in Nodes</button></div>
+      </aside>
+    </div>
+    <div class="legend panel" style="padding:12px 14px"><b>Callouts</b><ol>
+      <li><span class="co">1</span> The order list as in SillyTavern and RoleCall, with markers for the new features (rose tag). Exports to SillyTavern keep their markers; a Bunraku marker becomes its macro where one exists, and the export says which it left out.</li>
+      <li><span class="co">2</span> Items with their own spot are listed where they land, so nothing is placed that the list does not show.</li>
+      <li><span class="co">3</span> Missing markers fall back to today's spots: parity with today's output is the rule and the existing assembly tests prove it.</li>
+      <li><span class="co">4</span> "+ Marker" next to Add in the list's toolbar: every slot, the placed ones greyed (a slot is placed once). The new marker lands at the end of the list; drag it where you want it, and set its placement in its row as any block.</li>
+    </ol></div>
+  </section>
+</div>
+<script>
+document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('.tabs button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  document.querySelectorAll('.view').forEach((v) => v.classList.toggle('on', v.id === b.dataset.v));
+}));
+</script><script src="kit.js"></script>
+</body></html>

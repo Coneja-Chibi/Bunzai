@@ -27,6 +27,18 @@ describe("addMarker", () => {
     expect(twice).toBe(once); // unchanged body, not a clone
   });
 
+  test("its id is the slot when free, so a SillyTavern export and import keeps it; a taken id gets a fresh one", () => {
+    expect(addMarker(base(), "trackers").prompts[0]!.id).toBe("trackers");
+    const taken: PresetBody = { name: "P", prompts: [newBlock({ id: "trackers" })] };
+    const added = addMarker(taken, "trackers").prompts[1]!;
+    expect(added.id).not.toBe("trackers");
+    expect(added.markerSlot).toBe("trackers");
+  });
+
+  test("a feature marker is named from its label", () => {
+    expect(markerSlotName("linkedTrackers")).toBe("Library trackers");
+  });
+
   test("different slots coexist", () => {
     let b = addMarker(base(), "chatHistory");
     b = addMarker(b, "charDescription");
