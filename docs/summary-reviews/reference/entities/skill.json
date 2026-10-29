@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/skill",
   "sourcePath": "docs/reference/entities/skill.md",
-  "sourceHash": "sha256:60c635631315ef86829eaa8412c57579f75c9c442b99bd2cbabb460f44e50048",
-  "semanticSummaryHash": "sha256:441a67608831601accc673aa68e35c686c8118e4901e01bc9fc1d64be167eb6f",
+  "sourceHash": "sha256:4ff531bd1dbf31dfe5f172003b9490e68c491139d021653482d0c3e0763ec734",
+  "semanticSummaryHash": "sha256:56a24b1bc666585eeac2f5051149937fd76b918d622c9d1c15d48d8c6abac55c",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Picked line verified: skillVerdict closes only when closeWhenUnmentioned, triggers.length above 0, scanDepth above 0 and no match; otherwise a picked open skill stays open. Page sentence matches.",
-  "reviewedAt": "2026-10-29T09:58:55.337Z"
+  "notes": "Open and closed verified: skills slot is fields, bool shape, writers turn and person, skillDelta sets true or removes; open_skill and close_skill built in library-skills.ts as stateScoped writes at narrator.skill, description lists picked skills, unknown name refused with names, open is once, close of a not-open skill writes nothing, door TOOL_SLOT takes tracker slots and skills only, scene-turn.ts closes skills whose close rule held and a continue has no deltas, tools need toolAccess. Not built yet text matches (no person route).",
+  "reviewedAt": "2026-10-29T17:36:14.795Z"
 }

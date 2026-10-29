@@ -7,16 +7,16 @@ const rec = (field: string, value: number): Delta => ({ slot: "tracker-record:h"
 const list = (name: string): Delta => ({ slot: "tracker-list:p", path: [name], value: { name }, at: 1 });
 
 describe("the write door", () => {
-  test("S3: only tracker-record and tracker-list slots come through; any other slot is refused whole and nothing is saved", async () => {
+  test("S3: only tracker-record, tracker-list and the open skills slots come through; any other slot is refused whole and nothing is saved", async () => {
     const saved: Delta[][] = [];
     const w = turnWrites(() => 5);
     w.open([], async (all) => (saved.push(all), {}));
-    expect(await w.append([rec("hp", 1), list("Vera")])).toBeNull();
-    for (const slot of ["vars", "tracker-record:*", "tracker-recordx:h", "tracker-record", "other:h", "tracker-list:"]) {
-      expect(await w.append([rec("hp", 2), { slot, path: ["a"], value: 1, at: 1 }]), slot).toBe("That change is not to a tracker, so nothing in that call was written.");
+    expect(await w.append([rec("hp", 1), list("Vera"), { slot: "skills", path: ["s1"], value: true, at: 1 }])).toBeNull();
+    for (const slot of ["vars", "tracker-record:*", "tracker-recordx:h", "tracker-record", "other:h", "tracker-list:", "skills:x", "skillsx"]) {
+      expect(await w.append([rec("hp", 2), { slot, path: ["a"], value: 1, at: 1 }]), slot).toBe("That change is not to a tracker or a skill, so nothing in that call was written.");
     }
     expect(saved).toHaveLength(1);
-    expect(saved[0]).toHaveLength(2);
+    expect(saved[0]).toHaveLength(3);
   });
 
   test("the tool's door never reaches a Props module's slots, and the turn's tick never reaches a library tracker's: each path takes its own slots only", async () => {
@@ -24,9 +24,9 @@ describe("the write door", () => {
     const w = turnWrites(() => 5);
     w.open([], async (all) => (saved.push(all), {}));
     const props: Delta = { slot: "tracker.resources", path: ["hp"], value: 3, at: 1 };
-    expect(await w.append([props])).toBe("That change is not to a tracker, so nothing in that call was written.");
-    expect(await w.tick([rec("hp", 1)])).toBe("That change is not to a tracker, so nothing in that call was written.");
-    for (const slot of ["tracker.", "tracker.*", "tracker.Resources", "tracker.res urces", "vars", "summary"]) expect(await w.tick([{ ...props, slot }]), slot).not.toBeNull();
+    expect(await w.append([props])).toBe("That change is not to a tracker or a skill, so nothing in that call was written.");
+    expect(await w.tick([rec("hp", 1)])).toBe("That change is not to a tracker or a skill, so nothing in that call was written.");
+    for (const slot of ["tracker.", "tracker.*", "tracker.Resources", "tracker.res urces", "vars", "summary", "skills"]) expect(await w.tick([{ ...props, slot }]), slot).not.toBeNull();
     expect(await w.tick([props])).toBeNull();
     expect(saved).toHaveLength(1);
     expect(saved[0]).toEqual([props]);

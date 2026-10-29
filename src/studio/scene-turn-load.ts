@@ -188,7 +188,7 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
   const storyboards = storyboardsOf(chat, lore?.books);
   // The trackers show the state as it stands: a continue extends a reply whose own writes are part of it (a swipe builds from before the reply it replaces, as the variables do).
   const trackerState = kind === "continue" ? (await chats.sceneState(branchId)) ?? sceneState : sceneState;
-  const skills = await linkedSkills(readLibrary, chat.prompting?.skills);
+  const skills = await linkedSkills(readLibrary, chat.prompting?.skills, trackerState);
   const linked = await linkedTrackers(readLibrary && ((id) => readPiece(readLibrary, "tracker", id) as Promise<TrackerBody | null>), chat.prompting?.trackers, trackerState);
   // A cast the person recorded on the reply being replaced or continued is for the reply after it (scene-turn-ticks.ts).
   const onTarget = target && chat.props ? (await chats.sceneDeltas(branchId, target.id, target.id, ["tracker.spellbook"]))?.messages[0] : undefined;

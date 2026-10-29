@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/entities/skill",
   "sourcePath": "docs/reference/entities/skill.md",
-  "sourceHash": "sha256:60c635631315ef86829eaa8412c57579f75c9c442b99bd2cbabb460f44e50048",
-  "summary": "The skill entity page covers CanonicalSkill: instructions the model gets only when they matter, with a name, a one-line description the model reads when it may pick the skill, and macro-rendered text. A skill turns on always, when its triggers match, or while the model has it open, and its triggers are a lorebook entry's own fields matched by the lore engine's own matcher. A scene links skills by id in its prompting like tools and trackers, a turn reads them through its one library reader, and the ones on ride as one Skills block at the preset's skills marker, reserved by the budget so they are never dropped. The editor, the scene panel, opening skills and Kit editing them are not built yet.",
+  "sourceHash": "sha256:4ff531bd1dbf31dfe5f172003b9490e68c491139d021653482d0c3e0763ec734",
+  "summary": "The skill entity page covers CanonicalSkill: instructions the model gets only when they matter, with a name, a one-line description the model reads when it may pick the skill, and macro-rendered text. A skill turns on always, when its triggers match, or while the model has it open, and its triggers are a lorebook entry's own fields matched by the lore engine's own matcher. A scene links skills by id in its prompting like tools and trackers, a turn reads them through its one library reader, and the ones on ride as one Skills block at the preset's skills marker, reserved by the budget so they are never dropped. The model opens and closes picked skills with open_skill and close_skill, kept in the skills scene-state slot. The editor, the scene panel and Kit editing are not built yet.",
   "topics": [
     "CanonicalSkill",
     "skillVerdict",
@@ -17,14 +17,29 @@
       "slug": "when-it-is-on",
       "title": "When it is on",
       "level": 2,
-      "sourceHash": "sha256:bcc75fe8bb7d3efbe822217f894d00681c702f8e118daac05a796fb08148f3f6",
-      "summary": "A skill's when is always, mentioned or picked. Always puts it in the prompt every turn while linked. Mentioned uses a lorebook entry's own trigger fields, decoded by the lorebook's trigger decoder and matched by the lore engine's matchTrigger and selectiveLogicMatches over the newest scanDepth messages, the one being answered included, newest first, with regex triggers vetted; no triggers or a scan depth of 0 never match. Picked is on while the model has it open, and with closeWhenUnmentioned it closes when its triggers stop matching; opening and closing are not built yet, so a picked skill is never open today. Each verdict carries a plain sentence of why, returned on the assembly result.",
+      "sourceHash": "sha256:541a3b514663528f7ee418e0144616f2c8263a5d21ac9e64b6ee05bd3dfaa6dc",
+      "summary": "A skill's when is always, mentioned or picked. Always puts it in the prompt every turn while linked. Mentioned uses a lorebook entry's own trigger fields, decoded by the lorebook's trigger decoder and matched by the lore engine's matchTrigger and selectiveLogicMatches over the newest scanDepth messages, the one being answered included, newest first, with regex triggers vetted; no triggers or a scan depth of 0 never match, and a trigger's frequency and probability are kept but unused. Picked is on while the model has it open, and with closeWhenUnmentioned it closes when its triggers stop matching, unless it has no triggers or a scan depth of 0. Each verdict carries a plain sentence of why, returned on the assembly result.",
       "topics": [
         "skillVerdict",
         "mentioned",
         "picked",
         "matchTrigger",
         "closeWhenUnmentioned"
+      ],
+      "children": []
+    },
+    {
+      "slug": "open-and-closed",
+      "title": "Open and closed",
+      "level": 2,
+      "sourceHash": "sha256:e0d13994e6211bce60656c3fc963f177cde7ad16cedee1e6b30379bd7697f4e4",
+      "summary": "Which skills are open is scene state: the fields slot skills, one field per skill id holding true while open, written by the turn and the person, so a swipe, regenerate, cut or fork shows the open set of what is shown. A scene linking picked skills gives the model open_skill and close_skill while Narrator Tool Access is on. open_skill lists every picked skill's name and purpose in its description, answers with the skill's instructions rendered read-only with unanswered macros stripped, and opens it once through the turn's tool door. close_skill closes an open one and says so of one that is not. Both are stateScoped writes at tier narrator.skill; an unknown name is refused with the list. A close rule that holds is closed by the turn itself.",
+      "topics": [
+        "skills slot",
+        "open_skill",
+        "close_skill",
+        "narrator.skill",
+        "stateScoped"
       ],
       "children": []
     },
@@ -47,8 +62,8 @@
       "slug": "not-built-yet",
       "title": "Not built yet",
       "level": 2,
-      "sourceHash": "sha256:6af43723559661b852a7f0beac85d6660124a0a9dc5a757dbdf02309649b92b2",
-      "summary": "Not built yet: the Workbench editor from the approved skill wireframe, so a skill opens read-only in the Workbench for now; the scene's Skills panel and linking a skill from the scene; the picked skills' list that the model reads, with the open_skill and close_skill tools and the scene-state slot that keeps which skills are open, so a picked skill is never on today; a skill's own spot in the chat apart from the skills marker; and Kit making or editing a skill, since the kind has no Kit capabilities yet. Kit can already list, read, duplicate, export and delete skills through its generic piece tools, as for any kind.",
+      "sourceHash": "sha256:177623ffe14844f9e402249d4ea6f2a29f8d87dce6e271ca91abb3bbad3f6468",
+      "summary": "Not built yet: the Workbench editor from the approved skill wireframe, so a skill opens read-only in the Workbench for now; the scene's Skills panel, linking a skill from the scene, and the person closing a skill there, since the skills slot accepts a person's write but no route makes one yet; a skill's own spot in the chat apart from the skills marker; and Kit making or editing a skill, since the kind has no Kit capabilities yet. Kit can already list, read, duplicate, export and delete skills through its generic piece tools, as for any kind. Opening and closing by the model, and the close rule, are built and described above.",
       "topics": [
         "skill editor",
         "open_skill",

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/scene-state",
   "sourcePath": "docs/reference/scene-state.md",
-  "sourceHash": "sha256:e5b851e94bb120757ee483462f755df6aaaa4ec811036d5659499772f45a0686",
-  "semanticSummaryHash": "sha256:a79402ab9ea58fa75d3e2f6def019e73891b92b4f431a4eb9ac335aa248fdbc7",
+  "sourceHash": "sha256:ceb9ffcddf68f6177a60b6eb514b2d9934ba2954d50c13636bc665e34fe2163b",
+  "semanticSummaryHash": "sha256:aca084e3ecf5dfea638aad4dd4c980747abfd3911d1133799d2873dabedc07f9",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "New clause matches code and test: setSummary is implemented in the stores (stage/store/summary-slot.ts, reaching recordMessageDeltas inside the store) and its only non-store, non-test caller is saveSummaryText in studio/scene-summary.ts; scene-state-guard.test.ts now holds that. Sidecar who-may-write summary (149 words) does not need the detail and stays accurate; sidecar fresh.",
-  "reviewedAt": "2026-10-29T01:36:23.769Z"
+  "notes": "Skills slot paragraph and tools door sentence match scene-turn-writes.ts (TOOL_SLOT), slots/skills.ts, tier narrator.skill and the close deltas in scene-turn.ts. Sidecar is accurate.",
+  "reviewedAt": "2026-10-29T17:36:14.928Z"
 }

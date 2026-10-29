@@ -6,6 +6,22 @@
  */
 import { matchTrigger, recentScanParts, selectiveLogicMatches, type LoreScan } from "./lore/engine";
 import type { SkillBody } from "../entities/skill/schema";
+import { isRecord } from "./guards";
+import type { Delta, SceneState } from "./scene-state/types";
+
+/** The scene-state slot that keeps which skills are open (scene-state/slots/skills.ts). */
+export const SKILLS_SLOT = "skills";
+
+/** The ids of the skills open in `state`. */
+export function openSkills(state: SceneState): Set<string> {
+  const cells = state[SKILLS_SLOT];
+  if (!isRecord(cells)) return new Set();
+  return new Set(Object.entries(cells).flatMap(([id, cell]) => (isRecord(cell) && cell["value"] === true ? [id] : [])));
+}
+
+/** The delta that opens or closes one skill. */
+export const skillDelta = (id: string, open: boolean, at: number): Delta =>
+  open ? { slot: SKILLS_SLOT, path: [id], value: true, at } : { slot: SKILLS_SLOT, path: [id], removed: true, at };
 
 export interface SkillVerdict {
   on: boolean;

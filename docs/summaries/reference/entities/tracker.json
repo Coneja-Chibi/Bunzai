@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tracker",
   "sourcePath": "docs/reference/entities/tracker.md",
-  "sourceHash": "sha256:76e8564fe93e112640c07fea520e294dbc463d7c5e4536a9f8099d4fb7c30183",
+  "sourceHash": "sha256:eb188c12bafcee6c5b932d2bf0a9b535a5193fca16e9f8c9a2861ff038a2c7ac",
   "summary": "The tracker entity page covers CanonicalTracker, a library piece for state a scene keeps, such as a character's health or a party's roster, kept as data and never code. A tracker has a name, a description, a layout of record or list, typed fields, a note telling the model how to update it, an optional macro template for its prompt line, an optional icon and a change style the Messenger draws. The page explains the field rules shared with tools and held in one small module the decoder and the core both use, including a number's top taken from another field and field icons from the shipped glyph set, the absence of product limits beyond hostile-input ceilings, the two layouts, how the state lives in two scene-state slot families, how a scene links trackers, gets a Trackers block the budget measures and never cuts, and can switch change visuals off, the tracker macro, the single update_trackers tool, which applies a batch all or nothing and writes only deltas on the reply being written, and the read that answers what each reply changed. The Editing section describes the tracker editor, with its settings, the field editor a tool shares, and a rail showing what the AI gets, and says the Messenger's Trackers panel links, shows and edits them and that each reply shows what it changed in the style the tracker chose.",
   "topics": [
     "CanonicalTracker",
@@ -87,8 +87,8 @@
       "slug": "the-update-tool",
       "title": "The update tool",
       "level": 2,
-      "sourceHash": "sha256:31b83e8c51770a20dbda4b0f9ec75fc023a144025d0df044c8543d2f76d45c4f",
-      "summary": "When Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, a scene with linked trackers offers one tool, update_trackers, taking updates each naming a tracker with an optional row, remove flag and set object. Its description is one fixed sentence plus one line per tracker with every field's type, range or choices and meaning, and the note, never cut, naming a top taken from another field as in hp from zero to hp_max. Items apply in order and the batch is all or nothing; a number past its range or such a top is clamped. The model is answered with only what changed. The deltas join the turn's pending set through a door for tracker slots only with no size cap, and the loop runs the tool as the one stateScoped write, exempt from answer shortening and a spent budget.",
+      "sourceHash": "sha256:09f3c3bef0aa223730ec8eedc578005c2a7d47954e6e0d408096df91d37ca61a",
+      "summary": "When Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, a scene with linked trackers offers one tool, update_trackers, taking updates each naming a tracker with an optional row, remove flag and set object. Its description is one fixed sentence plus one line per tracker with every field's type, range or choices and meaning, and the note, never cut, naming a top taken from another field as in hp from zero to hp_max. Items apply in order and the batch is all or nothing; a number past its range or such a top is clamped. The model is answered with only what changed. The deltas join the turn's pending set through the tools' door, which takes the tracker slots and the open skills only, with no size cap, and the loop runs the tool as a stateScoped write, exempt from answer shortening and a spent budget.",
       "topics": [
         "update_trackers",
         "all or nothing batch",

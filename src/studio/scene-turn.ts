@@ -46,6 +46,7 @@ import { cancelTrackerRound, startTrackerRound } from "./scene-director-trackers
 import { commitDirector, runDirector, type DirectorDeps, type DirectorRun } from "./scene-director";
 import { turnWrites } from "./scene-turn-writes";
 import { sendReply, sentTools, toolsRefusal, toolTurn, withToolCalls, type NarratorToolsFor } from "./scene-turn-tools";
+import { skillDelta } from "../core/skill";
 import { failedAttempt, requestParams, routeOf, splitEntryKey, traceOf, traceOptions, type RequestParams, type RouteAttempt } from "./scene-turn-trace";
 
 export { splitEntryKey };
@@ -230,7 +231,8 @@ async function runTurnBody(
     const recalled = recall ? recallSection(recall, result.recall) : undefined;
     let route: RouteAttempt[] = [{ connectionId: chat.connection.id, kind: connected.kind, model }];
     // The turn's local variable changes, as scene-state deltas (rule 17), and its global ones, as operations in the shared `global` slot (core/scene-state/globals.ts): both wait on the checkpoint and reach the version only when the turn commits, so a turn that does not commit has written none, and a continue makes none of its own. Their size is bounded by their source (the macro engine's output cap), so nothing is refused here.
-    const deltas = input.kind === "continue" ? [] : [...varsDeltas(result.local, started), ...globalDeltas(result.globalWrites, started, () => crypto.randomUUID())];
+    // A picked skill whose close rule held this turn (core/skill.ts) is closed with them, as the reply's own write.
+    const deltas = input.kind === "continue" ? [] : [...varsDeltas(result.local, started), ...globalDeltas(result.globalWrites, started, () => crypto.randomUUID()), ...(result.skills ?? []).filter((s) => s.close).map((s) => skillDelta(s.id, false, started))];
     let trace = (traceOf(recounted(result, regexEdits), model, window, estimate, traceOptions(options, connected.provider.params, model), guided, recalled));
     if (input.inspect) {
       // F16: the one pause gate. Cancel and Stop drop the checkpoint, so nothing was written, saved or sent.

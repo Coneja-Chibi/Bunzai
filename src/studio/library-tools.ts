@@ -13,16 +13,18 @@ import { SCENE_ACTION_TIERS } from "../kit/tools/safety/scene-tiers";
 import { INVALID_TOOL, type NarratorTool } from "../stage/provider/tool-loop";
 import { compendiumTools } from "./compendium-lookup";
 import { trackerTool } from "./library-trackers";
+import { skillTools } from "./library-skills";
 import type { NarratorToolsFor, ToolsContext } from "./scene-turn-tools";
 
 export type ReadPiece = (kind: string, id: string) => Promise<unknown | null>;
 
-/** A scene's tools: the lorebook lookup first, then the library tools it links (none without a library), then the one update tool for its linked trackers. */
+/** A scene's tools: the lorebook lookup first, then the library tools it links (none without a library), then the one update tool for its linked trackers, then open_skill and close_skill for its picked skills. */
 export const narratorTools = (read: ReadPiece | undefined): NarratorToolsFor => async (ctx, writes) => {
   const lookup = compendiumTools(ctx);
   const library = read ? await libraryTools(ctx, read, lookup) : [];
   const trackers = trackerTool(ctx, [...lookup, ...library].map((t) => t.definition.function.name), writes);
-  return [...lookup, ...library, ...(trackers ? [trackers] : [])];
+  const before = [...lookup, ...library, ...(trackers ? [trackers] : [])];
+  return [...before, ...skillTools(ctx, before.map((t) => t.definition.function.name), writes)];
 };
 
 /** One stored piece of the given kind, checked by its strict decoder; null when it is gone, unreadable or another kind. */

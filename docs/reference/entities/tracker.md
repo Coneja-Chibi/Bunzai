@@ -119,9 +119,10 @@ narration and the state in step. This tool is handed no deadline: a call is appl
 whole.
 
 The tool loop runs only read tools, with one exception: a tool declared `access: "write"` and `stateScoped: true`,
-whose only effect is pending scene-state deltas on the reply being written. `update_trackers` is that tool
-(`SCENE_ACTION_TIERS["narrator.tracker"]`), the only tool that sets the flag and the only one handed the write door; any
-other non-read tool is still refused.
+whose only effect is pending scene-state deltas on the reply being written. `update_trackers` is such a tool
+(`SCENE_ACTION_TIERS["narrator.tracker"]`), as are the skills' `open_skill` and `close_skill` ([skill.md](skill.md),
+`narrator.skill`); they are the only tools that set the flag and the only ones handed the write door; any other non-read
+tool is still refused.
 
 ## What a reply changed
 

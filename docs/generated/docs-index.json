@@ -7715,7 +7715,7 @@
         "reference/entities/tracker",
         "reference/entities/tool"
       ],
-      "semanticSummary": "The skill entity page covers CanonicalSkill: instructions the model gets only when they matter, with a name, a one-line description the model reads when it may pick the skill, and macro-rendered text. A skill turns on always, when its triggers match, or while the model has it open, and its triggers are a lorebook entry's own fields matched by the lore engine's own matcher. A scene links skills by id in its prompting like tools and trackers, a turn reads them through its one library reader, and the ones on ride as one Skills block at the preset's skills marker, reserved by the budget so they are never dropped. The editor, the scene panel, opening skills and Kit editing them are not built yet.",
+      "semanticSummary": "The skill entity page covers CanonicalSkill: instructions the model gets only when they matter, with a name, a one-line description the model reads when it may pick the skill, and macro-rendered text. A skill turns on always, when its triggers match, or while the model has it open, and its triggers are a lorebook entry's own fields matched by the lore engine's own matcher. A scene links skills by id in its prompting like tools and trackers, a turn reads them through its one library reader, and the ones on ride as one Skills block at the preset's skills marker, reserved by the budget so they are never dropped. The model opens and closes picked skills with open_skill and close_skill, kept in the skills scene-state slot. The editor, the scene panel and Kit editing are not built yet.",
       "topics": [
         "CanonicalSkill",
         "skillVerdict",
@@ -7729,13 +7729,27 @@
           "text": "When it is on",
           "slug": "when-it-is-on",
           "level": 2,
-          "summary": "A skill's when is always, mentioned or picked. Always puts it in the prompt every turn while linked. Mentioned uses a lorebook entry's own trigger fields, decoded by the lorebook's trigger decoder and matched by the lore engine's matchTrigger and selectiveLogicMatches over the newest scanDepth messages, the one being answered included, newest first, with regex triggers vetted; no triggers or a scan depth of 0 never match. Picked is on while the model has it open, and with closeWhenUnmentioned it closes when its triggers stop matching; opening and closing are not built yet, so a picked skill is never open today. Each verdict carries a plain sentence of why, returned on the assembly result.",
+          "summary": "A skill's when is always, mentioned or picked. Always puts it in the prompt every turn while linked. Mentioned uses a lorebook entry's own trigger fields, decoded by the lorebook's trigger decoder and matched by the lore engine's matchTrigger and selectiveLogicMatches over the newest scanDepth messages, the one being answered included, newest first, with regex triggers vetted; no triggers or a scan depth of 0 never match, and a trigger's frequency and probability are kept but unused. Picked is on while the model has it open, and with closeWhenUnmentioned it closes when its triggers stop matching, unless it has no triggers or a scan depth of 0. Each verdict carries a plain sentence of why, returned on the assembly result.",
           "topics": [
             "skillVerdict",
             "mentioned",
             "picked",
             "matchTrigger",
             "closeWhenUnmentioned"
+          ],
+          "children": []
+        },
+        {
+          "text": "Open and closed",
+          "slug": "open-and-closed",
+          "level": 2,
+          "summary": "Which skills are open is scene state: the fields slot skills, one field per skill id holding true while open, written by the turn and the person, so a swipe, regenerate, cut or fork shows the open set of what is shown. A scene linking picked skills gives the model open_skill and close_skill while Narrator Tool Access is on. open_skill lists every picked skill's name and purpose in its description, answers with the skill's instructions rendered read-only with unanswered macros stripped, and opens it once through the turn's tool door. close_skill closes an open one and says so of one that is not. Both are stateScoped writes at tier narrator.skill; an unknown name is refused with the list. A close rule that holds is closed by the turn itself.",
+          "topics": [
+            "skills slot",
+            "open_skill",
+            "close_skill",
+            "narrator.skill",
+            "stateScoped"
           ],
           "children": []
         },
@@ -7757,7 +7771,7 @@
           "text": "Not built yet",
           "slug": "not-built-yet",
           "level": 2,
-          "summary": "Not built yet: the Workbench editor from the approved skill wireframe, so a skill opens read-only in the Workbench for now; the scene's Skills panel and linking a skill from the scene; the picked skills' list that the model reads, with the open_skill and close_skill tools and the scene-state slot that keeps which skills are open, so a picked skill is never on today; a skill's own spot in the chat apart from the skills marker; and Kit making or editing a skill, since the kind has no Kit capabilities yet. Kit can already list, read, duplicate, export and delete skills through its generic piece tools, as for any kind.",
+          "summary": "Not built yet: the Workbench editor from the approved skill wireframe, so a skill opens read-only in the Workbench for now; the scene's Skills panel, linking a skill from the scene, and the person closing a skill there, since the skills slot accepts a person's write but no route makes one yet; a skill's own spot in the chat apart from the skills marker; and Kit making or editing a skill, since the kind has no Kit capabilities yet. Kit can already list, read, duplicate, export and delete skills through its generic piece tools, as for any kind. Opening and closing by the model, and the close rule, are built and described above.",
           "topics": [
             "skill editor",
             "open_skill",
@@ -7957,7 +7971,7 @@
           "text": "The update tool",
           "slug": "the-update-tool",
           "level": 2,
-          "summary": "When Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, a scene with linked trackers offers one tool, update_trackers, taking updates each naming a tracker with an optional row, remove flag and set object. Its description is one fixed sentence plus one line per tracker with every field's type, range or choices and meaning, and the note, never cut, naming a top taken from another field as in hp from zero to hp_max. Items apply in order and the batch is all or nothing; a number past its range or such a top is clamped. The model is answered with only what changed. The deltas join the turn's pending set through a door for tracker slots only with no size cap, and the loop runs the tool as the one stateScoped write, exempt from answer shortening and a spent budget.",
+          "summary": "When Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, a scene with linked trackers offers one tool, update_trackers, taking updates each naming a tracker with an optional row, remove flag and set object. Its description is one fixed sentence plus one line per tracker with every field's type, range or choices and meaning, and the note, never cut, naming a top taken from another field as in hp from zero to hp_max. Items apply in order and the batch is all or nothing; a number past its range or such a top is clamped. The model is answered with only what changed. The deltas join the turn's pending set through the tools' door, which takes the tracker slots and the open skills only, with no size cap, and the loop runs the tool as a stateScoped write, exempt from answer shortening and a spent budget.",
           "topics": [
             "update_trackers",
             "all or nothing batch",
@@ -14186,7 +14200,7 @@
           "text": "How a turn uses it",
           "slug": "how-a-turn-uses-it",
           "level": 2,
-          "summary": "loadTurn reads the variables from sceneState for a new reply and from sceneStateBefore for a new version or a continue, so a regenerate never counts its own earlier writes twice. Assembly returns the local variable changes, and scene-turn turns them into vars deltas saved on the checkpoint with the trace; commitTurn stamps them on the version it stores and rebuilds the take. A continue makes no deltas. That save is awaited, so a lost save cannot commit a reply without its variables. The library's global variables ride the same pending set, so nothing is written before the request. The variables route reads the vars slot, and a chat import records its variables as the take's base. The trackers' update tool adds deltas mid-reply through the turn's one door, for tracker slots only, as the one stateScoped write. A write of a value the message already shows, its version's deltas included, adds nothing, so a person's tracker edit back to the value before a reply is kept on the tip message.",
+          "summary": "loadTurn reads the variables from sceneState for a new reply and from sceneStateBefore for a new version or a continue, so a regenerate never counts its own earlier writes twice. Assembly returns the local variable changes, and scene-turn turns them into vars deltas saved on the checkpoint with the trace; commitTurn stamps them on the version it stores and rebuilds the take. A continue makes no deltas. The library's global variables ride the same pending set, so nothing is written before the request. The trackers' update tool and the skills' open_skill and close_skill add deltas mid-reply through the turn's one door, for the tracker slots and the skills slot only, as the loop's stateScoped writes; a skill's close rule closes it with the turn's own deltas. A write of a value the message already shows, its version's deltas included, adds nothing, so a person's tracker edit back to the value before a reply is kept on the tip message.",
           "topics": [
             "load before the reply",
             "deltas on the checkpoint",

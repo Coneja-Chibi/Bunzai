@@ -25,11 +25,31 @@ The plan is `.claude/plans/skill-agent-kinds.md` section 2.
   trigger goes through the engine's vetted regex. No triggers, or a scan depth of 0, never match. A trigger's `frequency` and
   `probability`, which a lore entry's triggers may carry, are kept but not used by a skill.
 - `picked`: while the model has it open. With `closeWhenUnmentioned`, an open skill closes on a turn its triggers no
-  longer match (a skill with no triggers or a scan depth of 0 stays open). Opening and closing (the `open_skill` and `close_skill` tools, and the scene-state slot that keeps which
-  skills are open) are the next step of the skill build and are not built yet, so a picked skill is never open today.
+  longer match (a skill with no triggers or a scan depth of 0 stays open).
 
 Each verdict carries one plain sentence of why ("Mentioned: sword.", "Not opened."), returned on the assembly result as
 `skills`.
+
+## Open and closed
+
+Which skills are open is scene state: the slot `skills` (`src/core/scene-state/slots/skills.ts`, a `fields` slot, one
+field per skill id holding `true` while open, closing removes it; writers `turn` and `person`). So a swipe, regenerate,
+cut or fork shows exactly the open set of what is shown, with no rule of its own ([scene-state.md](../scene-state.md)).
+
+A scene that links picked skills gives the writing model two tools while Narrator Tool Access is on
+(`studio/library-skills.ts`), made like the trackers' update tool:
+
+- `open_skill` lists every picked skill in its own description, as a name and what it is for, so only that list costs
+  anything until a skill opens. Its one argument is the skill's name. It answers with the skill's instructions, the
+  turn's macros read read-only and what no macro answers stripped, and opens the skill (once) through the turn's one
+  tool door, so it is in the Skills block from the next reply.
+- `close_skill` closes an open one ("Closed ..."; a skill that is not open says so and writes nothing).
+
+Both are `stateScoped` writes at the tier `narrator.skill`: their only effect is the open skills' deltas pending on the
+reply being written, which a regenerate, swipe or cut takes back. An unknown name is refused with the list of names, and a
+write that could not be saved is the model's error with nothing kept. With Tool Access off, or a connection that takes no
+tools, a picked skill cannot open. A picked skill whose close rule holds on a turn is closed by that turn, with its
+variable deltas (`studio/scene-turn.ts`); a continue closes nothing.
 
 ## In a scene and in the prompt
 
@@ -48,8 +68,8 @@ it "Skills".
 ## Not built yet
 
 The Workbench editor (wireframe `design/wireframes/premiere/skill-pieces.html`, approved), so a skill opens read-only
-in the Workbench; the scene's Skills panel and linking from it; the picked skills' list, `open_skill` and `close_skill`;
-a skill's own spot in the chat (a skill placed apart from the marker); and Kit making or editing a skill (it has no
+in the Workbench; the scene's Skills panel, linking from it and the person closing a skill there (the slot takes a
+person's write, but no route makes one yet); a skill's own spot in the chat (a skill placed apart from the marker); and Kit making or editing a skill (it has no
 capabilities for the kind yet). Kit can list, read, duplicate, export and delete skills through its generic piece tools.
 
 

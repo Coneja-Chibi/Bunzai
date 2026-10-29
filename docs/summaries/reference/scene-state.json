@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/scene-state",
   "sourcePath": "docs/reference/scene-state.md",
-  "sourceHash": "sha256:e5b851e94bb120757ee483462f755df6aaaa4ec811036d5659499772f45a0686",
+  "sourceHash": "sha256:ceb9ffcddf68f6177a60b6eb514b2d9934ba2954d50c13636bc665e34fe2163b",
   "summary": "Scene state is what a scene remembers beyond its text, kept so that regenerating, choosing a version, cutting, restoring and forking all leave it where the shown history says. A piece of state is a slot declared in one file and listed by a generator. What one reply version changed in a slot is a delta, a value at a path rather than an operation, stored on that version by swipe id so a fork shares its prefix's deltas without copying them. The state is rebuilt from the shown versions, from the nearest keyframe, inside the transaction of whatever changed the history. Slots are single files (the macro variables and the chat summary), one list made from the module table (the Props trackers, whose Story Director updates, Spellbook tick and the person's edits all go through the same two write doors), and two families that serve the library trackers a scene links, whose state a tracker's update tool writes as pending deltas on the reply being written. Its sections cover slots, deltas and the three strategies, storage, rebuild, how a turn uses it (with the variables route and the chat import), the Props trackers, the chat summary, global variables derived from every scene's shown versions, who may write each slot, what is not built yet, and what is tested. A range read of the same data shows what each message changed.",
   "topics": [
     "slots",
@@ -113,8 +113,8 @@
       "slug": "how-a-turn-uses-it",
       "title": "How a turn uses it",
       "level": 2,
-      "sourceHash": "sha256:2065dbd6bb8de66ede361f0eeeb182eb1db5b05bb3a6c6648198cbecdc2ba75b",
-      "summary": "loadTurn reads the variables from sceneState for a new reply and from sceneStateBefore for a new version or a continue, so a regenerate never counts its own earlier writes twice. Assembly returns the local variable changes, and scene-turn turns them into vars deltas saved on the checkpoint with the trace; commitTurn stamps them on the version it stores and rebuilds the take. A continue makes no deltas. That save is awaited, so a lost save cannot commit a reply without its variables. The library's global variables ride the same pending set, so nothing is written before the request. The variables route reads the vars slot, and a chat import records its variables as the take's base. The trackers' update tool adds deltas mid-reply through the turn's one door, for tracker slots only, as the one stateScoped write. A write of a value the message already shows, its version's deltas included, adds nothing, so a person's tracker edit back to the value before a reply is kept on the tip message.",
+      "sourceHash": "sha256:3394a00dc193e1366405d1076f64a5f9dcd8fedb516c12c4de4220db8909167b",
+      "summary": "loadTurn reads the variables from sceneState for a new reply and from sceneStateBefore for a new version or a continue, so a regenerate never counts its own earlier writes twice. Assembly returns the local variable changes, and scene-turn turns them into vars deltas saved on the checkpoint with the trace; commitTurn stamps them on the version it stores and rebuilds the take. A continue makes no deltas. The library's global variables ride the same pending set, so nothing is written before the request. The trackers' update tool and the skills' open_skill and close_skill add deltas mid-reply through the turn's one door, for the tracker slots and the skills slot only, as the loop's stateScoped writes; a skill's close rule closes it with the turn's own deltas. A write of a value the message already shows, its version's deltas included, adds nothing, so a person's tracker edit back to the value before a reply is kept on the tip message.",
       "topics": [
         "load before the reply",
         "deltas on the checkpoint",
@@ -147,7 +147,7 @@
       "slug": "the-chat-summary",
       "title": "The chat summary",
       "level": 2,
-      "sourceHash": "sha256:af95cde337d620d7a327e7019f0580a58e86ead306509b442196a11e31b8df33",
+      "sourceHash": "sha256:a53e7283ef5045e62409fdb22e32a19f29df8767e10afae1040f90e82cbb78ad",
       "summary": "The summary slot is a keyed-list with a declared row shape and two layers that never write the same path. Generated pieces are rows keyed by the swipe id of the version they end at, written after the reply lands on that version in this take: an Every-exchange line is the row of its reply, and a rolling recap, growing timeline or backfill is a replacing block that removes the other generated rows, so regenerating or cutting its message gives them back. The person's text is one separate row written as an edit of the newest message, with a fresh edit id and the next number on every save. Each generated row records the id and number it saw, which orders the layers without a clock: rows that saw an older text are covered however many there are, and rows written after, or that saw a newer save since deleted, show. A fork inherits the prefix and its writes stay in the fork.",
       "topics": [
         "generated rows keyed by version",

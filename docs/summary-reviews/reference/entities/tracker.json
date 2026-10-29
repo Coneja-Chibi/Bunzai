@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tracker",
   "sourcePath": "docs/reference/entities/tracker.md",
-  "sourceHash": "sha256:76e8564fe93e112640c07fea520e294dbc463d7c5e4536a9f8099d4fb7c30183",
-  "semanticSummaryHash": "sha256:24367d473e6269e1ce9856fe8d656e16de8866157fbdaafab95492700705a149",
+  "sourceHash": "sha256:eb188c12bafcee6c5b932d2bf0a9b535a5193fca16e9f8c9a2861ff038a2c7ac",
+  "semanticSummaryHash": "sha256:44e1b08ea16f120dae9831b10382b9b1ae7bcac69b622b3863c146bf95e6d7ee",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Still accurate: the Trackers block goes where the preset's linkedTrackers marker stands, else right after the Props block; unmarked features are still placed after the guides in the feature order, and a marked one is filled before the guides without changing that statement.",
-  "reviewedAt": "2026-10-29T07:31:45.558Z"
+  "notes": "stateScoped sentence matches: update_trackers and the skill tools are the write-access stateScoped tools handed the writes door; tier narrator.skill exists in scene-tiers.ts. Sidecar matches.",
+  "reviewedAt": "2026-10-29T17:36:15.065Z"
 }
