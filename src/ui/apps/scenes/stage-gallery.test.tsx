@@ -2,14 +2,14 @@
  * The Stage Gallery as it mounts: it lists the scene's art with the right count, asks for 256 thumbnails and never the full picture,
  * mounts only the rows in view, never lists a link, and Use as background sets the scene backdrop (or says why it could not).
  */
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import type { JSDOM } from "jsdom";
 import type { Root } from "react-dom/client";
 import type { AppContext } from "../../app-contract";
 import type { Chat, ChatBackdrop } from "../../../stage/contracts/chat-store";
 import type { OpenScene } from "../../../studio/scenes";
 import { artCache } from "../../_shared/art-cache";
-import { installDom, type InstalledDom } from "../../_shared/test-dom";
+import { installDom, waitFor, type InstalledDom } from "../../_shared/test-dom";
 import { StageGallery } from "./stage-gallery";
 
 let dom: JSDOM;
@@ -41,8 +41,8 @@ beforeAll(() => {
   Object.defineProperty(dom.window.HTMLElement.prototype, "offsetWidth", { configurable: true, get(this: HTMLElement) { return this.className.includes("sg-scroll") ? 400 : 200; } });
   Object.defineProperty(dom.window.HTMLElement.prototype, "offsetHeight", { configurable: true, get(this: HTMLElement) { return this.className.includes("sg-scroll") ? 600 : 200; } });
 });
-afterAll(() => {
-  installed.teardown();
+afterAll(async () => {
+  await installed.teardown();
   globalThis.fetch = realFetch;
   URL.createObjectURL = realCreate;
   URL.revokeObjectURL = realRevoke;
@@ -86,7 +86,7 @@ function makeCtx(opts: { pack?: unknown; card?: unknown; persona?: unknown; pack
 const chat = { id: "c1", snapshotVersion: 2, cast: { character: { id: "k1", version: 1 }, persona: { id: "p1", version: 1 } } } as unknown as Chat;
 const sceneOf = (hasPortrait: boolean): OpenScene => ({ hasPortrait, snapshot: { character: { body: { identity: { name: "Vera" } } } } }) as unknown as OpenScene;
 
-let root: Root;
+let root: Root | null = null;
 let host: HTMLElement;
 type FlushSync = typeof import("react-dom")["flushSync"];
 const settle = async (flushSync: FlushSync, ms = 40): Promise<void> => { await new Promise((r) => setTimeout(r, ms)); flushSync(() => undefined); };
@@ -99,11 +99,17 @@ async function mount(ctx: AppContext, scene = sceneOf(false)): Promise<FlushSync
   host = dom.window.document.createElement("div");
   dom.window.document.body.appendChild(host);
   root = createRoot(host);
-  flushSync(() => root.render(<StageGallery ctx={ctx} chat={chat} scene={scene} onChat={(c) => chats.push(c)} />));
+  flushSync(() => root!.render(<StageGallery ctx={ctx} chat={chat} scene={scene} onChat={(c) => chats.push(c)} />));
   await settle(flushSync);
   return flushSync;
 }
-const unmount = (flushSync: FlushSync): void => { flushSync(() => root.unmount()); host.remove(); };
+const unmount = (flushSync: FlushSync): void => {
+  const mounted = root;
+  root = null;
+  if (mounted) flushSync(() => mounted.unmount());
+  host?.remove();
+};
+afterEach(async () => { unmount((await import("react-dom")).flushSync); });
 
 describe("the Gallery lists the scene's art", () => {
   test("the portrait, the card's extra art, the persona and the pack, counted as images", async () => {
@@ -147,7 +153,17 @@ describe("thumbnails and windowing", () => {
   });
 
   test("a big pack mounts only the rows in view", async () => {
-    const flushSync = await mount(makeCtx({ pack: pack(600) }));
+    const ctx = makeCtx({ pack: pack(600) });
+    const read = ctx.api.getLightEditableEntity;
+    let release!: () => void;
+    const loading = new Promise<void>((resolve) => { release = resolve; });
+    ctx.api.getLightEditableEntity = async (query) => {
+      if (query.includes("kind=pack")) await loading;
+      return read(query);
+    };
+    const flushSync = await mount(ctx);
+    release();
+    await waitFor(flushSync, () => host.textContent?.includes("601 images in this scene"), "the loaded 600-picture gallery pack");
     expect(host.textContent).toContain("601 images in this scene");
     expect(tiles().length).toBeGreaterThan(0);
     expect(tiles().length).toBeLessThan(60);
