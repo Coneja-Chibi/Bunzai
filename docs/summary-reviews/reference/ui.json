@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:0d527b31aea8edbca112190dace1bdb870f38cf405beb74316e2471e2c477baf",
-  "semanticSummaryHash": "sha256:a2021e8255681295ec2e2d56980ca9a13759be54a6358339e1cea6f9e0a4873c",
+  "sourceHash": "sha256:284f3ab154bd81901db45de31b57371e1474c413a35a3e4c04b8c2843c9d72e7",
+  "semanticSummaryHash": "sha256:bb4d022c5da78a2e86ab37f37d0328c0e5384a64b4100ff95b3ca29df173c8a0",
   "verdict": "APPROVE",
   "reviewer": "integration_review",
-  "notes": "Reviewed phone dock targets, safe-area rules and measured reserve against current Dock owner; checked shared composer resize and portrait/action selectors, and stable stored-revision HTTP save regression. Recorded live-browser evidence covers unchanged draft resize and uploaded-art Save/reload; physical-phone keyboards, actual installation and packaged behavior remain unverified.",
-  "reviewedAt": "2026-10-30T04:20:23.704Z"
+  "notes": "Reviewed Dramaturg refusal cap through existing readStreamCapped byte-pump owner: exact64KiB accepted, oversized source cancelled with status-preserving fallback. Independently reran13disk-inventory,whole-buffer,SHAandstreamtests32assert; Nodecrypto confirms corrected renamed fixture digest. No real-provider, browser or packaged proof claimed by this narrow fix.",
+  "reviewedAt": "2026-10-30T04:49:27.680Z"
 }

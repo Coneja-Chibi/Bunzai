@@ -9,6 +9,7 @@ import { readSse } from "../../../../_shared/read-sse";
 import type { DramaturgStreamEvent } from "../../../../app-contract-dramaturg";
 import { isPlainObject } from "../../../../../core/guards";
 import { decodeDramaturg } from "../../../../../stage/store/dramaturg-rules";
+import { readStreamCapped } from "../../../../../core/stream-bytes";
 
 const LAST = new Set<DramaturgStreamEvent["type"]>(["done", "failed", "stopped"]);
 const KEYS: Record<DramaturgStreamEvent["type"], readonly string[]> = { text: ["type", "delta"], read: ["type", "tool", "summary"], done: ["type", "thread"], stopped: ["type", "thread"], failed: ["type", "message", "thread"] };
@@ -31,7 +32,8 @@ function accept(value: unknown): value is DramaturgStreamEvent {
 
 /** The server's refusal, in its words and with its code, as apiFetchJson would have thrown it. */
 export async function refusalOf(res: Response): Promise<ApiHttpError> {
-  const text = await res.text().catch(() => "");
+  const read = await readStreamCapped(res.body, 64 * 1024);
+  const text = read.ok ? new TextDecoder().decode(read.bytes) : "";
   let body: unknown = null;
   try { body = text ? JSON.parse(text) as unknown : null; } catch { body = null; }
   const rec = body && typeof body === "object" ? body as { error?: unknown; code?: unknown } : {};
