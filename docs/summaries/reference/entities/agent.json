@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/agent",
+  "sourcePath": "docs/reference/entities/agent.md",
+  "sourceHash": "sha256:0403f9289ce0117fc946c560eb0935669138e13d2321ec1d939ff08148effd75",
+  "summary": "An Agent is one canonical Library piece containing instructions, optional model settings and Tool and Skill reference IDs. Promptbook phases compose these through the existing scene runtime with phase model overrides taking precedence. Final Cut uses the same Library authority and migrates active legacy records only after exact identity creation and complete escrow verification. Collisions retain the source, tombstones and banks remain untouched, and revision checks protect saves and transactional deletes. Final Cut loads instructions and model settings as templates rather than executing linked capabilities; Director integration remains absent. Isolated tests cover migration and revision safety, with live and packaged behavior unverified.",
+  "topics": [
+    "agent",
+    "Library",
+    "canonical",
+    "revision",
+    "verification"
+  ],
+  "sections": []
+}

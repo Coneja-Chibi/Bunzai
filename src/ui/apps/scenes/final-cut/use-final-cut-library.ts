@@ -57,8 +57,11 @@ export function useFinalCutLibrary(ctx: AppContext): FinalCutLibrary {
   return {
     state, banks, agents, error,
     saveBank: (bank) => write(() => api.current.saveFinalCutBank(bank), (made) => setBanks((l) => put(l, made))),
-    saveAgent: (agent) => write(() => api.current.saveFinalCutAgent(agent), (made) => setAgents((l) => put(l, made))),
+    saveAgent: (agent) => {
+      const old = agents.find((a) => a.id === agent.id || (typeof agent.name === "string" && a.name.toLowerCase() === agent.name.toLowerCase()));
+      return write(() => api.current.saveFinalCutAgent({ ...agent, ...(old ? { id: old.id, revision: old.revision } : {}) }), (made) => setAgents((l) => put(l, made)));
+    },
     deleteBank: async (id) => { await write(() => api.current.deleteFinalCutBank(id), () => setBanks((l) => l.filter((b) => b.id !== id))); },
-    deleteAgent: async (id) => { await write(() => api.current.deleteFinalCutAgent(id), () => setAgents((l) => l.filter((a) => a.id !== id))); },
+    deleteAgent: async (id) => { await write(() => api.current.deleteFinalCutAgent(id, agents.find((a) => a.id === id)?.revision ?? ""), () => setAgents((l) => l.filter((a) => a.id !== id))); },
   };
 }

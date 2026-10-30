@@ -10,8 +10,9 @@ import type { SceneTrace, TraceBlockView } from "../../../app-contract-scenes";
 export const FOLD_OVER_CHARS = 1_200;
 
 export interface CallRow {
-  id: "recall" | "narrator";
-  phase: "before" | "reply";
+  id: "recall" | "narrator" | `book:${string}`;
+  phase: "before" | "reply" | "after";
+  bookPhaseId?: string;
   label: string;
   model: string;
   state: "Done" | "Failed" | "Stopped";
@@ -26,6 +27,8 @@ export interface CallRow {
 /** The calls the trace records, in the order they ran. */
 export function callsOf(trace: SceneTrace): CallRow[] {
   const rows: CallRow[] = [];
+  const bookCalls = (role: "private" | "after"): CallRow[] => (trace.book?.phases ?? []).filter((p) => p.role === role && p.status === "ran").map((p) => ({ id: `book:${p.id}`, bookPhaseId: p.id, phase: role === "private" ? "before" : "after", label: p.name, model: p.model ?? "", state: "Done", trigger: p.why, confidence: p.promptTokens !== undefined || p.outputTokens !== undefined ? "exact" : "none", ...(p.promptTokens !== undefined ? { sent: p.promptTokens } : {}), ...(p.outputTokens !== undefined ? { back: p.outputTokens } : {}), ...(p.ms !== undefined ? { ms: p.ms } : {}) }));
+  rows.push(...bookCalls("private"));
   const recall = trace.recall;
   if (recall && recall.calls > 0) {
     rows.push({ id: "recall", phase: "before", label: "Compendium Retrieval", model: recall.model ?? "", state: recall.status === "failed" ? "Failed" : "Done", trigger: "select lore needed by the upcoming narration", confidence: "none" });
@@ -44,6 +47,7 @@ export function callsOf(trace: SceneTrace): CallRow[] {
     confidence: t?.exact ? "exact" : t?.estimate !== undefined ? "estimated" : "none",
     ...(t?.ms !== undefined ? { ms: t.ms } : {}),
   });
+  rows.push(...bookCalls("after"));
   return rows;
 }
 

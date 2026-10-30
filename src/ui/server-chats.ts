@@ -320,7 +320,7 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
       if (filing) return filing;
       const guides = await handleGuideRoute(req, p, chats, state, null);
       if (guides) return guides;
-      const finalCut = await handleFinalCutRoute(req, url, chats, state, readPreset, regexReaderOf(store), null);
+      const finalCut = await handleFinalCutRoute(req, url, chats, state, readPreset, regexReaderOf(store), null, store);
       if (finalCut) return finalCut;
       const compare = await handleCompareRoute(req, url, chats);
       if (compare) return compare;
@@ -448,7 +448,7 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
     if (forecast) return forecast;
     const guides = await handleGuideRoute(req, p, chats, state, b);
     if (guides) return guides;
-    const finalCut = await handleFinalCutRoute(req, url, chats, state, readPreset, regexReaderOf(store), b);
+    const finalCut = await handleFinalCutRoute(req, url, chats, state, readPreset, regexReaderOf(store), b, store);
     if (finalCut) return finalCut;
     const compendium = await handleCompendiumSettingsRoute(p, chats, b);
     if (compendium) return compendium;

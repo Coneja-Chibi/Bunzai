@@ -50,7 +50,7 @@ export async function prepareRequest(deps: { chats: Pick<ChatStore, "globalOps">
   const meter = await readMeter(deps.state);
   // A new version of a reply starts its local variables from the state before the reply it replaces (scene-turn-load.ts), and the library's
   // global ones from every shown version but the one it replaces (core/scene-state/globals.ts), so nothing is counted twice.
-  const startGlobal = await readGlobals(deps.chats, loaded.target ? [loaded.target.swipes[loaded.target.current]!.id] : []);
+  const startGlobal = await readGlobals(deps.chats, loaded.target ? [loaded.target.swipes[loaded.target.current]!.id] : [], loaded.pendingGlobals);
   // The take's own summary (ChatStore rule 45), sent only while Include in AI context is on; hiding what it covers keeps Keep recent messages (RoleCall resolveSummaryContextWindowSize).
   const settings = resolveSummary(chat.summary?.settings);
   const take = settings.include ? (loaded.savedSummary ?? null) : null;

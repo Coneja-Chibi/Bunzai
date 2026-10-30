@@ -339,10 +339,11 @@ export function memoryDocumentBackend(): DocumentBackend {
       return p ? (await materializeParts(snapshotParts([p])))[0] ?? null : null;
     },
 
-    async bury(kind, id, graveId, deletedAt, capture) {
+    async bury(kind, id, graveId, deletedAt, capture, expectedRevision) {
       const key = keyOf(kind, id);
       const row = rows.get(key);
       if (!row || graves.has(graveId)) return false;
+      if (expectedRevision !== undefined && row.revision !== expectedRevision) return false;
       graves.set(graveId, { grave: { ...row, writeId: row.writeId + 1, autosaveStartedAt: null, graveId, deletedAt }, versions: versionLog.get(key) ?? [], summary: summaries.get(key) });
       rows.delete(key);
       versionLog.delete(key);

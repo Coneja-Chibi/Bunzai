@@ -33,7 +33,7 @@ const BASE = "preset";
  */
 export function formatsFor<F extends { kind: string; friendly: string }>(formats: readonly F[], kind: string): F[] {
   const own = formats.filter((f) => f.kind === kind);
-  if (kind === BASE || !isWritingKind(kind)) return own;
+  if (kind === BASE || !isWritingKind(kind) || kindOf(kind)?.presetExports === false) return own;
   const covered = new Set(own.map((f) => f.friendly));
   return [...own, ...formats.filter((f) => f.kind === BASE && !covered.has(f.friendly))];
 }
@@ -41,5 +41,6 @@ export function formatsFor<F extends { kind: string; friendly: string }>(formats
 /** A writing piece made ready for a preset format: as the preset it sends; any other piece is left as it is. */
 export function forFormatKind<E extends { kind: string; body: unknown }>(entity: E, formatKind: string): E {
   if (entity.kind === formatKind || formatKind !== BASE || !isWritingKind(entity.kind)) return entity;
+  if (kindOf(entity.kind)?.presetExports === false) throw new Error("A Promptbook's phases cannot be exported as a single preset. Choose Bunzai Promptbook to keep the workflow.");
   return { ...entity, kind: BASE, body: asPresetBody(entity.kind, entity.body) };
 }

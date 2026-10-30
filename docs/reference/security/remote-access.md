@@ -103,12 +103,17 @@ a `subjectAltName` (a CN-only cert triggers a harsher, sometimes un-bypassable b
 regenerated if the cached one no longer covers the current IP. The private key is written with `chmod 600`
 (best effort; Windows uses ACLs). The owner verifies the shown sha256 fingerprint on first connect.
 
-### Why the session cookie is not `Secure`
+### Session transport and bounded admission
 
-The approved-session cookie is `HttpOnly; SameSite=Lax; Path=/` with **no `Secure` attribute**
-(`src/ui/remote/lan-server.ts`). The listener is HTTPS-only, but a self-signed cert is not a "secure
-context" in some browsers, which then silently DROP a `Secure` cookie, leaving the device stuck re-entering
-the code forever. `SameSite=Lax` lets the cookie ride the reload navigation; `HttpOnly` still stands.
+The approval cookie is `Secure; HttpOnly; SameSite=Lax; Path=/`. An HTTPS listener alone does not
+protect a bearer cookie from plaintext requests to another port on the same host. Browsers that
+cannot retain a Secure cookie must fail closed; certificate compatibility is not a reason to remove it.
+
+The login route caps JSON at 1,024 bytes and code input at 32 characters. Verification reserves admission
+before awaiting Argon2: one comparison per IP, at most four globally, without an unbounded queue.
+Attempt records cap at 1,024 and sessions at 256; expired pending sessions are swept before admission.
+Reset immediately invalidates credentials and sessions, and only the current generation can publish
+a hash or issue a session. Disabling LAN access also invalidates any startup still in flight.
 
 ## Host-only surface
 
@@ -193,8 +198,9 @@ release the installed helper came from and offers to fetch it again.
 
 The sidecar is a background process that speaks only over stdio pipes (status events out, kick commands
 in). It watches its stdin: when the parent app dies, stdin hits EOF and the sidecar exits, so a crashed app
-never leaves an orphan carrying a stale secret. On startup the manager also sweeps any orphan from a prior
-run before spawning a fresh one (`killOrphans`, `src/ui/remote/sidecar-manager.ts`).
+can exit without a process-name sweep. The manager never force-kills programs by image name; it stops
+only its retained child handle. Late output from a stopped child cannot restore an active state.
+LAN startup is coalesced and generation-checked, so a listener arriving after Off is stopped immediately.
 
 The binary is built as a **Windows GUI-subsystem** executable (`bun sidecar/build.ts`, `-H=windowsgui`) so
 that spawning it from the window-less packaged app never pops a console window; the parent-provided pipes
@@ -205,6 +211,9 @@ layer.
 
 - The Tailscale owner gate and its fail-closed cases are unit-tested (`sidecar/main_test.go`).
 - The LAN code format, per-IP throttle, pending cap, and TTL are unit-tested (`src/ui/remote/lan-host.test.ts`).
+- Capped login bodies, Secure-cookie issuance, hash concurrency, reset races and startup revocation have
+  isolated handler/lifecycle regressions. These October 30 changes have not been reverified in a browser,
+  on a real LAN or in the packaged host.
 - The trusted-port secret refusal and the host-only route block are tested at the handler
   (`src/ui/server-remote.test.ts`), including that a guest cannot trigger a helper download.
 - The three binary locations, the `unavailable` phase, and the refusal to spawn or to persist an "on" that

@@ -1,10 +1,7 @@
 /**
- * The person's own Final Cut library (RoleCall's `user_anti_slop_banks` and `user_custom_agents`, rc app/api/post-production): banks they
- * authored for the Anti-Slop pass, and Custom Agents they saved to load onto any scene. One sealed document in the library's state (StateStore
- * key `finalCut`), like the guides, written one change at a time. A document that cannot be read is refused, never read as empty, so a
- * save cannot wipe what it failed to read. Deleting is soft (RoleCall deletes the row): the record stays with a `deletedAt` and shows
- * nowhere. A saved agent is checked against the same bounds as the pass it loads onto (RoleCall allows a temperature of 2 and a context of
- * 0 where its pass takes 1.5 and 1).
+ * Final Cut's authored Anti-Slop banks and legacy saved-agent migration. Banks remain in the sealed state document;
+ * reusable Agents live only as canonical Library pieces (agent-library.ts). The shared serializer prevents a migration
+ * clearing legacy rows from overwriting a simultaneous bank edit. Unreadable state is refused, never replaced with defaults.
  */
 import { randomUUID } from "node:crypto";
 import { BANK_KINDS, BANK_SCOPES, type Bank, type BankKind, type BankScope } from "../core/final-cut/banks";
@@ -45,6 +42,7 @@ export interface AgentRecord {
   createdAt: number;
   updatedAt: number;
   deletedAt?: number;
+  revision?: string;
 }
 
 interface Library { banks: BankRecord[]; agents: AgentRecord[] }
@@ -115,7 +113,16 @@ export function parseAgent(raw: unknown): Omit<AgentRecord, "id" | "createdAt" |
 }
 
 export const listBanks = async (state: Pick<StateStore, "read">): Promise<BankRecord[]> => live((await read(state)).banks).sort((a, b) => b.updatedAt - a.updatedAt);
-export const listAgents = async (state: Pick<StateStore, "read">): Promise<AgentRecord[]> => live((await read(state)).agents).sort((a, b) => b.updatedAt - a.updatedAt);
+/** Moves legacy saved agents only after their canonical pieces have all been verified. Bank writes share this queue. */
+export async function migrateSavedAgents(state: StateStore, accept: (agents: readonly AgentRecord[]) => Promise<void>): Promise<void> {
+  await enqueue(async () => {
+    const library = await read(state);
+    const active = live(library.agents);
+    if (active.length === 0) return;
+    await accept(active);
+    await write(state, { ...library, agents: library.agents.filter((agent) => agent.deletedAt !== undefined) });
+  });
+}
 
 /** Makes a bank, or replaces the one named by `raw.id`; two live banks never share an id. */
 export function saveBank(state: StateStore, raw: unknown, now: number, newId: () => string = randomUUID): Promise<BankRecord> {
@@ -132,20 +139,7 @@ export function saveBank(state: StateStore, raw: unknown, now: number, newId: ()
   });
 }
 
-/** Makes an agent, or overwrites the one with the same name (RoleCall's save is idempotent on the name) or the one named by `raw.id`. */
-export function saveAgent(state: StateStore, raw: unknown, now: number, newId: () => string = randomUUID): Promise<AgentRecord> {
-  return enqueue(async () => {
-    const id = isRecord(raw) && typeof raw["id"] === "string" ? raw["id"] : undefined;
-    const fields = parseAgent(raw);
-    const library = await read(state);
-    const rows = live(library.agents);
-    const old = id === undefined ? rows.find((a) => a.name.toLowerCase() === fields.name.toLowerCase()) : rows.find((a) => a.id === id);
-    if (id !== undefined && !old) throw new StudioNotFoundError("that agent is gone");
-    const saved: AgentRecord = old ? { ...fields, id: old.id, createdAt: old.createdAt, updatedAt: now } : { ...fields, id: newId(), createdAt: now, updatedAt: now };
-    await write(state, { ...library, agents: old ? library.agents.map((a) => (a.id === old.id ? saved : a)) : [...library.agents, saved] });
-    return saved;
-  });
-}
+export { listLibraryAgents as listAgents, saveLibraryAgent as saveAgent, deleteLibraryAgent as deleteAgent } from "./agent-library";
 
 const remove = (kind: "banks" | "agents") => (state: StateStore, id: string, now: number): Promise<boolean> => enqueue(async () => {
   const library = await read(state);
@@ -154,7 +148,6 @@ const remove = (kind: "banks" | "agents") => (state: StateStore, id: string, now
   return true;
 });
 export const deleteBank = remove("banks");
-export const deleteAgent = remove("agents");
 
 /** The enabled banks as the Anti-Slop prompt reads them, by their `user/...` id. */
 export async function finalCutBanksOf(state: Pick<StateStore, "read">): Promise<Record<string, Bank>> {

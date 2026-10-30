@@ -123,7 +123,7 @@ function compileVettedKey(pattern: string, flags: string): RegExp | null {
   const cached = vettedRegexCache.get(cacheKey);
   if (cached !== undefined) return cached;
   let compiled: RegExp | null = null;
-  if (vetPattern(pattern)) {
+  if (vetPattern(pattern, safeFlags)) {
     try {
       compiled = new RegExp(pattern, safeFlags);
     } catch {

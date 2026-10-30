@@ -25,6 +25,78 @@ describe("throttleDelayMs", () => {
 });
 
 describe("LanHost", () => {
+  test("concurrent comparisons reserve attempt capacity before awaiting", async () => {
+    const pending = Promise.withResolvers<boolean>();
+    let blocked = false; let admitted = 0;
+    const h = new LanHost({ now: () => 1, hash: async (s) => s, verify: () => { if (blocked) { admitted++; return pending.promise; } return Promise.resolve(false); } });
+    const code = await h.reset();
+    for (let i = 0; i < 1023; i++) await h.verifyCode(`old-${i}`, "WRONGCODE");
+    blocked = true;
+    const attempts = Array.from({ length: 4 }, (_, i) => h.verifyCode(`new-${i}`, code));
+    expect(admitted).toBe(1);
+    pending.resolve(false);
+    await Promise.all(attempts);
+  });
+  test("expired pending sessions cannot permanently fill the approval capacity", async () => {
+    let now = 1;
+    const h = new LanHost({ now: () => now, hash: async (code) => code, verify: async () => true });
+    const code = await h.reset();
+    for (let i = 0; i < 256; i++) h.createPending(`ip-${i}`, "test");
+    now += 16 * 60 * 1000;
+    expect((await h.requestSession("new-ip", code, "new")).ok).toBe(true);
+    expect(h.pending()).toHaveLength(1);
+  });
+  test("same-IP bursts enter verification once and the global admission is bounded", async () => {
+    const pending = Promise.withResolvers<boolean>();
+    let calls = 0;
+    const h = new LanHost({ now: () => 1, hash: async () => "hash", verify: () => { calls++; return pending.promise; } });
+    const code = await h.reset();
+    const first = h.verifyCode("ip", code);
+    const duplicate = h.verifyCode("ip", code);
+    expect(calls).toBe(1);
+    const others = Array.from({ length: 20 }, (_, i) => h.verifyCode(`other-${i}`, code));
+    expect(calls).toBeLessThanOrEqual(4);
+    pending.resolve(false);
+    expect((await duplicate).ok).toBe(false);
+    await Promise.all([first, ...others]);
+  });
+  test("reset invalidates verification already running against the old code", async () => {
+    const pending = Promise.withResolvers<boolean>();
+    const h = new LanHost({ now: () => 1, hash: async (code) => code, verify: () => pending.promise });
+    const code = await h.reset();
+    const old = h.verifyCode("ip", code);
+    await h.reset();
+    pending.resolve(true);
+    expect((await old).ok).toBe(false);
+  });
+  test("a reset between comparison and issuance cannot create a pending session", async () => {
+    const pending = Promise.withResolvers<boolean>();
+    const h = new LanHost({ now: () => 1, hash: async (code) => code, verify: () => pending.promise });
+    const code = await h.reset();
+    const login = h.requestSession("ip", code, "test");
+    pending.resolve(true);
+    await Promise.resolve();
+    h.revoke();
+    expect((await login).ok).toBe(false);
+    expect(h.pending()).toHaveLength(0);
+  });
+  test("overlapping resets publish only the newest code", async () => {
+    const hashes: ReturnType<typeof Promise.withResolvers<string>>[] = [];
+    const h = new LanHost({ now: () => 1, hash: () => { const hash = Promise.withResolvers<string>(); hashes.push(hash); return hash.promise; } });
+    const old = h.reset(); const current = h.reset();
+    hashes[1]!.resolve("new hash");
+    const code = await current;
+    hashes[0]!.resolve("old hash");
+    expect(await old).toBe("");
+    expect(h.code).toBe(code);
+  });
+  test("a verifier failure releases admission for the next request", async () => {
+    let calls = 0;
+    const h = new LanHost({ now: () => 1, hash: async (code) => code, verify: async () => { if (++calls === 1) throw new Error("unavailable"); return true; } });
+    const code = await h.reset();
+    await h.verifyCode("ip", code).catch(() => undefined);
+    expect((await h.verifyCode("ip", code)).ok).toBe(true);
+  });
   const mkHost = (nowRef: { t: number }): LanHost => new LanHost({ now: () => nowRef.t });
 
   test("accepts the right code, rejects a wrong one", async () => {

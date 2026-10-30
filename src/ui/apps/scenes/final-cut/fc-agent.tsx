@@ -19,13 +19,11 @@ import type { FinalCutLibrary } from "./use-final-cut-library";
 const agentOf = (pass: FinalCutPass, name: string): Record<string, unknown> => ({
   name, instructions: pass.agentPrompt ?? "",
   ...(pass.connection ? { connection: pass.connection } : {}), ...(pass.temperature !== undefined ? { temperature: pass.temperature } : {}), ...(pass.contextMessages !== undefined ? { contextMessages: pass.contextMessages } : {}),
-  ...(pass.customPresetId ? { presetId: pass.customPresetId } : {}), ...(pass.customPresetName ? { presetName: pass.customPresetName } : {}), ...(pass.customPresetPromptStates && Object.keys(pass.customPresetPromptStates).length > 0 ? { presetPromptStates: pass.customPresetPromptStates } : {}),
 });
 
 /** What loading an agent sets on the pass; what the agent does not carry is cleared, so the pass is exactly the agent. */
 const passOf = (a: AgentRecord): Partial<FinalCutPass> => ({
   label: a.name, agentPrompt: a.instructions, connection: a.connection, temperature: a.temperature, contextMessages: a.contextMessages,
-  customPresetId: a.presetId ?? null, customPresetName: a.presetName ?? null, customPresetPromptStates: a.presetPromptStates ?? {},
 });
 
 function SavedAgents({ pass, lib, onChange }: { pass: FinalCutPass; lib: FinalCutLibrary; onChange: Change }): JSX.Element {
@@ -44,7 +42,7 @@ function SavedAgents({ pass, lib, onChange }: { pass: FinalCutPass; lib: FinalCu
       <header>
         <div>
           <h4>Saved Agents</h4>
-          <p>{lib.state === "loading" ? "Loading..." : lib.agents.length === 0 ? "Save this agent to reuse it on any chat. Its instruction, model, and preset travel with it." : `${lib.agents.length} saved · load one onto this pass, or save the current setup.`}</p>
+          <p>{lib.state === "loading" ? "Loading..." : lib.agents.length === 0 ? "Save an Agent to the Library. Its instructions and model can be reused; this pass keeps its own preset." : `${lib.agents.length} Library Agents · load instructions and model onto this pass.`}</p>
         </div>
         <Button size="sm" aria-expanded={name !== null} onClick={() => setName(name === null ? (pass.label && pass.label !== "Custom Department" ? pass.label : "") : null)}>{name === null ? "+ Save current" : "Cancel"}</Button>
       </header>
@@ -55,7 +53,7 @@ function SavedAgents({ pass, lib, onChange }: { pass: FinalCutPass; lib: FinalCu
             <input className="fc-field" value={name} maxLength={120} autoFocus placeholder="Name this agent (e.g. Pacing Doctor)" aria-label="Agent name" onChange={(e) => setName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") void save(); }} />
             <Button variant="primary" size="sm" disabled={saving || !name.trim()} onClick={() => void save()}>{saving ? "Saving..." : "Save to account"}</Button>
           </div>
-          <small>Captures the instruction, attached preset, model, and sampling from the controls below. Reusing an existing name overwrites it.</small>
+          <small>Saves the instruction, model and sampling. This pass keeps its own preset. Reusing an existing name replaces that Agent after a revision check.</small>
         </div>
       )}
       {lib.agents.length > 0 && (

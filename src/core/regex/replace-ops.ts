@@ -25,11 +25,13 @@
  * rendering that output happens elsewhere, only through SealedHtmlPreview.
  */
 import type { RegexSubstitution } from "../../entities/regex/schema";
-import { escapeRegex } from "./escape";
+import { escapeRegex, escapedRegexLength } from "./escape";
+import { assertRegexSize, REGEX_OUTPUT_CHARS } from "./limits";
 
 type CaseMode = "none" | "upper" | "lower";
 
 export interface ExpandOptions {
+  maxChars?: number;
   /** fragments stripped from each substituted match/group value (never from prefix/suffix/literals) */
   trimStrings?: readonly string[];
   /**
@@ -77,13 +79,20 @@ export function substituteMacros(
   macros: Record<string, string> | undefined,
   escapeValues: boolean,
 ): string {
+  assertRegexSize(text.length);
   if (!macros) return text;
   const lookup = new Map<string, string>();
   for (const [key, value] of Object.entries(macros)) lookup.set(key.toLowerCase(), value);
+  let length = text.length;
   return text.replace(MACRO_TOKEN, (whole, key: string) => {
     const value = lookup.get(key.toLowerCase());
     if (value === undefined) return whole; // not ours: leave it exactly as written
-    return escapeValues ? escapeRegexChars(value) : value;
+    assertRegexSize(value.length);
+    assertRegexSize(length + (escapeValues ? escapedRegexLength(value) : value.length) - whole.length);
+    const replacement = escapeValues ? escapeRegexChars(value) : value;
+    length += replacement.length - whole.length;
+    assertRegexSize(length);
+    return replacement;
   });
 }
 
@@ -167,9 +176,14 @@ export function expandReplacement(
   // is consumed. Iterating by code point (for...of) keeps astral characters intact. An empty string
   // consumes no one-shot, so it carries to the next real character (the Perl behavior).
   const emit = (text: string): void => {
+    const cap = Math.min(options?.maxChars ?? REGEX_OUTPUT_CHARS, REGEX_OUTPUT_CHARS);
+    assertRegexSize(out.length + text.length, cap);
+    if (oneShot === "none" && runMode === "none") { out += text; return; }
     for (const ch of text) {
       const mode = oneShot !== "none" ? oneShot : runMode;
-      out += mode === "upper" ? ch.toUpperCase() : mode === "lower" ? ch.toLowerCase() : ch;
+      const value = mode === "upper" ? ch.toUpperCase() : mode === "lower" ? ch.toLowerCase() : ch;
+      assertRegexSize(out.length + value.length, cap);
+      out += value;
       if (oneShot !== "none") oneShot = "none";
     }
   };

@@ -9,9 +9,11 @@ import type { PiecePatch } from "../../../../stage/contracts/content-store";
 import { installDom, type InstalledDom } from "../../../_shared/test-dom";
 import { tick } from "../../../../stage/provider/test-fetch-harness";
 import type { KindEditorProps } from "../editors";
+import { PieceStore } from "../../../_shared/piece-store";
 
 export const installPieceDom = (): InstalledDom => installDom("<!doctype html><html><body></body></html>", {
   url: "http://127.0.0.1:8321/",
+  observers: true,
   extraGlobals: ["HTMLInputElement", "HTMLTextAreaElement", "HTMLSelectElement", "Event", "KeyboardEvent"],
   globals: { IS_REACT_ACT_ENVIRONMENT: true },
 });
@@ -81,6 +83,7 @@ export async function mountEditor(Editor: ComponentType<KindEditorProps & { rand
   const opened: StudioEntitySummary[] = [];
   const piece = { id: "p1", kind, name: "A piece" } as StudioEntitySummary;
   const ctx = {
+    pieces: new PieceStore(),
     setStatus: (s: string) => status.push(s),
     prefs: { get: () => undefined, set: () => undefined },
     workbench: { setDirty: () => undefined, open: (s: StudioEntitySummary) => opened.push(s) },

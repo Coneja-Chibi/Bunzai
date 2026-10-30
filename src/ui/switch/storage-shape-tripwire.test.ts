@@ -464,12 +464,16 @@ async function shapeFiles(): Promise<string[]> {
 // 2026-10-30: the checked nullable settings merge has one shared owner, settings-patch.ts (now pinned).
 // COMPATIBLE extraction: Director/Summary retain references and undefined-empty behavior;
 // Dramaturg still clones supplied values. Memory/SQLite contract and damaged-record tests pass.
-const PINNED_SHAPE_HASH = "8a3daa5ef9515482dccd492537ae5ed9f97b61d70a92225d1ae57b2c2373c93f";
+// 2026-10-30: Promptbook and Agent add two kind decoders; Skill primaryLogic is optional (absent means any).
+// Existing pieces remain readable. Older builds cannot read new kinds. Final Cut active saved Agents move
+// to canonical pieces with complete original escrow, verified exact identity and revision-guarded edits.
+// Downgrade remains one-way for those new pieces; the existing v0.1.42 storage-change fence covers this release.
+const PINNED_SHAPE_HASH = "82a96da9fb0d90b894bed6eae16a3e17a483032d05edb885c92fedee25e9bea4";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");
   const files = await shapeFiles();
-  expect(files.filter((path) => path.includes("/runtime-schema.ts"))).toHaveLength(16);
+  expect(files.filter((path) => path.includes("/runtime-schema.ts"))).toHaveLength(18);
   for (const f of files) h.update((await Bun.file(f).text()).replace(/\r\n/g, "\n"));
   expect(h.digest("hex")).toBe(PINNED_SHAPE_HASH);
 });

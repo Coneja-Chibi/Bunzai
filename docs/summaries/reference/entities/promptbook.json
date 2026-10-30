@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/promptbook",
+  "sourcePath": "docs/reference/entities/promptbook.md",
+  "sourceHash": "sha256:18c427995f4525ffcd05e1f21d0ee5576869a5360afd1d1f254ac5879a42987f",
+  "summary": "Promptbooks are ordered workflows built from private, reply and after phases. Each phase owns preset blocks, linked Library cards, optional Agent and model, conditions, budgets and forward hand-offs. Phases, Cards and Board share one revision-checked draft. Runtime composition reuses scene assembly, permission gates, tools, Skill activation and state writes; incomplete workflows fail closed while completed or stopped checkpoints recover. Inspector records phase requests and usage. Native JSON preserves reference IDs without embedding dependencies. Rehearsal checks phase conditions only, Board wires are visual, and attachments, card versions and arbitrary branching remain unbuilt. Evidence is unit and source based; live and packaged verification remain unavailable.",
+  "topics": [
+    "promptbook",
+    "Library",
+    "canonical",
+    "revision",
+    "verification"
+  ],
+  "sections": []
+}

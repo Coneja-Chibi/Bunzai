@@ -37,6 +37,9 @@ import type { StoryboardsInput } from "../core/assembly/storyboards";
 
 import { WHOLE_BRANCH } from "./scene-branch";
 import { sceneGeneration, type SceneGeneration } from "../stage/params/scene";
+import type { PromptbookBody } from "../entities/promptbook/schema";
+import type { SceneState } from "../core/scene-state/types";
+import type { Delta } from "../core/scene-state/types";
 
 export type TurnKind = "reply" | "swipe" | "continue";
 
@@ -70,6 +73,11 @@ export const presetReader = (store: BodyStore): ReadPreset => async (id, kind) =
 };
 
 export interface LoadedTurn {
+  promptbook?: PromptbookBody;
+  bookState?: SceneState;
+  pendingGlobals?: readonly Delta[];
+  literalPrompts?: Readonly<Record<string, string>>;
+  slotNonce?: string;
   branchId: string;
   character: CharacterBody;
   persona?: PersonaBody;
@@ -191,6 +199,8 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
   // The trackers show the state as it stands: a continue extends a reply whose own writes are part of it (a swipe builds from before the reply it replaces, as the variables do).
   const trackerState = kind === "continue" ? (await chats.sceneState(branchId)) ?? sceneState : sceneState;
   const skills = await linkedSkills(readLibrary, chat.prompting?.skills, trackerState);
+  const promptbook = chat.preset?.kind === "promptbook" ? await readPiece(readLibrary ?? (async () => null), "promptbook", chat.preset.id) as PromptbookBody | null : null;
+  if (chat.preset?.kind === "promptbook" && !promptbook) throw new PresetGoneError();
   const linked = await linkedTrackers(readLibrary && ((id) => readPiece(readLibrary, "tracker", id) as Promise<TrackerBody | null>), chat.prompting?.trackers, trackerState);
   // A cast the person recorded on the reply being replaced or continued is for the reply after it (scene-turn-ticks.ts).
   const onTarget = target && chat.props ? (await chats.sceneDeltas(branchId, target.id, target.id, ["tracker.spellbook"]))?.messages[0] : undefined;
@@ -200,6 +210,7 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
 
   return {
     branchId,
+    ...(promptbook ? { promptbook, bookState: trackerState } : {}),
     character,
     ...(persona ? { persona } : {}),
     ...(preset && chat.preset ? { preset, promptToggles: { ...chat.preset.toggles }, ...(choices ? { choices } : {}), generation: sceneGeneration(chat.preset.samplers) } : {}),
@@ -264,10 +275,10 @@ async function loadLore(
  * nothing is written before a reply lands and a reply that never lands, or is regenerated, swiped or cut away, takes its writes with it.
  * `exceptSwipeIds` leaves out versions being redone: a new version of a reply builds from the globals without the one it replaces.
  */
-export async function readGlobals(chats: Pick<ChatStore, "globalOps">, exceptSwipeIds: readonly string[] = []): Promise<Map<string, MacroVariable>> {
+export async function readGlobals(chats: Pick<ChatStore, "globalOps">, exceptSwipeIds: readonly string[] = [], pending: readonly Delta[] = []): Promise<Map<string, MacroVariable>> {
   const ops = await chats.globalOps(exceptSwipeIds);
   try {
-    return foldGlobals(ops);
+    return foldGlobals([...ops, ...pending]);
   } catch {
     // Every later value depends on each operation, so a damaged one refuses the read rather than giving wrong values.
     throw new StudioValidationError("The library's global variables could not be read: a saved change to one of them is damaged.");

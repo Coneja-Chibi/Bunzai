@@ -23,8 +23,9 @@ import type {
 import type { Span } from "./ast/ast-types";
 import { jsFlagsForRule } from "./ast/dialect";
 import { expandReplacement, substituteAfterMacros, substituteFindMacros } from "./replace-ops";
-import { validateRule } from "./validate";
+import { validateRule, MAX_PATTERN_LENGTH } from "./validate";
 import { toErrorMessage } from "../../error-message";
+import { assertRegexSize, REGEX_OUTPUT_CHARS, REGEX_SPAN_LIMIT, RegexLimitError } from "./limits";
 
 export const DEFAULT_TIMEOUT_MS = 100;
 export const MAX_TIMEOUT_MS = 500;
@@ -116,8 +117,12 @@ function skipReasonFor(rule: RegexRule, opts: RegexRunOptions): string | undefin
   return undefined;
 }
 
-function findMatches(regex: RegExp, text: string): RegExpMatchArray[] {
-  if (regex.global) return [...text.matchAll(regex)];
+function findMatches(regex: RegExp, text: string, cap: number): RegExpMatchArray[] {
+  if (regex.global) {
+    const found: RegExpMatchArray[] = [];
+    for (const match of text.matchAll(regex)) { found.push(match); if (found.length >= cap) break; }
+    return found;
+  }
   const m = text.match(regex);
   return m ? [m] : [];
 }
@@ -159,7 +164,7 @@ function runReplace(
 
   let found: RegExpMatchArray[];
   try {
-    found = findMatches(regex, text);
+    found = findMatches(regex, text, firstMatchOnly ? 1 : maxMatches + 1);
   } catch (err) {
     return { result: text, matchCount: 0, matches: [], error: `regex/apply: ${msg(err)}` };
   }
@@ -196,7 +201,7 @@ function runReplace(
     const m = matches[i];
     if (!m) continue;
     const idx = m.index ?? 0;
-    const replacement = expandReplacement(replaceRaw, m, { trimStrings, protect });
+    const replacement = expandReplacement(replaceRaw, m, { trimStrings, protect, maxChars: REGEX_OUTPUT_CHARS - result.length + m[0].length });
     result = result.slice(0, idx) + replacement + result.slice(idx + m[0].length);
   }
   return { result, matchCount: matches.length, matches: spans };
@@ -209,13 +214,16 @@ function applyRule(
   now: () => number,
 ): { trace: RuleTrace; overlay?: RuleOverlay } {
   const start = now();
+  assertRegexSize(text.length);
 
   const skip = skipReasonFor(rule, opts);
   if (skip) {
     return { trace: { ruleId: rule.id, applied: false, skipReason: skip, matchCount: 0, elapsedMs: 0, before: text, after: text } };
   }
 
-  const validation = validateRule(rule);
+  const substituteMode: RegexSubstitution = rule.substituteFind ?? "none";
+  const findPattern = rule.find.length > MAX_PATTERN_LENGTH ? rule.find : substituteFindMacros(rule.find, substituteMode, opts.macros);
+  const validation = validateRule({ ...rule, find: findPattern });
   if (!validation.ok) {
     return {
       trace: {
@@ -230,8 +238,6 @@ function applyRule(
     };
   }
 
-  const substituteMode: RegexSubstitution = rule.substituteFind ?? "none";
-  const findPattern = substituteFindMacros(rule.find, substituteMode, opts.macros);
   // "none" and "after" leave the find pattern untouched: "after" resolves macros on the OUTPUT of
   // the replace instead (Lumiverse adds an 'after' mode that substitutes macros after the replace runs).
 
@@ -258,7 +264,7 @@ function applyRule(
   }
 
   const timeoutMs = Math.min(opts.timeoutMs ?? DEFAULT_TIMEOUT_MS, MAX_TIMEOUT_MS);
-  const maxMatches = opts.maxMatches ?? DEFAULT_MAX_MATCHES;
+  const maxMatches = Number.isFinite(opts.maxMatches) ? Math.max(0, Math.min(DEFAULT_MAX_MATCHES, Math.floor(opts.maxMatches!))) : DEFAULT_MAX_MATCHES;
   const trimStrings = rule.trimStrings ?? [];
   // First-class field first; the sealed `extras` spelling survives as an import fallback (rules
   // imported before the field existed keep working without a migration).
@@ -353,6 +359,8 @@ export function applyRules(
   const setStart = setBudgetMs !== undefined ? now() : 0;
   let budgetSpent = false;
   let current = text;
+  let produced = 0;
+  let spans = 0;
 
   for (const rule of ordered) {
     if (!budgetSpent && setBudgetMs !== undefined && now() - setStart > setBudgetMs) {
@@ -393,12 +401,23 @@ export function applyRules(
       }
     }
 
-    const { trace, overlay } = applyRule(current, rule, opts, now);
+    let outcome: ReturnType<typeof applyRule>;
+    try {
+      outcome = applyRule(current, rule, opts, now);
+      if (outcome.trace.applied && outcome.trace.after !== current) assertRegexSize(produced + outcome.trace.after.length);
+      assertRegexSize(spans + (outcome.trace.matches ?? []).reduce((n, m) => n + 1 + m.groups.length, 0), REGEX_SPAN_LIMIT);
+    } catch (error) {
+      if (!(error instanceof RegexLimitError)) throw error;
+      budgetSpent = true;
+      outcome = { trace: { ruleId: rule.id, applied: false, matchCount: 0, elapsedMs: 0, before: current, after: current, error: error.message } };
+    }
+    const { trace, overlay } = outcome;
     traces.push(trace);
     // A rule "matched" for chaining purposes when it applied AND found something.
     appliedById.set(rule.id, trace.applied && trace.matchCount > 0);
     if (overlay) overlays.push(overlay);
-    if (trace.applied) current = trace.after;
+    spans += (trace.matches ?? []).reduce((n, m) => n + 1 + m.groups.length, 0);
+    if (trace.applied && trace.after !== current) { produced += trace.after.length; current = trace.after; }
   }
   return { text: current, traces, overlays };
 }

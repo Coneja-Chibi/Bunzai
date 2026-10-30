@@ -121,7 +121,7 @@ export interface ScenesApi extends DramaturgApi {
   saveFinalCutBank(bank: Record<string, unknown>): Promise<BankRecord>;
   deleteFinalCutBank(id: string): Promise<{ deleted: boolean }>;
   saveFinalCutAgent(agent: Record<string, unknown>): Promise<AgentRecord>;
-  deleteFinalCutAgent(id: string): Promise<{ deleted: boolean }>;
+  deleteFinalCutAgent(id: string, revision: string): Promise<{ deleted: boolean }>;
   /** One tracker module's SETTINGS (ChatStore rule 43): `context` its AI Context, `auto` its automatic-update choice, `subs` its sub-feature switches, and a Storyboard's profile as `data`; a key given replaces it, null clears it, a key left out stays. A module's state is written with `writeTrackerStates`. */
   setSceneTracker(chatId: string, module: TrackerModule, patch: ChatTrackerPatch): Promise<Chat>;
   /** The Props trackers' state at the take's tip (studio/tracker-state.ts): each module's data, the last update a reply made to each, and the branch version and tip message a write must name back (read only). */
@@ -412,6 +412,7 @@ export interface TraceTurn {
 
 /** Everything TrackHare shows about one reply (the trace route's answer). */
 export interface SceneTrace {
+  book?: import("../core/promptbook-run").BookRun;
   /** `number` is the reply's #N in the take, as the scene shows it; `take` is the active take's name
    * as the scene's take pill shows it ("Director's Cut" for the original, else the branch name) */
   reply: { messageId: string; swipeId: string; number: number; model: string; take: string };

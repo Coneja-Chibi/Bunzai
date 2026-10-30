@@ -2,7 +2,7 @@
  * The Nodes view's graph (pure): the links the kinds declare (core/links.ts) become ports and wires,
  * the graph derived from the open pieces' bodies, and the one body edit that adds or removes a link.
  */
-import { LINK_PORTS, portsOf, refsIn } from "../../../../core/links";
+import { LINK_PORTS, portsOf as kindPorts, refsIn } from "../../../../core/links";
 import { keyOf } from "../../../_shared/piece-key";
 import type { StudioEntitySummary } from "../../../app-contract";
 import { attachKnowledgeRef, detachKnowledgeRef } from "../lore/knowledge-refs";
@@ -10,10 +10,11 @@ import { attachKnowledgeRef, detachKnowledgeRef } from "../lore/knowledge-refs";
 /** A link field name, as the kinds declare them (src/entities/<kind>/kind.ts, read through core/links.ts). */
 export type RefField = string;
 
-export { portsOf };
+/** Structured references have their own authoring surface and cannot be edited as flat arrays here. */
+export const portsOf = (kind: string) => kindPorts(kind).filter((p) => !p.read);
 export const isTargetKind = (kind: string): boolean => LINK_PORTS.some((p) => p.to === kind);
 export const canLink = (fromKind: string, field: RefField, toKind: string): boolean =>
-  LINK_PORTS.some((p) => p.from === fromKind && p.field === field && p.to === toKind);
+  portsOf(fromKind).some((p) => p.field === field && p.to === toKind);
 
 export const refsOf = refsIn;
 

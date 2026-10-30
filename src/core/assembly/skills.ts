@@ -15,6 +15,8 @@ export interface AssemblySkill {
   id: string;
   body: SkillBody;
   open: boolean;
+  /** The preset's named slots for this skill; absent means its normal shared Skills block. */
+  slots?: readonly string[];
 }
 
 export type SkillRun = SkillVerdict & { id: string; name: string };

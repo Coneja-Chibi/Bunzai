@@ -31,6 +31,18 @@ const emit = async (m: Mounted, e: TurnEvent): Promise<void> => { m.flush(() => 
 const end = async (m: Mounted): Promise<void> => { m.flush(() => finish!()); await m.tick(); await m.tick(); };
 
 describe("committed", () => {
+  test("the latest phase or Final Cut event replaces the previous activity", async () => {
+    const m = await mounted(dom, <Probe />);
+    try {
+      await begin(m, "reply");
+      await emit(m, { type: "phase", name: "Think", role: "private" });
+      await emit(m, { type: "finalcut", pass: "Polish", index: 1, of: 1 });
+      expect(seen!.live?.phase).toBeUndefined();
+      await emit(m, { type: "phase", name: "Tidy", role: "after" });
+      expect(seen!.live?.finalCut).toBeUndefined();
+      expect(seen!.live?.phase).toBe("Tidy");
+    } finally { await end(m); m.unmount(); }
+  });
   test("null before any turn and at the start of a turn; a done event sets it from the saved message and the swipe showing; a new start resets it", async () => {
     const m = await mounted(dom, <Probe />);
     expect(seen!.committed).toBeNull();

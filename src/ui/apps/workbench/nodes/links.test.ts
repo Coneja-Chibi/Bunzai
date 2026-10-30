@@ -12,7 +12,8 @@ test("canLink follows the table and nothing else", () => {
   expect(canLink("character", "knowledgeRefs", "regex")).toBe(false);
   expect(canLink("lorebook", "knowledgeRefs", "lorebook")).toBe(false);
   expect(canLink("persona", "behaviorRefs", "regex")).toBe(false);
-  expect(LINK_PORTS).toHaveLength(5);
+  expect(LINK_PORTS).toHaveLength(14);
+  expect(canLink("promptbook", "cards:skill", "skill")).toBe(false);
 });
 
 test("a lorebook linked by two pieces is one node with two wires", () => {

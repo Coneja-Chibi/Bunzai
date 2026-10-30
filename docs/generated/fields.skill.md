@@ -9,6 +9,7 @@
 | `text` | `string` | - | The instructions; macros render as in any prompt text. |
 | `when` | `SkillWhen` | - | "always": every turn while linked; "mentioned": when its triggers match; "picked": while the model has it open. |
 | `triggers` | `Trigger[]` | - | "mentioned": a lorebook entry's primary triggers, matched as a lore entry's are (any one of them). |
+| `primaryLogic?` | `"any" \| "all"` | - |  |
 | `secondaryTriggers` | `Trigger[]` | - | With the primary ones, combined by `selectiveLogic`, as a lore entry's secondary triggers. |
 | `selectiveLogic` | `SelectiveLogic` | - | How the secondary triggers combine with the primary ones (the lorebook's and_any, and_all, not_any, not_all). |
 | `caseSensitive` | `boolean` | - | The triggers match case as written. |

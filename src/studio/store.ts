@@ -154,8 +154,8 @@ export class StudioStore {
   }
 
   /** Moves one piece to the library's Trash; its name is free at once. True when something was live. */
-  async delete(kindRaw: string, idRaw: string): Promise<boolean> {
-    return this.content().delete(assertStudioEntityKind(kindRaw), assertSafeStudioId(idRaw));
+  async delete(kindRaw: string, idRaw: string, expectedRevision?: string): Promise<boolean> {
+    return this.content().delete(assertStudioEntityKind(kindRaw), assertSafeStudioId(idRaw), expectedRevision);
   }
 
   async deleteWithReceipt(kindRaw: string, idRaw: string) {

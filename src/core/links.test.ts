@@ -5,7 +5,7 @@ import { LINK_PORTS, linkedRefs, linksTo, portsOf, referencedBy, resolveLinks, w
 describe("links", () => {
   test("who can point at a kind: the kinds that link to it, then scenes where a scene field holds it", () => {
     expect(referencedBy("lorebook")).toEqual(["character", "persona", "scene"]);
-    expect(referencedBy("regex")).toEqual(["character", "preset", "scene"]);
+    expect(referencedBy("regex")).toEqual(["character", "preset", "promptbook", "scene"]);
     expect(referencedBy("quickreply")).toEqual(["preset"]);
     expect(referencedBy("pack")).toEqual(["scene"]);
     expect(referencedBy("preset")).toEqual(["scene"]);
@@ -19,6 +19,15 @@ describe("links", () => {
       "persona.knowledgeRefs->lorebook",
       "preset.behaviorRefs->regex",
       "preset.quickReplyRefs->quickreply",
+      "promptbook.cards:scriptsheet->scriptsheet",
+      "promptbook.cards:skill->skill",
+      "promptbook.cards:tool->tool",
+      "promptbook.cards:dice->dice",
+      "promptbook.cards:regex->regex",
+      "promptbook.cards:tracker->tracker",
+      "promptbook.phaseAgents->agent",
+      "agent.tools->tool",
+      "agent.skills->skill",
     ]);
     expect(portsOf("lorebook")).toEqual([]);
     expect(linksTo("lorebook").map((p) => p.from)).toEqual(["character", "persona"]);
@@ -50,6 +59,6 @@ describe("links", () => {
     const preset = await resolveLinks("preset", { behaviorRefs: ["r1"], quickReplyRefs: ["gone"] }, read, "embedded");
     expect(preset.found.map((f) => f.kind)).toEqual(["regex"]);
     expect(preset.missing).toEqual([]);
-    expect(LINK_PORTS.filter((p) => p.embedded).map((p) => `${p.from}.${p.field}`)).toEqual(["character.knowledgeRefs", "preset.behaviorRefs"]);
+    expect(LINK_PORTS.filter((p) => p.embedded).map((p) => `${p.from}.${p.field}`)).toEqual(["character.knowledgeRefs", "preset.behaviorRefs", "promptbook.cards:scriptsheet", "promptbook.cards:skill", "promptbook.cards:tool", "promptbook.cards:dice", "promptbook.cards:regex", "promptbook.cards:tracker", "promptbook.phaseAgents"]);
   });
 });

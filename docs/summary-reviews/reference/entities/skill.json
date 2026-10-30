@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/skill",
   "sourcePath": "docs/reference/entities/skill.md",
-  "sourceHash": "sha256:4ff531bd1dbf31dfe5f172003b9490e68c491139d021653482d0c3e0763ec734",
-  "semanticSummaryHash": "sha256:56a24b1bc666585eeac2f5051149937fd76b918d622c9d1c15d48d8c6abac55c",
+  "sourceHash": "sha256:24218039990e96fdddd37ba72185c65cd169205b2cfb854f6c4f49e554457116",
+  "semanticSummaryHash": "sha256:30794c426ba27a90ae0e17184ba67333f1c628fa834cd6995a2f50681dccf47c",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "Open and closed verified: skills slot is fields, bool shape, writers turn and person, skillDelta sets true or removes; open_skill and close_skill built in library-skills.ts as stateScoped writes at narrator.skill, description lists picked skills, unknown name refused with names, open is once, close of a not-open skill writes nothing, door TOOL_SLOT takes tracker slots and skills only, scene-turn.ts closes skills whose close rule held and a continue has no deltas, tools need toolAccess. Not built yet text matches (no person route).",
-  "reviewedAt": "2026-10-29T17:36:14.795Z"
+  "reviewer": "promptbook_runtime_review",
+  "notes": "Source and summary accurately describe activation, state-scoped open and close, normal Skills block and named Promptbook placements. Fixed reservations and duplicate include rejection match source. UI and packaged evidence remain limited as documented; no suite run by this reviewer.",
+  "reviewedAt": "2026-10-30T13:04:08.479Z"
 }

@@ -1,0 +1,69 @@
+{
+  "kind": "agent",
+  "source": "src/entities/agent/schema.ts",
+  "shapes": [
+    {
+      "name": "AgentBody",
+      "doc": "",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "name",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "description",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "instructions",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "connection",
+          "optional": true,
+          "type": "{ id: string; model: string }",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "temperature",
+          "optional": true,
+          "type": "number",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "contextMessages",
+          "optional": true,
+          "type": "number",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "tools",
+          "optional": false,
+          "type": "string[]",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "skills",
+          "optional": false,
+          "type": "string[]",
+          "meaning": "",
+          "producers": []
+        }
+      ]
+    }
+  ]
+}

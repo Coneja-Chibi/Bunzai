@@ -210,7 +210,7 @@ export const TEMPLATE_CATALOG: readonly RegexTemplateEntry[] = [
     category: "guardrails",
     name: "Remove assistant apologies",
     does: "deletes \"I apologize\" / \"As an AI\" phrases that break the scene",
-    find: "\\b(I apologize|I'm sorry|As an AI|I cannot|I'm not able to|I don't have the ability)\\b[^.!?]*[.!?]?\\s*",
+    find: "\\b(I apologize|I'm sorry|As an AI|I cannot|I'm not able to|I don't have the ability)\\b(?:[^.!?]*[.!?]\\s*|[^.!?]*$)",
     flags: "gi",
     replace: "",
     phases: ["output"],

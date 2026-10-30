@@ -33,7 +33,7 @@ import { noteDue, placeNote } from "./note";
 import { injectionTexts, linkedTrackersText, placeBlock, trackersText } from "./trackers";
 import { refreshTrackerTexts, trackerViews } from "../tracker";
 import { storyboardsBlock } from "./storyboards";
-import { fillSlot, leftPlaceholder, withoutPlaceholders } from "./feature-slots";
+import { fillSlot, leftPlaceholder, withoutPlaceholders, slotPlaceholder } from "./feature-slots";
 import { skillRuns, skillsText } from "./skills";
 import type { FeatureMarkerSlot } from "../preset/build";
 import { placeDirector } from "./director";
@@ -58,7 +58,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   const choiceGroups = toChoiceGroups(input.preset?.choices);
   const choiceSelections = resolveSelections(choiceGroups, input.choices);
   const toggles = effectiveToggles(choiceGroups, choiceSelections, input.promptToggles);
-  const plan = input.preset ? presetPlan(input.preset, toggles) : defaultPrompts();
+  const plan = input.preset ? presetPlan(input.preset, toggles, input.slotNonce) : defaultPrompts();
   /** A history message as the model and the history macros read it: tool-call leaks out, and an assistant reply's thinking out unless the scene keeps it. */
   const cleaned = (m: HistoryMessage): string => historyText(m, input.reasoning, input.keepThinking);
   const [first, ...rest] = input.history;
@@ -210,7 +210,10 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   // The skills that are on this turn (skills.ts), decided once the lore's side effects are in the variables, their text rendered here so the budget reserves it.
   const skillsRun = input.skills ? skillRuns(input.skills, loreScan(), mulberry32(input.randomSeed ^ 0x5bd1e995)) : undefined;
   // Rendered like any prompt text: the macros run, and what no macro answers is stripped (section 12's own rule).
-  const skillsBlock = input.skills && skillsRun ? skillsText(input.skills, skillsRun, (text) => stripUnresolvedMacros(macros.write(text), HISTORY_MARKER)) : "";
+  const skillText = (skills: NonNullable<AssemblyInput["skills"]>) => skillsRun ? skillsText(skills, skills.map((s) => skillsRun.find((r) => r.id === s.id)!), (text) => stripUnresolvedMacros(macros.write(text), HISTORY_MARKER)) : "";
+  const skillsBlock = skillText((input.skills ?? []).filter((s) => !s.slots?.length));
+  const placedSkills = (input.skills ?? []).flatMap((s) => (s.slots ?? []).map((slot) => ({ slot, text: skillText([s]) })));
+  const skillsReserved = [skillsBlock, ...placedSkills.map((s) => s.text)].filter(Boolean);
 
   // Summary-aware truncation (summary-cut.ts): recaps replace the oldest messages they cover, and a recap lore already placed is not sent twice.
   const loreKeys = new Set(loreResult?.injected.map((h) => h.entryKey));
@@ -270,7 +273,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
         ...(recapBlocks.length > 0 ? [recapBlocks.map((b) => b.content).join("\n")] : []),
         // The trackers' block and the texts that ride beside the messages (the tool definitions) are fixed, like the card: history gives way to them, never they to history.
         ...(linkedText ? [linkedText] : []),
-        ...(skillsBlock ? [skillsBlock] : []),
+        ...skillsReserved,
         ...(input.reserved ?? []),
       ],
       raw: shown.map((m) => m.content),
@@ -356,7 +359,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
 
   // Section 12: the final macro pass, the strip of anything unresolved, and empty messages dropped.
   blocks = blocks
-    .map((b) => ({ ...b, content: stripUnresolvedMacros(b.historical ? macros.historical(b.content) : macros.write(b.content), HISTORY_MARKER) }))
+    .map((b) => ({ ...b, content: b.source.kind === "prompt" && b.source.id && Object.hasOwn(input.literalPrompts ?? {}, b.source.id) ? input.literalPrompts![b.source.id]! : stripUnresolvedMacros(b.historical ? macros.historical(b.content) : macros.write(b.content), HISTORY_MARKER) }))
     .filter((b) => b.content.length > 0);
 
   // The recaps ride in front of the history that is left (after the greeting), as data like recall's text; the budget only ever drops history.
@@ -373,12 +376,16 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   }
 
   // The final budget pass over the finished request.
+  for (const { slot } of placedSkills) {
+    const mark = slotPlaceholder(slot, plan.slotNonce);
+    if (blocks.reduce((n, b) => n + b.content.split(mark).length - 1, 0) > 1) throw new PresetPlanError("A Skill card was placed more than once through include. Add another Skill card instead so its budget is reserved.");
+  }
   let finalPassDropped = 0;
   let overflow = false;
   if (input.window && input.window.context > 0 && input.budgeter) {
     const cap = Math.max(1, input.window.context - (input.window.reply || FALLBACK_REPLY));
     // The fixed texts are measured as messages at the end, so the pass counts them; their entries in `keep` are never read (blocks has none).
-    const fixed: AssembledMessage[] = [...(linkedText ? [linkedText] : []), ...(skillsBlock ? [skillsBlock] : []), ...(input.reserved ?? [])].map((content) => ({ role: "system", content }));
+    const fixed: AssembledMessage[] = [...(linkedText ? [linkedText] : []), ...skillsReserved, ...(input.reserved ?? [])].map((content) => ({ role: "system", content }));
     // A feature marker's placeholder is measured as nothing: its content is fixed and added after this pass.
     const measured = blocks.map((b) => ({ role: b.role, content: withoutPlaceholders(b.content, plan.slotNonce) }));
     const { keep, dropped, overflow: over } = input.budgeter.finalPass([...measured, ...fixed], cap, [...blocks.map((b) => b.source.kind === "history"), ...fixed.map(() => false)]);
@@ -400,7 +407,8 @@ export function assemble(input: AssemblyInput): AssemblyResult {
     ["skills", skillsBlock ? [skillsBlock] : [], "skills"],
   ];
   for (const [slot, texts, kind] of features) if (plan.slots.has(slot)) blocks = fillSlot(blocks, slot, plan.slotNonce, texts, { kind });
-  if (plan.slots.size > 0 && leftPlaceholder(blocks, plan.slotNonce)) throw new PresetPlanError("A feature marker in the preset could not be filled, so the turn was stopped rather than send its placeholder.");
+  for (const skill of placedSkills) blocks = fillSlot(blocks, skill.slot, plan.slotNonce, skill.text ? [skill.text] : [], { kind: "skills" });
+  if (leftPlaceholder(blocks, plan.slotNonce)) throw new PresetPlanError("A feature marker in the preset could not be filled, so the turn was stopped rather than send its placeholder.");
 
   // The worker's steps after assembly (guides.ts): the system guide block and the depth and append guides.
   blocks = applyGuides(blocks, guides, macros.write);
@@ -434,7 +442,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   return {
     messages: blocks.map(toMessage),
     trace: blocks.map((b) => ({ source: b.source, role: b.role, tokens: countText(b.content) })),
-    budget: { budgeter: input.budgeter && input.window ? input.budgeter.name : "none", trimmed, finalPassDropped, ...(overflow ? { overflow: true as const } : {}), ...(linkedText || skillsBlock || (input.reserved?.length ?? 0) > 0 ? { fixed: true as const } : {}) },
+    budget: { budgeter: input.budgeter && input.window ? input.budgeter.name : "none", trimmed, finalPassDropped, ...(overflow ? { overflow: true as const } : {}), ...(linkedText || skillsReserved.length > 0 || (input.reserved?.length ?? 0) > 0 ? { fixed: true as const } : {}) },
     local,
     global,
     globalWrites,

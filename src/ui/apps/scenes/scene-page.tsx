@@ -67,7 +67,7 @@ import { useSceneComposer } from "./use-scene-composer";
 import { PromptInspector } from "./scene-inspector";
 import { SceneComposer } from "./scene-composer";
 import { useEscapeKey } from "../../_shared/use-escape-key";
-import { CutOff, FailCard, FinalCutStatus, HeldCard, LiveBubble, Starting } from "./scene-turn-parts";
+import { CutOff, FailCard, TurnStatus, HeldCard, LiveBubble, Starting } from "./scene-turn-parts";
 import { useSceneFinalCut } from "./use-scene-final-cut";
 import { SHOW_TIMESTAMPS_KEY, replyFacts, showTimestamps } from "./scene-meta-core";
 import { lookRoot, readLook } from "./stage-look-core";
@@ -442,7 +442,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
           {turn.live?.kind === "reply" && (turn.live.text || turn.live.reasoning
             ? <LiveBubble n={rows.filter((r) => r.kind === "msg").length + 1} who={name} tone={CHAR_TONE} art={charArt} live={turn.live} format={reasoning} prefs={ctx.prefs} speakers={speakers} />
             : look.typing ? <Starting /> : null)}
-          {turn.live?.finalCut && <FinalCutStatus pass={turn.live.finalCut} />}
+          <TurnStatus live={turn.live} />
           {find.jump}
         </div>
         {scene && propsOn && sceneStageProps(registeredProps, propsOn).map((p) => <p.Stage key={p.id} ctx={ctx} chat={scene.chat} />)}

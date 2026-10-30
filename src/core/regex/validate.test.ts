@@ -5,7 +5,16 @@
  */
 import { describe, expect, test } from "bun:test";
 import { makeRegexRule as rule } from "./test-fixtures";
-import { COMPLEXITY_HARD_CAP, MAX_PATTERN_LENGTH, MAX_REPLACEMENT_LENGTH, validateRule } from "./validate";
+import { COMPLEXITY_HARD_CAP, MAX_PATTERN_LENGTH, MAX_REPLACEMENT_LENGTH, validateRule, vetPattern } from "./validate";
+
+test("synchronous regex admission refuses overlapping sequential repetition, including grouped and caseless forms", () => {
+  expect(vetPattern("a", "v")).toBe(false);
+  for (const find of ["a+a+a+a+a+$", "(a+)(a+)$", "a+\\s*a+$", "a{1,1000}a{1,1000}$", "a+A+A+$", "a+(?:b|a+)$", "a+a+a+a+a+{", "(?:a|[a])+b$", "(a{1,1000}){1,1000}$", "(a|A)+$", "(a|a){1000}$"]) {
+    expect(vetPattern(find)).toBe(false);
+    expect(validateRule(rule({ find, flags: "i" })).ok).toBe(false);
+  }
+  for (const find of ["a+b+$", "a+,a+$", "(a+b)+$"]) expect(vetPattern(find)).toBe(true);
+});
 
 describe("validateRule", () => {
   test("accepts a plain pattern", () => {
@@ -97,11 +106,9 @@ describe("R2X: validate delegates to ast/redos when the pattern parses", () => {
     expect(v.culprit).toBeUndefined();
   });
 
-  test("a pattern the u-mode parser refuses still validates via the heuristic fallback", () => {
-    // Annex-B legacy: a lone `{` is a literal in non-u mode; host RegExp compiles it, our
-    // u-mode parser refuses it - the heuristic path must still answer.
+  test("a pattern outside the structural parser is refused instead of bypassing the safety screen", () => {
     const v = validateRule(rule({ find: "a{" }));
-    expect(v.ok).toBe(true);
+    expect(v.ok).toBe(false);
     expect(v.complexity).toBeGreaterThanOrEqual(0);
   });
 });
@@ -127,7 +134,6 @@ describe("validateRule compiles under the rule's own flags", () => {
   });
 
   test("useFlags false means the stored flags are ignored, matching apply", () => {
-    // apply compiles with plain "g" when useFlags is off; \p{Foo=Bar} is Annex-B legal there.
-    expect(validateRule(rule({ find: String.raw`\p{Foo=Bar}`, flags: "gu", useFlags: false })).ok).toBe(true);
+    expect(validateRule(rule({ find: "a", flags: "invalid", useFlags: false })).ok).toBe(true);
   });
 });

@@ -31,6 +31,7 @@ export const NO_SIDECAR_DETAIL =
   "LAN mode below works with no extra download.";
 
 export interface SidecarManagerOptions {
+  spawn?: typeof Bun.spawn;
   /**
    * Locate the sidecar binary, or return null when it is absent. A FUNCTION, not a path, because it is
    * re-run on every enable(): a developer who builds the sidecar while the studio is open then gets a
@@ -110,31 +111,11 @@ export function createSidecarManager(opts: SidecarManagerOptions): SidecarManage
     }
     openedSignIn = false;
     setState({ phase: "starting" });
-    void startFresh(bin);
+    startFresh(bin);
   };
 
-  // Clear any sidecar orphaned by a previous app run (e.g. a hard crash before the parent-watch could
-  // fire) so a stale node carrying an old secret can never shadow the fresh one we are about to start.
-  const killOrphans = async (): Promise<void> => {
-    try {
-      const argv =
-        process.platform === "win32"
-          ? ["taskkill", "/F", "/IM", "sidecar.exe"]
-          : ["pkill", "-f", "bunzai/sidecar"];
-      await Bun.spawn(argv, {
-        stdout: "ignore",
-        stderr: "ignore",
-        stdin: "ignore",
-        windowsHide: true, // taskkill is a console app too; do not flash a window when we sweep orphans
-      }).exited;
-    } catch {
-      /* no orphan to clear, or the killer is unavailable; not fatal */
-    }
-  };
-
-  const startFresh = async (binPath: string): Promise<void> => {
-    await killOrphans();
-    if (proc) return; // a concurrent enable already won the race
+  const startFresh = (binPath: string): void => {
+    if (proc) return;
 
     const args = [binPath, "-upstream", opts.untrustedUpstream, "-watch-parent"];
     if (opts.stateDir) args.push("-state-dir", opts.stateDir);
@@ -146,7 +127,7 @@ export function createSidecarManager(opts: SidecarManagerOptions): SidecarManage
       // the sidecar treats as "parent died, exit". stdout is the control channel; stderr is noise. The
       // shared secret goes via ENV, never argv, argv is world-readable in the process table (ps,
       // /proc/<pid>/cmdline, Task Manager), which would leak the entire untrusted-listener auth.
-      child = Bun.spawn(args, {
+      child = (opts.spawn ?? Bun.spawn)(args, {
         stdout: "pipe",
         stderr: "ignore",
         stdin: "pipe",
@@ -173,6 +154,7 @@ export function createSidecarManager(opts: SidecarManagerOptions): SidecarManage
     proc = child;
 
     void pumpLines(child.stdout as ReadableStream<Uint8Array>, (line) => {
+      if (proc !== child) return;
       const devs = parseDevicesLine(line);
       if (devs) {
         devices = devs;
@@ -208,11 +190,11 @@ export function createSidecarManager(opts: SidecarManagerOptions): SidecarManage
     // "unavailable" survives a turn-off: it describes the BUILD, not a switch position, so collapsing it
     // to "off" would re-offer an Enable button that cannot work.
     if (state.phase === "unavailable") return;
+    setState(OFF);
     if (child) {
       child.kill();
       await child.exited.catch(() => {});
     }
-    setState(OFF);
   };
 
   const kick = (nodeId: string): void => {

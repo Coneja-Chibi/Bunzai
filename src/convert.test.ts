@@ -20,6 +20,8 @@ import { characterAdapter as risuCharacter } from "./formats/risu/index";
 import stWorldbook from "./formats/sillytavern/lorebook";
 import rcLorebook from "./formats/rolecall/lorebook";
 import { emptySkillBody } from "./entities/skill/schema";
+import { emptyPromptbookBody } from "./core/promptbook";
+import { emptyAgentBody } from "./entities/agent/schema";
 import type { CanonicalLorebook } from "./entities/lorebook/schema";
 
 /** A card file read into its character and extracted lorebooks (convert.ts readPieces). */
@@ -123,6 +125,10 @@ function minimalEntity(kind: FormatAdapter["kind"]): ParsedCanonicalEntity {
       };
     case "scriptsheet":
       return { ...envelope, kind, body: { name: "Conversion sheet", content: "Be brief." } };
+    case "promptbook":
+      return { ...envelope, kind, body: emptyPromptbookBody("Conversion book") };
+    case "agent":
+      return { ...envelope, kind, body: emptyAgentBody("Conversion agent") };
     case "dice":
       return { ...envelope, kind, body: { name: "Conversion dice", description: "", type: "roll", dice: "1d20" } };
     case "formula":

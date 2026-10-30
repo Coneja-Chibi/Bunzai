@@ -288,7 +288,7 @@ describe("Custom Banks and Saved Agents", () => {
     unmount(flushSync);
   });
 
-  test("a saved agent is made from the pass, listed with its preset and model, loaded back onto the pass, and deleted on the second click", async () => {
+  test("a Library Agent saves instructions and model, loads onto the pass and deletes on the second click", async () => {
     const flushSync = await mount();
     click(flushSync, live("Your Department"));
     input(flushSync, label(card("Your Department"), "Agent instruction").querySelector("textarea")!, "onChange", { value: "Tighten pacing." });
@@ -297,7 +297,7 @@ describe("Custom Banks and Saved Agents", () => {
     click(flushSync, [...card("Your Department").querySelectorAll<HTMLElement>(".fc-save-row button")].find((b) => b.textContent === "Save to account")!);
     await settle(flushSync);
     expect(saved[0]).toMatchObject({ name: "Pacing Doctor", instructions: "Tighten pacing.", contextMessages: 3 });
-    expect(text()).toContain("1 saved · load one onto this pass, or save the current setup.");
+    expect(text()).toContain("1 Library Agents · load instructions and model onto this pass.");
     input(flushSync, label(card("Your Department"), "Agent instruction").querySelector("textarea")!, "onChange", { value: "Something else." });
     click(flushSync, [...card("Your Department").querySelectorAll<HTMLElement>(".fc-list button")].find((b) => b.textContent === "Load")!);
     expect((label(card("Your Department"), "Agent instruction").querySelector("textarea") as HTMLTextAreaElement).value).toBe("Tighten pacing.");

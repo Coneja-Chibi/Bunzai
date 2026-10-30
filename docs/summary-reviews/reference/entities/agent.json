@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/agent",
+  "sourcePath": "docs/reference/entities/agent.md",
+  "sourceHash": "sha256:0403f9289ce0117fc946c560eb0935669138e13d2321ec1d939ff08148effd75",
+  "semanticSummaryHash": "sha256:24546a96bb8b576ddccf3550bc6929237765b508d8421c76ade36f9e344e1557",
+  "verdict": "APPROVE",
+  "reviewer": "promptbook_runtime_review",
+  "notes": "Source and summary match canonical Agent authority, exact-create migration, full escrow verification and atomic revision deletion. Final Cut capability and Director limitations are explicit. Review is code-read; reported isolated tests were inspected but not independently rerun.",
+  "reviewedAt": "2026-10-30T13:04:03.594Z"
+}

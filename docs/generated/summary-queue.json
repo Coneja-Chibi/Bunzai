@@ -1,12 +1,12 @@
 {
   "generated": "2026-10-30",
   "targetChars": 90000,
-  "totalPages": 131,
-  "totalSourceChars": 1645170,
+  "totalPages": 133,
+  "totalSourceChars": 1638463,
   "batches": [
     {
       "id": "batch-001",
-      "sourceChars": 89211,
+      "sourceChars": 89477,
       "pages": [
         {
           "docId": "01-VISION",
@@ -140,8 +140,8 @@
           "docId": "FORMAT-SUPPORT",
           "sourcePath": "docs/FORMAT-SUPPORT.md",
           "sidecarPath": "docs/summaries/FORMAT-SUPPORT.json",
-          "sectionCount": 18,
-          "sourceChars": 6397,
+          "sectionCount": 20,
+          "sourceChars": 6663,
           "status": "APPROVED"
         },
         {
@@ -390,21 +390,21 @@
     },
     {
       "id": "batch-005",
-      "sourceChars": 171288,
+      "sourceChars": 173092,
       "pages": [
         {
           "docId": "reference/components",
           "sourcePath": "docs/reference/components.md",
           "sidecarPath": "docs/summaries/reference/components.json",
           "sectionCount": 3,
-          "sourceChars": 171288,
+          "sourceChars": 173092,
           "status": "APPROVED"
         }
       ]
     },
     {
       "id": "batch-006",
-      "sourceChars": 87647,
+      "sourceChars": 86549,
       "pages": [
         {
           "docId": "reference/concepts/bundles",
@@ -467,7 +467,7 @@
           "sourcePath": "docs/reference/concepts/regex-engine.md",
           "sidecarPath": "docs/summaries/reference/concepts/regex-engine.json",
           "sectionCount": 4,
-          "sourceChars": 4267,
+          "sourceChars": 4852,
           "status": "APPROVED"
         },
         {
@@ -487,13 +487,27 @@
           "status": "APPROVED"
         },
         {
+          "docId": "reference/entities/agent",
+          "sourcePath": "docs/reference/entities/agent.md",
+          "sidecarPath": "docs/summaries/reference/entities/agent.json",
+          "sectionCount": 0,
+          "sourceChars": 1958,
+          "status": "APPROVED"
+        },
+        {
           "docId": "reference/entities/character",
           "sourcePath": "docs/reference/entities/character.md",
           "sidecarPath": "docs/summaries/reference/entities/character.json",
           "sectionCount": 26,
           "sourceChars": 21870,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-007",
+      "sourceChars": 89718,
+      "pages": [
         {
           "docId": "reference/entities/dice",
           "sourcePath": "docs/reference/entities/dice.md",
@@ -501,13 +515,7 @@
           "sectionCount": 4,
           "sourceChars": 3641,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-007",
-      "sourceChars": 87758,
-      "pages": [
+        },
         {
           "docId": "reference/entities/formula",
           "sourcePath": "docs/reference/entities/formula.md",
@@ -557,6 +565,14 @@
           "status": "APPROVED"
         },
         {
+          "docId": "reference/entities/promptbook",
+          "sourcePath": "docs/reference/entities/promptbook.md",
+          "sidecarPath": "docs/summaries/reference/entities/promptbook.json",
+          "sectionCount": 0,
+          "sourceChars": 3401,
+          "status": "APPROVED"
+        },
+        {
           "docId": "reference/entities/promptformat",
           "sourcePath": "docs/reference/entities/promptformat.md",
           "sidecarPath": "docs/summaries/reference/entities/promptformat.json",
@@ -571,7 +587,13 @@
           "sectionCount": 5,
           "sourceChars": 3340,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-008",
+      "sourceChars": 65890,
+      "pages": [
         {
           "docId": "reference/entities/README",
           "sourcePath": "docs/reference/entities/README.md",
@@ -579,13 +601,7 @@
           "sectionCount": 3,
           "sourceChars": 5082,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-008",
-      "sourceChars": 60550,
-      "pages": [
+        },
         {
           "docId": "reference/entities/regex",
           "sourcePath": "docs/reference/entities/regex.md",
@@ -607,7 +623,7 @@
           "sourcePath": "docs/reference/entities/skill.md",
           "sidecarPath": "docs/summaries/reference/entities/skill.json",
           "sectionCount": 4,
-          "sourceChars": 5496,
+          "sourceChars": 5754,
           "status": "APPROVED"
         },
         {
@@ -776,7 +792,7 @@
     },
     {
       "id": "batch-012",
-      "sourceChars": 89159,
+      "sourceChars": 89172,
       "pages": [
         {
           "docId": "reference/formats/vaud-json",
@@ -807,7 +823,7 @@
           "sourcePath": "docs/reference/kit/tools.md",
           "sidecarPath": "docs/summaries/reference/kit/tools.json",
           "sectionCount": 18,
-          "sourceChars": 39575,
+          "sourceChars": 39588,
           "status": "APPROVED"
         },
         {
@@ -1042,7 +1058,7 @@
     },
     {
       "id": "batch-015",
-      "sourceChars": 88399,
+      "sourceChars": 88704,
       "pages": [
         {
           "docId": "reference/scene-state",
@@ -1072,24 +1088,24 @@
           "docId": "reference/security/regex-safety",
           "sourcePath": "docs/reference/security/regex-safety.md",
           "sidecarPath": "docs/summaries/reference/security/regex-safety.json",
-          "sectionCount": 8,
-          "sourceChars": 20796,
+          "sectionCount": 3,
+          "sourceChars": 4789,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/security/remote-access",
+          "sourcePath": "docs/reference/security/remote-access.md",
+          "sidecarPath": "docs/summaries/reference/security/remote-access.json",
+          "sectionCount": 11,
+          "sourceChars": 16312,
           "status": "APPROVED"
         }
       ]
     },
     {
       "id": "batch-016",
-      "sourceChars": 86153,
+      "sourceChars": 82033,
       "pages": [
-        {
-          "docId": "reference/security/remote-access",
-          "sourcePath": "docs/reference/security/remote-access.md",
-          "sidecarPath": "docs/summaries/reference/security/remote-access.json",
-          "sectionCount": 11,
-          "sourceChars": 15552,
-          "status": "APPROVED"
-        },
         {
           "docId": "reference/security/safe-rendering",
           "sourcePath": "docs/reference/security/safe-rendering.md",
@@ -1121,13 +1137,7 @@
           "sectionCount": 5,
           "sourceChars": 14366,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-017",
-      "sourceChars": 11432,
-      "pages": [
+        },
         {
           "docId": "reference/token-meter",
           "sourcePath": "docs/reference/token-meter.md",
@@ -1139,21 +1149,21 @@
       ]
     },
     {
-      "id": "batch-018",
-      "sourceChars": 287598,
+      "id": "batch-017",
+      "sourceChars": 287853,
       "pages": [
         {
           "docId": "reference/ui",
           "sourcePath": "docs/reference/ui.md",
           "sidecarPath": "docs/summaries/reference/ui.json",
           "sectionCount": 34,
-          "sourceChars": 287598,
+          "sourceChars": 287853,
           "status": "APPROVED"
         }
       ]
     },
     {
-      "id": "batch-019",
+      "id": "batch-018",
       "sourceChars": 4726,
       "pages": [
         {

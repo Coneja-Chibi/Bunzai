@@ -7,6 +7,9 @@ const t = (keyword: string, patch: Partial<Parameters<typeof matchKeywordTrigger
   isRegex: false,
   ...patch,
 });
+test("regex triggers refuse grammar flags the structural screen does not support", () => {
+  expect(matchKeywordTrigger(t("a", { isRegex: true, flags: "v" }), "a", { caseSensitive: true, matchWholeWords: false })).toBe(false);
+});
 
 describe("matchKeywordTrigger: plain keywords", () => {
   test("substring match, case-insensitive by default", () => {

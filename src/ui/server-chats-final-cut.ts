@@ -15,10 +15,11 @@ import type { TurnDeps } from "../studio/scene-turn";
 import type { ReadPreset } from "../studio/scene-turn-load";
 import { connect } from "../kit/providers/scene-connect";
 import { err, json } from "./server-security";
+import type { StudioStoreLike } from "../studio/contracts";
 
 type Body = Record<string, unknown>;
 
-export async function handleFinalCutRoute(req: Request, url: URL, chats: ChatStore, state: StateStore, readPreset: ReadPreset, readRegex: TurnDeps["readRegex"], b: Body | null): Promise<Response | null> {
+export async function handleFinalCutRoute(req: Request, url: URL, chats: ChatStore, state: StateStore, readPreset: ReadPreset, readRegex: TurnDeps["readRegex"], b: Body | null, store: StudioStoreLike): Promise<Response | null> {
   const p = url.pathname;
   if (req.method === "GET" && p === "/api/chats/final-cut/run") {
     const chat = await chats.getChat(url.searchParams.get("chatId") ?? "");
@@ -29,12 +30,12 @@ export async function handleFinalCutRoute(req: Request, url: URL, chats: ChatSto
     const trace = await chats.swipeTrace(message.id, swipe.id);
     return json({ messageId: message.id, swipeId: swipe.id, text: swipe.content, run: trace?.["finalCut"] ?? null });
   }
-  if (req.method === "GET" && p === "/api/chats/final-cut/library") return json({ banks: await listBanks(state), agents: await listAgents(state) });
+  if (req.method === "GET" && p === "/api/chats/final-cut/library") return json({ banks: await listBanks(state), agents: await listAgents(store, state) });
   if (req.method !== "POST" || !b) return null;
   if (p === "/api/chats/final-cut/library/bank") return json(await saveBank(state, b["bank"], Date.now()));
-  if (p === "/api/chats/final-cut/library/agent") return json(await saveAgent(state, b["agent"], Date.now()));
+  if (p === "/api/chats/final-cut/library/agent") return json(await saveAgent(store, state, b["agent"], Date.now()));
   if (p === "/api/chats/final-cut/library/bank/delete") return json({ deleted: await deleteBank(state, str(b["id"]), Date.now()) });
-  if (p === "/api/chats/final-cut/library/agent/delete") return json({ deleted: await deleteAgent(state, str(b["id"]), Date.now()) });
+  if (p === "/api/chats/final-cut/library/agent/delete") return json({ deleted: await deleteAgent(store, state, str(b["id"]), str(b["revision"])) });
   if (p === "/api/chats/final-cut") {
     const chat = await chats.setFinalCut(str(b["chatId"]), b["finalCut"] as ChatFinalCutPatch);
     return chat ? json(chat) : err("that scene is gone", 404);

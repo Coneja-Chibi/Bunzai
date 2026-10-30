@@ -7,7 +7,7 @@
  */
 import type { ParsedCanonicalEntity } from "../entities/runtime-schema";
 import type { AssetLookup, AssetSize, GraveSummary, LightStoredEntity, StoredBody, StoredOriginalEntry, StoredPortraitAsset, StoredPortraitContent, StoredRisuNamedAssets, PartBlob, PiecePatch, SaveIntent } from "../stage/contracts/content-store";
-import type { CompareSaveResult, EntitySummary, StudioInventory } from "./store";
+import type { CompareCreateResult, CompareSaveResult, EntitySummary, StudioInventory } from "./store";
 import type { StudioSettings } from "./settings-shape";
 import type { ThumbnailSize } from "../stage/store/asset-thumbnails";
 
@@ -31,13 +31,14 @@ export interface StudioStoreLike {
   importCompleted?(pieceCount: number): Promise<void>;
   /** A hydrated piece with its stored revision and library version, which a chat freezes as its cast. */
   readVersioned(kind: string, id: string): Promise<{ entity: ParsedCanonicalEntity; revision: string; version: number } | null>;
-  delete(kind: string, id: string): Promise<boolean>;
+  delete(kind: string, id: string, expectedRevision?: string): Promise<boolean>;
   deleteWithReceipt?(kind: string, id: string): Promise<Omit<import("../stage/contracts/content-store").PieceChangeEvent, "sequence"> | null>;
   /** The Trash, newest first. */
   graveyard(): Promise<GraveSummary[]>;
   /** Brings a piece back under its own id; null once the Trash has let it go. */
   restore(graveId: string): Promise<EntitySummary | null>;
   save(raw: unknown, opts?: { overwrite?: boolean }): Promise<EntitySummary>;
+  compareAndCreate?(raw: unknown): Promise<CompareCreateResult>;
   /** A keep-both copy made by reference, never opening the piece whole; null when it is not there. */
   duplicate?(kind: string, id: string): Promise<EntitySummary | null>;
   compareAndSave(raw: unknown, expectedRevision: string): Promise<CompareSaveResult>;

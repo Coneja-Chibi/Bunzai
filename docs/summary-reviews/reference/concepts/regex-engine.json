@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/concepts/regex-engine",
   "sourcePath": "docs/reference/concepts/regex-engine.md",
-  "sourceHash": "sha256:cb4ec44bb8c5ba4455b44412ca23d94e1fd8582f2b95ca61e4ccbacf582dc142",
-  "semanticSummaryHash": "sha256:23355d4eb5dd70558a6e4842193fd43f20f5a495cc4952c3f82f446640d2eba6",
+  "sourceHash": "sha256:80aa4e6cc47f8fe0fc8a3a45e313a3fb51490b0de7ab15a9566e8c683e11b229",
+  "semanticSummaryHash": "sha256:4052ca271dbad8022feb45977036197a4e553cf183e488d6c57ea5a52423c933",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:48:08.372Z"
+  "reviewer": "node_placement_review",
+  "notes": "Reviewed updated call order, substituted-pattern screening, unsupported v execution refusal, construction and trace limits, and non-preemptive core-clock caveat against the previously reviewed source. Summary preserves conversion and execution distinctions and packaged evidence limits.",
+  "reviewedAt": "2026-10-30T14:01:19.006Z"
 }

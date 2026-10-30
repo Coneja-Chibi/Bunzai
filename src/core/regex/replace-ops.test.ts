@@ -7,6 +7,7 @@
  *     oracle, so each is asserted against explicit expected output on execution-derived matches.
  */
 import { describe, expect, test } from "bun:test";
+import { REGEX_OUTPUT_CHARS } from "./limits";
 import {
   applyTrim,
   escapeRegexChars,
@@ -15,6 +16,14 @@ import {
   substituteFindMacros,
   substituteMacros,
 } from "./replace-ops";
+
+test("replacement and macro construction reject projected amplification before returning oversized text", () => {
+  const text = "a" + "b".repeat(2000);
+  expect(() => expandReplacement("$'".repeat(600), text.match(/^a/)!) ).toThrow("size limit");
+  expect(() => substituteMacros("{{x}}".repeat(600), { x: "b".repeat(2000) }, false)).toThrow("size limit");
+  expect(expandReplacement("x".repeat(REGEX_OUTPUT_CHARS), text.match(/^a/)!)).toHaveLength(REGEX_OUTPUT_CHARS);
+  expect(() => expandReplacement("\\U$&", "ß".match(/ß/)!, { maxChars: 1 })).toThrow("size limit");
+});
 
 /** Run a NON-GLOBAL regex once and rebuild the whole string the way our engine would per match. */
 function reconstruct(text: string, re: RegExp, template: string): string {

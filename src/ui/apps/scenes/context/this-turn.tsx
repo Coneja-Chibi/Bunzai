@@ -13,7 +13,7 @@ import { CallDetail } from "./this-turn-call";
 import { callsOf, formatDuration, neighbours, totalsOf, type CallRow } from "./this-turn-core";
 import type { TraceState } from "./use-reply-trace";
 
-const GROUPS: { id: CallRow["phase"]; label: string }[] = [{ id: "before", label: "Before the reply" }, { id: "reply", label: "The reply" }];
+const GROUPS: { id: CallRow["phase"]; label: string }[] = [{ id: "before", label: "Before the reply" }, { id: "reply", label: "The reply" }, { id: "after", label: "After the reply" }];
 
 const count = (n: number | undefined, estimated: boolean): string => (n === undefined ? "not reported" : `${estimated ? "~" : ""}${n.toLocaleString()}`);
 

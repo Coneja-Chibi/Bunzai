@@ -10,14 +10,14 @@ import { PREF_NODES, parseCanvas, serializeCanvas, type CanvasState } from "./ca
 
 const SAVE_MS = 400;
 
-export function useCanvasState(ctx: AppContext): [CanvasState, (edit: (s: CanvasState) => CanvasState) => void] {
-  const [state, setState] = useState(() => parseCanvas(ctx.prefs.get(PREF_NODES)));
+export function useCanvasState(ctx: AppContext, prefKey = PREF_NODES): [CanvasState, (edit: (s: CanvasState) => CanvasState) => void] {
+  const [state, setState] = useState(() => parseCanvas(ctx.prefs.get(prefKey)));
   const saved = useRef(JSON.stringify(serializeCanvas(state)));
   const save = useDebouncedSave((next: CanvasState) => {
     const json = JSON.stringify(serializeCanvas(next));
     if (json === saved.current || next.frozen) return; // a newer version's record is never overwritten
     saved.current = json;
-    ctx.prefs.set(PREF_NODES, serializeCanvas(next));
+    ctx.prefs.set(prefKey, serializeCanvas(next));
   }, SAVE_MS);
 
   useEffect(() => {

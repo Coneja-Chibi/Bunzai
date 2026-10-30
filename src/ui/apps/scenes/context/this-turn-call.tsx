@@ -9,6 +9,7 @@ import { copyText } from "../../../_shared/clipboard";
 import { FLASH_MS, useFlash } from "../../../_shared/use-flash";
 import type { SceneTrace } from "../../../app-contract-scenes";
 import { formatDuration, lanesOf, rawJson, requestBlocks, routeRows, type CallRow } from "./this-turn-core";
+import { VirtualRows } from "../../../_shared/virtual-list";
 
 type Tab = "request" | "tools" | "route" | "time" | "raw";
 const KEPT = "Raw text is kept for each take's latest reply; this one shows sizes only.";
@@ -81,6 +82,10 @@ function Time({ trace }: { trace: SceneTrace }): JSX.Element {
 export function CallDetail({ row, trace }: { row: CallRow; trace: SceneTrace }): JSX.Element {
   const [tab, setTab] = useState<Tab>("request");
   const copied = useFlash<boolean>(FLASH_MS.copy);
+  if (row.bookPhaseId) {
+    const phase = trace.book?.phases.find((p) => p.id === row.bookPhaseId);
+    return <div className="tt-detail" data-part="scene.context.promptbook"><p className="tt-note">{phase?.role === "private" ? "Private phase" : "After phase"} · {phase?.why}</p><h4>Request</h4><VirtualRows items={phase?.request ?? []} keyOf={(_text, i) => String(i)} estimate={120} render={(text, i) => <div className="tt-msg"><b>Message {i + 1}</b><pre>{text}</pre></div>} /><h4>Output</h4><pre>{phase?.text ?? "No output was recorded."}</pre></div>;
+  }
   if (row.id === "recall") {
     const recall = trace.recall!;
     return (

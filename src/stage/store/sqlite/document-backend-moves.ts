@@ -13,11 +13,12 @@ export function documentMoveMethods(
 ): Pick<DocumentBackend, "bury" | "unbury"> {
   const { statement } = database;
   return {
-    async bury(kind, id, graveId, deletedAt, capture) {
+    async bury(kind, id, graveId, deletedAt, capture, expectedRevision) {
       const docKey = key(kind, id);
       return database.transaction(() => {
         const live = statement("SELECT id_cell,revision,version,write_id FROM documents WHERE kind=? AND id=?").get(kind, docKey) as { id_cell: string; revision: string; version: number; write_id: number } | null;
         if (!live) return false;
+        if (expectedRevision !== undefined && cipher.open("documents.revision", live.revision) !== expectedRevision) return false;
         const actualId = cipher.open("documents.id_cell", live.id_cell);
         if (key(kind, actualId) !== docKey) throw new DamagedDataError("documents.id_cell", "the id does not belong to this row");
         const moved = statement(

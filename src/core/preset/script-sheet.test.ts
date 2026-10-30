@@ -27,8 +27,8 @@ const input = (over: Partial<AssemblyInput> = {}): AssemblyInput => ({
 const lines = (body: ScriptSheetBody, over: Partial<AssemblyInput> = {}) =>
   assemble(input({ preset: asPresetBody("scriptsheet", body)!, ...over })).messages.map((m) => `${m.role}:${m.content}`);
 
-test("presets and Script Sheets are the writing family, read from their kind.ts", () => {
-  expect(WRITING_KINDS).toEqual(["preset", "scriptsheet"]);
+test("presets, Script Sheets and Promptbooks are the writing family, read from their kind.ts", () => {
+  expect(WRITING_KINDS).toEqual(["preset", "scriptsheet", "promptbook"]);
   expect(isWritingKind("lorebook")).toBe(false);
   expect(asPresetBody("lorebook", {})).toBeNull();
 });

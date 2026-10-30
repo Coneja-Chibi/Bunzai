@@ -14,7 +14,7 @@ export type GlyphName = keyof typeof glyphs;
 export type PromptingList = { [K in keyof ChatPrompting]-?: ChatPrompting[K] extends string[] | undefined ? K : never }[keyof ChatPrompting];
 
 /** A body field holding ids of another kind's pieces. `embedded`: export writes those pieces inside this kind's file. */
-export interface KindLink { field: string; to: string; label: string; embedded?: boolean }
+export interface KindLink { field: string; to: string; label: string; embedded?: boolean; /** Computed references are edited by their kind's editor, never as a flat id array. */ read?(body: unknown): string[] }
 
 /**
  * The editor this kind opens in on the Workbench (the component lives in src/ui/apps/workbench/editors.ts under this id).
@@ -52,6 +52,8 @@ export interface KindDescriptor<Id extends string = string, Body = unknown> {
   /** Lines `bunzai inspect` prints for one piece. */
   describe(body: Body): string[];
   links?: readonly KindLink[];
+  /** Renames structured references after a keep-both import; flat links are handled by core/links. */
+  renameLinks?(body: Body, renamed: ReadonlyMap<string, string>): Body;
   /** The Workbench editor this kind opens in; absent means it opens read-only. */
   editor?: KindEditor;
   /** Where the body keeps the name; absent means `name` (a character's is identity.name). */
@@ -71,6 +73,8 @@ export interface KindDescriptor<Id extends string = string, Body = unknown> {
    * Final Cut and export read every writing kind the one way.
    */
   asPreset?(body: Body): PresetBody;
+  /** False for workflows whose phases cannot be represented by one platform preset. */
+  presetExports?: boolean;
   /** Why this piece cannot be sent as it is, in words fit to show, or null. Checked when a turn reads it. */
   sendProblem?(body: Body): string | null;
 }

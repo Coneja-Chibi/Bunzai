@@ -164,19 +164,14 @@ export function cliArgs(model: string, system: string, mcpConfig?: string | null
    * servers the person has configured for their own work, and those would appear inside a Kit turn as
    * if Kit had offered them.
    *
-   * `bypassPermissions` turns OFF the CLI's prompting, which is correct and load-bearing. Kit owns the
-   * gate, and two gates asking about the same call would be one too many; but it does mean Kit's gate
-   * is now the only one, with no CLI backstop behind it.
+   * Kit owns its bridge permission gate. The CLI denies unapproved capabilities and exposes no built-ins.
    */
   const bridge = mcpConfig
     ? [
       "--mcp-config", mcpConfig,
-      // An ALLOWLIST, not a denylist, and the distinction is load-bearing. bypassPermissions turns
-      // the CLI's own prompting off because Kit owns the gate, so whatever remains reachable runs
-      // unasked. A denylist of the CLI's built-ins would let any tool a future release adds through
-      // by default; naming only Kit's own server means the reachable set cannot grow underneath us.
+      // Auto-approve Kit's bridge only; --tools below removes built-ins from the available set.
       "--allowedTools", `${MCP_TOOL_PREFIX}*`,
-      "--permission-mode", "bypassPermissions",
+      "--permission-mode", "dontAsk",
     ]
     : [];
   return [
@@ -193,6 +188,7 @@ export function cliArgs(model: string, system: string, mcpConfig?: string | null
     // Always, bridge or no bridge. Without it the CLI loads whatever MCP servers the person has set
     // up for their own work, and those would appear inside a Kit turn as if Kit had offered them.
     "--strict-mcp-config",
+    "--tools", "",
     "--disallowedTools", REFUSED_TOOLS,
   ];
 }
@@ -217,12 +213,11 @@ export function sdkOptions(model: string, system: string, bridge: McpServers | n
     // Do not inherit the user's settings, CLAUDE.md, project config or MCP servers. A Kit turn
     // carries what Kit sent, not whatever is configured for their coding work.
     settingSources: [],
-    // An ALLOWLIST, not a denylist. bypassPermissions turns the CLI's own prompting off because Kit
-    // owns the gate, so whatever stays reachable runs unasked; naming only Kit's own server means
-    // the reachable set cannot grow underneath us when the CLI adds built-ins.
+    // allowedTools grants permission; it does not remove other tools. Restrict availability separately.
+    tools: [], skills: [], strictMcpConfig: true,
     ...(bridge
-      ? { mcpServers: bridge, allowedTools: [`${MCP_TOOL_PREFIX}*`], permissionMode: "bypassPermissions" }
-      : { tools: [], skills: [] }),
+      ? { mcpServers: bridge, allowedTools: [`${MCP_TOOL_PREFIX}*`], permissionMode: "dontAsk" }
+      : {}),
     disallowedTools: REFUSED_TOOLS.split(","),
     // Opt out of the signed-in account's claude.ai connectors (Notion/Gmail/Calendar). They ride the
     // `claudeai` MCP scope, which `settingSources: []` does not gate, and they would otherwise appear

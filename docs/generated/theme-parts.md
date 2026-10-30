@@ -4,6 +4,7 @@
 
 | Part | Element | Source |
 | --- | --- | --- |
+| `agent.editor` | `div` | `src/ui/apps/workbench/promptbook/agent-editor.tsx` |
 | `agent.header` | `RoomHeader` | `src/ui/apps/agent/premiere-frame.tsx` |
 | `agent.window` | `Panel` | `src/ui/apps/agent/premiere-frame.tsx` |
 
@@ -176,6 +177,8 @@
 | `piece.formula.page` | `Panel` | `src/ui/apps/workbench/pieces/formula-editor.tsx` |
 | `piece.formula.try` | `aside` | `src/ui/apps/workbench/pieces/formula-editor.tsx` |
 | `piece.linked` | `span` | `src/ui/apps/workbench/pieces/linked-scenes.tsx` |
+| `piece.skill.condition` | `div` | `src/ui/apps/workbench/pieces/skill-condition.tsx` |
+| `piece.skill.editor` | `div` | `src/ui/apps/workbench/pieces/skill-editor.tsx` |
 | `piece.tool.action` | `div` | `src/ui/apps/workbench/pieces/tool-action.tsx` |
 | `piece.tool.fields` | `Panel` | `src/ui/apps/workbench/pieces/tool-editor.tsx` |
 | `piece.tool.rail` | `aside` | `src/ui/apps/workbench/pieces/tool-rail.tsx` |
@@ -207,10 +210,23 @@
 | `press.rail` | `Panel` | `src/ui/apps/press/index.tsx` |
 | `press.room` | `div` | `src/ui/apps/press/index.tsx` |
 
+### promptbook
+
+| Part | Element | Source |
+| --- | --- | --- |
+| `promptbook.board` | `div` | `src/ui/apps/workbench/promptbook/book-board.tsx` |
+| `promptbook.cards` | `section` | `src/ui/apps/workbench/promptbook/book-cards.tsx` |
+| `promptbook.editor` | `div` | `src/ui/apps/workbench/promptbook/promptbook-editor.tsx` |
+| `promptbook.phase` | `section` | `src/ui/apps/workbench/promptbook/phase-editor.tsx` |
+| `promptbook.rehearsal` | `aside` | `src/ui/apps/workbench/promptbook/promptbook-editor.tsx` |
+
 ### props
 
 | Part | Element | Source |
 | --- | --- | --- |
+| `props.dramaturg.model` | `div` | `src/ui/apps/scenes/props/dramaturg/dramaturg-settings.tsx` |
+| `props.dramaturg.reasoning` | `div` | `src/ui/apps/scenes/props/dramaturg/dramaturg-settings.tsx` |
+| `props.dramaturg.settings` | `div` | `src/ui/apps/scenes/props/dramaturg/dramaturg-settings.tsx` |
 | `props.mood-music` | `div` | `src/ui/apps/scenes/props/mood-music/music-tab-row.tsx` |
 | `props.story-director.auto-update` | `div` | `src/ui/apps/scenes/props/story-director/auto-update.tsx` |
 | `props.story-director.auto-update.calls` | `div` | `src/ui/apps/scenes/props/story-director/auto-update.tsx` |
@@ -348,6 +364,7 @@
 | `scene.context.memory` | `div` | `src/ui/apps/scenes/context/memory-tab.tsx` |
 | `scene.context.next-send` | `div` | `src/ui/apps/scenes/context/next-send.tsx` |
 | `scene.context.pressure` | `div` | `src/ui/apps/scenes/context/pressure.tsx` |
+| `scene.context.promptbook` | `div` | `src/ui/apps/scenes/context/this-turn-call.tsx` |
 | `scene.context.this-turn` | `div` | `src/ui/apps/scenes/context/this-turn.tsx` |
 | `scene.context.toast` | `div` | `src/ui/apps/scenes/context/context-wing.tsx` |
 | `scene.correct` | `div` | `src/ui/apps/scenes/scene-correct.tsx` |
@@ -388,6 +405,13 @@
 | `scene.director.tabs` | `Tabs` | `src/ui/apps/scenes/props/story-director/director-panel.tsx` |
 | `scene.director.tools` | `div` | `src/ui/apps/scenes/props/story-director/director-panel.tsx` |
 | `scene.director.tour` | `aside` | `src/ui/apps/scenes/props/story-director/director-tour.tsx` |
+| `scene.dramaturg` | `div` | `src/ui/apps/scenes/props/dramaturg/dramaturg-panel.tsx` |
+| `scene.dramaturg.answer` | `div` | `src/ui/apps/scenes/props/dramaturg/dramaturg-panel.tsx` |
+| `scene.dramaturg.composer` | `form` | `src/ui/apps/scenes/props/dramaturg/dramaturg-panel.tsx` |
+| `scene.dramaturg.hero` | `header` | `src/ui/apps/scenes/props/dramaturg/dramaturg-panel.tsx` |
+| `scene.dramaturg.log` | `div` | `src/ui/apps/scenes/props/dramaturg/dramaturg-panel.tsx` |
+| `scene.dramaturg.model` | `p` | `src/ui/apps/scenes/props/dramaturg/dramaturg-panel.tsx` |
+| `scene.dramaturg.question` | `div` | `src/ui/apps/scenes/props/dramaturg/dramaturg-panel.tsx` |
 | `scene.finalcut` | `div` | `src/ui/apps/scenes/final-cut/final-cut-tab.tsx` |
 | `scene.finalcut.activity` | `div` | `src/ui/apps/scenes/final-cut/fc-activity.tsx` |
 | `scene.finalcut.agents` | `section` | `src/ui/apps/scenes/final-cut/fc-agent.tsx` |

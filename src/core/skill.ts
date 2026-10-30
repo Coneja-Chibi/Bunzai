@@ -39,6 +39,7 @@ export function skillMentioned(body: SkillBody, scan: LoreScan, rng: () => numbe
   const options = { caseSensitive: body.caseSensitive, matchWholeWords: body.matchWholeWords };
   const primary = body.triggers.filter((t) => matchTrigger(t, text, options, scan, rng, lower));
   if (primary.length === 0) return null;
+  if (body.primaryLogic === "all" && primary.length !== body.triggers.length) return null;
   const secondary = body.secondaryTriggers.filter((t) => matchTrigger(t, text, options, scan, rng, lower));
   if (body.secondaryTriggers.length > 0 && !selectiveLogicMatches(primary.length, secondary.length, body.secondaryTriggers.length, body.selectiveLogic)) return null;
   return [...primary, ...secondary].map((t) => t.keyword);

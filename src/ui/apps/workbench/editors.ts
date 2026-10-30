@@ -19,6 +19,9 @@ import { TrackerEditor } from "./pieces/tracker-editor";
 import { ToolEditor } from "./pieces/tool-editor";
 import { DiceEditor } from "./pieces/dice-editor";
 import { FormulaEditor } from "./pieces/formula-editor";
+import { PromptbookEditor } from "./promptbook/promptbook-editor";
+import { AgentEditor } from "./promptbook/agent-editor";
+import { SkillEditor } from "./pieces/skill-editor";
 
 /** What every editor is handed: the fetched entity and its revision, the app, the open piece, the hoisted chrome. */
 export interface KindEditorProps {
@@ -37,6 +40,9 @@ export const EDITOR_VIEWS: Readonly<Record<string, ComponentType<KindEditorProps
   pack: PackEditor,
   preset: PresetEditor,
   scriptsheet: ScriptSheetBench,
+  promptbook: PromptbookEditor,
+  agent: AgentEditor,
+  skill: SkillEditor,
   regex: RegexSetEditor,
   quickreply: QuickReplyEditor,
   htmldoc: HtmlDocEditor,

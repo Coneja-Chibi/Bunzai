@@ -18,9 +18,10 @@ export function Starting(): JSX.Element {
   return <div className="starting" role="status"><Ic name="lucide:loader-circle" />Starting...</div>;
 }
 
-/** RoleCall's status while Final Cut's passes run before the reply is saved, on any kind of turn; the title names the pass. */
-export function FinalCutStatus({ pass }: { pass: string }): JSX.Element {
-  return <div className="starting" role="status" title={pass}><Ic name="lucide:loader-circle" />Final Cut pass...</div>;
+/** The active workflow or Final Cut pass, before the reply is saved. */
+export function TurnStatus({ live }: { live: LiveTurn | null }): JSX.Element | null {
+  const title = live?.finalCut ?? live?.phase;
+  return title ? <div className="starting" role="status" title={title}><Ic name="lucide:loader-circle" />{live?.finalCut ? "Final Cut pass..." : `${title}...`}</div> : null;
 }
 
 /** The reply being written, in its own bubble: no message id yet, so none of Bubble's edit/branch/cut

@@ -11,7 +11,7 @@ per-platform facts live in the matrix, never a UI literal).
 
 ## The pipeline (`apply.ts`)
 
-`applyRules(rules, text, options)` runs one deterministic pass in `sortOrder`:
+`applyRules(text, rules, options)` runs one deterministic pass in `sortOrder`:
 
 - Every rule is compiled with the `d` flag appended so match/group SPANS come back from the engine
   itself (`TraceMatch { whole, groups }`) - the bench's capture chips and diffs are engine truth,
@@ -24,6 +24,12 @@ per-platform facts live in the matrix, never a UI literal).
 - `overlay: true` rules match WITHOUT mutating - their spans come back on a separate
   `overlays` channel for display-layer painting.
 - `firstMatchOnly: true` replaces only the first hit even under the `g` flag.
+- Patterns are screened after find-side macro substitution. Text construction, match enumeration,
+  capture counts and retained traces have explicit limits in `core/regex/limits.ts`.
+
+A clock checked between steps cannot interrupt one native match. Studio execution adds a terminable
+worker; direct core callers do not gain that deadline. See [regex safety](../security/regex-safety.md)
+for the limits and evidence, including what is not proven in a packaged host.
 
 Replacement text goes through `replace-ops.ts`: `$1`-style groups, `{{match}}` sugar, JavaScript's
 own `$&` / `` $` `` / `$'`, and the `\u \l \U \L \E` case transforms, with exact escape-handling
@@ -46,8 +52,9 @@ with spans on every node. Everything explanatory is built on it:
   honest about ASCII `\w`/`\b`).
 - `examplesFor` - generated example matches, each VERIFIED by executing the real regex before
   display (engine-truth rule: never show a match the engine did not confirm).
-- `analyzeRedos` - catastrophic-backtracking detection with culprit spans; `validate.ts` delegates
-  to it and falls back to the old heuristic only for patterns the parser refuses.
+- `analyzeRedos` - structural backtracking screening with culprit spans. Execution refuses suspicious
+  and dangerous reports, and unsupported parser syntax or flags fail closed. Stored `v` flags remain
+  intact for conversion, but execution is unsupported until the analysis grammar implements them.
 - `dialect.ts` - tolerant flag-token parsing (`gu<cbs>`) for imports.
 
 ## Travel honesty (`travel-lint.ts`)

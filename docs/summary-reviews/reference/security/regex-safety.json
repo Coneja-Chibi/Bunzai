@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/security/regex-safety",
   "sourcePath": "docs/reference/security/regex-safety.md",
-  "sourceHash": "sha256:222c3253e40aa1fcd97c7a25eb8cb7b85bc6405d8e4a04afded2ca3c234730f2",
-  "semanticSummaryHash": "sha256:ada0fac51d13b266b8d6bb705bcc98e983c8c312b717b29adf38e54f9afd5881",
+  "sourceHash": "sha256:a5c8f7b61fd78d040a319ac1eaceb94af2df55a424fa4001a295fdab20a974dd",
+  "semanticSummaryHash": "sha256:5eb8cb584ec069ccf4101a62303fe662bf4f1b0425568d12d5e22cb0a8283d7b",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:47:58.863Z"
+  "reviewer": "integration_review",
+  "notes": "Documentation-only consistency review against validateRule, vetPattern, shared regex allocation limits, replacement construction and worker request contracts. Numerical ceilings and fail-closed behavior match source; native-call preemption, packaged WebView and physical memory limits remain explicitly unproven. No exploit probes or new attack analysis performed.",
+  "reviewedAt": "2026-10-30T13:43:00.203Z"
 }

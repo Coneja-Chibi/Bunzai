@@ -52,6 +52,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | AddPopover | src/ui/apps/scenes/scene-lore-books.tsx | ({ library, inScene, onPick, onCreate, onClose }: { library: StudioEntitySummary[] \| null; inScene: ReadonlySet<strin... | The dashed button's popover: "+ New Lorebook" (name it first, then Create) over the library list. |  |
 | AdvancedBody | src/ui/apps/scenes/messenger/settings/scene/memory-rows.tsx | ({ env }: { env: SceneEnv }) | The summary model's own settings: method, reasoning, limits and the prompt template. |  |
 | AgentControls | src/ui/apps/scenes/final-cut/fc-agent.tsx | ({ ctx, pass, lib, onChange }: { ctx: AppContext; pass: FinalCutPass; lib: FinalCutLibrary; onChange: Change }) |  |  |
+| AgentEditor | src/ui/apps/workbench/promptbook/agent-editor.tsx | ({ entity, revision, ctx, piece, topRight }: KindEditorProps) |  | .root .toolbar .layout .main .phaseList .phase .rehearsal .recipes ... |
 | AgentPage | src/ui/apps/scenes/messenger/settings/scene/finalcut-agent.tsx | ({ env }: { env: SceneEnv }) |  |  |
 | AgentRoom | src/ui/apps/agent/room.tsx | ({ ctx, onClose }: { ctx: AppContext; onClose?: () => void }) | Shows the screen the agent can see, and talks to whichever model the vault has. |  |
 | AiPanel | src/ui/apps/scenes/compendium/storyboards/dossier-parts.tsx | ({ ai, included, onOff, onMode, onRadius }: { ai: DossierAiContext; included: boolean; onOff(): void; onMode(mode: Co... |  |  |
@@ -102,6 +103,8 @@ The answer for the common needs, before searching the table below. For buttons, 
 | BondsPanel | src/ui/apps/scenes/props/trackers/bonds/bonds-panel.tsx | ({ ctx, chat, onChat, popOut }: PopoutContext) |  |  |
 | BookAccessRows | src/ui/apps/scenes/messenger/settings/scene/compendium-books.tsx | ({ a }: { a: WingArgs }) | One access choice per book, as in the Compendium's access chip. |  |
 | BookBar | src/ui/apps/scenes/compendium/compendium-shell.tsx | ({ books, bookId, onBook, access, chip }: { books: readonly SceneLoreBook[]; bookId: string; onBook(id: string): void... |  |  |
+| BookBoard | src/ui/apps/workbench/promptbook/book-board.tsx | ({ phases, selected, onSelect, onChange, ctx, bookId }: { phases: readonly BookPhase[]; selected: string; onSelect(id... |  | .root .toolbar .layout .main .phaseList .phase .rehearsal .recipes ... |
+| BookCards | src/ui/apps/workbench/promptbook/book-cards.tsx | ({ phase, ctx, onChange, expanded }: { phase: BookPhase; ctx: AppContext; onChange(p: BookPhase): void; expanded: boo... |  | .root .toolbar .layout .main .phaseList .phase .rehearsal .recipes ... |
 | BookCover | src/ui/apps/library/book-cover.tsx | ({ title, choice }: { title: string; choice: BookCoverChoice }) |  | .cover .dialog .editor .fields |
 | BookCoverDialog | src/ui/apps/library/book-cover.tsx | ({ title, initial, onSave, onDismiss }: { title: string; initial: BookCoverChoice \| null; onSave(choice: BookCoverCho... |  | .cover .dialog .editor .fields |
 | BookList | src/ui/apps/scenes/scene-lore-books.tsx | ({ books, characterName, selectedId, onSelect, onToggle, onRemove, onAdd, lastTurn }: { books: readonly SceneLoreBook... |  |  |
@@ -324,7 +327,6 @@ The answer for the common needs, before searching the table below. For buttons, 
 | Filters | src/ui/apps/scenes/props/trackers/items/item-parts.tsx | ({ options, value, onChange, icons }: { options: readonly T[]; value: T; onChange(v: T): void; icons?: Partial<Record... |  |  |
 | FinalCutActivity | src/ui/apps/scenes/final-cut/fc-activity.tsx | ({ api, chatId, messageId, enabled, onApply, onApplyRerun, onClose }: { api: Pick<ScenesApi, "getFinalCutRun" \| "reru... |  |  |
 | FinalCutBody | src/ui/apps/scenes/messenger/settings/scene/writing-lists.tsx | ({ env }: { env: SceneEnv }) |  |  |
-| FinalCutStatus | src/ui/apps/scenes/scene-turn-parts.tsx | ({ pass }: { pass: string }) | RoleCall's status while Final Cut's passes run before the reply is saved, on any kind of turn; the title names the pass. |  |
 | FinalCutTab | src/ui/apps/scenes/final-cut/final-cut-tab.tsx | ({ ctx, chat, onChanged }: { ctx: AppContext; chat: Chat; onChanged(chat: Chat): void }) |  |  |
 | FinalCutWing | src/ui/apps/scenes/scene-final-cut.tsx | ({ ctx, chat, onChanged, initialTab, single }: { ctx: AppContext; chat: Chat; onChanged(chat: Chat): void; initialTab... |  |  |
 | FindPanel | src/ui/apps/scenes/scene-find.tsx | (p: FindPanelProps) |  |  |
@@ -511,6 +513,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | MiniSelect | src/ui/apps/workbench/workshop/mini-select.tsx | ({ opts, value, onChange }: MiniSelectProps) |  | .shell .rail .railhead .icoSealed .editor .ehead .sub .add ... |
 | MobileEditorHead | src/ui/components/mobile-editor-head/index.tsx | ({ name, sub, dirty, saving, onBack, onSave, menu }: MobileEditorHeadProps) | Back / name / save / kebab at 2.2rem touch targets; the kebab holds the long tail. | .head .name .kebabWrap .menu |
 | ModeGuided | src/ui/apps/workbench/regex/mode-guided.tsx | ({ rule, writeFor, styles, onPatch, onEscape }: ModeGuidedProps) |  |  |
+| ModelChoice | src/ui/apps/workbench/promptbook/model-choice.tsx | ({ ctx, value, onChange }: { ctx: AppContext; value: ChatConnection \| undefined; onChange(c: ChatConnection): void }) |  |  |
 | ModelPick | src/ui/apps/scenes/final-cut/fc-pass-chrome.tsx | ({ pass, models, onChange }: { pass: FinalCutPass; models: SceneModels; onChange: Change }) |  |  |
 | ModelRow | src/ui/apps/scenes/messenger/settings/scene/finalcut-kit.tsx | ({ label, description, current, models, onPick }: { label: string; description: string; current: FinalCutPass["connec... | A model of the scene's connections, or "the scene's model" (nothing set). The select twin of Full Chat's model picker; the pick is the same `connection` field. |  |
 | ModelSection | src/ui/apps/scenes/compendium/tabs/settings/model.tsx | ({ chat, compendium, models, set }: SectionProps) |  |  |
@@ -587,6 +590,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | PersonaPicker | src/ui/apps/scenes/scene-persona-picker.tsx | ({ ctx, personas, activeId, defaultId, busy, onCast, onNew, onClose }: { ctx: AppContext; personas: readonly PickerPe... | The Casting Call: search, portrait tiles, the Lead Role card, Clear role and Cast. It only chooses; the caller confirms and casts. |  |
 | PersonaSwap | src/ui/apps/scenes/messenger/shell/persona-swap.tsx | ({ args, onClose, onNew }: { args: WingArgs; onClose(): void; onNew(): void }) |  |  |
 | PerspectivePill | src/ui/apps/scenes/scene-draft-status.tsx | ({ onPick, disabled }: { onPick(perspective: Perspective): void; disabled?: boolean }) | Picking a segment fires the expansion at once, as RoleCall's does; 1ST is lit until another is picked. |  |
+| PhaseEditor | src/ui/apps/workbench/promptbook/phase-editor.tsx | ({ phase, earlier, ctx, onChange, cards, onRemove }: { phase: BookPhase; earlier: BookPhase[]; ctx: AppContext; onCha... |  | .root .toolbar .layout .main .phaseList .phase .rehearsal .recipes ... |
 | PhasePicker | src/ui/apps/workbench/regex/phase-picker.tsx | ({ phases, writeFor, styles, onToggle }: PhasePickerProps) |  |  |
 | PickHint | src/ui/apps/scenes/scene-lore-books.tsx | ({ hasBooks }: { hasBooks: boolean }) | The right pane while no book is open. |  |
 | PieceFrame | src/ui/apps/workbench/pieces/piece-frame.tsx | ({ kind, noun, piece, session, meta, topRight, onName, children }: { kind: string; noun: string; piece: StudioEntityS... |  | .root .problem .cols .flush .colsPair .rail .railTitle .section ... |
@@ -625,6 +629,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | ProgramSlot | src/ui/apps/scenes/messenger/shell/program-holders.tsx | ({ holder }: { holder: HTMLElement }) | The open surface's slot for one program: the holder sits here while this is mounted. |  |
 | ProgressChecklist | src/ui/components/progress-checklist/index.tsx | ({ items, extraStat, compact = false }: ProgressChecklistProps) | Bar + count chip; the checklist itself lives in a bottom sheet. | .prog .compact .bar .row .ok .no .pendingLabel |
 | PromptBlocksPage | src/ui/apps/scenes/messenger/settings/scene/prompt-blocks.tsx | ({ env }: { env: SceneEnv }) | The page body: choices, then one switch per block, then the way to the prompt text. |  |
+| PromptbookEditor | src/ui/apps/workbench/promptbook/promptbook-editor.tsx | ({ entity, revision, ctx, piece, topRight }: KindEditorProps) |  | .root .toolbar .layout .main .phaseList .phase .rehearsal .recipes ... |
 | PromptEditor | src/ui/apps/scenes/scene-preset-parts.tsx | ({ prompt, loadedAt, presetName, note, prefs, onText, onClose }: { prompt: PresetPrompt \| null; loadedAt: number; pre... | One block's text. Typing saves to the preset after a pause (RoleCall saves after 500 ms). |  |
 | PromptEditPanel | src/ui/apps/workbench/preset/prompt-edit-panel.tsx | ({ block, stops, writeFor, groups, onSetGroup, onClose, onPatch, }: PromptEditPanelProps) |  | .sideHead .sideHeadTitle .sideEmpty .sideEmptyTitle .sideEmptyHint .sideBody .sideRow .sideHintLine ... |
 | PromptingWing | src/ui/apps/scenes/scene-prompting.tsx | ({ ctx, chat, presetBody, onChanged, onBody, initialTab, single }: { ctx: AppContext; single?: boolean; initialTab?: ... |  |  |
@@ -762,6 +767,8 @@ The answer for the common needs, before searching the table below. For buttons, 
 | SideEffects | src/ui/apps/scenes/scene-lore-advanced.tsx | ({ value, onChange }: { value: EntrySideEffects \| null; onChange(next: EntrySideEffects \| null): void }) | RoleCall's Side Effects: variable operations that run when the entry fires, over the scene's own variables (core/assembly/lore-effects.ts). |  |
 | SidePanel | src/ui/apps/scenes/messenger/frames/side-panel.tsx | ({ title, subtitle, width = "side", pinned = false, onTogglePin, onPopOut, onClose, children }: SidePanelProps) |  |  |
 | SizeDial | src/ui/apps/library/shelves.tsx | ({ ctx, sizeRem, setSizeRem, rootRef, prefKey }: { ctx: AppContext; sizeRem: number; setSizeRem(next: number): void; ... | The art dial, in the top bar: one size for the whole page. It sizes the cards (at its resting |  |
+| SkillConditionEditor | src/ui/apps/workbench/pieces/skill-condition.tsx | ({ value, onChange }: { value: SkillCondition; onChange(next: SkillCondition): void }) |  | .root .problem .cols .flush .colsPair .rail .railTitle .section ... |
+| SkillEditor | src/ui/apps/workbench/pieces/skill-editor.tsx | ({ entity, revision, ctx, piece, topRight }: KindEditorProps) |  | .root .problem .cols .flush .colsPair .rail .railTitle .section ... |
 | SlashMenu | src/ui/agent/slash-menu.tsx | ({ title, choices, active, onPick, }: { title: string; choices: readonly SlashChoice[]; active: number; onPick: (inde... |  |  |
 | Slider | src/ui/components/slider/index.tsx | ({ value, defaultValue, min, max, step = 1, onChange, format, label, help, color, readout = true, style, onInput, ...... |  | .sr-only .range .wrap .card .head .label .help .value ... |
 | SliderField | src/ui/apps/scenes/stage-controls.tsx | ({ icon, label, caption, value, limits, format, help, changed, onChange, onReset }: { icon: IconName; label: string; ... |  |  |
@@ -887,6 +894,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | TuningRows | src/ui/apps/scenes/messenger/settings/scene/compendium-passes.tsx | ({ a }: { a: WingArgs }) | Retrieval tuning: how many entries, how much of each, how many recent messages, how deep, and how several books are laid out. |  |
 | TuningSection | src/ui/apps/scenes/compendium/tabs/settings/recall.tsx | ({ compendium, set }: SectionProps) |  |  |
 | TurnList | src/ui/apps/scenes/props/trackers/battle/battle-parts.tsx | ({ order, current, round, enemies, onNext }: { order: readonly string[]; current: string \| null; round: number; enemi... |  |  |
+| TurnStatus | src/ui/apps/scenes/scene-turn-parts.tsx | ({ live }: { live: LiveTurn \| null }) | The active workflow or Final Cut pass, before the reply is saved. |  |
 | TypeAct | src/ui/apps/scenes/stage-type-act.tsx | ({ look, set, accent }: StageActProps & { accent: string }) | `accent` is the colour the Dialogue picker starts from: the scene accent (RoleCall started it from a fixed violet, F5). |  |
 | UpdateBadge | src/ui/apps/scenes/scene-card.tsx | ({ onClick }: { onClick(): void }) |  |  |
 | UpdateCardDialog | src/ui/apps/scenes/scene-card.tsx | ({ card, onCancel, onUpdate }: { card: CardState; onCancel(): void; onUpdate(): void }) |  |  |

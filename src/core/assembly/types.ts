@@ -185,6 +185,10 @@ export interface AssemblyInput {
   persona?: PersonaBody;
   /** The scene's preset. Absent: RoleCall's "No Preset (Defaults)" set. */
   preset?: PresetBody;
+  /** Runtime data for named prompt blocks, inserted after macro evaluation and before budgeting. Never evaluated as authored instructions. */
+  literalPrompts?: Readonly<Record<string, string>>;
+  /** Shared nonce for host-compiled, late-bound preset slots. */
+  slotNonce?: string;
   /** The scene's own on/off per preset block id, over the preset's switches (RoleCall's promptEnabledStates). */
   promptToggles?: Readonly<Record<string, boolean>>;
   /** The scene's answers to this preset's choice groups, by group id (ChatStore rule 42); absent groups take their declared default. */

@@ -6,6 +6,7 @@ export default defineKind<"skill", SkillBody>({
   id: "skill", order: 79, singular: "Skill", plural: "Skills", short: "skl", receiptWord: "skill",
   blurb: "Instructions for when they matter", icon: "lucide:sparkles", accent: "var(--deck-lorebook)", libraryDeck: true, promptingList: "skills",
   blank: () => emptySkillBody("My skill"), blankId: "skill",
+  editor: { id: "skill", label: "Skill editor", load: "light" },
   describe: (b) => [
     `name     ${b.name || "(unnamed)"}`,
     `when     ${b.when}${b.when === "mentioned" ? `: ${b.triggers.map((t) => t.keyword).join(", ") || "(no triggers)"}` : ""}`,

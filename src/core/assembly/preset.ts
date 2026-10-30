@@ -70,12 +70,11 @@ const CARD_SLOTS: readonly (readonly [string, string])[] = [
   ["dialogueExamples", "{{mesExamples}}"],
 ];
 
-export function presetPlan(body: PresetBody, toggles: Readonly<Record<string, boolean>> = {}): PresetPlan {
+export function presetPlan(body: PresetBody, toggles: Readonly<Record<string, boolean>> = {}, nonce = slotNonce()): PresetPlan {
   const blocks = activeBlocks(body.prompts, toggles);
   // A feature marker's block carries its placeholder (a marker of the same slot placed twice keeps the first, as one id does).
   // Appended at a depth it is its own message there instead: glued on, the feature would ride a history message the budget may drop.
   const slots = new Set<FeatureMarkerSlot>();
-  const nonce = slotNonce();
   for (const b of blocks) {
     if (!b.slot || slots.has(b.slot)) continue;
     slots.add(b.slot);

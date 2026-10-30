@@ -9,6 +9,7 @@ import { makePresetPrompt } from "../preset/test-fixtures";
 import { assemble } from "./assemble";
 import type { AssemblySkill } from "./skills";
 import type { AssemblyInput, Budgeter, HistoryMessage } from "./types";
+import { slotPlaceholder } from "./feature-slots";
 
 const card = { identity: { name: "Vera", description: "Keeps the light." }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {} } as CharacterBody;
 const msg = (id: string, role: HistoryMessage["role"], content: string): HistoryMessage => ({ id, role, content });
@@ -64,6 +65,11 @@ describe("the Skills block", () => {
 });
 
 describe("the budget", () => {
+  test("a named Skill slot cannot be copied through include and evade its fixed reservation", () => {
+    const mark = slotPlaceholder("skill:S", "test");
+    const preset = { name: "Book", prompts: [makePresetPrompt({ id: "skill-card", content: mark }), makePresetPrompt({ id: "copy", content: "{{include::skill-card}}" })] };
+    expect(() => assemble(input({ preset, slotNonce: "test", skills: [{ ...skill("S"), slots: ["skill:S"] }] }))).toThrow("placed more than once");
+  });
   test("reserves the Skills block like the trackers' block: history gives way to it, it is never dropped", () => {
     const seen: { fit?: readonly unknown[]; final?: string[] } = {};
     const budgeter: Budgeter = {

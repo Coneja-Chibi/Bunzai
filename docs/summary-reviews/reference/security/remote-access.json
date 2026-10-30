@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/security/remote-access",
   "sourcePath": "docs/reference/security/remote-access.md",
-  "sourceHash": "sha256:0920bf075535a09af739f7758fe368a843575bae8e4ad67907d5eeeb41b326dc",
-  "semanticSummaryHash": "sha256:f8ef41ee5eb68bb3e107dbb10d4b4353de68d79d99a72ab83d9ece0f2643b5a8",
+  "sourceHash": "sha256:c08e14f8c84144fa1a9c4b466c9a61baa3b4e9a37a7e311fe35e895080293740",
+  "semanticSummaryHash": "sha256:c8b10c4f2363c173990b4dbc966cfda4c8bc4ac85b4ec60aae9b0b4675266760",
   "verdict": "APPROVE",
-  "reviewer": "integration_review",
-  "notes": "Reviewed changed source and summaries against format adapters, shared export writer, host-only routes and UI delivery paths. Independently ran 38 format, stream and export-route tests; importer mapping retains dated co-developer provenance, external-host import and packaged behavior unverified.",
-  "reviewedAt": "2026-10-30T01:00:04.590Z"
+  "reviewer": "node_placement_review",
+  "notes": "Independently reviewed Secure-cookie and bounded LAN admission, generation-safe session issuance, expiry recovery, exact attempt-cap reservation, owned sidecar lifecycle and corrected summaries against source. New claims retain isolated evidence limits; browser, real LAN and packaged behavior remain unverified.",
+  "reviewedAt": "2026-10-30T13:42:28.929Z"
 }

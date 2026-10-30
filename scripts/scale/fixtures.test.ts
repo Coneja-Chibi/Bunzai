@@ -18,6 +18,8 @@ import { scriptSheet } from "./fixtures/scriptsheet";
 import { skill } from "./fixtures/skill";
 import { tool } from "./fixtures/tool";
 import { tracker } from "./fixtures/tracker";
+import { promptbook } from "./fixtures/promptbook";
+import { agent } from "./fixtures/agent";
 
 const NON_ENTITY_OWNER_KINDS = ["chat", "studio-document", "asset"] as const;
 
@@ -46,7 +48,7 @@ test("every scale entity fixture is accepted by the registered canonical parser"
   const values = [
     characters(1).next().value!, lorebook(1), [...personas(1)][0]!, pack(1), regexSet(1),
     preset(1), [...htmldocs(1)][0]!, quickReplySet(1), promptFormat(1),
-    dice(1), formula(1), scriptSheet(1), skill(1), tool(1), tracker(1),
+    dice(1), formula(1), scriptSheet(1), skill(1), tool(1), tracker(1), promptbook(1), agent(1),
   ];
   expect(values.map((value) => parseCanonicalEntity(value).kind).sort()).toEqual([...STUDIO_ENTITY_KINDS].sort());
 });

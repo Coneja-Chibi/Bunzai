@@ -1,0 +1,29 @@
+/* Promptbook phases, library cards and rehearsal use the editor's shared theme tokens. */
+.root { container-type: inline-size; display: grid; gap: 16px; padding: 16px; color: var(--stage-card); font: 400 14px/1.5 var(--font-body); }
+.toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.toolbar input { flex: 1; min-width: 140px; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 280px); gap: 20px; align-items: start; }
+.main { min-width: 0; }
+.phaseList { max-height: 250px; overflow: auto; margin-bottom: 16px; }
+.phase, .rehearsal, .recipes { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--stage-line); background: var(--stage-panel); min-width: 0; }
+.root h2, .root h3 { margin: 0; font-family: var(--font-fancy); }
+.root p { margin: 0; }
+.phase fieldset { min-width: 0; border: 1px solid var(--stage-line); padding: 12px; }
+.phase label { display: grid; gap: 4px; }
+.block, .card, .trace { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--stage-line); min-width: 0; }
+.card { border-left: 4px solid var(--deck-preset); }
+.card[data-kind="skill"] { border-color: var(--deck-lorebook); }
+.card[data-joined="true"] { border-top-style: dashed; }
+.card small, .boardPhase small { font: 600 12px/1.5 var(--font-mono); }
+.trace[data-on="false"] { opacity: .65; }
+.cards { display: grid; gap: 10px; }
+.columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.phaseColumn { min-width: 0; max-height: 440px; overflow: auto; border: 1px solid var(--stage-line); padding: 12px; }
+.picker { max-height: 240px; overflow: auto; }
+.rehearsal { max-height: 600px; overflow: auto; }
+.board { position: relative; display: flex; height: 320px; min-width: 0; overflow: hidden; }
+.boardPhase { position: absolute; box-sizing: border-box; width: 224px; height: 130px; padding: 12px; display: grid; gap: 6px; background: var(--stage-panel); border: 1px solid var(--stage-line); border-top: 3px solid var(--deck-preset); }
+.wires { position: absolute; width: 1px; height: 1px; overflow: visible; pointer-events: none; }
+.boardPhase > *, .phaseName { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.wires path { fill: none; stroke: var(--deck-preset); stroke-width: 2; }
+@container (max-width: 760px) { .layout { grid-template-columns: minmax(0, 1fr); } .rehearsal { max-height: 360px; } }

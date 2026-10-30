@@ -22,7 +22,6 @@ Bunzai is AGPL-3.0-or-later (see [LICENSE](LICENSE)). This file lists what ships
 | @ai-sdk/openai-compatible | 3.0.14 | Apache-2.0 | https://github.com/vercel/ai |
 | @ai-sdk/provider | 4.0.3 | Apache-2.0 | https://github.com/vercel/ai |
 | @ai-sdk/provider-utils | 5.0.12 | Apache-2.0 | https://github.com/vercel/ai |
-| @anthropic-ai/claude-agent-sdk | 0.3.221 | SEE LICENSE IN README.md | https://github.com/anthropics/claude-agent-sdk-typescript |
 | @noble/hashes | 2.4.0 | MIT | https://github.com/paulmillr/noble-hashes |
 | @openrouter/ai-sdk-provider | 3.0.0 | Apache-2.0 | https://github.com/OpenRouterTeam/ai-sdk-provider |
 | @opentui/core | 0.5.1 | MIT | https://github.com/anomalyco/opentui |
@@ -44,7 +43,7 @@ Bunzai is AGPL-3.0-or-later (see [LICENSE](LICENSE)). This file lists what ships
 | bun-ffi-structs | 0.3.1 | MIT | https://github.com/anomalyco/bun-ffi-structs |
 | crc-32 | 0.3.0 | Apache-2.0 | https://github.com/SheetJS/js-crc32 |
 | diff | 9.0.0 | BSD-3-Clause | https://github.com/kpdecker/jsdiff |
-| dompurify | 3.4.15 | (MPL-2.0 OR Apache-2.0) | https://github.com/cure53/DOMPurify |
+| dompurify | 3.4.17 | (MPL-2.0 OR Apache-2.0) | https://github.com/cure53/DOMPurify |
 | emoji-picker-react | 4.16.1 | MIT | https://github.com/ealush/emoji-picker-react |
 | emoji-regex | 10.6.0 | MIT | https://github.com/mathiasbynens/emoji-regex |
 | eventsource-parser | 3.1.0 | MIT | ssh://git@github.com/rexxars/eventsource-parser |
@@ -70,7 +69,7 @@ Bunzai is AGPL-3.0-or-later (see [LICENSE](LICENSE)). This file lists what ships
 | strip-ansi | 7.1.2 | MIT | chalk/strip-ansi |
 | wasmoon | 1.16.0 | MIT | https://github.com/ceifa/wasmoon |
 | webview-bun | 2.4.0 | MIT | https://github.com/tr1ckydev/webview-bun |
-| zod | 4.4.3 | MIT | https://github.com/colinhacks/zod |
+| zod | 4.6.7 | MIT | https://github.com/colinhacks/zod |
 | zustand | 5.0.14 | MIT | https://github.com/pmndrs/zustand |
 
 ## Go sidecar modules

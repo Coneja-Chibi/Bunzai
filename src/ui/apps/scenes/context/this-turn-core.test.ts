@@ -19,6 +19,16 @@ const trace = (over: Partial<SceneTrace> = {}): SceneTrace => ({
 });
 
 describe("callsOf", () => {
+  test("Promptbook private and after phases add their reported usage without counting the reply twice", () => {
+    const rows = callsOf(trace({ book: { status: "complete", phases: [
+      { id: "think", name: "Think", role: "private", status: "ran", why: "Always runs.", text: "Notes", request: ["Plan"], model: "planner", promptTokens: 100, outputTokens: 20 },
+      { id: "write", name: "Write", role: "reply", status: "ran", why: "Reply", text: "Story", request: [] },
+      { id: "tidy", name: "Tidy up", role: "after", status: "ran", why: "Always runs.", text: "Done", request: [], model: "tidier", promptTokens: 40, outputTokens: 10 },
+    ] } }));
+    expect(rows.map((r) => r.id)).toEqual(["book:think", "narrator", "book:tidy"]);
+    expect(rows.map((r) => r.phase)).toEqual(["before", "reply", "after"]);
+    expect(totalsOf(rows)).toMatchObject({ calls: 3, sent: 1340, back: 330 });
+  });
   test("a plain reply is one Narrator call with the provider's counts, Exact", () => {
     const rows = callsOf(trace());
     expect(rows).toHaveLength(1);

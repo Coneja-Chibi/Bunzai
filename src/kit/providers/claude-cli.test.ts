@@ -7,7 +7,7 @@
  */
 import { describe, expect, test } from "bun:test";
 import { basename, dirname } from "node:path";
-import { cliArgs, foldHistory, MCP_TOOL_PREFIX, parseCliResult, writeMcpConfig } from "./claude-cli";
+import { cliArgs, sdkOptions, foldHistory, MCP_TOOL_PREFIX, parseCliResult, writeMcpConfig } from "./claude-cli";
 import type { ModelMessage } from "./provider";
 
 describe("foldHistory", () => {
@@ -74,6 +74,17 @@ describe("cliArgs", () => {
     expect(valueAfter("--output-format")).toBe("json");
     expect(valueAfter("--model")).toBe("sonnet");
   });
+});
+
+test("SDK turns expose no built-in tools or skills and inherit no external MCP servers", () => {
+  for (const bridge of [null, { bunzai: { command: "bun", args: ["bridge.ts"] } }]) {
+    const options = sdkOptions("sonnet", "SYS", bridge);
+    expect(options.tools).toEqual([]);
+    expect(options.skills).toEqual([]);
+    expect(options.strictMcpConfig).toBe(true);
+    expect(options.permissionMode).not.toBe("bypassPermissions");
+    if (bridge) expect(options.allowedTools).toEqual([`${MCP_TOOL_PREFIX}*`]);
+  }
 });
 
 describe("parseCliResult", () => {
@@ -157,9 +168,8 @@ describe("the MCP tool bridge", () => {
     const args = cliArgs("sonnet", "SYS", "C:/tmp/mcp.json");
     expect(args[args.indexOf("--mcp-config") + 1]).toBe("C:/tmp/mcp.json");
     expect(args).toContain("--strict-mcp-config");
-    // bypassPermissions turns the CLI's own prompting off. Correct, because Kit owns the gate, and
-    // load-bearing, because there is then no second gate behind it.
-    expect(args[args.indexOf("--permission-mode") + 1]).toBe("bypassPermissions");
+    expect(args[args.indexOf("--permission-mode") + 1]).toBe("dontAsk");
+    expect(args[args.indexOf("--tools") + 1]).toBe("");
   });
 });
 
@@ -185,10 +195,8 @@ describe("the MCP config file is a security boundary", () => {
   });
 });
 
-describe("the tool allowlist bounds what bypassPermissions grants", () => {
+describe("the bridge permission list and empty built-in tool set", () => {
   test("only Kit's own server is reachable", () => {
-    // A denylist of the CLI's built-ins would admit any tool a future release adds. Naming only our
-    // prefix means the reachable set cannot grow underneath us.
     const args = cliArgs("sonnet", "SYS", "C:/tmp/mcp.json");
     expect(args[args.indexOf("--allowedTools") + 1]).toBe(`${MCP_TOOL_PREFIX}*`);
     expect(MCP_TOOL_PREFIX).toBe("mcp__bunzai__");

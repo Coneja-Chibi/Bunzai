@@ -76,6 +76,12 @@ Default portable character shape for thin hosts (C.AI Tools dumps, Crushon impor
 | --- | --- | --- | --- |
 | `rolecall-script-sheet` | scriptsheet | .json | RoleCall Script Sheet export (one instruction, with the blocks it sends) |
 
+## Promptbooks (1)
+
+| id | kind | writes | label |
+| --- | --- | --- | --- |
+| `bunzai-promptbook` | promptbook | .json | Bunzai Promptbook |
+
 ## Regex sets (5)
 
 | id | kind | writes | label |
@@ -127,6 +133,12 @@ Default portable character shape for thin hosts (C.AI Tools dumps, Crushon impor
 | id | kind | writes | label |
 | --- | --- | --- | --- |
 | `sillytavern-promptformat` | promptformat | .json | SillyTavern prompt format (instruct and context templates) |
+
+## Agents (1)
+
+| id | kind | writes | label |
+| --- | --- | --- | --- |
+| `bunzai-agent` | agent | .json | Bunzai Agent |
 
 ## Drawings (0)
 

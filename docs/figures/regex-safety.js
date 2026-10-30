@@ -13,18 +13,17 @@ export default {
   pipeline: {
     type: "flow",
     fig: "fig 01",
-    title: "a card-authored pattern, before it is ever allowed to compile",
+    title: "a card-authored pattern, before matching",
     caption:
-      "Every stage up to the gate is analysis over the pattern STRING: nothing here compiles or " +
-      "runs the pattern (ast-types.ts:13-14). A 'dangerous' verdict stops the pattern at the gate " +
-      "with a culprit span and never reaches a real RegExp compile. This runs on EVERY execution of " +
-      "EVERY enabled rule, not just once at save time (apply.ts:214).",
+      "The parser and analyzer inspect data. Validation includes a native syntax check and refuses " +
+      "unsupported, suspicious or dangerous patterns before matching. Allocation limits bound " +
+      "replacement construction; Studio workers add termination. Static screening is not a native-call deadline.",
     steps: [
       { label: "Find pattern string", sub: "untrusted, card-authored", color: "clay" },
       { label: "Parse to AST", sub: "parser.ts, unicode-mode grammar, never throws", color: "ochre" },
-      { label: "Structural ReDoS scan", sub: "redos.ts, 3 culprit shapes, precision over recall", color: "sage" },
-      { label: "Gate: validateRule", sub: "dangerous refused before compile, validate.ts", color: "teal" },
-      { label: "Compile + run, budgeted", sub: "native RegExp, per-call timeoutMs, apply.ts", color: "plum" },
+      { label: "Structural ReDoS scan", sub: "nested, sequential, alternation and backreference seams", color: "sage" },
+      { label: "Gate: validateRule", sub: "unsafe or unsupported patterns refused before matching", color: "teal" },
+      { label: "Match + bounded output", sub: "native calls cannot be preempted by a clock", color: "plum" },
     ],
   },
 };

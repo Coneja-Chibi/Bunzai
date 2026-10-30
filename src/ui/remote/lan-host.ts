@@ -58,10 +58,13 @@ interface Attempt {
   fails: number;
   nextAllowedAt: number;
 }
+interface CodeVerdict { ok: boolean; retryAfterMs: number; generation?: number }
 
 export interface LanHostOptions {
   /** injected clock (Date.now); tests pass a controllable one. */
   now: () => number;
+  hash?: (code: string) => Promise<string>;
+  verify?: (code: string, hash: string) => Promise<boolean>;
 }
 
 export class LanHost {
@@ -70,35 +73,71 @@ export class LanHost {
   private codeHash = "";
   private sessions = new Map<string, LanSession>();
   private attempts = new Map<string, Attempt>();
+  private verifying = new Set<string>();
+  private generation = 0;
   private readonly now: () => number;
+  private readonly hash: (code: string) => Promise<string>;
+  private readonly verify: (code: string, hash: string) => Promise<boolean>;
 
   constructor(opts: LanHostOptions) {
     this.now = opts.now;
+    this.hash = opts.hash ?? ((code) => Bun.password.hash(code, { algorithm: "argon2id" }));
+    this.verify = opts.verify ?? ((code, hash) => Bun.password.verify(code, hash));
   }
 
   /** Generate a fresh code, hash it, and clear all sessions/attempts. Returns the plaintext code. */
   async reset(): Promise<string> {
-    this.code = formatConnectCode(randomBytes(32)); // generous supply for rejection sampling
-    this.codeHash = await Bun.password.hash(normalizeCode(this.code), { algorithm: "argon2id" });
+    this.revoke();
+    const generation = this.generation;
+    const code = formatConnectCode(randomBytes(32));
+    const hash = await this.hash(normalizeCode(code));
+    if (generation !== this.generation) return "";
+    this.code = code;
+    this.codeHash = hash;
+    return code;
+  }
+
+  /** Invalidate credentials synchronously, including work still awaiting a hash or comparison. */
+  revoke(): void {
+    this.generation++;
+    this.code = "";
+    this.codeHash = "";
     this.sessions.clear();
     this.attempts.clear();
-    return this.code;
   }
 
   /** Verify a code from an IP, throttled per IP. On success the IP's failure count resets. */
-  async verifyCode(ip: string, input: string): Promise<{ ok: boolean; retryAfterMs: number }> {
+  async verifyCode(ip: string, input: string): Promise<CodeVerdict> {
+    const refused = { ok: false, retryAfterMs: THROTTLE_BASE_MS };
+    if (!this.codeHash || this.verifying.has(ip) || this.verifying.size >= 4) return refused;
     const a = this.attempts.get(ip) ?? { fails: 0, nextAllowedAt: 0 };
     const wait = a.nextAllowedAt - this.now();
     if (wait > 0) return { ok: false, retryAfterMs: wait };
-    const ok = this.codeHash !== "" && (await Bun.password.verify(normalizeCode(input), this.codeHash));
-    if (ok) {
-      this.attempts.delete(ip);
-      return { ok: true, retryAfterMs: 0 };
+    if (this.attempts.size >= 1024) for (const [key, attempt] of this.attempts) if (attempt.nextAllowedAt <= this.now() && key !== ip && !this.verifying.has(key)) this.attempts.delete(key);
+    if (this.attempts.size >= 1024 && !this.attempts.has(ip)) return refused;
+    const generation = this.generation;
+    this.attempts.set(ip, a);
+    this.verifying.add(ip);
+    try {
+      const code = input.length <= 32 ? normalizeCode(input) : "";
+      const ok = /^[0-9A-Z]{9}$/.test(code) && await this.verify(code, this.codeHash);
+      if (generation !== this.generation) return refused;
+      if (ok) { this.attempts.delete(ip); return { ok: true, retryAfterMs: 0, generation }; }
+      const fails = a.fails + 1;
+      const delay = throttleDelayMs(fails);
+      this.attempts.set(ip, { fails, nextAllowedAt: this.now() + delay });
+      return { ok: false, retryAfterMs: delay };
+    } finally {
+      this.verifying.delete(ip);
     }
-    const fails = a.fails + 1;
-    const delay = throttleDelayMs(fails);
-    this.attempts.set(ip, { fails, nextAllowedAt: this.now() + delay });
-    return { ok: false, retryAfterMs: delay };
+  }
+
+  /** Verification and pending-session issuance share the same reset generation. */
+  async requestSession(ip: string, input: string, label: string): Promise<CodeVerdict & { id?: string }> {
+    const verdict = await this.verifyCode(ip, input);
+    this.sweepExpired();
+    if (!verdict.ok || verdict.generation !== this.generation || this.sessions.size >= 256) return { ok: false, retryAfterMs: verdict.retryAfterMs || THROTTLE_BASE_MS };
+    return { ...verdict, id: this.createPending(ip, label) };
   }
 
   /** Create a pending session for a device that entered the code correctly. It is not served until the

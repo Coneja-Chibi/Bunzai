@@ -141,14 +141,14 @@ test("the person's banks are made, listed, changed and deleted softly; a bad one
 test("a saved agent is kept by name, overwrites on the same name, keeps the pass's bounds, and deletes softly", async () => {
   const s = await scene();
   const agent = { name: "Tightener", instructions: "Tighten pacing.", connection: { id: "k", model: "m" }, temperature: 0.4, contextMessages: 4 };
-  const one = (await (await s.post("/api/chats/final-cut/library/agent", { agent })).json()) as { id: string };
-  const two = (await (await s.post("/api/chats/final-cut/library/agent", { agent: { ...agent, name: "tightener", instructions: "Tighter." } })).json()) as { id: string; instructions: string };
+  const one = (await (await s.post("/api/chats/final-cut/library/agent", { agent })).json()) as { id: string; revision: string };
+  const two = (await (await s.post("/api/chats/final-cut/library/agent", { agent: { ...agent, id: one.id, revision: one.revision, name: "tightener", instructions: "Tighter." } })).json()) as { id: string; instructions: string; revision: string };
   expect(two).toMatchObject({ id: one.id, instructions: "Tighter." });
   for (const bad of [{ ...agent, temperature: 1.8 }, { ...agent, contextMessages: 0 }, { ...agent, instructions: "" }, { ...agent, connection: { id: "k" } }, { ...agent, presetPromptStates: { a: "yes" } }]) {
     expect((await s.post("/api/chats/final-cut/library/agent", { agent: bad })).status).toBe(400);
   }
   expect(((await (await s.handler(apiReq("/api/chats/final-cut/library"))).json()) as { agents: unknown[] }).agents).toHaveLength(1);
-  expect(await (await s.post("/api/chats/final-cut/library/agent/delete", { id: one.id })).json()).toEqual({ deleted: true });
+  expect(await (await s.post("/api/chats/final-cut/library/agent/delete", { id: one.id, revision: two.revision })).json()).toEqual({ deleted: true });
   expect(((await (await s.handler(apiReq("/api/chats/final-cut/library"))).json()) as { agents: unknown[] }).agents).toEqual([]);
 });
 

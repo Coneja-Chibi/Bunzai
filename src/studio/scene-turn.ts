@@ -24,14 +24,14 @@ import { recoverThinkingEnd } from "./scene-turn-recover";
 import { thinkingSignature } from "./scene-turn-reasoning";
 import { modelTakesPrefill } from "../core/assembly/request";
 import { countPrompt, estimateFor, modelKey } from "../core/tokens";
-import type { ChatConnection, ChatStore, Generation, JsonObject, Message } from "../stage/contracts/chat-store";
+import type { Chat, ChatConnection, ChatStore, Generation, JsonObject, Message } from "../stage/contracts/chat-store";
 import { ProviderError, type Provider, type ProviderEvent, type ProviderRole } from "../stage/contracts/provider";
 import type { StateStore } from "../stage/contracts/state-store";
 import { StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
 
 import { assembleRequest, openedWith, overflowMessage, prepareRequest, shapeRequest } from "./scene-turn-build";
 import { tickDeltas } from "./scene-turn-ticks";
-import { loadTurn, type ReadPreset, type TurnKind } from "./scene-turn-load";
+import { loadTurn, type LoadedTurn, type ReadPreset, type TurnKind } from "./scene-turn-load";
 import { isFallbackWorthy } from "./scene-turn-fallback";
 import { learnReply } from "./scene-turn-meter";
 import { applyEdits, awaitReview } from "./scene-turn-review";
@@ -49,10 +49,13 @@ import { turnWrites } from "./scene-turn-writes";
 import { sendReply, sentTools, toolsRefusal, toolTurn, withToolCalls, type NarratorToolsFor } from "./scene-turn-tools";
 import { skillDelta } from "../core/skill";
 import { failedAttempt, requestParams, routeOf, splitEntryKey, traceOf, traceOptions, type RequestParams, type RouteAttempt } from "./scene-turn-trace";
+import { BookCancelledError, bookTrace, prepareBookReply, runBookPhases, type PhaseRun } from "./book-phase";
+import { replyPhase } from "../core/promptbook";
 
 export { splitEntryKey };
 
 export type TurnEvent =
+  | { type: "phase"; name: string; role: "private" | "reply" | "after" }
   | { type: "start"; turnId: string; kind: TurnKind; messageId: string | null }
   /** A piece of the reply: added to the end, or, when `full` is set, the whole text so far. */
   | { type: "text"; delta: string; full?: true }
@@ -155,15 +158,23 @@ async function runTurnBody(
   const guidance = input.guidance?.trim() ?? "";
   if (guidance && input.kind !== "swipe") throw new StudioValidationError("guidance belongs to a new version of a reply");
   if (guidance.length > GUIDANCE_MAX) throw new StudioValidationError(`guidance is longer than ${GUIDANCE_MAX} characters`);
-  const chat = await chats.getChat(input.chatId);
-  if (!chat) throw new StudioNotFoundError("that scene does not exist");
+  const initialChat = await chats.getChat(input.chatId);
+  if (!initialChat) throw new StudioNotFoundError("that scene does not exist");
+  let chat: Chat = initialChat;
   // A tracker round still running for the last reply writes the trackers this turn reads: it stops and finishes writing or undoing first.
   await cancelTrackerRound(deps.runtime, chat.id);
   if (!chat.connection) throw new NoConnectionError();
   let connected = await deps.connect(chat.connection, controller.signal);
   if (!connected) throw new NoConnectionError("this scene's connection is gone from Kit; pick another in the AI wing");
-  const loaded = await loadTurn(chats, chat.id, input.kind, deps.readPreset, deps.readLorebook, deps.readLibrary, deps.choiceDefaults);
-  if (!loaded) throw new StudioNotFoundError("that scene does not exist");
+  const initialLoaded = await loadTurn(chats, chat.id, input.kind, deps.readPreset, deps.readLorebook, deps.readLibrary, deps.choiceDefaults);
+  if (!initialLoaded) throw new StudioNotFoundError("that scene does not exist");
+  let loaded: LoadedTurn = initialLoaded;
+  const bookBase = loaded;
+  const bookChat = chat;
+  const bookRuns: PhaseRun[] = [];
+  let bookAfter = false;
+  let bookComplete = input.kind === "continue";
+  let completedBookTrace: JsonObject | undefined;
   const replacedId = loaded.target?.id;
   /** Who spoke, for the Director's tracker request after the reply. */
   const loadedTurn = loaded;
@@ -175,7 +186,7 @@ async function runTurnBody(
   let model = chat.connection.model;
   const stored = (streamed: string): string => (input.kind === "continue" ? continuationAddition(original, streamed, !modelTakesPrefill(model)) : streamed);
   const writes = turnWrites(deps.now);
-  const toolsTurn = await toolTurn(deps.narratorTools, input.kind, chat, loaded, deps.randomSeed(), writes, await deps.toolBudgetMs?.());
+  let toolsTurn = await toolTurn(deps.narratorTools, input.kind, chat, loaded, deps.randomSeed(), writes, await deps.toolBudgetMs?.());
   if (controller.signal.aborted) { emit({ type: "stopped", message: null }); return; }
   const turn = await chats.beginTurn(loaded.branchId, target, { expectedVersion: input.expectedVersion });
   if (!turn) throw new StudioNotFoundError("that scene does not exist");
@@ -195,6 +206,10 @@ async function runTurnBody(
   if (controller.signal.aborted) directorStop.abort(controller.signal.reason);
   try {
     const started = deps.now();
+    if (loaded.promptbook) {
+      ({ loaded, chat, connected, model } = await prepareBookReply({ deps, chat: bookChat, loaded: bookBase, connected, model, runs: bookRuns, writes, turnId: turn.id, kind: input.kind, inspect: input.inspect, signal: controller.signal, emit }));
+      toolsTurn = await toolTurn(deps.narratorTools, input.kind, chat, loaded, deps.randomSeed(), writes, await deps.toolBudgetMs?.());
+    }
     const prep = await prepareRequest(deps, chat, loaded, connected, model, started);
     const { window, options, presetName, reasoningFormat, meter, key, startGlobal } = prep;
     // Recall (compendium-recall.ts) runs once, here: the Inspector's pause, the fallback model and a draft never ask it again.
@@ -234,11 +249,12 @@ async function runTurnBody(
     if (opened(model)) emit({ type: "prefill", text: opened(model)! });
     const estimate = estimateFor(meter, key, countPrompt(messages.map((m) => m.content)), started);
     const recalled = recall ? recallSection(recall, result.recall) : undefined;
-    let route: RouteAttempt[] = [{ connectionId: chat.connection.id, kind: connected.kind, model }];
+    let route: RouteAttempt[] = [{ connectionId: chat.connection!.id, kind: connected.kind, model }];
     // The turn's local variable changes, as scene-state deltas (rule 17), and its global ones, as operations in the shared `global` slot (core/scene-state/globals.ts): both wait on the checkpoint and reach the version only when the turn commits, so a turn that does not commit has written none, and a continue makes none of its own. Their size is bounded by their source (the macro engine's output cap), so nothing is refused here.
     // A picked skill whose close rule held this turn (core/skill.ts) is closed with them, as the reply's own write.
-    const deltas = input.kind === "continue" ? [] : [...varsDeltas(result.local, started), ...globalDeltas(result.globalWrites, started, () => crypto.randomUUID()), ...(result.skills ?? []).filter((s) => s.close).map((s) => skillDelta(s.id, false, started))];
+    const deltas = input.kind === "continue" ? [] : [...writes.pending(), ...varsDeltas(result.local, started), ...globalDeltas(result.globalWrites, started, () => crypto.randomUUID()), ...(result.skills ?? []).filter((s) => s.close).map((s) => skillDelta(s.id, false, started))];
     let trace = (traceOf(recounted(result, regexEdits), model, window, estimate, traceOptions(options, connected.provider.params, model), guided, recalled));
+    if (loaded.promptbook && input.kind !== "continue") trace["book"] = bookTrace(bookRuns, "running");
     if (input.inspect) {
       // F16: the one pause gate. Cancel and Stop drop the checkpoint, so nothing was written, saved or sent.
       emit({ type: "review", turnId: turn.id, messages: messages.map((m) => ({ role: m.role, content: m.content })), tokens: estimate.mid, params: requestParams(traceOptions(options, connected.provider.params, model)), ...(sentTools(toolsTurn, connected).length > 0 ? { tools: sentTools(toolsTurn, connected) } : {}) });
@@ -304,7 +320,7 @@ async function runTurnBody(
         // RoleCall's fallback (worker.ts): only a transient failure, only before anything was written, never a Stop, and
         // never the model that just failed. One try; if it fails too, the main model's error is the one reported.
         const fb = input.fallback;
-        const eligible = !controller.signal.aborted && !text && reasoningFrom === undefined && toolsTurn.calls.length === 0 && isFallbackWorthy(first) && !(fb?.id === chat.connection.id && fb.model === model);
+        const eligible = !controller.signal.aborted && !text && reasoningFrom === undefined && toolsTurn.calls.length === 0 && isFallbackWorthy(first) && !(fb?.id === chat.connection!.id && fb.model === model);
         const next = fb && eligible ? await deps.connect(fb, controller.signal).catch(() => null) : null;
         if (!fb || !next) throw first;
         const before = { connected, model, messages, trace, route };
@@ -313,6 +329,7 @@ async function runTurnBody(
         model = fb.model;
         messages = shape(model);
         trace = traceOf(recounted(result, regexEdits), model, window, estimate, traceOptions(options, connected.provider.params, model), guided, recalled);
+        if (loaded.promptbook && input.kind !== "continue") trace["book"] = bookTrace(bookRuns, "running");
         try {
           completion = await sendReply(connected, { model, messages, options }, { signal: controller.signal, onEvent }, toolsTurn, deps.now);
         } catch (second) {
@@ -331,6 +348,10 @@ async function runTurnBody(
           return;
         }
         answered = true;
+        if (loaded.promptbook) {
+          trace["book"] = bookTrace(bookRuns, "stopped"); completedBookTrace = trace;
+          await chats.saveCheckpoint(turn.id, { content: stored(text), trace, deltas: [...writes.pending()] });
+        }
         await commit({ content: stored(text), generation: { model, finishReason: "stopped", presetName, generationMs: deps.now() - started, ...(guidance ? { guidance } : {}), ...(outOfTime ? { outOfTime } : {}) }, ...(input.kind === "continue" ? {} : withToolCalls(toolsTurn, { ...trace, route: routeOf(route, "stopped") }, request)) }, "stopped");
         return;
       }
@@ -388,19 +409,35 @@ async function runTurnBody(
     const cut = input.kind === "continue" ? null : await finalCutStage({ deps, chat, text, history: [...loaded.history, loaded.current], format: reasoningFormat, signal: controller.signal, emit, turnId: turn.id, ...(deps.finalCutBanks ? { userBanks: deps.finalCutBanks } : {}) });
     if (cut && "stop" in cut) { await chats.dropTurn(turn.id); emit(cut.stop); return; }
     if (cut) text = cut.text;
-    const committed = await commit({ content: stored(text), generation: { ...generation, ...(cut ? { finalCut: cut.summary } : {}) }, ...(input.kind === "continue" ? {} : withToolCalls(toolsTurn, { ...trace, route: routeOf(route, "answered", completion.model), ...(usage ? { usage } : {}), ...(cut ? { finalCut: cut.trace } : {}) }, request)) }, "done");
+    if (loaded.promptbook && input.kind !== "continue") {
+      const phase = replyPhase(loaded.promptbook);
+      bookRuns.push({ id: phase.id, name: phase.name, role: "reply", status: "ran", why: "The reply.", text, request: messages.map((m) => m.content), model });
+      bookAfter = true;
+      await runBookPhases({ deps, chat: bookChat, loaded: bookBase, connected, role: "after", runs: bookRuns, writes, turnId: turn.id, content: stored(text), inspect: input.inspect, signal: controller.signal, emit });
+      bookAfter = false;
+      trace["book"] = bookTrace(bookRuns);
+    }
+    const answer: Parameters<typeof commit>[0] = { content: stored(text), generation: { ...generation, ...(cut ? { finalCut: cut.summary } : {}) }, ...(input.kind === "continue" ? {} : withToolCalls(toolsTurn, { ...trace, route: routeOf(route, "answered", completion.model), ...(usage ? { usage } : {}), ...(cut ? { finalCut: cut.trace } : {}) }, request)) };
+    if (loaded.promptbook) { bookComplete = true; completedBookTrace = answer.trace; await chats.saveCheckpoint(turn.id, { content: answer.content, ...(answer.trace ? { trace: answer.trace } : {}), deltas: [...writes.pending()] }); }
+    const committed = await commit(answer, "done");
     // Step 7, best-effort: a lost calibration sample is harmless.
     // Not after tool rounds: their usage covers more than the request the meter would be taught it against.
     if (committed && toolsTurn.rounds === 0) {
       await learnReply(state, modelKey(connected.kind, model, completion.model), messages.map((m) => m.content), completion.usage, deps.now()).catch(() => undefined);
     }
   } catch (error) {
-    if (controller.signal.aborted && !text && !answered) {
+    if (error instanceof BookCancelledError || (bookAfter && controller.signal.aborted)) {
+      await chats.dropTurn(turn.id).catch(() => undefined);
+      emit({ type: "stopped", message: null });
+    } else if (bookBase.promptbook && !bookComplete && !controller.signal.aborted) {
+      await chats.dropTurn(turn.id).catch(() => undefined);
+      emit({ type: "failed", category: "api_error", code: "promptbook_failed", message: toErrorMessage(error, "The Promptbook could not finish. Nothing from this turn was committed."), draft: text });
+    } else if (controller.signal.aborted && !text && !answered) {
       await chats.dropTurn(turn.id).catch(() => undefined);
       emit({ type: "stopped", message: null });
     } else if (answered) {
       // Best-effort: the checkpoint then holds the whole reply, not just the last periodic save.
-      await chats.saveCheckpoint(turn.id, { content: stored(text) }).catch(() => undefined);
+      await chats.saveCheckpoint(turn.id, { content: stored(text), ...(completedBookTrace ? { trace: completedBookTrace } : {}) }).catch(() => undefined);
       emit({ type: "failed", category: "api_error", code: "backend_error", message: "The reply arrived but could not be saved yet. It is kept, and comes back when the scene reopens.", draft: stored(text) });
     } else {
       await chats.dropTurn(turn.id).catch(() => undefined);

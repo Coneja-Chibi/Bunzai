@@ -19,7 +19,7 @@ discovery remains part of the tool loop.
 
 ## Built lifecycle
 
-The capability foundation and all eight canonical content kinds are connected to the live Kit
+The capability foundation and the eight listed lifecycle kinds are connected to the live Kit
 session:
 
 - `src/entities/capabilities/` owns stable IDs, deterministic search, provider-safe names,
@@ -49,7 +49,7 @@ session:
   calls may omit `action`: a query means search, an exact ID means describe, and other calls browse.
   A flat content `kind` is accepted, and `content/character` browse shorthand resolves to the
   character kind rather than an empty area.
-- `studio.<kind>.create` reveals a typed creation workflow for every canonical kind: character,
+- `studio.<kind>.create` reveals a typed creation workflow for each of these supported kinds: character,
   lorebook, persona, preset, regex, quick-reply set, sprite pack, and HTML document. Each builds a canonical preview and does not write
   during composition.
 - `studio.piece.duplicate` copies one stored piece to a new id. A copy is a create, so it composes a
@@ -243,7 +243,7 @@ One provider-discovery catalog accepts `content`, `studio`, `transfer`, and `dia
 nothing should read its presence in the enum as a shipped workflow.
 Content capability metadata projects into that catalog; a non-content `HarnessTool` supplies the
 same validated discovery metadata beside its implementation. The live deferred inventory includes
-the content catalog and typed creation for all eight canonical kinds under `studio/lifecycle`.
+the content catalog and typed creation for the eight listed lifecycle kinds under `studio/lifecycle`.
 Lifecycle, transfer, and diagnostic workflows join the same router instead of adding another
 meta-tool. Only restricted pure-content capabilities derive safe read or draft access from catalog
 metadata. General workflow tools remain unknown to the Gate until separately classified. Each
@@ -488,22 +488,22 @@ studio the CLI would. The subcommand exists so nothing has to know where Bunzai'
 compiled binary has no `src/mcp/main.ts` to point at, and a path that worked from a checkout failed
 silently for anyone who installed rather than cloned, with the turn simply answering without tools.
 
-TWO POSTURES, DIFFERING ONLY IN WHO HOLDS THE GATE. Registered by a person with their own client,
-that client prompts before it runs a tool, so the prompt belongs to the person sitting there and
-nothing runs they did not agree to; the full belt is therefore safe to offer, and that is the
-default. Spawned by Kit for the Claude subscription provider, the CLI is started with
-`bypassPermissions`, because two gates asking about one call is worse than one. That turns the client
-prompt off, and Kit's own gate is per-turn state in Kit's process which cannot cross to another
-process. Nothing would ask, so that path passes `--read-only` and gets only the tools whose effect is
-`read`. The filter is applied by building the dispatcher from the reduced set, so a call naming a
-filtered tool comes back as an unknown tool rather than running: it fails closed rather than trusting
-the caller.
+The connecting client owns its permission policy. A person registering the full belt must review
+that client's configuration; Bunzai cannot guarantee that another client prompts before each call.
+Use `--read-only` to exclude write capabilities. Spawned by Kit for the Claude subscription provider,
+the CLI is started with
+`dontAsk`, with `tools: []`, `skills: []`, and `strictMcpConfig: true`. `allowedTools` only grants
+permission; it does not restrict availability. Only the explicitly supplied Bunzai bridge is exposed,
+and other unapproved calls are denied. The bridge is read-only unless the person explicitly enables
+its write option. Filtering builds the dispatcher from that reduced set, so a filtered tool is unknown
+rather than executable. These configuration properties have isolated tests; real SDK execution is not
+a security proof from this audit.
 
 The belt comes from `discoverTools()`, the same folders-as-schema loader Kit's own loop uses, and the
 schemas come from the tools' own Zod definitions. A file dropped into `src/kit/tools` appears in
-every connected client with no edit here. There is no MCP SDK dependency: over stdio the protocol is
-newline-delimited JSON-RPC with a handful of methods, and the official package carries seventeen
-transitive dependencies serving HTTP transport and OAuth that this never uses.
+every connected client with no edit here. Bunzai's stdio server implements its small JSON-RPC protocol
+without the MCP SDK. The optional Claude provider does require that SDK as a peer; its patched version
+is pinned explicitly because a transitive peer override did not update the installed package.
 
 ## Wearing other people's belts
 

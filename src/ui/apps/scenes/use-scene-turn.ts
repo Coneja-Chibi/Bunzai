@@ -33,6 +33,7 @@ export interface LiveTurn {
   prefill?: string;
   /** The Final Cut pass running before the reply is saved (RoleCall's "Final Cut pass..."). */
   finalCut?: string;
+  phase?: string;
 }
 
 /** A turn paused by the Prompt Inspector: the exact request, waiting for Send or Cancel. */
@@ -102,7 +103,11 @@ export function useSceneTurn(ctx: AppContext, chatId: string, reload: () => void
       } else if (e.type === "director") {
         publishDirector(chatId, e);
       } else if (e.type === "finalcut") {
+        delete turn.phase;
         turn.finalCut = e.pass;
+      } else if (e.type === "phase") {
+        delete turn.finalCut;
+        turn.phase = e.name;
       } else if (e.type === "reasoning") {
         turn.reasoning = e.full ? e.delta : turn.reasoning + e.delta;
         scheduleFlush();

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/kit/tools",
   "sourcePath": "docs/reference/kit/tools.md",
-  "sourceHash": "sha256:c3de89e54478c5da15771687bc5c4dfb531d70ce6f41363bea0d992497cd0a19",
-  "semanticSummaryHash": "sha256:e6c6f6d59e9fbb0a0175253de407639bce06d5f2c86103d4e454d7fbfda121cd",
+  "sourceHash": "sha256:e0897b0cc3e153d063a2da31145baf6d38f12fc3d4a5c6cb1604b61e489a33d3",
+  "semanticSummaryHash": "sha256:96fcf12e7b84b2ccd48ed04d874780ffe3376fd5c047e0466de129ad1e5eed40",
   "verdict": "APPROVE",
   "reviewer": "integration_review",
-  "notes": "Reviewed changed source and summaries against format adapters, shared export writer, host-only routes and UI delivery paths. Independently ran 38 format, stream and export-route tests; importer mapping retains dated co-developer provenance, external-host import and packaged behavior unverified.",
-  "reviewedAt": "2026-10-30T01:00:04.195Z"
+  "notes": "Documentation-only re-review of current source hash: all canonical-kind scope claims now name the eight listed lifecycle kinds, including progressive exposure. External client policy is explicitly its own; SDK empty built-ins and skills, strict MCP configuration, dontAsk and permission-only allowedTools match current source. Patched optional peer and isolated-test limits are accurately distinguished from real execution proof. No exploit probes or source edits.",
+  "reviewedAt": "2026-10-30T13:45:11.479Z"
 }

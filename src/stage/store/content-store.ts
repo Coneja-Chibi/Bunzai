@@ -385,14 +385,14 @@ export function createContentStore(
       return patchPiece(backend, pieceCacheToken, kind, id, expectedRevision, patch, uploads, clock, keepVersions, intent, options.coldFill);
     },
 
-    async delete(kindRaw, idRaw) {
-      return Boolean(await store.deleteWithReceipt(kindRaw, idRaw));
+    async delete(kindRaw, idRaw, expectedRevision) {
+      return Boolean(await store.deleteWithReceipt(kindRaw, idRaw, expectedRevision));
     },
 
-    async deleteWithReceipt(kindRaw, idRaw) {
+    async deleteWithReceipt(kindRaw, idRaw, expectedRevision) {
       const { kind, id } = addr(kindRaw, idRaw);
       let receipt: Omit<import("../contracts/content-store").PieceChangeEvent, "sequence"> | null = null;
-      const deleted = await backend.bury(kind, id, crypto.randomUUID(), clock(), (committed) => { receipt = committed; });
+      const deleted = await backend.bury(kind, id, crypto.randomUUID(), clock(), (committed) => { receipt = committed; }, expectedRevision);
       return deleted ? receipt : null;
     },
 

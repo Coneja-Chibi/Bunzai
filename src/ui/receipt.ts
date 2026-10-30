@@ -32,6 +32,8 @@ const FRIENDLY: Record<string, string> = {
   byaf: "Backyard",
   "novelai-lorebook": "NovelAI",
   "vaud-json": "Bunzai",
+  "bunzai-promptbook": "Bunzai",
+  "bunzai-agent": "Bunzai",
   lumiverse: "Lumiverse",
   "lumiverse-archive": "Lumiverse",
   pygmalion: "Pygmalion",

@@ -12,6 +12,7 @@ const bodyShape = defineExhaustiveShape<SkillBody>()({
   text: z.string().max(SANITY_TEXT),
   when: z.enum(["always", "mentioned", "picked"]),
   triggers: z.array(triggerSchema),
+  primaryLogic: z.enum(["any", "all"]).optional(),
   secondaryTriggers: z.array(triggerSchema),
   selectiveLogic: selectiveLogicSchema,
   caseSensitive: z.boolean(),

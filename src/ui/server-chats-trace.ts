@@ -23,6 +23,7 @@ import { buildTools } from "./server-chats-trace-tools";
 import { macrosOf, routeOfTrace, variablesOf } from "./server-chats-trace-report";
 import { WHOLE_BRANCH } from "../studio/scene-branch";
 import { plural } from "../core/text";
+import { readBookRun } from "../core/promptbook-run";
 
 const num = (v: unknown, fallback = 0): number => (typeof v === "number" ? v : fallback);
 
@@ -146,7 +147,9 @@ async function buildTrace(
     .map((m) => ({ messageId: m.id, swipeId: m.swipes[m.current]!.id, number: numberOf.get(m.id)! }));
 
   const requestRec = recOr(trace["request"]);
+  const book = readBookRun(trace["book"]);
   return {
+    ...(book ? { book } : {}),
     reply: { messageId: message.id, swipeId, number: numberOf.get(message.id)!, model: str(requestRec["model"]), take },
     blocks,
     window: windowView,

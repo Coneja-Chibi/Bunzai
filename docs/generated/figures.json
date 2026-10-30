@@ -403,8 +403,8 @@
     "file": "regex-safety.js",
     "figid": "pipeline",
     "type": "flow",
-    "title": "a card-authored pattern, before it is ever allowed to compile",
-    "caption": "Every stage up to the gate is analysis over the pattern STRING: nothing here compiles or runs the pattern (ast-types.ts:13-14). A 'dangerous' verdict stops the pattern at the gate with a culprit span and never reaches a real RegExp compile. This runs on EVERY execution of EVERY enabled rule, not just once at save time (apply.ts:214).",
+    "title": "a card-authored pattern, before matching",
+    "caption": "The parser and analyzer inspect data. Validation includes a native syntax check and refuses unsupported, suspicious or dangerous patterns before matching. Allocation limits bound replacement construction; Studio workers add termination. Static screening is not a native-call deadline.",
     "svg": "docs/generated/figures/regex-safety__pipeline.svg",
     "w": 950,
     "h": 172

@@ -43,6 +43,13 @@
           "producers": []
         },
         {
+          "name": "primaryLogic",
+          "optional": true,
+          "type": "\"any\" | \"all\"",
+          "meaning": "",
+          "producers": []
+        },
+        {
           "name": "secondaryTriggers",
           "optional": false,
           "type": "Trigger[]",

@@ -65,12 +65,17 @@ after the leading system messages, after the trackers' and storyboards' blocks. 
 the library trackers' block: history gives way to it and it is never dropped (Chi, 2026-10-29). The Tokens sheet labels
 it "Skills".
 
-## Not built yet
+## Editing and placement
 
-The Workbench editor (wireframe `design/wireframes/premiere/skill-pieces.html`, approved), so a skill opens read-only
-in the Workbench; the scene's Skills panel, linking from it and the person closing a skill there (the slot takes a
-person's write, but no route makes one yet); a skill's own spot in the chat (a skill placed apart from the marker); and Kit making or editing a skill (it has no
-capabilities for the kind yet). Kit can list, read, duplicate, export and delete skills through its generic piece tools.
+The Workbench editor edits instructions, activation and shared trigger controls through the existing
+revision-checked piece session. Primary triggers can match any or all; older pieces default to any.
+Promptbook Skill cards can occupy named positions and join adjacent Prompt cards in one message.
+Their instructions still use the same activation and fixed-budget owner. Repeating a named slot
+through include is refused rather than sending unreserved duplicate content.
+
+The scene's dedicated Skills panel, manual close route and Kit authoring capabilities remain unbuilt.
+Kit can list, read, duplicate, export and delete Skills through generic piece tools. The new editor and
+placements have unit evidence; live UI verification remains blocked by browser access.
 
 
 Every field, with its meaning, is in the generated [fields.skill.md](../../generated/fields.skill.md).

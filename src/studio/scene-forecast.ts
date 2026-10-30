@@ -16,7 +16,9 @@ import { NoConnectionError, type TurnDeps } from "./scene-turn";
 import { assembleRequest, overflowMessage, prepareRequest, shapeRequest } from "./scene-turn-build";
 import { sentTools, toolTurn } from "./scene-turn-tools";
 import { turnWrites } from "./scene-turn-writes";
-import { loadTurn, type TurnReader } from "./scene-turn-load";
+import { loadTurn, type LoadedTurn, type TurnReader } from "./scene-turn-load";
+import { composeBookPhase } from "./book-phase";
+import { replyPhase } from "../core/promptbook";
 
 export interface ForecastDeps extends Pick<TurnDeps, "connect" | "readPreset" | "readLorebook" | "readLibrary" | "choiceDefaults" | "promptBudgetMs" | "clock" | "narratorTools" | "toolBudgetMs" | "now" | "randomSeed"> {
   chats: TurnReader;
@@ -45,13 +47,22 @@ async function readScene(deps: ForecastDeps, chatId: string) {
 
 /** The turn a send of the draft would build, up to its assembled request: what the forecast reads, so it cannot drift from a send. */
 async function draftedTurn(deps: ForecastDeps, input: { chatId: string; draft: string }) {
-  const { chat, read, started } = await readScene(deps, input.chatId);
+  const initial = await readScene(deps, input.chatId);
+  let { chat } = initial;
+  const { read, started } = initial;
   if (!chat.connection) throw new NoConnectionError();
-  const connected = await deps.connect(chat.connection);
+  let connected = await deps.connect(chat.connection);
   if (!connected) throw new NoConnectionError("this scene's connection is gone from Kit; pick another in the AI wing");
-  const model = chat.connection.model;
+  let model = chat.connection.model;
   // The take so far is the history and the draft is the message being answered, as it will be once sent.
-  const loaded = { ...read, current: { id: "forecast", role: "user" as const, content: input.draft, at: deps.now() } };
+  let loaded: LoadedTurn = { ...read, current: { id: "forecast", role: "user", content: input.draft, at: deps.now() } };
+  if (loaded.promptbook) {
+    const prepared = await composeBookPhase(deps, chat, loaded, replyPhase(loaded.promptbook), [], turnWrites(deps.now), false, true);
+    loaded = prepared.loaded;
+    chat = { ...prepared.chat, regex: { ...prepared.chat.regex, sets: prepared.regex } };
+    if (prepared.connection) { connected = await deps.connect(prepared.connection); model = prepared.connection.model; chat.connection = prepared.connection; }
+    if (!connected) throw new NoConnectionError("The reply phase's model is unavailable.");
+  }
   const prep = await prepareRequest(deps, chat, loaded, connected, model, started);
   // The tool definitions a send would carry are reserved by the budget the same way (the tools are made, never called).
   const tools = await toolTurn(deps.narratorTools, "reply", chat, loaded, deps.randomSeed(), turnWrites(deps.now), await deps.toolBudgetMs?.());
@@ -67,6 +78,7 @@ export async function forecastRequest(deps: ForecastDeps, input: { chatId: strin
   const messages = sent.map((m, i) => ({ role: m.role, content: m.content, tokens: i < trace.length && built.asked[i]?.content === m.content ? trace[i]!.tokens : countText(m.content) }));
   const compendium = resolveCompendium(chat.compendium);
   const notes = [
+    ...(loaded.promptbook ? [`Promptbook: ${loaded.promptbook.phases.filter((p) => p.enabled).length} enabled phases. This forecast estimates the reply only; earlier phase outputs and dice rolls are generated when you send.`] : []),
     ...(compendium.on && compendium.recall.on ? ["The Compendium's recall is not run for a forecast; its entries are added when you send."] : []),
     ...((chat.regex?.sets?.length ?? 0) > 0 ? ["Prompt regex runs when you send; this forecast shows the request before it."] : []),
   ];

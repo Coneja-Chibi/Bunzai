@@ -28,6 +28,13 @@ const NOT_KINDS = "the same words used for something else (field names, panel id
 const ARCHIVE = "the Lumiverse archive's own tables and scopes, fixed by that format";
 
 const ALLOWED: Record<string, { lines: number; reason: string }> = {
+  "src/core/promptbook.ts": { lines: 1, reason: "Together groups accept only prompt-bearing card kinds, a domain rule rather than all kinds" },
+  "src/entities/agent/kind.ts": { lines: 1, reason: "the hub itself: the Agent's links" },
+  "src/entities/promptbook/schema.ts": { lines: 1, reason: "the workflow card union is a supported subset, not the Library kind registry" },
+  "src/formats/bunzai-workflow/index.ts": { lines: 2, reason: "two native adapters sharing one strict canonical codec" },
+  "src/ui/agent/kit-transcript.tsx": { lines: 1, reason: "transcript speaker and event categories, not Library kinds" },
+  "src/ui/apps/workbench/promptbook/agent-editor.tsx": { lines: 1, reason: "the two link capabilities an Agent owns" },
+  "src/ui/apps/workbench/promptbook/book-cards.tsx": { lines: 2, reason: "prompt-bearing Together cards and the separate Agent seat, not Library kind discovery" },
   "src/core/adapter.ts": { lines: 1, reason: "the generic adapter type plus the two kinds with real adapter extras" },
   "src/core/loadout-panels.ts": { lines: 3, reason: `RoleCall's loadout panel and unit ids: ${NOT_KINDS}` },
   "src/core/preset/script-sheet.ts": { lines: 1, reason: `macro names a Script Sheet seats itself: ${NOT_KINDS}` },

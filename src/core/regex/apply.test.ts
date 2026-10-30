@@ -92,6 +92,19 @@ describe("applyRules - step 2: compile", () => {
 });
 
 describe("applyRules - step 3: substituteFind macro modes", () => {
+  test("an output cap preserves input and stops later rules instead of retaining a partial amplification", () => {
+    const text = "a" + "b".repeat(2000);
+    const result = applyRules(text, [rule({ find: "^a", replace: "$'".repeat(600) }), rule({ id: "next", find: "b", replace: "X", sortOrder: 1 })], { phase: "output" });
+    expect(result.text).toBe(text);
+    expect(result.traces[0]!.error).toContain("size limit");
+    expect(result.traces[1]!.applied).toBe(false);
+  });
+  test("raw macro values are screened as the pattern that actually executes", () => {
+    const result = applyRules("aa!", [rule({ find: "{{char}}", substituteFind: "raw", replace: "X" })], { phase: "output", macros: { char: "a+a+a+a+a+$" } });
+    expect(result.text).toBe("aa!");
+    expect(result.traces[0]!.applied).toBe(false);
+    expect(result.traces[0]!.error).toContain("backtracking");
+  });
   test("raw mode substitutes macros into the find pattern verbatim", () => {
     const result = applyRules("hello Nova", [
       rule({ find: "{{char}}", substituteFind: "raw", replace: "WORLD" }),
@@ -269,13 +282,13 @@ describe("R2X (1): replace-side delegates to replace-ops - host parity + extende
 });
 
 describe("R2X (2): flag handling delegates to ast/dialect parseFlagTokens", () => {
-  test("the ES2025 'v' flag is accepted (parseFlagTokens superset over the old compileFlags)", () => {
-    // Pre-R2X compileFlags dropped 'v'; parseFlagTokens keeps it. v-mode compiles cleanly here.
+  test("the v flag is preserved but execution refuses its unsupported analysis grammar", () => {
     const result = applyRules("CAT", [rule({ useFlags: true, flags: "gvi", find: "cat" })], {
       phase: "output",
     });
-    expect(result.traces.at(0)!.applied).toBe(true);
-    expect(result.text).toBe("dog");
+    expect(result.traces.at(0)!.applied).toBe(false);
+    expect(result.traces.at(0)!.error).toContain("unsupported");
+    expect(result.text).toBe("CAT");
   });
 
   test("conflicting u+v flags trace an error instead of throwing out of the engine", () => {

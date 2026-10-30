@@ -4,7 +4,7 @@
  * view, the Press bundles, exports, imports and delete warnings all follow the same table.
  */
 import { isRecord, strArray } from "./guards";
-import { KINDS } from "../generated/kinds";
+import { KINDS, kindOf } from "../generated/kinds";
 import type { KindLink } from "../entities/_shared/kind-descriptor";
 
 /** One link, with the kind that holds it. */
@@ -26,7 +26,7 @@ export const refsIn = (body: unknown, field: string): string[] => strArray(isRec
 /** Every piece a body of `kind` links, in the kind's link order; `embedded` keeps only the ones its file carries. */
 export const linkedRefs = (kind: string, body: unknown, scope: "all" | "embedded" = "all"): LinkRef[] =>
   portsOf(kind).filter((p) => scope === "all" || p.embedded === true)
-    .flatMap((p) => refsIn(body, p.field).map((id) => ({ kind: p.to, id, field: p.field })));
+    .flatMap((p) => (p.read ? p.read(body) : refsIn(body, p.field)).map((id) => ({ kind: p.to, id, field: p.field })));
 
 /**
  * The body with linked ids renamed after keep-both saves gave pieces new ids; `renamed` maps "kind:oldId" to the new
@@ -39,7 +39,8 @@ export function withLinksRenamed<B>(kind: string, body: B, renamed: ReadonlyMap<
     if (!Array.isArray(out[p.field])) continue;
     out[p.field] = refsIn(body, p.field).map((id) => renamed.get(`${p.to}:${id}`) ?? id);
   }
-  return out as B;
+  const rename = kindOf(kind)?.renameLinks as ((body: B, renamed: ReadonlyMap<string, string>) => B) | undefined;
+  return rename ? rename(out as B, renamed) : out as B;
 }
 
 /** The linked pieces of a body read through `read`, split into the ones found and the ones that are gone. */

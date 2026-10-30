@@ -3,12 +3,10 @@
  * synchronous RegExp, so the only honest way to warn about it at author time is to derive the danger
  * from the tree. This is the underline source for QOL row 22 (the editor highlights culpritSpan).
  *
- * It is a WARNING lens, not the gate. The actual defense is already shipped: validate.ts refuses a
- * pattern over its complexity cap before compile, and apply.ts holds the per-rule timeout budget.
- * So this module is tuned for PRECISION over recall: a false positive cries wolf on a safe pattern
- * (the UX harm we avoid), whereas a miss simply falls through to those existing guards.
+ * validate.ts refuses both suspicious and dangerous reports for execution. This static screen is
+ * conservative, not a proof of linear execution; clocks cannot interrupt a native RegExp call.
  *
- * Three structural culprits, each derived from the AST:
+ * Structural culprits, each derived from the AST:
  *  - nested unbounded quantifiers whose iteration boundary is ambiguous ((a+)+, (a+a)+) - the seam
  *    between two outer iterations is nullable or its first-set overlaps the inner run's first-set;
  *    a mandatory disjoint separator ((a+b)+, (ab+)+) is proven safe and passes clean.
@@ -36,7 +34,7 @@ import type {
 
 export type RedosSeverity = "safe" | "suspicious" | "dangerous";
 
-export type RedosKind = "nested-quantifier" | "overlapping-alternation" | "quantified-backreference";
+export type RedosKind = "nested-quantifier" | "overlapping-alternation" | "quantified-backreference" | "adjacent-repetition";
 
 /** One structural ReDoS culprit, spanning the exact characters the editor should underline. */
 export interface RedosFinding {
@@ -51,6 +49,11 @@ export interface RedosReport {
   severity: RedosSeverity;
   findings: RedosFinding[];
 }
+export function captureCount(ast: Alternation): number {
+  let count = 0;
+  eachNode(ast, (n) => { if (n.type === "group" && n.capturing) count++; });
+  return count;
+}
 
 /**
  * Analyze a parsed pattern for static ReDoS shapes. Pure over the AST: returns a report whose
@@ -59,20 +62,34 @@ export interface RedosReport {
 export function analyzeRedos(ast: Alternation): RedosReport {
   const raw: RedosFinding[] = [];
   eachNode(ast, (node) => {
+    if (node.type === "sequence") collectAdjacentRepetition(node, raw);
     if (node.type !== "quantifier") return;
-    if (node.max === null) {
+    if (node.max === null || node.max > 1) {
       collectForQuantifier(node, raw);
-    } else if (node.max > 1) {
-      // D6: a *bounded* outer repeat above 1 still has an iteration boundary, so a body that
-      // contains an unbounded quantifier is exactly as ambiguous as the max===null case - each
-      // repetition can still split the input a different way. Only the nested-quantifier detector
-      // applies here: overlapping-alternation and quantified-backreference are unaffected by an
-      // outer repeat count, so they stay scoped to the truly unbounded case above.
-      collectNestedQuantifier(node, raw);
     }
   });
   const findings = dedupeBySpan(raw);
   return { severity: worstSeverity(findings), findings };
+}
+
+/** Repetitions can share input across nullable/overlapping seams without being nested. */
+function collectAdjacentRepetition(seq: Sequence, out: RedosFinding[]): void {
+  const flatten = (nodes: readonly Node[]): Node[] => nodes.flatMap((n) => n.type === "group" && n.body.alternatives.length === 1 ? flatten(n.body.alternatives[0]!.elements) : [n]);
+  let prior: Node[] = [];
+  for (const node of flatten(seq.elements)) {
+    const first = firstSet(node);
+    let repeated = false;
+    eachNode(node, (n) => { if (n.type === "quantifier" && (n.max === null || n.max > Math.max(1, n.min))) repeated = true; });
+    if (repeated) {
+      const previous = prior.find((p) => overlaps(firstSet(p), first));
+      if (previous) {
+        out.push({ kind: "adjacent-repetition", severity: "dangerous", culpritSpan: { start: previous.start, end: node.end }, message: "Sequential repetitions can consume the same text, risking polynomial backtracking." });
+        return;
+      }
+    }
+    if (!nullable(node)) prior = prior.filter((p) => overlaps(firstSet(p), first));
+    if (repeated) prior.push(node);
+  }
 }
 
 // --- per-quantifier detectors ----------------------------------------------
@@ -146,7 +163,7 @@ function scanInner(node: Node, after: readonly Atom[], out: Quantifier[]): void 
       scanInner(node.body, after, out);
       return;
     case "quantifier": {
-      const loops = node.max === null;
+      const loops = node.max === null || node.max > node.min;
       if (loops && overlaps(firstSet(node.body), after)) out.push(node);
       scanInner(node.body, loops ? [...firstSet(node.body), ...after] : after, out);
       return;
@@ -175,8 +192,8 @@ function alternationOverlap(alt: Alternation): "dangerous" | "suspicious" | null
     for (let j = i + 1; j < branches.length; j++) {
       const a = branches[i] as Sequence;
       const b = branches[j] as Sequence;
-      const sa = literalString(a);
-      const sb = literalString(b);
+      const sa = literalString(a)?.toUpperCase().toLowerCase() ?? null;
+      const sb = literalString(b)?.toUpperCase().toLowerCase() ?? null;
       if (sa !== null && sb !== null) {
         if (sa.startsWith(sb) || sb.startsWith(sa)) return "dangerous";
         continue; // both literal and diverging: deterministic, safe
@@ -300,7 +317,10 @@ function overlaps(xs: readonly Atom[], ys: readonly Atom[]): boolean {
 function atomsOverlap(a: Atom, b: Atom): boolean {
   if (a.wide || b.wide) return true;
   for (const cp of [...SAMPLE, ...a.witnesses, ...b.witnesses]) {
-    if (a.test(cp) && b.test(cp)) return true;
+    // Conservatively include case folding: the same pattern may be executed with an imported i flag.
+    const char = String.fromCodePoint(cp);
+    const variants = [cp, char.toLowerCase().codePointAt(0)!, char.toUpperCase().codePointAt(0)!, char.toUpperCase().toLowerCase().codePointAt(0)!];
+    if (variants.some(a.test) && variants.some(b.test)) return true;
   }
   return false;
 }

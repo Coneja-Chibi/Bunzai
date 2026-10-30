@@ -26,7 +26,7 @@ const ALLOWED: Record<string, Entry> = {
   "src/stage/provider/provider-send.ts": { count: 1, reason: "the default transport for the connection's own configured endpoint; the caller's guardedFetch replaces it where the host is locked" },
   // Loopback and the studio's own origin.
   "src/ui/port-owner.ts": { count: 1, reason: "asks 127.0.0.1 whether the studio already runs on this port" },
-  "src/ui/remote/lan-server.ts": { count: 3, reason: "browser script text served to the pairing page; same-origin /lan routes" },
+  "src/ui/remote/lan-server.ts": { count: 2, reason: "two browser-script requests on the pairing page, both same-origin /lan routes; the listener callback is not an outbound fetch" },
   "src/ui/setup/wizard.tsx": { count: 1, reason: "browser: same-origin /api/setup/steps" },
   "src/ui/shell/theme-asset-urls.ts": { count: 1, reason: "browser: a theme package's own asset URL under the studio's origin (CSP connect-src 'self')" },
   "src/ui/shell/use-boot.ts": { count: 2, reason: "browser: same-origin /api/apps and /api/settings" },

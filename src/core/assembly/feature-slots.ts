@@ -8,11 +8,10 @@
  * The placeholder carries a random nonce made per plan (`slotNonce`), so no chat message, card or lore text can hold one:
  * matching it by text only ever finds the plan's own marker blocks.
  */
-import type { FeatureMarkerSlot } from "../preset/build";
 import type { Block } from "./conversation";
 import type { BlockSource } from "./types";
 
-export const slotPlaceholder = (slot: FeatureMarkerSlot, nonce: string): string => `\uE000bunzai-slot:${nonce}:${slot}\uE001`;
+export const slotPlaceholder = (slot: string, nonce: string): string => `\uE000bunzai-slot:${nonce}:${slot}\uE001`;
 /** A fresh nonce for one plan, from the platform's random source. */
 export function slotNonce(): string {
   const bytes = new Uint8Array(16);
@@ -30,7 +29,7 @@ export const leftPlaceholder = (blocks: readonly Block[], nonce: string): boolea
  * assistant marker can have a preset append block glued onto it (conversation.ts appendAtDepth), as any block of that role can:
  * then the texts take the placeholder's place in that one message, ahead of what was glued.
  */
-export function fillSlot(blocks: readonly Block[], slot: FeatureMarkerSlot, nonce: string, texts: readonly string[], source: BlockSource): Block[] {
+export function fillSlot(blocks: readonly Block[], slot: string, nonce: string, texts: readonly string[], source: BlockSource): Block[] {
   const mark = slotPlaceholder(slot, nonce);
   return blocks.flatMap((b): Block[] => {
     if (b.content === mark) return texts.map((content) => ({ role: b.role, content, source }));

@@ -7,7 +7,7 @@
  */
 import { chmod, mkdir } from "node:fs/promises";
 import { join } from "node:path";
-import { json } from "../server-security";
+import { json, readJsonObject, err } from "../server-security";
 import type { LanHost, LanSessionStatus } from "./lan-host";
 
 const COOKIE = "bunzai-lan";
@@ -166,33 +166,25 @@ function gatePage(status: LanSessionStatus | null): Response {
   );
 }
 
-/** Start the LAN listener. Binds 0.0.0.0 so LAN devices can reach it; TLS keeps the code off the wire. */
-export async function startLanServer(opts: LanServerOptions): Promise<LanServerHandle> {
-  const { cert, key, fingerprint } = await ensureCert(opts.certDir, opts.hostIp);
-
-  const server = Bun.serve({
-    port: opts.port,
-    hostname: "0.0.0.0",
-    tls: { cert, key },
-    async fetch(req, srv) {
-      const ip = srv.requestIP(req)?.address ?? "unknown";
+/** The unauthenticated LAN gate, separated from TLS binding for direct boundary verification. */
+export function createLanHandler(opts: Pick<LanServerOptions, "lanHost" | "appHandler">): (req: Request, ip: string) => Promise<Response> {
+  return async (req, ip) => {
       const p = new URL(req.url).pathname;
       const sessionId = readCookie(req, COOKIE);
 
       if (p === "/lan/code" && req.method === "POST") {
-        const body = (await req.json().catch(() => null)) as { code?: unknown } | null;
-        const code = typeof body?.code === "string" ? body.code : "";
-        const v = await opts.lanHost.verifyCode(ip, code);
-        if (!v.ok) return json({ ok: false, retryAfterMs: v.retryAfterMs }, 403);
-        const id = opts.lanHost.createPending(ip, deviceLabel(req.headers.get("user-agent") ?? "", ip));
+        const body = await readJsonObject(req, 1024);
+        if (!body.ok) return body.response;
+        const { code } = body.value;
+        if (typeof code !== "string" || code.length > 32 || Object.keys(body.value).some((k) => k !== "code")) return err("Expected a connect code.");
+        const v = await opts.lanHost.requestSession(ip, code, deviceLabel(req.headers.get("user-agent") ?? "", ip));
+        if (!v.ok || !v.id) return json({ ok: false, retryAfterMs: v.retryAfterMs }, 403);
+        const id = v.id;
         return new Response(JSON.stringify({ ok: true }), {
           headers: {
             "content-type": "application/json",
             "cache-control": "no-store",
-            // No `Secure`: the LAN listener is HTTPS-only, and a self-signed cert is not a "secure
-            // context" in some browsers, which then DROP Secure cookies (the device loops on the code
-            // page). SameSite=Lax so the cookie rides the reload navigation. HttpOnly still stands.
-            "set-cookie": `${COOKIE}=${id}; HttpOnly; SameSite=Lax; Path=/`,
+            "set-cookie": `${COOKIE}=${id}; Secure; HttpOnly; SameSite=Lax; Path=/`,
           },
         });
       }
@@ -203,7 +195,18 @@ export async function startLanServer(opts: LanServerOptions): Promise<LanServerH
       const status = sessionId ? opts.lanHost.status(sessionId) : null;
       if (status === "approved") return opts.appHandler(req);
       return gatePage(status);
-    },
+  };
+}
+
+/** Start the LAN listener. Binds 0.0.0.0 so LAN devices can reach it; TLS keeps the code off the wire. */
+export async function startLanServer(opts: LanServerOptions): Promise<LanServerHandle> {
+  const { cert, key, fingerprint } = await ensureCert(opts.certDir, opts.hostIp);
+  const handler = createLanHandler(opts);
+  const server = Bun.serve({
+    port: opts.port,
+    hostname: "0.0.0.0",
+    tls: { cert, key },
+    fetch: (req, srv) => handler(req, srv.requestIP(req)?.address ?? "unknown"),
   });
 
   return {

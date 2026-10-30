@@ -12,7 +12,8 @@ import type { RegexRule } from "../../entities/regex/schema";
 import type { Span } from "./ast/ast-types";
 import { jsFlagsForRule } from "./ast/dialect";
 import { parseRegex } from "./ast/parser";
-import { analyzeRedos } from "./ast/redos";
+import { analyzeRedos, captureCount } from "./ast/redos";
+import { REGEX_CAPTURE_LIMIT } from "./limits";
 import { toErrorMessage } from "../../error-message";
 
 export const MAX_PATTERN_LENGTH = 10_000;
@@ -49,15 +50,15 @@ function estimateComplexity(pattern: string): number {
  * Pattern-only safety vet for UNTRUSTED regexes compiled OUTSIDE the rule engine (lorebook
  * regex keys ride imported books straight onto the render thread). Same discipline as
  * validateRule minus the rule plumbing: length cap, AST ReDoS analysis when the pattern parses,
- * the complexity heuristic when the u-mode parser refuses it. Fail closed: a dangerous or
+ * refusing patterns the structural parser cannot inspect. Fail closed: a dangerous or
  * over-budget pattern comes back false and the caller must refuse to run it - refusing before
  * the call is the only clean timeout a synchronous engine has.
  */
-export function vetPattern(pattern: string): boolean {
+export function vetPattern(pattern: string, flags = ""): boolean {
   if (!pattern.trim() || pattern.length > MAX_PATTERN_LENGTH) return false;
-  const parsed = parseRegex(pattern);
-  if ("ast" in parsed) return analyzeRedos(parsed.ast).severity !== "dangerous";
-  return estimateComplexity(pattern) < COMPLEXITY_HARD_CAP;
+  const parsed = parseRegex(pattern, flags);
+  if ("ast" in parsed) return captureCount(parsed.ast) <= REGEX_CAPTURE_LIMIT && analyzeRedos(parsed.ast).severity === "safe";
+  return false;
 }
 
 /**
@@ -98,23 +99,21 @@ export function validateRule(rule: RegexRule): RuleValidation {
 
   // R2X: real static analysis on the AST when the pattern parses (nested unbounded quantifiers,
   // overlapping alternation under a star, quantified backreferences - with the culprit's exact
-  // span). The regex heuristic below remains the fallback for patterns our u-mode parser refuses
-  // (Annex-B legacy forms that the host engine still compiles).
-  const parsed = parseRegex(pattern); // pattern-only analysis; flags don't change ReDoS shape
+  // span). Unsupported syntax must not bypass structural inspection through a weaker heuristic.
+  const parsed = parseRegex(pattern, jsFlagsForRule(rule));
   if ("ast" in parsed) {
+    if (captureCount(parsed.ast) > REGEX_CAPTURE_LIMIT) return { ok: false, error: "regex/validate: too many capture groups", complexity: COMPLEXITY_HARD_CAP };
     const report = analyzeRedos(parsed.ast);
     const worst = report.findings[0];
-    if (report.severity === "dangerous") {
+    if (report.severity !== "safe") {
       return {
         ok: false,
-        error: "regex/validate: pattern has nested quantifiers that risk catastrophic backtracking",
+        error: "regex/validate: ambiguous repetition risks catastrophic or polynomial backtracking",
         complexity: COMPLEXITY_HARD_CAP,
         ...(worst ? { culprit: worst.culpritSpan } : {}),
       };
     }
-    const complexity = report.severity === "suspicious"
-      ? Math.max(estimateComplexity(pattern), COMPLEXITY_HARD_CAP - 10)
-      : estimateComplexity(pattern);
+    const complexity = estimateComplexity(pattern);
     return {
       ok: true,
       complexity,
@@ -122,14 +121,5 @@ export function validateRule(rule: RegexRule): RuleValidation {
     };
   }
 
-  const complexity = estimateComplexity(pattern);
-  if (complexity >= COMPLEXITY_HARD_CAP) {
-    return {
-      ok: false,
-      error: "regex/validate: pattern has nested quantifiers that risk catastrophic backtracking",
-      complexity,
-    };
-  }
-
-  return { ok: true, complexity };
+  return { ok: false, error: "regex/validate: unsupported syntax cannot be checked safely; rewrite it using standard Unicode-compatible regex syntax", complexity: estimateComplexity(pattern) };
 }

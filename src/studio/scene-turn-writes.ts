@@ -12,6 +12,8 @@ import type { Delta } from "../core/scene-state/types";
 export type ToolWrites = Pick<TurnWrites, "now" | "append">;
 
 export interface TurnWrites {
+  /** A snapshot for the owning runner when another phase adds macro deltas to the same checkpoint. */
+  pending(): readonly Delta[];
   /** The clock the turn runs on, for the time of a write. */
   now(): number;
   /** Adds deltas and saves the whole set; an error in words for the model when they are not library tracker slots or the open skills, or the save fails, with nothing kept. */
@@ -44,6 +46,7 @@ export function turnWrites(now: () => number): TurnWrites {
     return null;
   };
   return {
+    pending: () => [...held],
     now,
     open: (pending, to) => {
       held = [...pending];

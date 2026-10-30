@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/components",
   "sourcePath": "docs/reference/components.md",
-  "sourceHash": "sha256:56dd655f3589cc729ea899823d73df12f415d6595d3934a54adf22f81f2d3e76",
-  "semanticSummaryHash": "sha256:77e925df0f7afeb3d361e2a9956117b17e6785cf8a0004ba4acb9c5ae96ae188",
+  "sourceHash": "sha256:cb9abe666c9a242b8269e4749c5ba12eaeacb718676e5d6e454b31aa4c9f0970",
+  "semanticSummaryHash": "sha256:0b766a24920da50718102202c13d0215c895b9e31de4bb9597230b589edb2beb",
   "verdict": "APPROVE",
-  "reviewer": "integration_review",
-  "notes": "Reviewed regenerated Dramaturg component exports and updated shared component signatures against owning source; catalog remains generated lookup metadata, not behavioral verification.",
-  "reviewedAt": "2026-10-30T03:37:04.880Z"
+  "reviewer": "node_placement_review",
+  "notes": "Re-reviewed latest catalog export rename to TurnStatus against component, caller and mutually exclusive phase/Final Cut event state; prior Promptbook editor entries remain accurate.",
+  "reviewedAt": "2026-10-30T13:06:40.283Z"
 }

@@ -36,6 +36,28 @@ function makeManager(resolveBin: () => string | null): {
 }
 
 describe("no sidecar binary present", () => {
+  test("enable launches only its helper; disable kills only the owned child and ignores stale output", async () => {
+    const calls: string[][] = [];
+    const exited = Promise.withResolvers<number>();
+    let output!: ReadableStreamDefaultController<Uint8Array>;
+    let kills = 0;
+    const child = { stdout: new ReadableStream<Uint8Array>({ start(c) { output = c; } }), exited: exited.promise, kill: () => { kills++; exited.resolve(0); } };
+    const spawn = ((argv: string[]) => {
+      calls.push(argv);
+      return argv[0] === "owned-helper" ? child : { exited: Promise.resolve(0) };
+    }) as unknown as typeof Bun.spawn;
+    const manager = createSidecarManager({ resolveBin: () => "owned-helper", spawn, untrustedUpstream: "127.0.0.1:8788", sharedSecret: "test", openUrl: () => undefined });
+    manager.enable();
+    await Promise.resolve();
+    manager.enable();
+    expect(calls.map((c) => c[0])).toEqual(["owned-helper"]);
+    await manager.disable();
+    output.enqueue(new TextEncoder().encode('{"event":"status","state":"running","dnsName":"test.ts.net"}\n'));
+    output.close();
+    await Promise.resolve();
+    expect(kills).toBe(1);
+    expect(manager.getState().phase).toBe("off");
+  });
   test("reports unavailable BEFORE anything is clicked", () => {
     // The real fix: the panel must not offer a control this build cannot honour. Discovering the
     // absence only after a click is how a raw uv_spawn error reached a user's screen.
@@ -97,9 +119,7 @@ describe("the resolver is re-run, not cached", () => {
     // working button, not an "unavailable" that only a restart clears.
     //
     // Asserted by COUNTING calls with the binary still absent, rather than by letting a resolver return
-    // a fake path. A non-null path takes enable() into the real imperative edge, which sweeps orphans
-    // with `taskkill /F /IM sidecar.exe` - a test must not reach for a signal that would kill a sidecar
-    // the developer is actually running.
+    // a fake path. This test exercises absence; the owned launch above uses an injected process.
     let calls = 0;
     const { manager } = makeManager(() => {
       calls++;

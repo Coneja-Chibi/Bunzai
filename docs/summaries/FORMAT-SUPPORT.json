@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "FORMAT-SUPPORT",
   "sourcePath": "docs/FORMAT-SUPPORT.md",
-  "sourceHash": "sha256:27dc476ed88372f57e2a16b1f9f08f44f9b4d30c02cf41bacbef21dfbe86a092",
-  "summary": "Auto-generated format support matrix from the live adapter registry, grouped by canonical content kind, in the kind hub's order and names, with adapter id, output extensions, and human label. It documents CLI listing, inspection, conversion, and validation, with SillyTavern CCv3 as the default portable character shape for thin hosts. The current registry has eleven character, nine lorebook, four persona, one pack, four preset, one Script Sheet, five regex-set, one quick-reply and one prompt-format adapter. The pack adapter, image-pack, writes a zip of pictures and sounds. Tools (kind tool), dice (kind dice), formulas (kind formula), trackers (kind tracker), skills (kind skill) and drawings (kind htmldoc) have no import or export format yet, and their sections say so. Notes explain content-sniff detection, fixture-proven same-format round trips, honest cross-format loss reporting, and sample locations. Because the page is generated, counts and rows change only with the registry.",
+  "sourceHash": "sha256:8bc9029dfc68d4582cc04308b3f00593b7913d4bd2085eadb90c06f064197fb6",
+  "summary": "Auto-generated format support matrix from the live adapter registry, grouped by canonical content kind, in the kind hub's order and names, with adapter id, output extensions, and human label. It documents CLI listing, inspection, conversion, and validation, with SillyTavern CCv3 as the default portable character shape for thin hosts. The current registry has eleven character, nine lorebook, four persona, one pack, four preset, one Script Sheet, five regex-set, one quick-reply and one prompt-format adapter. The pack adapter, image-pack, writes a zip of pictures and sounds. Tools (kind tool), dice (kind dice), formulas (kind formula), trackers (kind tracker), skills (kind skill) and drawings (kind htmldoc) have no import or export format yet, and their sections say so. Notes explain content-sniff detection, fixture-proven same-format round trips, honest cross-format loss reporting, and sample locations. Because the page is generated, counts and rows change only with the registry. Native Bunzai Promptbook and Agent adapters now read and write canonical JSON; these preserve reference IDs rather than embedding linked pieces.",
   "topics": [
     "format support matrix",
     "live adapter registry",
@@ -129,6 +129,20 @@
       "children": []
     },
     {
+      "slug": "promptbooks-1",
+      "title": "Promptbooks (1)",
+      "level": 2,
+      "sourceHash": "sha256:e42dba353c0ae27b7dcc5ee5fc47b4d7905780cdc7fae85441dd806be94031f7",
+      "summary": "The Promptbooks table lists one native Bunzai JSON adapter. It reads and writes the complete canonical entity through strict decoding. The file retains linked Library reference IDs, rather than packaging the referenced pieces inside it. This row describes conversion support only; it does not promise that a recipient already has the referenced Library content or that workflow runtime behavior has been live verified.",
+      "topics": [
+        "Bunzai",
+        "JSON",
+        "canonical"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
       "slug": "regex-sets-5",
       "title": "Regex sets (5)",
       "level": 2,
@@ -236,6 +250,20 @@
         "instruct and context templates",
         "generated row"
       ]
+    },
+    {
+      "slug": "agents-1",
+      "title": "Agents (1)",
+      "level": 2,
+      "sourceHash": "sha256:6c66bba89b383f45efd2e4a34cb48af22758069818fb758320c57079e3e35c13",
+      "summary": "The Agents table lists one native Bunzai JSON adapter. It reads and writes the complete canonical entity through strict decoding. The file retains linked Library reference IDs, rather than packaging the referenced pieces inside it. This row describes conversion support only; it does not promise that a recipient already has the referenced Library content or that workflow runtime behavior has been live verified.",
+      "topics": [
+        "Bunzai",
+        "JSON",
+        "canonical"
+      ],
+      "children": [],
+      "shortSource": true
     },
     {
       "slug": "drawings-0",

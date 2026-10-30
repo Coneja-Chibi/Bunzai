@@ -6,13 +6,14 @@
  * input; these cases cover the spots where they could in principle have diverged.
  */
 import { describe, expect, test } from "bun:test";
-import { compileStateless, escapeRegex, splitAlternation, unescapeLiteral } from "./escape";
+import { compileStateless, escapeRegex, escapedRegexLength, splitAlternation, unescapeLiteral } from "./escape";
 
 describe("escapeRegex", () => {
   test("escapes every metacharacter, leaves plain text alone", () => {
     expect(escapeRegex("a.b*c")).toBe("a\\.b\\*c");
     expect(escapeRegex("plain words")).toBe("plain words");
     expect(escapeRegex("[x](y){z}|w?+^$\\")).toBe("\\[x\\]\\(y\\)\\{z\\}\\|w\\?\\+\\^\\$\\\\");
+    for (const value of ["plain", ".*[]\\$", "😀."]) expect(escapedRegexLength(value)).toBe(escapeRegex(value).length);
   });
 });
 

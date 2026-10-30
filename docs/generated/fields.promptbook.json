@@ -1,0 +1,181 @@
+{
+  "kind": "promptbook",
+  "source": "src/entities/promptbook/schema.ts",
+  "shapes": [
+    {
+      "name": "BookCard",
+      "doc": "",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "id",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "kind",
+          "optional": false,
+          "type": "typeof BOOK_CARD_KINDS[number]",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "pieceId",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "enabled",
+          "optional": false,
+          "type": "boolean",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "joinPrevious",
+          "optional": true,
+          "type": "boolean",
+          "meaning": "Context cards in the same row compile to one preset message. Placement still belongs to that preset block.",
+          "producers": []
+        },
+        {
+          "name": "condition",
+          "optional": true,
+          "type": "BookCondition",
+          "meaning": "",
+          "producers": []
+        }
+      ]
+    },
+    {
+      "name": "BookPhase",
+      "doc": "",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "id",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "name",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "description",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "role",
+          "optional": false,
+          "type": "\"private\" | \"reply\" | \"after\"",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "enabled",
+          "optional": false,
+          "type": "boolean",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "preset",
+          "optional": false,
+          "type": "PresetBody",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "cards",
+          "optional": false,
+          "type": "BookCard[]",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "agentId",
+          "optional": true,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "connection",
+          "optional": true,
+          "type": "{ id: string; model: string }",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "maxTokens",
+          "optional": true,
+          "type": "number",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "condition",
+          "optional": true,
+          "type": "BookCondition",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "reads",
+          "optional": false,
+          "type": "string[]",
+          "meaning": "The outputs this phase reads. Only earlier phases may be named.",
+          "producers": []
+        }
+      ]
+    },
+    {
+      "name": "PromptbookBody",
+      "doc": "",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "name",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "description",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "phases",
+          "optional": false,
+          "type": "BookPhase[]",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "setups",
+          "optional": false,
+          "type": "{ id: string; name: string; off: string[] }[]",
+          "meaning": "",
+          "producers": []
+        }
+      ]
+    }
+  ]
+}

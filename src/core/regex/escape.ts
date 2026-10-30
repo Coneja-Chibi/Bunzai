@@ -7,7 +7,14 @@
  */
 
 /** Escape every regex metacharacter in `s`, so it matches only its literal characters. */
-export const escapeRegex = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const META_CHARACTERS = /[.*+?^${}()|[\]\\]/g;
+export const escapeRegex = (s: string): string => s.replace(META_CHARACTERS, "\\$&");
+/** Count before constructing escaped text, for callers with an output budget. */
+export function escapedRegexLength(s: string): number {
+  let length = s.length;
+  for (const _match of s.matchAll(META_CHARACTERS)) length++;
+  return length;
+}
 
 /** Reverse `escapeRegex` for a run with no bare metacharacters, or null if it is not a plain run
  *  (a bare metacharacter, or a trailing backslash with nothing after it). */

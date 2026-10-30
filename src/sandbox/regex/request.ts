@@ -7,12 +7,13 @@ import { applyRules, type RegexRunOptions, type RegexRunResult } from "../../cor
 import type { RegexRule } from "../../entities/regex/schema";
 import { isRecord } from "../../core/guards";
 import { toErrorMessage } from "../../error-message";
+import { REGEX_TEXT_CHARS, REGEX_BATCH_CHARS, assertRegexSize } from "../../core/regex/limits";
 
-export const MAX_TEXT_CHARS = 200_000;
+export const MAX_TEXT_CHARS = REGEX_TEXT_CHARS;
 export const MAX_RULES = 500;
 export const MAX_ITEMS = 300;
 /** All the texts of one batch together. */
-export const MAX_BATCH_CHARS = 1_000_000;
+export const MAX_BATCH_CHARS = REGEX_BATCH_CHARS;
 
 export type RegexReply =
   | { runId: number; ok: true; result: RegexRunResult }
@@ -44,7 +45,9 @@ export function answerRegexRequest(request: unknown): RegexReply {
   try {
     if (batch) {
       const items = request.items as { text: string; depth: number }[];
-      return { runId, ok: true, texts: items.map((i) => applyRules(i.text, request.rules as RegexRule[], { ...options, depth: i.depth }).text) };
+      let total = 0;
+      const texts = items.map((i) => { const text = applyRules(i.text, request.rules as RegexRule[], { ...options, depth: i.depth }).text; total += text.length; assertRegexSize(total, MAX_BATCH_CHARS); return text; });
+      return { runId, ok: true, texts };
     }
     return { runId, ok: true, result: applyRules(request.text as string, request.rules as RegexRule[], options) };
   } catch (error) {

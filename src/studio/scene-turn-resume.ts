@@ -7,6 +7,7 @@ import { runOwnedTask } from "./scene-turn-runtime";
 import { StudioConflictError } from "./errors";
 import type { TurnRuntime } from "./scene-turn-runtime";
 import { turnStarting } from "./scene-turn-running";
+import { isRecord } from "../core/guards";
 
 /** A scene's waiting turn, never one still streaming. */
 async function waiting(runtime: TurnRuntime, chats: ChatStore, chatId: string, turnId: string) {
@@ -18,7 +19,7 @@ async function waiting(runtime: TurnRuntime, chats: ChatStore, chatId: string, t
 export async function commitAnyway(runtime: TurnRuntime, chats: ChatStore, chatId: string, turnId: string): Promise<Message | null> {
   return runOwnedTask(runtime, async () => {
     const open = await waiting(runtime, chats, chatId, turnId);
-    if (!open) return null;
+    if (!open || (isRecord(open.trace?.["book"]) && open.trace["book"]["status"] === "running")) return null;
     return chats.commitTurn(turnId, { content: open.content, ...(open.trace ? { trace: open.trace } : {}) });
   });
 }
@@ -43,7 +44,7 @@ export async function resumeScene(runtime: TurnRuntime, chats: ChatStore, chatId
     let kept = 0;
     for (const c of await chats.resumeIncomplete()) {
       if (c.chatId !== chatId || runtime.running.has(c.id) || turnStarting(runtime, chatId)) continue;
-      if (!c.content) {
+      if (!c.content || (isRecord(c.trace?.["book"]) && c.trace["book"]["status"] === "running")) {
         await chats.dropTurn(c.id);
         continue;
       }

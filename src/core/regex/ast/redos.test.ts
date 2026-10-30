@@ -182,7 +182,7 @@ describe("severity roll-up and dedupe", () => {
   test("worst severity wins when suspicious and dangerous coexist", () => {
     const r = report("(\\d|\\w)+(a+)+");
     expect(r.severity).toBe("dangerous");
-    expect(r.findings).toHaveLength(2);
+    expect(r.findings.map((f) => f.kind).sort()).toEqual(["adjacent-repetition", "nested-quantifier", "overlapping-alternation"]);
   });
 
   test("two dangerous culprits both reported, sorted by span start", () => {

@@ -20,6 +20,7 @@ export interface SkillBody {
   when: SkillWhen;
   /** "mentioned": a lorebook entry's primary triggers, matched as a lore entry's are (any one of them). */
   triggers: Trigger[];
+  primaryLogic?: "any" | "all";
   /** With the primary ones, combined by `selectiveLogic`, as a lore entry's secondary triggers. */
   secondaryTriggers: Trigger[];
   /** How the secondary triggers combine with the primary ones (the lorebook's and_any, and_all, not_any, not_all). */
@@ -35,9 +36,14 @@ export interface SkillBody {
 }
 
 export type CanonicalSkill = CanonicalEntity<"skill", SkillBody>;
+export type SkillCondition = Pick<SkillBody, "triggers" | "primaryLogic" | "secondaryTriggers" | "selectiveLogic" | "caseSensitive" | "matchWholeWords" | "scanDepth">;
 
 export const emptySkillBody = (name: string): SkillBody => ({
   name, description: "", text: "", when: "mentioned",
   triggers: [], secondaryTriggers: [], selectiveLogic: "and_any", caseSensitive: false, matchWholeWords: true,
   scanDepth: DEFAULT_SCAN_DEPTH, closeWhenUnmentioned: false,
 });
+export function emptySkillCondition(): SkillCondition {
+  const { triggers, primaryLogic, secondaryTriggers, selectiveLogic, caseSensitive, matchWholeWords, scanDepth } = emptySkillBody("");
+  return { triggers, ...(primaryLogic ? { primaryLogic } : {}), secondaryTriggers, selectiveLogic, caseSensitive, matchWholeWords, scanDepth };
+}
