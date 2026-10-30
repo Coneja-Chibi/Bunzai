@@ -384,7 +384,7 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
   <div class="panel" data-deck="preset">
     <h2 class="sec">Engines on this machine</h2><p class="sec-note">Rendering a macro through another tool's own engine needs a copy of it on disk. Paste the folder's path and press Save; the answer comes from looking for the engine's own file inside it. Kit uses the same folders.</p>
     <div class="row"><div><b>SillyTavern</b></div><p>The folder holding SillyTavern's install. Kit uses it too.</p>
-      <div class="ctl" style="display:grid;min-width:min(480px,100%)"><input class="field mono" value="C:\Users\chiev\Documents\SillyTavern" aria-label="SillyTavern folder" spellcheck="false"><div class="acts"><button class="btn sm" type="button">Save</button><button class="btn sm quiet" type="button">Clear</button><span class="state-line"><span class="dot on"></span>in use</span></div></div></div>
+      <div class="ctl" style="display:grid;min-width:min(480px,100%)"><input class="field mono" value="C:\Users\you\Documents\SillyTavern" aria-label="SillyTavern folder" spellcheck="false"><div class="acts"><button class="btn sm" type="button">Save</button><button class="btn sm quiet" type="button">Clear</button><span class="state-line"><span class="dot on"></span>in use</span></div></div></div>
     <div class="row"><div><b>Marinara</b></div><p>Set by MARINARA_ROOT for this run, so the folder below is not being used. Unset the variable to go back to the saved one.</p>
       <div class="ctl" style="display:grid;min-width:min(480px,100%)"><input class="field mono off" value="D:\engines\marinara" aria-label="Marinara folder" disabled><div class="acts"><button class="btn sm off" type="button">Save</button><button class="btn sm quiet off" type="button">Clear</button><span class="state-line"><span class="dot on"></span>in use, from MARINARA_ROOT</span></div><div class="id dim">D:\engines\marinara-dev</div></div></div>
     <div class="row"><div><b>Other engine, never set</b></div><p>The folder holding that engine. Kit uses it too. (Two more states: "saved, but nothing is there now", and "MARINARA_ROOT is set but no engine is there".)</p>
@@ -482,7 +482,7 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
   </div>
   <div class="panel protected" data-deck="persona">
     <h2 class="sec">Bunzai as a server</h2><p class="sec-note">Point any MCP client at Bunzai's own belt: the library, catalogs and renderers. Your client asks before each tool runs.</p>
-    <code class="block">claude mcp add bunzai -- bunzai mcp "C:\Users\chiev\Documents\Studio"</code>
+    <code class="block">claude mcp add bunzai -- bunzai mcp "C:\Users\you\Documents\Studio"</code>
   </div>
 </section>
 
@@ -761,7 +761,7 @@ code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10
     <h2 class="sec">Your studio folder</h2>
     <p class="small dim" style="margin:6px 0 12px;max-width:72ch" data-st="packaged source">Your pieces are stored here, encrypted in library.db. A copy of this folder opens on another computer only with your recovery words; to share pieces, export them.</p>
     <p class="small dim" style="margin:6px 0 12px" data-st="browser" hidden>This studio exists only in this page. Export work before reloading or closing it.</p>
-    <code class="block" data-st="packaged source">C:\Users\chiev\Documents\Studio</code><code class="block" data-st="browser" hidden>Tab memory only</code>
+    <code class="block" data-st="packaged source">C:\Users\you\Documents\Studio</code><code class="block" data-st="browser" hidden>Tab memory only</code>
   </div>
   <div class="panel" data-deck="character">
     <h2 class="sec">Project</h2><p class="sec-note">Open source under AGPL-3.0. Bugs and wishes welcome.</p>
