@@ -120,14 +120,26 @@ for (const editor of editors) {
 }
 
 describe("the character editor's Bento | Playbill pair", () => {
-  test("stays visible and enabled in core, and is visible but disabled with a note under a theme frame", async () => {
-    const pair = (host: HTMLElement): HTMLButtonElement[] => [...host.querySelectorAll<HTMLButtonElement>('[data-tour="layout"] button')];
+  test("View options keeps both layouts enabled in core and disabled with a note under a theme frame", async () => {
+    const options = async (host: HTMLElement): Promise<HTMLElement> => {
+      await act(async () => { host.querySelector<HTMLButtonElement>('[data-tour="layout"] button')!.click(); });
+      const dialog = document.querySelector<HTMLElement>('[role="dialog"][aria-label="View options"]');
+      expect(dialog).not.toBeNull();
+      return dialog!;
+    };
+    const pair = (dialog: HTMLElement): HTMLButtonElement[] => [...dialog.querySelectorAll<HTMLButtonElement>('[aria-label="Editor layout"] button')];
     const core = await mount(character, "core", "labeled-rows");
-    expect(pair(core.host).map((b) => b.textContent)).toEqual(["Bento", "Playbill"]);
-    expect(pair(core.host).every((b) => !b.disabled)).toBe(true);
+    const coreOptions = await options(core.host);
+    expect(pair(coreOptions).map((b) => b.textContent)).toEqual(["Bento", "Playbill"]);
+    expect(pair(coreOptions).every((b) => !b.disabled)).toBe(true);
+    await act(async () => { pair(coreOptions)[1]!.click(); });
+    expect(pair(coreOptions)[1]!.getAttribute("aria-pressed")).toBe("true");
     await core.unmount();
     const themed = await mount(character, "card-stack", "cards");
-    expect(pair(themed.host).every((b) => b.disabled && b.title !== "")).toBe(true);
+    const themedOptions = await options(themed.host);
+    expect(pair(themedOptions).map((b) => b.textContent)).toEqual(["Bento", "Playbill"]);
+    expect(pair(themedOptions).every((b) => b.disabled)).toBe(true);
+    expect(themedOptions.textContent).toContain("This theme sets how the editor is arranged.");
     await themed.unmount();
   });
 });
