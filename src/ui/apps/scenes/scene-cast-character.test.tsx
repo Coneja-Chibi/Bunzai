@@ -4,13 +4,13 @@
  * section (bundled and added books, the scene's own choice, the full editor). Typing is not simulated
  * (see scene-preset-wing.test.tsx); the handler React attached is called straight off the node.
  */
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import type { JSDOM } from "jsdom";
 import type { Root } from "react-dom/client";
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
 import type { SceneLoreBook, SceneLoreChoice } from "../../app-contract-scenes";
 import type { OpenScene } from "../../../studio/scenes";
-import { installDom, type InstalledDom } from "../../_shared/test-dom";
+import { installDom, waitFor, type InstalledDom } from "../../_shared/test-dom";
 
 let dom: JSDOM;
 let installed: InstalledDom;
@@ -88,8 +88,9 @@ function makeCtx(): AppContext {
   } as unknown as AppContext;
 }
 
-let root: Root;
+let root: Root | null = null;
 let host: HTMLElement;
+afterEach(async () => { unmount((await import("react-dom")).flushSync); });
 type FlushSync = typeof import("react-dom")["flushSync"];
 const doc = (): Document => dom.window.document;
 const buttons = (): HTMLButtonElement[] => [...doc().body.querySelectorAll("button")];
@@ -97,20 +98,22 @@ const byText = (text: string): HTMLButtonElement | undefined => buttons().find((
 const byLabel = (label: string): HTMLElement | null => doc().body.querySelector(`[aria-label="${label}"]`);
 const has = (text: string): boolean => (doc().body.textContent ?? "").includes(text);
 const settle = async (flushSync: FlushSync, ms = 40): Promise<void> => { await new Promise((r) => setTimeout(r, ms)); flushSync(() => undefined); };
-async function mount(): Promise<FlushSync> {
+async function mount(ctx = makeCtx()): Promise<FlushSync> {
   const { flushSync } = await import("react-dom");
   const { createRoot } = await import("react-dom/client");
   const { CastWing } = await import("./scene-cast-wing");
   host = doc().createElement("div");
   doc().body.appendChild(host);
   root = createRoot(host);
-  flushSync(() => root.render(<CastWing ctx={makeCtx()} scene={scene()} busy={false} card={null} onScene={() => undefined} onUpdate={() => undefined} onRevert={() => undefined} />));
+  flushSync(() => root!.render(<CastWing ctx={ctx} scene={scene()} busy={false} card={null} onScene={() => undefined} onUpdate={() => undefined} onRevert={() => undefined} />));
   await settle(flushSync, 80);
   return flushSync;
 }
 function unmount(flushSync: FlushSync): void {
-  flushSync(() => root.unmount());
-  host.remove();
+  const current = root;
+  root = null;
+  try { flushSync(() => current?.unmount()); }
+  finally { host?.remove(); }
 }
 async function press(flushSync: FlushSync, el: HTMLElement | undefined | null, ms = 60): Promise<void> {
   if (!el) throw new Error("nothing to press");
@@ -186,10 +189,16 @@ describe("Cast wing: Character tab, the Lorebooks section", () => {
   });
 
   test("switching a bundled book off and removing an added one are the scene's own choice, not a card edit", async () => {
-    const flushSync = await mount();
-    await press(flushSync, byLabel("Switch off Lighthouse Lore"));
+    const ctx = makeCtx();
+    const getLore = ctx.api.getSceneLore;
+    let releaseLore!: () => void;
+    const held = new Promise<void>((resolve) => { releaseLore = resolve; });
+    ctx.api.getSceneLore = async (...args) => { await held; return getLore(...args); };
+    const flushSync = await mount(ctx);
+    releaseLore();
+    await press(flushSync, await waitFor(flushSync, () => byLabel("Switch off Lighthouse Lore"), "loaded bundled lorebook switch"));
     expect(loreWrites.at(-1)).toEqual({ added: ["mine"], off: ["lore-a"] });
-    await press(flushSync, byLabel("Remove Keeper's Notes from this scene"));
+    await press(flushSync, await waitFor(flushSync, () => byLabel("Remove Keeper's Notes from this scene"), "loaded added lorebook removal"));
     expect(loreWrites.at(-1)).toEqual({ added: [], off: ["lore-a"] });
     expect(byText("Save Draft")).toBeUndefined();
     expect(saves).toHaveLength(0);
