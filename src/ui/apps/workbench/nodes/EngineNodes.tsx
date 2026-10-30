@@ -2,7 +2,7 @@
  * The engine steps on the canvas (dashed, not pieces): the Lore pass, and the Request with its scene picker and
  * Preview, which only report; and the feature nodes, whose port draws a wire that places a feature's marker (the caller writes it).
  */
-import { useState } from "react";
+import { useId, useState } from "react";
 import type { CSSProperties, JSX, PointerEvent } from "react";
 import type { SceneSummary } from "../../../../studio/scenes";
 import { InkDialog } from "../../../components/ink-dialog";
@@ -100,7 +100,7 @@ export function RequestNode(p: RequestNodeProps): JSX.Element {
 export interface FeatureNodeProps {
   at: readonly [number, number];
   slot: FeatureMarkerSlot;
-  /** where its marker stands in the request's preset, or null for its own spot */
+  /** Where its markers stand in the canvas presets, or null when no preset places it. */
   placedAt: string | null;
   /** why its port cannot be dragged (unsaved Desk edits, a narrow window), or null */
   locked: string | null;
@@ -112,6 +112,7 @@ export interface FeatureNodeProps {
 /** A feature that splices into the request (trackers, library trackers, storyboards). Its port is a piece node's port: drag a wire to a block to put its marker there. */
 export function FeatureNode(p: FeatureNodeProps): JSX.Element {
   const name = markerSlotName(p.slot);
+  const descriptionId = useId();
   return (
     <div
       className={css.eng}
@@ -119,17 +120,18 @@ export function FeatureNode(p: FeatureNodeProps): JSX.Element {
       data-feature={p.slot}
       onPointerDown={p.onDown}
     >
-      <div className={css.engKind}>Feature</div>
+      <div className={css.engKind}>Placement</div>
       <div className={css.engName}>{name}</div>
-      <div className={css.engMeta}>{p.placedAt ? `Marker: ${p.placedAt}` : "Own spot: after the leading system messages"}</div>
+      <div id={descriptionId} className={`${css.engMeta} ${p.placedAt ? css.placementSummary : ""}`} title={p.placedAt ?? undefined}>{p.placedAt ? `Preset marker: ${p.placedAt}` : "No preset marker. Defaults apply only when used."}</div>
       <div className={`${css.port} ${css.featurePort} ${p.placedAt ? css.full : ""}`} style={{ height: FEATURE_PORT_H, "--pc": featureColor(p.slot) } as CSSProperties}>
-        <span>Marker</span>
+        <span>Place in preset</span>
         <Dot
           kind="port"
           color={featureColor(p.slot)}
           label={`Place ${name}'s marker`}
+          aria-describedby={descriptionId}
           disabled={p.locked !== null}
-          title={p.locked ?? "Drag onto a block to put its marker there; select its wire and press Delete for its own spot"}
+          title={p.locked ?? "Sets placement, not whether the feature runs. Drag onto a preset block; select its wire and press Delete to restore default placement."}
           onPointerDown={(e) => { e.stopPropagation(); p.onPortDown(e); }}
         />
       </div>

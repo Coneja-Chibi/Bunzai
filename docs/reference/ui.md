@@ -1385,11 +1385,14 @@ canvas.
   derived wires from the context character, persona and a Lore pass step. The Request node picks a scene
   and, with several presets on the canvas and no scene, which preset to build from; with a scene its totals
   and Preview come from the scene forecast, otherwise from a dry run of the canvas pieces that is labeled an
-  estimate (empty slots show their placeholder and count as nothing). Each feature marker slot has a Feature node
-  (Trackers, Library trackers, Storyboards, Skills) under the Lore pass: it wires to its marker's block in every preset that has
-  one, and dashed to the Request when the request's preset has none ("Own spot", where the feature goes without a
-  marker). It reads the marker the assembler fills (the slot's first switched-on marker in the preset's order) by the
-  preset's own switches, not a picked scene's. Its Marker port is a piece node's port and draws a wire with the
+  estimate (empty slots show their placeholder and count as nothing). Feature placement controls
+  (Trackers, Library trackers, Storyboards, Skills) appear for markers actually placed in the canvas presets.
+  **Feature placements** reveals the remaining controls when you want to add a marker; they are hidden by default
+  and excluded from Fit and the minimap while hidden. An unplaced control has no wire to the Request: it is an
+  available placement, not evidence that a feature contributes to the request. These controls never enable a feature.
+  A placed control names every preset marker it wires to. It reads the marker the assembler fills (the slot's first
+  switched-on marker in the preset's order) by the preset's own switches, not a picked scene's.
+  Its **Place in preset** port is a piece node's port and draws a wire with the
   same drag as a link: released on a block of any preset, it puts the marker at that block's place in the list, as
   dragging a block there does, taking its placement, depth and order and switched on (added when the preset has none).
   Its wire to a marker selects like a link's, and Delete gives the feature its own spot by switching the marker off,

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:4a65a85984430f99f27afe98ea225554fa0df213467fce00af80c457fc19bd63",
-  "semanticSummaryHash": "sha256:bd94ed56a44434162f3a2e1dd3a5dd2f4d9d23f69400934eda81fd49771e0868",
+  "sourceHash": "sha256:f33e57a4239d5608d3d80f6387e0a34f5b789025140e796c196781916ee28ab7",
+  "semanticSummaryHash": "sha256:7468566617e192bbeef29e16e201197e6d41de0c512e942e102041b15a2c4f1c",
   "verdict": "APPROVE",
-  "reviewer": "integration_review",
-  "notes": "Verified busy Dramaturg polling now uses shared useVisibleInterval and public component regression confirms timer cancellation while hidden and rearming when visible. Existing refusal cap and verification limitations remain accurate. Independently reran syntax protocol and panel checks17pass212assert; actual-function preopen checks now reject absent and reordered guard mutations.",
-  "reviewedAt": "2026-10-30T05:23:02.735Z"
+  "reviewer": "node_placement_review",
+  "notes": "Reviewed node placement visibility, actual-marker wires, editing semantics and unchanged parent summary against source.",
+  "reviewedAt": "2026-10-30T09:24:10.080Z"
 }

@@ -248,6 +248,7 @@
 /* a feature node: its color edge, and a piece node's port row along its foot (the dot sits past the edge, so no clipping) */
 .eng[data-feature] { border-left: 4px solid var(--k); overflow: visible; }
 .featurePort { position: absolute; left: 0; right: 0; bottom: 0; padding: 0 10px; }
+.placementSummary { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .preview { max-width: min(640px, 90vw); max-height: 80vh; overflow: auto; color: var(--stage-card); }
 .preview h3 { font: 800 16px var(--font-big); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 8px; }
 .previewNote { font: 400 11.5px/1.5 var(--font-mono); color: var(--stage-soft); margin: 0 0 6px; }

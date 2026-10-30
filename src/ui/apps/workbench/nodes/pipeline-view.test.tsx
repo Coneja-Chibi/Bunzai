@@ -106,6 +106,27 @@ const preview = async (): Promise<string> => {
   return dom.window.document.body.querySelector('[data-part="nodes.preview"]')?.textContent ?? "";
 };
 
+const showPlacements = async (): Promise<void> => {
+  fire([...host.querySelectorAll("button")].find((b) => b.textContent === "Feature placements")!, "click");
+  await flush();
+};
+
+test("unused feature placements stay out of the graph and can be opened without request wires or writes", async () => {
+  const h = harness([cut]);
+  await mountView(h);
+  try {
+    expect(all("[data-feature]")).toHaveLength(0);
+    expect(all('[data-pipe-wire^="feature:"]')).toHaveLength(0);
+    await showPlacements();
+    expect(all("[data-feature]")).toHaveLength(4);
+    expect(q<HTMLElement>('[data-feature="trackers"]')!.textContent).toContain("No preset marker");
+    expect(all('[data-pipe-wire^="feature:"]')).toHaveLength(0);
+    await showPlacements();
+    expect(all("[data-feature]")).toHaveLength(0);
+    expect(h.patches).toHaveLength(0);
+  } finally { root.unmount(); }
+});
+
 test("a preset on the canvas opens into its blocks, off ones struck, beside the lore pass and the request", async () => {
   await mountView(harness([cut]));
   expect(all("[data-block]").map((b) => [b.getAttribute("data-block"), b.getAttribute("data-on")])).toEqual([["main", "true"], ["cd", "true"], ["hist", "true"], ["jb", "false"]]);
@@ -221,12 +242,13 @@ const wireTo = (slot: string, row: number): void => {
   fire(dom.window as unknown as EventTarget, "pointerup", { clientX: x, clientY: y });
 };
 
-test("a feature keeps its own spot until its port's wire is released on a block, which places its marker there in one patch", async () => {
+test("an available feature placement adds its marker on a block in one patch", async () => {
   const h = harness([cut]);
   await mountView(h);
+  await showPlacements();
   const node = q<HTMLElement>('[data-feature="trackers"]')!;
-  expect(node.textContent).toContain("Own spot");
-  expect(q('[data-pipe-wire="feature:trackers>request"]')).not.toBeNull();
+  expect(node.textContent).toContain("No preset marker");
+  expect(q('[data-pipe-wire="feature:trackers>request"]')).toBeNull();
   wireTo("trackers", 1);
   await flush();
   expect(h.patches).toHaveLength(1);
@@ -239,6 +261,7 @@ test("a feature keeps its own spot until its port's wire is released on a block,
 test("a wire released on empty canvas places nothing", async () => {
   const h = harness([cut]);
   await mountView(h);
+  await showPlacements();
   const dot = q<HTMLButtonElement>('[data-feature="trackers"] button')!;
   fire(dot, "pointerdown", { button: 0, clientX: 0, clientY: 0 });
   fire(dom.window as unknown as EventTarget, "pointermove", { clientX: 5000, clientY: 5000 });
@@ -252,7 +275,7 @@ test("a placed feature's wire selects and Delete gives it its own spot, switchin
   const h = harness([cut]);
   h.prompts = [...PROMPTS, slot("tk", "storyboards")];
   await mountView(h);
-  expect(q<HTMLElement>('[data-feature="storyboards"]')!.textContent).toContain("Marker: tk in Cut");
+  expect(q<HTMLElement>('[data-feature="storyboards"]')!.textContent).toContain("Preset marker: tk in Cut");
   fire(q('[data-pipe-wire^="feature:storyboards>"] path')!, "pointerdown", { button: 0 });
   await flush();
   fire(q("[data-nodes-canvas]")!, "keydown", { key: "Delete" });
@@ -265,6 +288,7 @@ test("a placed feature's wire selects and Delete gives it its own spot, switchin
 test("while a feature's wire is drawn, the block it would drop on is lit, and only that one", async () => {
   const h = harness([cut]);
   await mountView(h);
+  await showPlacements();
   const pipe = q<HTMLElement>("[data-pipe]")!;
   const x = parseFloat(pipe.style.left) + 40;
   const y = parseFloat(pipe.style.top) + 55 + 2 * 28 + 14;

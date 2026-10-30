@@ -18,7 +18,7 @@ import { boundsOf, fitView, nodeRect, type Pt, type Rect } from "./geometry";
 import { writeLink } from "./link-write";
 import type { GraphEdge, GraphNode, RefField } from "./links";
 import { ENGINE_W, FEATURE_H, LORE_H, LORE_KEY, PIPE_W, REQUEST_H, REQUEST_KEY, featureKey, featureWire, pipeHeight, pipeKey, pipelineModel, type PipelineModel } from "./pipeline";
-import { FEATURE_MARKER_SLOTS } from "../../../../core/preset";
+import { FEATURE_MARKER_SLOTS, type FeatureMarkerSlot } from "../../../../core/preset";
 import { writePreset, type BlockEdit } from "./preset-write";
 import { usePipeline } from "./use-pipeline";
 import { useCanvasState } from "./use-canvas-state";
@@ -39,6 +39,7 @@ export function NodesView({ ctx, pieces, onView }: { ctx: AppContext; pieces: re
   const [selection, select] = useState<Selection>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [chosenPresetId, setChosenPresetId] = useState<string | undefined>(undefined);
+  const [showFeaturePlacements, setShowFeaturePlacements] = useState(false);
   const readOnly = size.w > 0 && size.w < READ_ONLY_BELOW;
   const layout = useMemo(() => tidy(graph.nodes, graph.edges), [graph]);
   const presetPieces = pieces.filter((p) => p.kind === "preset");
@@ -57,6 +58,7 @@ export function NodesView({ ctx, pieces, onView }: { ctx: AppContext; pieces: re
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [presetBodies, chosenPresetId, data.scene, data.texts, data.lore, data.forecast],
   );
+  const featureSlots = FEATURE_MARKER_SLOTS.filter((slot) => showFeaturePlacements || model.presets.some((p) => p.summary.rows.some((row) => row.fills === slot)));
   const at = (key: string): Pt => canvas.pos[key] ?? layout[key] ?? model.defaults[key] ?? [40, 60];
   // A node keeps the place it first appeared at: pin unplaced nodes once, so opening another piece (which
   // changes the tidy layout) never moves nodes that were not dragged. Tidy up still lays everything out again.
@@ -88,7 +90,7 @@ export function NodesView({ ctx, pieces, onView }: { ctx: AppContext; pieces: re
     if ((await writePreset(ctx, piece, edit)) !== "busy") reload();
   };
   const openPiece = (piece: StudioEntitySummary): void => { ctx.workbench.focus(piece.id, piece.kind); onView("desk"); };
-  const layerRects = pipelineRects(model, at);
+  const layerRects = pipelineRects(model, at, featureSlots);
   const unlink = (edge: GraphEdge): void => { select(null); void write(edge.from, edge.field, edge.to, false); };
   /** Delete on a selected feature wire: the feature leaves that preset's marker for its own spot (the marker is switched off). */
   const ownSpot = (id: string): void => {
@@ -143,6 +145,7 @@ export function NodesView({ ctx, pieces, onView }: { ctx: AppContext; pieces: re
             <i style={{ background: color }} />{label}
           </Chip>
         ))}
+        {pipelineOn && <Chip pressed={showFeaturePlacements} onClick={() => setShowFeaturePlacements((show) => !show)} color="var(--deck-preset)">Feature placements</Chip>}
         <span className={css.grow} />
         <AddMenu disabled={readOnly} onAdd={add} />
         <Button size="sm" disabled={readOnly || !canvas.layers.links} onClick={tidyUp}>Tidy up</Button>
@@ -174,6 +177,7 @@ export function NodesView({ ctx, pieces, onView }: { ctx: AppContext; pieces: re
               tools={tools}
               onPreset={setChosenPresetId}
               model={model}
+              featureSlots={featureSlots}
               data={data}
               nodes={graph.nodes}
               piecesShown={canvas.layers.links}
@@ -223,13 +227,13 @@ function useStable<T>(next: readonly T[]): readonly T[] {
 }
 
 /** The Pipeline layer's rectangles: each expanded preset, the Lore pass, the feature nodes and the Request. */
-function pipelineRects(model: PipelineModel, at: (key: string) => Pt): Rect[] {
+function pipelineRects(model: PipelineModel, at: (key: string) => Pt, featureSlots: readonly FeatureMarkerSlot[]): Rect[] {
   if (model.presets.length === 0) return [];
   const box = (key: string, w: number, h: number): Rect => { const [x, y] = at(key); return { x, y, w, h }; };
   return [
     box(LORE_KEY, ENGINE_W, LORE_H),
     ...model.presets.map((p) => box(pipeKey(p.key), PIPE_W, pipeHeight(p.summary.blocks))),
-    ...FEATURE_MARKER_SLOTS.map((slot) => box(featureKey(slot), ENGINE_W, FEATURE_H)),
+    ...featureSlots.map((slot) => box(featureKey(slot), ENGINE_W, FEATURE_H)),
     box(REQUEST_KEY, ENGINE_W, REQUEST_H),
   ];
 }
