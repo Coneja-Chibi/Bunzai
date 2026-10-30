@@ -53,7 +53,7 @@ function streamTurn(run: (emit: (event: DramaturgStreamEvent) => void) => Promis
         if (!open) return;
         try { controller.enqueue(encoder.encode(`event: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`)); } catch { open = false; }
       };
-      const ping = setInterval(() => {
+      const ping = setInterval(() => { // interval-ok: server SSE heartbeat for this request, cleared when its turn settles
         if (!open) return;
         try { controller.enqueue(encoder.encode(": ping\n\n")); } catch { open = false; }
       }, PING_MS);

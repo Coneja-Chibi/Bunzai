@@ -55,36 +55,38 @@ export function reviewedTemporaryWriteProtocol(path: string, source: string): bo
 }
 
 /**
- * src/ui/server-body.ts is the one file that opens upload sinks. Its callers own the private temp root
- * (fileSink: server-engine.ts bunzai-lvbak-upload-; sealedFileSink: server-asset-staging.ts
- * bunzai-asset-staged-; the syntax test pins both callers). Here the file itself is pinned: two
- * owner-only (0o600 default) "w" opens, five handle.write calls and nothing else that writes. Four of
- * them carry sealed bytes (iv, cipher.update, cipher.final, auth tag from an aes-256-gcm cipher built
- * before any of them); the fifth, in fileSink, is the uploaded archive itself, deliberately raw.
+ * The shared upload/export sinks retain exact write sites, owner-only defaults, complete writes,
+ * sync-before-close and exclusive-file cleanup. Callers own private staging roots or the selected
+ * export run; the syntax test pins those callers separately. Four writes carry sealed bytes and
+ * the plain sink carries a bounded upload or an explicitly requested export.
  */
 export function reviewedHandleSinkProtocol(path: string, source: string): boolean {
   if (path !== "src/ui/server-body.ts") return false;
   const clean = stripComments(source);
   const count = (re: RegExp): number => [...clean.matchAll(re)].length;
   const once = (re: RegExp): boolean => count(re) === 1;
-  if (!/^import \{ open, type FileHandle \} from "node:fs\/promises";$/m.test(clean)) return false;
+  if (!/^import \{ open, unlink, type FileHandle \} from "node:fs\/promises";$/m.test(clean)) return false;
   if (count(/\bfrom\s*["']node:fs/g) !== 1 || /\bimport\s*\(|\brequire\s*\(/.test(clean)) return false;
   if (callsNamed(path, source, "open") !== 2
-    || count(/\bconst\s+handle(?:\s*:\s*FileHandle)?\s*=\s*await\s+open\s*\(\s*path\s*,\s*"w"\s*,\s*mode\s*\)/g) !== 2) return false;
-  if (count(/\(\s*path:\s*string,\s*(?:key:\s*Buffer,\s*)?mode\s*=\s*0o600\s*\)/g) !== 2) return false;
-  for (const name of ["writeFile", "writeFileSync", "appendFile", "createWriteStream", "openSync", "writeSync"]) {
+    || !once(/const handle = await open\(path, flags, mode\);/g)
+    || !once(/const handle: FileHandle = await open\(path, "w", mode\);/g)) return false;
+  if (!once(/fileSink\(path: string, mode = 0o600, flags: "w" \| "wx" = "w"\)/g)
+    || !once(/sealedFileSink\(path: string, key: Buffer, mode = 0o600\)/g)) return false;
+  for (const name of ["writeFileSync", "appendFile", "createWriteStream", "openSync", "writeSync"]) {
     if (callsNamed(path, source, name) !== 0) return false;
   }
-  // Five handle writes, plus hashSink teeing the same chunk into its inner sink.
-  if (callsNamed(path, source, "write") !== 6 || count(/\bhandle\.write\s*\(/g) !== 5) return false;
-  if (!once(/\bhandle\.write\(chunk\)/g) || !once(/\bhandle\.write\(iv\)/g) || !once(/\bhandle\.write\(cipher\.update\(chunk\)\)/g)
-    || !once(/\bhandle\.write\(cipher\.final\(\)\)/g) || !once(/\bhandle\.write\(cipher\.getAuthTag\(\)\)/g)) return false;
+  if (callsNamed(path, source, "writeFile") !== 5 || callsNamed(path, source, "write") !== 1 || !once(/inner\.write\(chunk\)/g)) return false;
+  if (!once(/\bhandle\.writeFile\(chunk\)/g) || !once(/\bhandle\.writeFile\(iv\)/g) || !once(/\bhandle\.writeFile\(cipher\.update\(chunk\)\)/g)
+    || !once(/\bhandle\.writeFile\(cipher\.final\(\)\)/g) || !once(/\bhandle\.writeFile\(cipher\.getAuthTag\(\)\)/g)) return false;
+  if (callsNamed(path, source, "sync") !== 2 || count(/handle\.close\(/g) !== 5) return false;
+  if (!once(/finish: async \(\) => \{ try \{ await handle\.sync\(\); \} finally \{ await handle\.close\(\); \} \}/g)) return false;
+  if (callsNamed(path, source, "unlink") !== 1 || !once(/await handle\.close\(\)\.catch\(\(\) => undefined\);\s*if \(flags === "wx"\) await unlink\(path\)\.catch\(\(\) => undefined\);/g)) return false;
   // The sealing boundary: a 12-byte random iv and the AES-256-GCM cipher precede every sealed write.
-  const sealing = /const\s+iv\s*=\s*randomBytes\(12\);\s*const\s+cipher\s*=\s*createCipheriv\("aes-256-gcm",\s*key,\s*iv\);\s*await\s+handle\.write\(iv\);/.exec(clean);
+  const sealing = /const\s+iv\s*=\s*randomBytes\(12\);\s*const\s+cipher\s*=\s*createCipheriv\("aes-256-gcm",\s*key,\s*iv\);\s*await\s+handle\.writeFile\(iv\);/.exec(clean);
   if (!sealing) return false;
   const afterSealing = clean.slice(sealing.index);
-  return /handle\.write\(cipher\.update\(chunk\)\)/.test(afterSealing) && /handle\.write\(cipher\.final\(\)\)/.test(afterSealing)
-    && /handle\.write\(cipher\.getAuthTag\(\)\)/.test(afterSealing);
+  return /handle\.writeFile\(cipher\.update\(chunk\)\)/.test(afterSealing)
+    && /await handle\.writeFile\(cipher\.final\(\)\);\s*await handle\.writeFile\(cipher\.getAuthTag\(\)\);\s*await handle\.sync\(\);\s*\} finally \{ await handle\.close\(\); \}/.test(afterSealing);
 }
 
 /** Identity repair moves one damaged file aside; all key publication remains in the atomic owner. */

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:284f3ab154bd81901db45de31b57371e1474c413a35a3e4c04b8c2843c9d72e7",
-  "semanticSummaryHash": "sha256:bb4d022c5da78a2e86ab37f37d0328c0e5384a64b4100ff95b3ca29df173c8a0",
+  "sourceHash": "sha256:4a65a85984430f99f27afe98ea225554fa0df213467fce00af80c457fc19bd63",
+  "semanticSummaryHash": "sha256:bd94ed56a44434162f3a2e1dd3a5dd2f4d9d23f69400934eda81fd49771e0868",
   "verdict": "APPROVE",
   "reviewer": "integration_review",
-  "notes": "Reviewed Dramaturg refusal cap through existing readStreamCapped byte-pump owner: exact64KiB accepted, oversized source cancelled with status-preserving fallback. Independently reran13disk-inventory,whole-buffer,SHAandstreamtests32assert; Nodecrypto confirms corrected renamed fixture digest. No real-provider, browser or packaged proof claimed by this narrow fix.",
-  "reviewedAt": "2026-10-30T04:49:27.680Z"
+  "notes": "Verified busy Dramaturg polling now uses shared useVisibleInterval and public component regression confirms timer cancellation while hidden and rearming when visible. Existing refusal cap and verification limitations remain accurate. Independently reran syntax protocol and panel checks17pass212assert; actual-function preopen checks now reject absent and reordered guard mutations.",
+  "reviewedAt": "2026-10-30T05:23:02.735Z"
 }

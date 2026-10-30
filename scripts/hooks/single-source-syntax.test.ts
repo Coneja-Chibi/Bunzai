@@ -7,6 +7,7 @@ import {
   sharedHomeDeclarationOutsideHome, testCipherOutsideHome, transportHelperOutsideHome,
 } from "./single-source-core";
 import { walk } from "./walk";
+import { callsNamed, functionBody } from "./single-source-syntax";
 
 test("syntax: imports and fixture text are not declarations", () => {
   for (const source of [
@@ -94,16 +95,24 @@ test("syntax: updated private ciphertext staging retains only its exact write pr
       expect(appDataWriteOutsideHome(path, source.replace("aesSeal(STAGING_KEY", "unsealed(STAGING_KEY"))).toContain("writeAtomicReplace");
       expect(appDataWriteOutsideHome(path, source.replace("bunzai-import-staged-", "persistent-"))).toContain("writeAtomicReplace");
     } else {
-      const refused = (changed: string): void => expect(appDataWriteOutsideHome(path, changed)).toContain("writeAtomicReplace");
+      const refused = (changed: string): void => {
+        expect(changed).not.toBe(source);
+        expect(appDataWriteOutsideHome(path, changed)).toContain("writeAtomicReplace");
+      };
       // A plaintext write where the sealed one was, a second handle write, and every other way in.
-      refused(source.replace("handle.write(cipher.update(chunk))", "handle.write(chunk)"));
-      refused(source.replace("handle.write(cipher.getAuthTag())", "handle.write(plaintext)"));
+      refused(source.replace("handle.writeFile(cipher.update(chunk))", "handle.writeFile(chunk)"));
+      refused(source.replace("handle.writeFile(cipher.getAuthTag())", "handle.writeFile(plaintext)"));
       refused(source + "\nasync function leak(handle: FileHandle, text: Uint8Array) { await handle.write(text); }");
       refused(source.replace('"aes-256-gcm"', '"aes-128-cbc"'));
       refused(source.replace("randomBytes(12)", "randomBytes(8)"));
       refused(source.replace("mode = 0o600", "mode = 0o644"));
       refused(source.replace('open(path, "w", mode)', 'open(path, "a", mode)'));
-      refused(source.replace('import { open, type FileHandle }', 'import { open as openFile, type FileHandle }').replaceAll("await open(", "await openFile("));
+      refused(source.replace('import { open, unlink, type FileHandle }', 'import { open as openFile, unlink, type FileHandle }').replaceAll("await open(", "await openFile("));
+      refused(source.replace('if (flags === "wx") ', ""));
+      refused(source.replace('flags === "wx"', 'flags === "w"'));
+      refused(source.replace("await unlink(path).catch(() => undefined);", ""));
+      refused(source.replace("handle.writeFile(chunk)", "handle.write(chunk)"));
+      refused(source.replace("await handle.sync();", ""));
       refused('import { open as raw } from "node:fs/promises";\n' + source + '\nawait raw(appData, "w");');
       refused('import * as fs from "node:fs/promises";\n' + source + '\nawait fs.open(appData, "w");');
       refused(source + '\nconst fs = await import("node:fs");\nfs.promises.open(appData, "r+");');
@@ -122,7 +131,31 @@ test("syntax: the upload file sink and the sealed sink keep their reviewed calle
     .filter((path) => path !== "src/ui/server-body.ts" && new RegExp(`\\b${name}\\s*\\(`).test(readFileSync(path, "utf8")));
   expect(callers("sealedFileSink")).toEqual(["src/ui/server-asset-staging.ts"]);
   expect(callers("fileSink")).toEqual(["src/ui/server-security.ts"]);
-  expect(callers("streamBodyToFile")).toEqual(["src/ui/server-engine.ts", "src/ui/server-security.ts"]);
+  expect(callers("streamBodyToFile")).toEqual(["src/ui/server-engine.ts", "src/ui/server-export-folder.ts", "src/ui/server-security.ts"]);
+  const exported = readFileSync("src/ui/server-export-folder.ts", "utf8");
+  expect(exported).toContain('resolveStudioExportRunPath(studioDir, folder, name)');
+  expect(exported).toContain('streamBodyToFile(req, path, EXPORT_FILE_MAX_BYTES, { mode: 0o644, flags: "wx" })');
+  const security = readFileSync("src/ui/server-security.ts", "utf8");
+  const preopen = (source: string): boolean => {
+    const body = functionBody("src/ui/server-security.ts", source, "streamBodyToFile");
+    if (!body || callsNamed("src/ui/server-security.ts", body, "fileSink") !== 1) return false;
+    const checks = ['if (req.signal.aborted)', 'return { ok: false, response: refusal("aborted") };',
+      'const refused = refuseDeclaredLength(req, limit);', 'if (refused) return { ok: false, response: refused };',
+      'await fileSink(destPath, file.mode, file.flags)'].map((text) => body.indexOf(text));
+    return checks.every((at, i) => at >= 0 && (i === 0 || at > checks[i - 1]!));
+  };
+  expect(preopen(security)).toBe(true);
+  const body = functionBody("src/ui/server-security.ts", security, "streamBodyToFile")!;
+  for (const removed of ['if (req.signal.aborted)', 'return { ok: false, response: refusal("aborted") };',
+    'const refused = refuseDeclaredLength(req, limit);', 'if (refused) return { ok: false, response: refused };']) {
+    const changed = security.replace(body, body.replace(removed, ""));
+    expect(changed).not.toBe(security);
+    expect(preopen(changed)).toBe(false);
+  }
+  const opening = body.split("\n").find((line) => line.includes("await fileSink(destPath, file.mode, file.flags)"))!;
+  const reordered = security.replace(body, body.replace(opening, "").replace("{", `{\n${opening}`));
+  expect(reordered).not.toBe(security);
+  expect(preopen(reordered)).toBe(false);
   const staging = readFileSync("src/ui/server-asset-staging.ts", "utf8");
   expect(staging).toContain('mkdtemp(join(tmpdir(), "bunzai-asset-staged-"))');
   expect(staging).toContain("sealedFileSink(file, KEY)");

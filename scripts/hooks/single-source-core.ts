@@ -81,8 +81,9 @@ const SINGLE_HOME_DECLARATIONS = [
   ["startLaneWorker", "src/stage/worker-lane.ts"],
   ["classifyLuaError", "src/sandbox/lua/limits.ts"],
   ["writeAtomicReplace", "src/studio/atomic-file.ts"],
-  ["isStudioWriteError", "src/studio/atomic-file.ts"],
-  ["isStudioConflictError", "src/studio/atomic-file.ts"],
+  // Scene code reads these in the browser; classification cannot import the filesystem writer.
+  ["isStudioWriteError", "src/studio/errors.ts"],
+  ["isStudioConflictError", "src/studio/errors.ts"],
   ["appDataDir", "src/app-data.ts"],
   ["appendStreamDelta", "src/stage/provider/stream-core.ts"],
   ["useEscapeKey", "src/ui/_shared/use-escape-key.ts"],

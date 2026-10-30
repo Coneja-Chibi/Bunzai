@@ -13,7 +13,7 @@ import type { ChatFn, ModelMessage, ModelToolCall, ToolSpec } from "../provider"
 import type { ModelTraits, ProviderSpoke } from "../spoke";
 import { allowedHost, guardedFetch } from "../egress";
 import { readUsage } from "../usage";
-import { isRecord } from "../../../core/guards";
+import { isRecord, strArray } from "../../../core/guards";
 import { readStreamCapped } from "../../../core/stream-bytes";
 import { OLLAMA_PARAMS } from "../../../stage/params/dialects";
 import type { ProviderMessage, ProviderRequest } from "../../../stage/contracts/provider";
@@ -35,7 +35,6 @@ const chosen = (c: ProviderConfig): number => (WINDOWS.includes(Number(c.options
 /** The proxy headers the connection carries, on every request, not only the chat. */
 const headersOf = (c: ProviderConfig): Record<string, string> => ({ "content-type": "application/json", ...(c.headers ?? {}) });
 const positive = (v: unknown): number | undefined => (typeof v === "number" && Number.isSafeInteger(v) && v > 0 ? v : undefined);
-const strings = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : []);
 
 /** A model's traits from what the server says of it: the window is the connection's choice capped by the model's own positive length. */
 const traitsOf = (config: ProviderConfig, length: number | undefined, caps: readonly string[]): ModelTraits =>
@@ -63,7 +62,7 @@ async function inspect(config: ProviderConfig, fetch: FetchFunction, parent?: Ab
     const info = isRecord(body) && isRecord(body["model_info"]) ? body["model_info"] : {};
     const arch = typeof info["general.architecture"] === "string" ? info["general.architecture"] : null;
     const length = positive(arch ? info[`${arch}.context_length`] : Object.entries(info).find(([k]) => k.endsWith(".context_length"))?.[1]);
-    return traitsOf(config, length, isRecord(body) ? strings(body["capabilities"]) : []);
+    return traitsOf(config, length, isRecord(body) ? strArray(body["capabilities"]) : []);
   } catch {
     parent?.throwIfAborted();
     return { window: chosen(config) };
@@ -127,7 +126,7 @@ const ollama: ProviderSpoke = {
         const m = models[index]!;
         const id = m.name as string;
         const details = isRecord(m.details) ? m.details : {};
-        const caps = strings(m.capabilities);
+        const caps = strArray(m.capabilities);
         if (caps.length > 0 && !caps.includes("completion")) continue;
         const size = typeof details.parameter_size === "string" ? details.parameter_size : null;
         const traits = caps.length > 0 && positive(details.context_length)

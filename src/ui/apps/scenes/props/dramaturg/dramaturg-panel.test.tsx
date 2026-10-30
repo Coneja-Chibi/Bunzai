@@ -3,7 +3,7 @@
  * reads and lands in the conversation as the server saved it; Stop asks the server to stop; a refusal shows the server's words and a
  * conflict re-reads; Clear asks first; with no model the composer is closed and says why; off says so; the settings write what was picked.
  */
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, spyOn, test } from "bun:test";
 import type { JSDOM } from "jsdom";
 import type { Chat } from "../../../../../stage/contracts/chat-store";
 import type { DramaturgEntry, DramaturgSettingsPatch, DramaturgThread } from "../../../../../stage/contracts/dramaturg-types";
@@ -69,6 +69,31 @@ test("the Scenes lifetime clears retained plaintext on a lock after its last pan
 });
 
 describe("the Dramaturg panel", () => {
+  test("busy-conversation polling pauses while the tab is hidden and resumes when visible", async () => {
+    const doc = dom.window.document;
+    const original = Object.getOwnPropertyDescriptor(doc, "visibilityState");
+    let visible = true;
+    Object.defineProperty(doc, "visibilityState", { configurable: true, get: () => visible ? "visible" : "hidden" });
+    const armed = spyOn(globalThis, "setInterval"), cleared = spyOn(globalThis, "clearInterval");
+    let cleanup: (() => void) | undefined;
+    try {
+      const m = await mounted(dom, view(rig(panelOf({ busy: true }))));
+      cleanup = () => m.unmount();
+      const index = armed.mock.calls.findIndex((call) => call[1] === 3000);
+      expect(index).toBeGreaterThanOrEqual(0);
+      const timer = armed.mock.results[index]!.value;
+      m.flush(() => { visible = false; doc.dispatchEvent(new dom.window.Event("visibilitychange")); });
+      expect(cleared).toHaveBeenCalledWith(timer);
+      const count = armed.mock.calls.length;
+      m.flush(() => { visible = true; doc.dispatchEvent(new dom.window.Event("visibilitychange")); });
+      expect(armed.mock.calls.length).toBe(count + 1);
+    } finally {
+      cleanup?.(); armed.mockRestore(); cleared.mockRestore();
+      if (original) Object.defineProperty(doc, "visibilityState", original);
+      else Reflect.deleteProperty(doc, "visibilityState");
+    }
+  });
+
   test("an answer streams with its reads, then lands as the server saved it", async () => {
     const r = rig(panelOf());
     const m = await mounted(dom, view(r));

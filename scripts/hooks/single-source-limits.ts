@@ -40,6 +40,8 @@ const BYTE_LITERAL_ALLOWED: Readonly<Record<string, string>> = {
   "src/kit/keystore/backends/passphrase.ts": "scrypt working memory, not a payload",
   "src/studio/signature-color.ts": "the compressed picture data one color probe will inflate, a decoder bound",
   "src/ui/_shared/download-sink.ts": "how much of a download streams to a Blob before it is flushed, not a limit",
+  "src/formats/janitor/index.ts": "Janitor's external avatar-upload policy, independent of this app's media buffering limits",
+  "src/ui/apps/scenes/props/dramaturg/dramaturg-live.ts": "aggregate retained plaintext conversation-cache budget, independent of media payload limits",
 };
 
 export function byteLimitLiteralOutsideHome(path: string, source: string): string | null {

@@ -5,6 +5,8 @@ import type { DramaturgRead, DramaturgSettingsPatch } from "../../../../../stage
 import type { ScenesApi } from "../../../../app-contract-scenes";
 import { apiStatusIs } from "../../../../_shared/api-fetch";
 import { attachCacheLockListener, enforceBudgets, registerCache } from "../../../../_shared/caches";
+import { useVisibleInterval } from "../../../../_shared/use-visible-interval";
+import { toErrorMessage } from "../../../../../error-message";
 
 type Api = Pick<ScenesApi, "getSceneDramaturg" | "setSceneDramaturgSettings" | "clearSceneDramaturg" | "askSceneDramaturg" | "stopSceneDramaturg">;
 export interface DramaturgPending { question: string; revision: number; text: string; reads: DramaturgRead[] }
@@ -16,7 +18,6 @@ const listeners = new Map<string, Set<() => void>>();
 const BUDGET = 32 * 1024 * 1024;
 const MAX_SCENES = 4;
 const BUSY_POLL_MS = 3000;
-const why = (e: unknown): string => e instanceof Error ? e.message : String(e);
 export const dramaturgState = (chatId: string): DramaturgLive => states.get(chatId)?.value ?? EMPTY;
 const notify = (chatId: string): void => { for (const fn of listeners.get(chatId) ?? []) fn(); };
 const current = (id: string, entry: Entry): boolean => states.get(id) === entry;
@@ -68,7 +69,7 @@ export async function loadDramaturg(api: Api, chatId: string): Promise<void> {
     const panel = await api.getSceneDramaturg(chatId);
     if (read === entry.read) take(chatId, entry, panel);
   } catch (e) {
-    if (read === entry.read) put(chatId, entry, { loading: false, error: why(e) });
+    if (read === entry.read) put(chatId, entry, { loading: false, error: toErrorMessage(e) });
   }
 }
 async function rereadKeeping(api: Api, id: string, entry: Entry, reason: string): Promise<void> {
@@ -99,8 +100,8 @@ export async function askDramaturg(api: Api, chatId: string, question: string): 
   try { await api.askSceneDramaturg(chatId, text, revision, onEvent, abort.signal); }
   catch (e) {
     refused = true;
-    put(chatId, entry, { pending: null, error: why(e) });
-    if (current(chatId, entry) && apiStatusIs(e, 409)) await rereadKeeping(api, chatId, entry, why(e));
+    put(chatId, entry, { pending: null, error: toErrorMessage(e) });
+    if (current(chatId, entry) && apiStatusIs(e, 409)) await rereadKeeping(api, chatId, entry, toErrorMessage(e));
   } finally {
     if (entry.abort === abort) delete entry.abort;
     put(chatId, entry, { pending: null });
@@ -111,7 +112,7 @@ export async function askDramaturg(api: Api, chatId: string, question: string): 
 export async function stopDramaturg(api: Api, chatId: string): Promise<void> {
   const entry = entryFor(chatId), { pending, panel } = entry.value;
   try { await api.stopSceneDramaturg(chatId, pending?.revision ?? panel?.thread.revision); }
-  catch (e) { put(chatId, entry, { error: why(e) }); }
+  catch (e) { put(chatId, entry, { error: toErrorMessage(e) }); }
   if (current(chatId, entry) && !pending) await loadDramaturg(api, chatId);
 }
 export async function clearDramaturg(api: Api, chatId: string): Promise<void> {
@@ -120,8 +121,8 @@ export async function clearDramaturg(api: Api, chatId: string): Promise<void> {
   entry.read++;
   try { take(chatId, entry, await api.clearSceneDramaturg(chatId, panel.thread.revision)); }
   catch (e) {
-    put(chatId, entry, { error: why(e) });
-    if (current(chatId, entry) && apiStatusIs(e, 409)) await rereadKeeping(api, chatId, entry, why(e));
+    put(chatId, entry, { error: toErrorMessage(e) });
+    if (current(chatId, entry) && apiStatusIs(e, 409)) await rereadKeeping(api, chatId, entry, toErrorMessage(e));
   }
 }
 export async function saveDramaturgSettings(api: Api, chatId: string, patch: DramaturgSettingsPatch): Promise<string | null> {
@@ -132,7 +133,7 @@ export async function saveDramaturgSettings(api: Api, chatId: string, patch: Dra
     // Another settings request may have committed while this response resolved its model metadata.
     if (current(chatId, entry)) await loadDramaturg(api, chatId);
     return null;
-  } catch (e) { return why(e); }
+  } catch (e) { return toErrorMessage(e); }
 }
 
 /** Retained conversations live with the Scenes app, including while every Dramaturg panel is closed. */
@@ -151,10 +152,6 @@ export function useDramaturg(api: Api, chatId: string, refresh: unknown = null):
   }, () => dramaturgState(chatId), () => EMPTY);
   useEffect(() => { if (!dramaturgState(chatId).pending) void loadDramaturg(api, chatId); }, [api, chatId, refresh]);
   const waiting = state.panel?.busy === true && !state.pending;
-  useEffect(() => {
-    if (!waiting) return;
-    const timer = setInterval(() => void loadDramaturg(api, chatId), BUSY_POLL_MS);
-    return () => clearInterval(timer);
-  }, [api, chatId, waiting]);
+  useVisibleInterval(() => void loadDramaturg(api, chatId), waiting ? BUSY_POLL_MS : null);
   return state;
 }

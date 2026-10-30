@@ -47,6 +47,14 @@ export function callsNamed(path: string, source: string, name: string): number {
   return previous!.calls.get(name) ?? 0;
 }
 
+/** A uniquely named function's actual body, excluding same-named text in comments and strings. */
+export function functionBody(path: string, source: string, name: string): string | null {
+  const tree = syntax(path, source);
+  const found = previous!.declarations.get(name);
+  const declaration = found?.length === 1 ? found[0] : undefined;
+  return declaration && ts.isFunctionDeclaration(declaration) && declaration.body ? declaration.body.getText(tree) : null;
+}
+
 function importedGuard(tree: ts.SourceFile, path: string): string | undefined {
   for (const node of tree.statements) {
     if (!ts.isImportDeclaration(node) || !ts.isStringLiteral(node.moduleSpecifier) || node.importClause?.isTypeOnly) continue;

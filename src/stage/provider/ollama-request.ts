@@ -5,7 +5,7 @@
  * checked: Ollama's wire carries none and matches a tool result to its call by order. Pure.
  */
 import { ProviderError, type ProviderMessage, type ProviderOptions, type ProviderRequest, type WireRequest } from "../contracts/provider";
-import { isRecord } from "../../core/guards";
+import { isRecord, recOr } from "../../core/guards";
 import { OLLAMA_PARAMS } from "../params/dialects";
 import { sentParams, type ParamSupport } from "../params/wire";
 import { finalizeMessages } from "./transport-core";
@@ -30,7 +30,7 @@ const TOOL_FIELDS = ["tools"] as const;
 function argsObject(text: string): Record<string, unknown> {
   try {
     const parsed: unknown = JSON.parse(text);
-    return isRecord(parsed) ? parsed : {};
+    return recOr(parsed);
   } catch {
     return {};
   }

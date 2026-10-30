@@ -254,8 +254,8 @@ export async function handleAssetRoutes(
     const [file, type] = icon;
     const encoded = packaged?.iconsB64[p.slice(1)];
     if (packaged && encoded === undefined) return err("the packaged icon is missing", 404);
-    const body = packaged ? Buffer.from(encoded!, "base64") : Bun.file(fileURLToPath(new URL(`../../build/${file}`, import.meta.url)));
-    return new Response(body, { headers: { "content-type": type } });
+    const asset = packaged ? Buffer.from(encoded!, "base64") : Bun.file(fileURLToPath(new URL(`../../build/${file}`, import.meta.url)));
+    return new Response(asset, { headers: { "content-type": type } });
   }
   if (p === "/app.webmanifest") {
     return noStore(
