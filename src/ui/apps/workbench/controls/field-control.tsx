@@ -106,6 +106,7 @@ export function makeControlFor(ctx: FieldCtx): FieldControlApi {
       <>
         <RenderBox value={value} format="markdown">
           <ExpandTextarea
+            grow
             label={proseLabel(id)}
             className={`${styles.in} ${styles.ta}${PROSE_MONO.has(id) ? ` ${styles.mono}` : ""}`}
             /**
@@ -144,6 +145,7 @@ export function makeControlFor(ctx: FieldCtx): FieldControlApi {
             </div>
             <RenderBox value={g.text} format="markdown">
               <ExpandTextarea
+                grow
                 label={g.title?.trim() || `Greeting ${i + 1}`}
                 className={`${styles.in} ${styles.ta} ${styles.mono}`}
                 // A greeting is prose somebody wrote and somebody else will read.

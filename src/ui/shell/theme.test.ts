@@ -113,6 +113,16 @@ test("the chrome sizing paints as html[data-chrome] and the UI font role as --bk
   expect(rootEl().dataset.chrome).toBe("bunzai");
 });
 
+test("protected surfaces take the host's light palette under a light theme and its dark one under a dark theme or core", () => {
+  paintTheme(readEffectiveTheme(active("paper"))!);
+  expect(rootEl().dataset.hostScheme).toBe("light");
+  paintTheme(readEffectiveTheme(active("theater"))!);
+  expect(rootEl().dataset.hostScheme).toBe("dark");
+  paintTheme(readEffectiveTheme(active("paper"))!);
+  paintTheme(CORE_THEME_APPEARANCE);
+  expect(rootEl().dataset.hostScheme).toBe("dark");
+});
+
 test("the Settings accent follows into the brand and action roles of a theme that follows the user, and never into a locked one", () => {
   const accent = "#12a05f";
   const theater = previews.theater!.appearance.palette;

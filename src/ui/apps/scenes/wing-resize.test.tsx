@@ -184,12 +184,17 @@ describe("a press outside the wing", () => {
     portal.remove();
     unmount(flushSync);
   });
-  test("other themes keep the pause: a press outside leaves the wing open and the Scene Paused mark closes it", async () => {
+  test("other themes retain the Scene Paused mark as a close control", async () => {
+    doc().documentElement.dataset["chrome"] = "bunzai";
+    const flushSync = await open("ai");
+    fire(flushSync, rig.host.querySelector("[data-part='scene.paused'] [data-control='tile']")!, "click");
+    expect(width()).toBe("");
+    unmount(flushSync);
+  });
+  test("a press on the paused scene closes the wing in other themes too", async () => {
     doc().documentElement.dataset["chrome"] = "bunzai";
     const flushSync = await open("ai");
     press(flushSync, rig.host.querySelector(".scroll")!);
-    expect(width()).toBe("720px");
-    fire(flushSync, rig.host.querySelector("[data-part='scene.paused'] [data-control='tile']")!, "click");
     expect(width()).toBe("");
     unmount(flushSync);
   });

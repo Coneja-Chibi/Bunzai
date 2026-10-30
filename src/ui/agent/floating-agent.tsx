@@ -20,7 +20,7 @@ import type { AppContext } from "../app-contract";
 import { AgentRoom } from "../apps/agent/room";
 import { useFloatingPanel } from "./use-floating";
 import type { Edge } from "./dock-position";
-import { kitVars } from "./kit-vars";
+import { useKitVars } from "./kit-vars";
 import { PREF_PANEL_MINIMISED } from "../apps/agent/styles";
 import { Button, IconButton } from "../components/button";
 import styles from "./floating-agent.module.css";
@@ -38,6 +38,7 @@ export function FloatingAgent({
   onClose: () => void;
 }): JSX.Element | null {
   const panel = useFloatingPanel();
+  const kitStyle = useKitVars();
   /** Parked as a tab rather than thrown away. Remembered, so a reload does not reopen it over you. */
   const [minimised, setMinimised] = useState(() => ctx.prefs.get(PREF_PANEL_MINIMISED) === true);
 
@@ -59,7 +60,7 @@ export function FloatingAgent({
    */
   if (minimised) {
     return (
-      <div className={styles.tab} style={kitVars()}>
+      <div className={styles.tab} style={kitStyle}>
         <Button
           size="sm"
           data-agent-panel="min"
@@ -84,7 +85,7 @@ export function FloatingAgent({
        * contents wore Kit.
        */
       style={{
-        ...kitVars(),
+        ...kitStyle,
         left: `${String(panel.spot.x)}px`,
         top: `${String(panel.spot.y)}px`,
         width: `${String(panel.size.width)}px`,

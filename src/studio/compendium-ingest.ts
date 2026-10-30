@@ -11,13 +11,13 @@ import { toErrorMessage } from "../error-message";
 import { activityLine, buildSnapshot, createChunker, ingestAllowed, ingestMessages, parseHistorian, resolveCompendium, writeBookOf, type Window } from "../core/compendium";
 import type { CompendiumReceipt, Message } from "../stage/contracts/chat-store";
 import { ProviderError } from "../stage/contracts/provider";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError, StudioNotFoundError } from "./errors";
 import { askJson } from "./compendium-ask";
 import { sceneBooks, type CompendiumDeps } from "./compendium-deps";
 import { enqueue } from "./compendium-queue";
 import { writeRecaps } from "./compendium-recap-write";
 import { undoAll } from "./compendium-undo";
-import { StudioNotFoundError } from "./errors";
+
 import { selectedGuides } from "./guides";
 
 export interface IngestLine { chunk: number; from: number; to: number; status: CompendiumReceipt["status"]; created: number; updated: number; reason?: string; receiptId: string }

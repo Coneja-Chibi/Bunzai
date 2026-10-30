@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/architecture",
   "sourcePath": "docs/reference/architecture.md",
-  "sourceHash": "sha256:9ffb72e840316f219cdc59848a4457246db11ed49a7f9c9356b11fc615c1a463",
-  "semanticSummaryHash": "sha256:34e7f890e452035100b55b7c887818710a3cce051e9040caf4be984609efdfbe",
+  "sourceHash": "sha256:71efe7756fdaeae512f8611c8e50ecce6661f1bbdd2026696355bf851c011103",
+  "semanticSummaryHash": "sha256:c8b1ff2d39e09ca5e2118871f23aea88d51c5c9ce4562d6080658af7e844d175",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:47:41.235Z"
+  "reviewer": "integration_review",
+  "notes": "Rechecked desktop composition rename to server-scene-composition.ts and sole production importer; reusable rp-core API and shutdown ownership remain unchanged. Approval covers documentation accuracy, not integration gate completion; storage shape tripwire currently requires deliberate compatible-extraction pin reconciliation.",
+  "reviewedAt": "2026-10-30T04:25:27.719Z"
 }

@@ -34,6 +34,7 @@ import { chatStoreSummaryContract } from "./chat-store.contract-summary";
 import { chatStoreGlobalsContract } from "./chat-store.contract-globals";
 import { chatStoreWritersContract } from "./chat-store.contract-writers";
 import { chatStoreDirectorContract } from "./chat-store.contract-director";
+import { chatStoreDramaturgContract } from "./chat-store.contract-dramaturg";
 import { chatStoreBackdropContract } from "./chat-store.contract-backdrop";
 import { chatStoreRequestContract } from "./chat-store.contract-request";
 import { chatStoreWriteContract } from "./chat-store.contract-writes";
@@ -419,6 +420,7 @@ export function chatStoreContract(label: string, make: (clock: () => number) => 
     chatStoreGlobalsContract(make);
     chatStoreWritersContract(make);
     chatStoreDirectorContract(make);
+    chatStoreDramaturgContract(make);
     chatStoreRequestContract(make);
     chatStoreFoldersContract(make);
     chatStoreHistoryContract(make);

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/janitor",
+  "sourcePath": "docs/reference/formats/janitor.md",
+  "sourceHash": "sha256:6566951f96147c789f9ade7911d8bc253a683ace57e5388ed7dc36c40a6d1d07",
+  "semanticSummaryHash": "sha256:e8a558f3e6ef7a61a8e700edecd4ad09c7c500492ce9301d5d9284d13c1601d9",
+  "verdict": "APPROVE",
+  "reviewer": "integration_review",
+  "notes": "Reviewed changed source and summaries against format adapters, shared export writer, host-only routes and UI delivery paths. Independently ran 38 format, stream and export-route tests; importer mapping retains dated co-developer provenance, external-host import and packaged behavior unverified.",
+  "reviewedAt": "2026-10-30T01:00:03.420Z"
+}

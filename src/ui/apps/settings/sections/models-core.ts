@@ -36,6 +36,8 @@ export interface ProviderKind {
   readonly defaultModel?: string;
   readonly keyless: boolean;
   readonly needsBaseUrl: boolean;
+  /** Where the server answers when the base URL is left blank (Ollama's local address); the field is then optional. */
+  readonly defaultBaseURL?: string;
   /**
    * The choices this provider offers.
    *
@@ -113,7 +115,7 @@ export function draftProblem(
 ): string | null {
   if (!kind) return "Choose a provider.";
   if (!draft.model.trim()) return "Choose or type a model.";
-  if (kind.needsBaseUrl && !draft.baseURL.trim()) return "This provider needs a base URL.";
+  if (kind.needsBaseUrl && !kind.defaultBaseURL && !draft.baseURL.trim()) return "This provider needs a base URL.";
   /**
    * A key is required unless the provider runs without one, or unless one is already stored. That
    * last clause is what lets somebody change the model on a saved provider without digging their
@@ -153,4 +155,14 @@ export function providerLabel(provider: SafeProvider, kinds: readonly ProviderKi
   const kind = kinds.find((k) => k.id === provider.kind);
   const base = kind?.label ?? provider.kind;
   return provider.name ? `${provider.name} (${base})` : `${base} · ${provider.model}`;
+}
+
+/**
+ * The model a new draft holds once the server's list arrives. A model the person chose or typed is kept, as is one the server offers; only
+ * an untouched field (empty, or the provider's pre-filled default) that the server does not have becomes the first one it offers, since a
+ * default it lacks (Ollama's llama3.1 on a machine without it) would only fail at the first turn.
+ */
+export function offeredModel(current: string, offered: readonly { id: string }[], prefilled: string | undefined): string {
+  const untouched = current === "" || current === prefilled;
+  return untouched && offered.length > 0 && !offered.some((m) => m.id === current) ? offered[0]!.id : current;
 }

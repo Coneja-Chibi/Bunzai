@@ -5,7 +5,7 @@ import type { Stub } from "../../../components/native-card";
 import { StubEditor } from "../../../components/native-card";
 import type { SpritePackValue, NamedAssetsValue } from "../../../../core/media";
 import { useAccentVars } from "../../../_shared/use-scoped-accents";
-import { EditorTabstrip, EditorHeader } from "./editor-chrome";
+import { EditorChrome } from "./editor-chrome";
 import { EditorDialogs } from "./editor-dialogs";
 import { buildEditorBodyViews } from "./editor-body-views";
 import { useCharacterPreferences } from "../use-character-preferences";
@@ -17,7 +17,7 @@ type Preferences = ReturnType<typeof useCharacterPreferences>;
 type BodyViews = ReturnType<typeof buildEditorBodyViews>;
 
 export function CharacterEditorView({
-  ctx, piece, topRight, prefs, bodyViews, coverage, platformLabel, doneCount, chips,
+  ctx, piece, topRight, prefs, bodyViews, coverage, platformLabel, chips,
   nativeStub, setNativeStub, workshop, setWorkshop, saving, dirty, doSave, openExport, version,
   exportOpen, setExportOpen, exportEntity, spritesOpen, setSpritesOpen, spritesFocusLabel,
   setSpritesFocusLabel, namedOpen, setNamedOpen, baseDraft, originalDraft, name,
@@ -31,7 +31,6 @@ export function CharacterEditorView({
   bodyViews: BodyViews;
   coverage: CoverageInfo[];
   platformLabel(id: string): string;
-  doneCount: number;
   chips: readonly (readonly [string, boolean])[];
   nativeStub: Stub | null;
   setNativeStub(value: Stub | null): void;
@@ -73,7 +72,7 @@ export function CharacterEditorView({
   transferAssets: import("../../../_shared/asset-upload").AssetTransfer;
   acceptUploads(refs: readonly string[]): void;
 }): JSX.Element {
-  const { editorScale, stepScale, setEditorScale, scaleMin, scaleMax, onboarded, mode, setMode, editorLayout, setEditorLayout } = prefs;
+  const { editorScale, stepScale, setEditorScale, scaleMin, scaleMax, mode, setMode, editorLayout, setEditorLayout } = prefs;
   const { lensActive, lensVisibleCount, lensTotalCount, flowView, bentoView, playbillView, framedView, workshopView, hasBehavior, entityAccent } = bodyViews;
   const accentVars = useAccentVars();
   const themedFrame = useSurfaceVariant("editor.frame") !== "core";
@@ -81,13 +80,12 @@ export function CharacterEditorView({
   return (
     <div className={styles.root} style={rootStyle}>
       {nativeStub && <StubEditor title={nativeStub.title} note={nativeStub.note} onClose={() => setNativeStub(null)}>{nativeStub.view}</StubEditor>}
-      <EditorTabstrip coverage={coverage} targets={targets} platformLabel={platformLabel} toggleTarget={prefs.toggleTarget}
+      <EditorChrome coverage={coverage} targets={targets} platformLabel={platformLabel} toggleTarget={prefs.toggleTarget}
         clearTargets={prefs.clearTargets} offTarget={prefs.offTarget} pickOffTarget={prefs.pickOffTarget}
         lensActive={lensActive} lensVisibleCount={lensVisibleCount} lensTotalCount={lensTotalCount}
-        doneCount={doneCount} chips={chips} styles={styles} />
-      <EditorHeader name={name} version={version}
+        chips={chips} name={name} version={version}
         onClose={() => ctx.workbench.remove(piece.id, piece.kind)} editorScale={editorScale} stepScale={stepScale}
-        setEditorScale={setEditorScale} scaleMin={scaleMin} scaleMax={scaleMax} onboarded={onboarded}
+        setEditorScale={setEditorScale} scaleMin={scaleMin} scaleMax={scaleMax}
         mode={mode} setMode={setMode} editorLayout={editorLayout} setEditorLayout={setEditorLayout} layoutLocked={themedFrame}
         hasBehavior={hasBehavior} workshop={workshop} setWorkshop={setWorkshop} saving={saving} dirty={dirty}
         doSave={doSave} openExport={openExport} topRight={topRight} styles={styles} />

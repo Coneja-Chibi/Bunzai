@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-29",
+  "generated": "2026-10-30",
   "targetChars": 90000,
-  "totalPages": 128,
-  "totalSourceChars": 1622449,
+  "totalPages": 131,
+  "totalSourceChars": 1644792,
   "batches": [
     {
       "id": "batch-001",
-      "sourceChars": 86515,
+      "sourceChars": 89211,
       "pages": [
         {
           "docId": "01-VISION",
@@ -129,11 +129,19 @@
           "status": "APPROVED"
         },
         {
+          "docId": "decisions/ADR-014-reusable-roleplay-core",
+          "sourcePath": "docs/decisions/ADR-014-reusable-roleplay-core.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-014-reusable-roleplay-core.json",
+          "sectionCount": 2,
+          "sourceChars": 2312,
+          "status": "APPROVED"
+        },
+        {
           "docId": "FORMAT-SUPPORT",
           "sourcePath": "docs/FORMAT-SUPPORT.md",
           "sidecarPath": "docs/summaries/FORMAT-SUPPORT.json",
           "sectionCount": 18,
-          "sourceChars": 6013,
+          "sourceChars": 6397,
           "status": "APPROVED"
         },
         {
@@ -282,7 +290,7 @@
     },
     {
       "id": "batch-003",
-      "sourceChars": 87728,
+      "sourceChars": 56061,
       "pages": [
         {
           "docId": "guide/platforms/risu",
@@ -347,21 +355,21 @@
           "sectionCount": 3,
           "sourceChars": 3552,
           "status": "APPROVED"
-        },
-        {
-          "docId": "reference/architecture",
-          "sourcePath": "docs/reference/architecture.md",
-          "sidecarPath": "docs/summaries/reference/architecture.json",
-          "sectionCount": 13,
-          "sourceChars": 31667,
-          "status": "APPROVED"
         }
       ]
     },
     {
       "id": "batch-004",
-      "sourceChars": 20282,
+      "sourceChars": 54459,
       "pages": [
+        {
+          "docId": "reference/architecture",
+          "sourcePath": "docs/reference/architecture.md",
+          "sidecarPath": "docs/summaries/reference/architecture.json",
+          "sectionCount": 14,
+          "sourceChars": 34177,
+          "status": "APPROVED"
+        },
         {
           "docId": "reference/audits",
           "sourcePath": "docs/reference/audits.md",
@@ -382,14 +390,14 @@
     },
     {
       "id": "batch-005",
-      "sourceChars": 171032,
+      "sourceChars": 171288,
       "pages": [
         {
           "docId": "reference/components",
           "sourcePath": "docs/reference/components.md",
           "sidecarPath": "docs/summaries/reference/components.json",
           "sectionCount": 3,
-          "sourceChars": 171032,
+          "sourceChars": 171288,
           "status": "APPROVED"
         }
       ]
@@ -630,14 +638,14 @@
     },
     {
       "id": "batch-009",
-      "sourceChars": 71712,
+      "sourceChars": 76468,
       "pages": [
         {
           "docId": "reference/extending/make-a-theme",
           "sourcePath": "docs/reference/extending/make-a-theme.md",
           "sidecarPath": "docs/summaries/reference/extending/make-a-theme.json",
           "sectionCount": 15,
-          "sourceChars": 29816,
+          "sourceChars": 29849,
           "status": "APPROVED"
         },
         {
@@ -663,12 +671,20 @@
           "sectionCount": 9,
           "sourceChars": 16735,
           "status": "APPROVED"
+        },
+        {
+          "docId": "reference/formats/janitor",
+          "sourcePath": "docs/reference/formats/janitor.md",
+          "sidecarPath": "docs/summaries/reference/formats/janitor.json",
+          "sectionCount": 4,
+          "sourceChars": 4723,
+          "status": "APPROVED"
         }
       ]
     },
     {
       "id": "batch-010",
-      "sourceChars": 69953,
+      "sourceChars": 70157,
       "pages": [
         {
           "docId": "reference/formats/lumiverse",
@@ -707,14 +723,14 @@
           "sourcePath": "docs/reference/formats/README.md",
           "sidecarPath": "docs/summaries/reference/formats/README.json",
           "sectionCount": 4,
-          "sourceChars": 4165,
+          "sourceChars": 4369,
           "status": "APPROVED"
         }
       ]
     },
     {
       "id": "batch-011",
-      "sourceChars": 88591,
+      "sourceChars": 85653,
       "pages": [
         {
           "docId": "reference/formats/risu",
@@ -741,13 +757,27 @@
           "status": "APPROVED"
         },
         {
+          "docId": "reference/formats/saucepan",
+          "sourcePath": "docs/reference/formats/saucepan.md",
+          "sidecarPath": "docs/summaries/reference/formats/saucepan.json",
+          "sectionCount": 4,
+          "sourceChars": 4016,
+          "status": "APPROVED"
+        },
+        {
           "docId": "reference/formats/sillytavern",
           "sourcePath": "docs/reference/formats/sillytavern.md",
           "sidecarPath": "docs/summaries/reference/formats/sillytavern.json",
           "sectionCount": 10,
           "sourceChars": 23126,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-012",
+      "sourceChars": 89159,
+      "pages": [
         {
           "docId": "reference/formats/vaud-json",
           "sourcePath": "docs/reference/formats/vaud-json.md",
@@ -755,13 +785,7 @@
           "sectionCount": 5,
           "sourceChars": 6954,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-012",
-      "sourceChars": 87134,
-      "pages": [
+        },
         {
           "docId": "reference/glossary",
           "sourcePath": "docs/reference/glossary.md",
@@ -783,7 +807,7 @@
           "sourcePath": "docs/reference/kit/tools.md",
           "sidecarPath": "docs/summaries/reference/kit/tools.json",
           "sectionCount": 18,
-          "sourceChars": 39456,
+          "sourceChars": 39575,
           "status": "APPROVED"
         },
         {
@@ -809,7 +833,13 @@
           "sectionCount": 7,
           "sourceChars": 6948,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-013",
+      "sourceChars": 83751,
+      "pages": [
         {
           "docId": "reference/platforms/marinara/characters",
           "sourcePath": "docs/reference/platforms/marinara/characters.md",
@@ -817,13 +847,7 @@
           "sectionCount": 9,
           "sourceChars": 5048,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-013",
-      "sourceChars": 86818,
-      "pages": [
+        },
         {
           "docId": "reference/platforms/marinara/chats-and-interchange",
           "sourcePath": "docs/reference/platforms/marinara/chats-and-interchange.md",
@@ -927,7 +951,13 @@
           "sectionCount": 9,
           "sourceChars": 4054,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-014",
+      "sourceChars": 68790,
+      "pages": [
         {
           "docId": "reference/platforms/sillytavern/macro-operators",
           "sourcePath": "docs/reference/platforms/sillytavern/macro-operators.md",
@@ -935,13 +965,7 @@
           "sectionCount": 9,
           "sourceChars": 8115,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-014",
-      "sourceChars": 60675,
-      "pages": [
+        },
         {
           "docId": "reference/platforms/sillytavern/macro-reference",
           "sourcePath": "docs/reference/platforms/sillytavern/macro-reference.md",
@@ -1056,14 +1080,14 @@
     },
     {
       "id": "batch-016",
-      "sourceChars": 84759,
+      "sourceChars": 86153,
       "pages": [
         {
           "docId": "reference/security/remote-access",
           "sourcePath": "docs/reference/security/remote-access.md",
           "sidecarPath": "docs/summaries/reference/security/remote-access.json",
           "sectionCount": 11,
-          "sourceChars": 15026,
+          "sourceChars": 15552,
           "status": "APPROVED"
         },
         {
@@ -1087,7 +1111,7 @@
           "sourcePath": "docs/reference/security/secrets-and-keys.md",
           "sidecarPath": "docs/summaries/reference/security/secrets-and-keys.json",
           "sectionCount": 13,
-          "sourceChars": 24147,
+          "sourceChars": 25015,
           "status": "APPROVED"
         },
         {
@@ -1116,15 +1140,15 @@
     },
     {
       "id": "batch-018",
-      "sourceChars": 280835,
+      "sourceChars": 287227,
       "pages": [
         {
           "docId": "reference/ui",
           "sourcePath": "docs/reference/ui.md",
           "sidecarPath": "docs/summaries/reference/ui.json",
           "sectionCount": 34,
-          "sourceChars": 280835,
-          "status": "APPROVED"
+          "sourceChars": 287227,
+          "status": "READY_FOR_REVIEW"
         }
       ]
     },

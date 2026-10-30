@@ -11,7 +11,7 @@ import type { AppContext } from "../../../app-contract";
 import { installDom, type InstalledDom, flushTasks } from "../../../_shared/test-dom";
 import { PopoutHost, PopoutSlot } from "./popout-host";
 import type { PopoutKind } from "./popout-kind";
-import { PopoutButton } from "./popout-panel";
+import { PopoutButton, PopoutPanel } from "./popout-panel";
 
 let dom: JSDOM;
 let installed: InstalledDom;
@@ -193,5 +193,48 @@ describe("keyboard and focus", () => {
     expect(panel("a")).not.toBeNull();
     expect(panel("a")!.contains(dom.window.document.activeElement)).toBe(false);
     unmount();
+  });
+});
+
+describe("the view it clamps to", () => {
+  test("a wide panel shrinks to its scene and recovers its preferred width when there is room", async () => {
+    const kind = { ...A, width: 460 };
+    const draw = (width: number): JSX.Element => <PopoutPanel kind={kind} c={{ ctx: ctxOf(), chat, id: kind.id }} saved={null} view={{ width, height: 820 }} onDrop={() => undefined} onClose={() => undefined} />;
+    await mount(draw(454));
+    try {
+      expect(parseFloat(panel("a")!.style.width)).toBeLessThanOrEqual(454);
+      flush(() => root.render(draw(300)));
+      expect(parseFloat(panel("a")!.style.width)).toBeLessThanOrEqual(300);
+      flush(() => root.render(draw(800)));
+      expect(parseFloat(panel("a")!.style.width)).toBe(460);
+    } finally { unmount(); }
+  });
+
+  test("is the scene's layer, measured again whenever the layer changes size, not only when the window does", async () => {
+    // The layer has no size before layout, so the host first falls back to the window. Without a re-measure on the layer's own
+    // resize, a panel then opened at the window's right edge ran past the scene's right edge, clipped, by the Studio's left rail's width.
+    const observers: (() => void)[] = [];
+    const g = globalThis as unknown as { ResizeObserver?: unknown };
+    const before = g.ResizeObserver;
+    g.ResizeObserver = class { private cb: () => void; constructor(cb: () => void) { this.cb = cb; } observe(): void { observers.push(this.cb); } disconnect(): void { observers.splice(observers.indexOf(this.cb), 1); } };
+    const proto = dom.window.HTMLElement.prototype;
+    const rect = proto.getBoundingClientRect;
+    let layer = { width: 0, height: 0 };
+    proto.getBoundingClientRect = function (this: HTMLElement): DOMRect {
+      return (this.classList.contains("po-layer") ? { ...layer, x: 0, y: 0, top: 0, left: 0, right: layer.width, bottom: layer.height } : rect.call(this)) as DOMRect;
+    };
+    try {
+      await mount(scene([A]));
+      layer = { width: 600, height: 700 };
+      flush(() => { for (const cb of [...observers]) cb(); });
+      await tick();
+      await click(popBtn("a"));
+      expect(place("a")).toEqual({ x: 600 - 380 - 20, y: 100 });
+      unmount();
+      expect(observers).toEqual([]);
+    } finally {
+      proto.getBoundingClientRect = rect;
+      g.ResizeObserver = before;
+    }
   });
 });

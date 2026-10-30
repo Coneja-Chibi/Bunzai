@@ -7,6 +7,7 @@ import { describe, expect, test } from "bun:test";
 import type { ProviderMessage } from "../contracts/provider";
 import {
   applyRolePostProcessing,
+  classifyHttpFailure,
   finalizeMessages,
   invalidRequest,
   normalizeFinishReason,
@@ -137,4 +138,9 @@ describe("finish reasons are normalized", () => {
     expect(normalizeFinishReason("Recitation")).toBe("recitation");
     expect(normalizeFinishReason(undefined)).toBeUndefined();
   });
+});
+
+test("a plain-string error body (Ollama's) is read as the message, not shown as raw JSON", () => {
+  const e = classifyHttpFailure(404, JSON.stringify({ error: "model 'nope' not found" }), "Ollama");
+  expect(e.message).toBe("Ollama (404): model 'nope' not found");
 });

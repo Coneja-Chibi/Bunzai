@@ -18,6 +18,7 @@
 import { json } from "../server-security";
 import { toErrorMessage } from "../_shared/error-message";
 import { spokes } from "../../kit/providers/registry";
+import { asksBaseURL } from "../../kit/providers/spoke";
 import {
   activeProvider,
   readVault,
@@ -97,7 +98,8 @@ export async function handleProviderList(): Promise<Response> {
        * refused after it. A spoke that supplies `chat` is not an HTTP provider, which is the
        * distinction the terminal's own form already draws (render/settings/providers-data.ts).
        */
-      needsBaseUrl: spoke.host === undefined && spoke.chat === undefined,
+      needsBaseUrl: asksBaseURL(spoke),
+      ...(spoke.defaultBaseURL ? { defaultBaseURL: spoke.defaultBaseURL } : {}),
       ...(spoke.options ? { options: spoke.options } : {}),
     })),
     /** A notice from a vault that could not be recovered. Surfaced, never swallowed. */
@@ -144,8 +146,7 @@ export async function handleProviderSave(body: unknown): Promise<Response> {
 
   // Same rule as the `kinds` list above: a spoke with `chat` runs a subprocess, not a request, so
   // there is no endpoint for a base URL to name. Demanding one here refused a valid subscription.
-  const httpProvider = spoke.chat === undefined;
-  if (httpProvider && spoke.host === undefined && !(typeof baseURL === "string" && baseURL.length > 0)) {
+  if (asksBaseURL(spoke) && !spoke.defaultBaseURL && !(typeof baseURL === "string" && baseURL.length > 0)) {
     return json({ error: `${spoke.label} needs a base URL` }, 400);
   }
 
@@ -310,13 +311,15 @@ export async function handleProviderModels(body: unknown, signal?: AbortSignal):
       model: typeof body["model"] === "string" ? body["model"] : (spoke.defaultModel ?? ""),
       ...(typeof apiKey === "string" && apiKey ? { apiKey } : {}),
       ...(typeof baseURL === "string" && baseURL ? { baseURL } : {}),
+      // The spoke's own choices (Ollama's window) shape what the list says of each model; only declared keys with string values pass.
+      ...(isRecord(body["options"]) ? { options: Object.fromEntries((spoke.options ?? []).flatMap((o) => (typeof (body["options"] as Record<string, unknown>)[o.key] === "string" ? [[o.key, String((body["options"] as Record<string, unknown>)[o.key])]] : []))) } : {}),
     } as ProviderConfig;
   } else {
     return json({ error: "id or kind is required" }, 400);
   }
 
   try {
-    const found = await listModelsFor(config);
+    const found = await listModelsFor(config, signal);
     /**
      * NULL AND EMPTY ARE DIFFERENT ANSWERS. Null means this provider publishes no list at all and
      * the form should simply take a typed model id; an empty array means it published a list with

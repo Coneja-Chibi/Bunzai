@@ -5,6 +5,7 @@
  * changes route does; a take that moved on since the page read it (a stale version, or a message that is no longer the tip) or a turn running in the scene is a 409, a tracker the scene does not use is a 400, a scene or take that is gone is a 404.
  */
 import { isRecord, str } from "../core/guards";
+import { sceneRuntimeFor } from "./server-scene-runtime";
 import type { ChatStore } from "../stage/contracts/chat-store";
 import { StudioNotFoundError, StudioValidationError } from "../studio/errors";
 import type { ReadTracker } from "../studio/library-trackers";
@@ -37,6 +38,6 @@ export async function handleLibraryTrackersRoute(req: Request, url: URL, chats: 
     if (!found) throw new StudioNotFoundError("that scene is gone");
     return json(found);
   }
-  if (req.method === "POST" && url.pathname === "/api/chats/tracker-edit" && b) return json(await editSceneTracker(chats, read, parseTrackerEdit(b), now));
+  if (req.method === "POST" && url.pathname === "/api/chats/tracker-edit" && b) return json(await editSceneTracker(sceneRuntimeFor(chats), chats, read, parseTrackerEdit(b), now));
   return null;
 }

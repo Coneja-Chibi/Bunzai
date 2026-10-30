@@ -2,6 +2,7 @@
 import { copyFile, cp, mkdir, rm } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { ICON_FILES, studioWebManifest } from "../src/ui/assets";
 import { parseDocsIndex } from "../src/ui/docs-corpus";
 import type { DocFigure } from "../src/ui/docs-types";
 import { buildSite } from "./build-site";
@@ -94,8 +95,7 @@ await write("pocket-data.js", `globalThis.__BUNZAI_POCKET_DATA__=${JSON.stringif
 await write("pocket.js", await bundleBrowser(join(root, "src", "pocket", "index.ts")));
 await write("search-worker.js", await bundleBrowser(join(root, "src", "pocket", "search-worker.ts")));
 await write("tokens.css", await Bun.file(join(ui, "theme", "tokens.css")).text());
-await copyFile(join(root, "build", "vaude.ico"), join(output, "favicon.ico"));
-await copyFile(join(root, "build", "vaude-256.png"), join(output, "icon-256.png"));
+for (const [name, [file]] of Object.entries(ICON_FILES)) await copyFile(join(root, "build", file), join(output, name));
 
 const rawHtml = await Bun.file(join(ui, "index.html")).text();
 const html = rawHtml
@@ -108,12 +108,6 @@ await write("index.html", html);
 await Bun.write(join(site, ".nojekyll"), "");
 await copyFile(join(root, "build", "vaude.ico"), join(site, "favicon.ico"));
 const sitePages = await buildSite(root, site);
-await write("app.webmanifest", JSON.stringify({
-  name: "Bunzai Studio",
-  short_name: "Bunzai",
-  start_url: "./",
-  display: "standalone",
-  icons: [{ src: "./icon-256.png", sizes: "256x256", type: "image/png" }],
-}, null, 2));
+await write("app.webmanifest", JSON.stringify(studioWebManifest("./"), null, 2));
 
 console.log(`dist/pages ready: ${sitePages} site pages; studio/ has ${manifests.length} apps, ${setupSteps.length} setup steps, ${docsIndex.count} docs`);

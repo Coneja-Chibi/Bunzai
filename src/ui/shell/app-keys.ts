@@ -70,6 +70,8 @@ export interface AppBinding {
   /** the platform accelerator: ctrl on Windows and Linux, cmd on a Mac. Exactly one, never both. */
   readonly accel?: boolean;
   readonly shift?: boolean;
+  /** shift may be held or not: AZERTY types its digits with shift */
+  readonly anyShift?: boolean;
   readonly alt?: boolean;
   /** matched on the typed character */
   readonly key?: string;
@@ -94,10 +96,25 @@ const ORDINALS = [
  * what "the first tile" is supposed to mean. Punctuation stays on `key`, where the character IS the
  * thing the user is aiming at.
  *
+ * THE BARE DIGIT COMES FIRST. In a browser tab, ctrl+1..9 belongs to the browser (Chrome and Firefox
+ * switch tabs and never hand the page the key), so the number printed on a tile only worked in the
+ * desktop app. The digit alone opens it everywhere; the typing guard below keeps it out of every
+ * field, and a key something else already handled (`defaultPrevented`, e.g. the agent's ask panel
+ * picking an option) never reaches here. ctrl+digit stays for the desktop app. The bare row is first,
+ * so the tile's hint reads the key that works in both. Unlike the ctrl rows it matches the TYPED
+ * digit with shift allowed: the printed "1" is what is aimed at, on AZERTY (shift) and the numpad too.
+ *
  * SETTINGS IS THE FOOT, NOT A NUMBER. It sits in the dock's foot rather than the numbered body
  * (`dockFoot` in its manifest), and ctrl+comma is what "preferences" has meant for a decade.
  */
 export const APP_KEYS: readonly AppBinding[] = [
+  ...Array.from({ length: NUMBERED_SLOTS }, (_, i): AppBinding => ({
+    does: { at: "numbered", slot: i },
+    key: String(i + 1),
+    anyShift: true,
+    label: String(i + 1),
+    says: `the ${ORDINALS[i]} app on the dock`,
+  })),
   ...Array.from({ length: NUMBERED_SLOTS }, (_, i): AppBinding => ({
     does: { at: "numbered", slot: i },
     code: `Digit${i + 1}`,
@@ -149,11 +166,10 @@ export function appRoster(manifests: readonly AppManifestEntry[]): AppRoster {
 const wants = (binding: AppBinding, event: AppKeyEvent): boolean => {
   // Exactly one accelerator. Ctrl and Cmd are the same finger on different machines; holding BOTH
   // is a third chord and belongs to nobody.
-  const accel = event.ctrlKey !== event.metaKey;
-  if ((binding.accel === true) !== accel) return false;
+  if (binding.accel === true ? event.ctrlKey === event.metaKey : event.ctrlKey || event.metaKey) return false;
   // Absent means "must NOT be held", the rail's rule: a binding that ignored modifiers would
   // swallow the chorded versions of its own key.
-  if ((binding.shift === true) !== event.shiftKey) return false;
+  if (binding.anyShift !== true && (binding.shift === true) !== event.shiftKey) return false;
   if ((binding.alt === true) !== event.altKey) return false;
   if (binding.code !== undefined) return binding.code === event.code;
   return binding.key !== undefined && binding.key.toLowerCase() === event.key.toLowerCase();

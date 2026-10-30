@@ -188,6 +188,7 @@ puts one element in it; `src/ui/protected-set.test.ts` holds each to the file th
 - Remove and restore of participants
 - Delete and remove of tracker items
 - Story Director model and connection
+- Dramaturg model and connection
 - Story Director Reset DM
 
 ## Copy-paste starter

@@ -3,8 +3,8 @@
  * chatStoreContract runs it on every backend.
  */
 import { describe, expect, test } from "bun:test";
-import { StudioConflictError } from "../../studio/atomic-file";
-import { StudioValidationError } from "../../studio/errors";
+import { StudioConflictError, StudioValidationError } from "../../studio/errors";
+
 import type { ChatStore, DirectorState } from "./chat-store";
 import { chatRig } from "./chat-store.contract-rig";
 

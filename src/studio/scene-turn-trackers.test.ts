@@ -4,6 +4,7 @@
  * narrator; this proves Bunzai does.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { typedEntry } from "../core/compendium/fixture-book";
 import { emptyLorebookBody } from "../core/lore";
 import { DEFAULT_RESOURCES } from "../core/trackers/resources";
@@ -29,7 +30,7 @@ async function scene(card: Record<string, unknown> = {}, readLorebook: (id: stri
   const sent: ProviderRequest[] = [];
   const flags = { failing: false };
   const provider: Provider = { id: "fake", async send(request) { sent.push(request); if (flags.failing) throw new Error("down"); return { content: "Maybe.", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
-  const deps = { chats, state: memoryStateStore(), connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }), readPreset: async () => null, readLorebook, now: () => (now += 10), randomSeed: () => 7 };
+  const deps = { runtime: createTurnRuntime(), chats, state: memoryStateStore(), connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }), readPreset: async () => null, readLorebook, now: () => (now += 10), randomSeed: () => 7 };
   const turn = async () => {
     const version = (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion!;
     await runTurn(deps, { chatId: chat.id, kind: "reply", expectedVersion: version }, () => undefined);

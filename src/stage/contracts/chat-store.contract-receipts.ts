@@ -3,8 +3,8 @@
  * the field-level values undo needs, never hard-deleted. chatStoreContract runs it on every backend.
  */
 import { describe, expect, test } from "bun:test";
-import { StudioConflictError } from "../../studio/atomic-file";
-import { StudioValidationError } from "../../studio/errors";
+import { StudioConflictError, StudioValidationError } from "../../studio/errors";
+
 import type { ChatStore, ReceiptWrite } from "./chat-store";
 import { CAST, chatRig, SNAP } from "./chat-store.contract-rig";
 

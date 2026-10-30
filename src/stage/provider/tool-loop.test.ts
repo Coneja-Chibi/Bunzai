@@ -161,6 +161,16 @@ describe("sendWithTools", () => {
     expect(records).toHaveLength(1);
   });
 
+  test("an answer past 12,000 characters is cut and says so, unless the tool declares a larger cap of its own", async () => {
+    const long: NarratorTool<{ q: string }> = { ...lookup, run: async () => ({ text: "x".repeat(15_000) }) };
+    const paged: NarratorTool<{ q: string }> = { ...long, definition: { ...long.definition, function: { ...long.definition.function, name: "paged" } }, resultCap: 20_000 };
+    const { provider } = scripted([reply("", [call("lookup", '{"q":"a"}', "a"), call("paged", '{"q":"a"}', "b")]), reply("end")]);
+    const records: ToolCallRecord[] = [];
+    await sendWithTools(provider, base(), {}, cfg(records, 8, [long as NarratorTool<never>, paged as NarratorTool<never>]));
+    expect(records[0]!.text).toStartWith("x".repeat(12_000) + "\n[cut: the result was longer than 12000 characters]");
+    expect(records[1]!.text).toBe("x".repeat(15_000));
+  });
+
   test("with no tools the request is sent as it is, with no tool fields", async () => {
     const { provider, requests } = scripted([reply("x")]);
     await sendWithTools(provider, base(), {}, cfg([], 8, []));

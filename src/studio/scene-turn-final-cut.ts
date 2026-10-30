@@ -46,7 +46,7 @@ function withThinking(original: string, reply: string, final: string): string {
 }
 
 export async function finalCutStage(a: {
-  deps: Pick<TurnDeps, "connect" | "now" | "readPreset" | "readRegex">;
+  deps: Pick<TurnDeps, "connect" | "now" | "readPreset" | "readRegex" | "runtime">;
   /** The turn that asked, so the page can be asked to run the scene's regex on a pass's input; absent for a re-run, which has no page to ask. */
   turnId?: string;
   chat: Chat;
@@ -65,7 +65,7 @@ export async function finalCutStage(a: {
   const preset = custom?.customPresetId ? await readPreset(deps.readPreset, custom.customPresetId) : null;
   const strip = (t: string): string => splitReasoning(t, a.format).reply;
   const regexInput = await finalCutRegexInput({
-    setIds: chat.regex?.sets, readRegex: deps.readRegex, turnId: a.turnId ?? "", chatId: chat.id, signal: a.signal,
+    runtime: deps.runtime, setIds: chat.regex?.sets, readRegex: deps.readRegex, turnId: a.turnId ?? "", chatId: chat.id, signal: a.signal,
     names: { user: chat.cast.persona?.name ?? "User", char: chat.cast.character.name ?? "" },
     emit: a.turnId ? a.emit : () => { throw new FinalCutRegexError(RERUN_REFUSAL); },
   });
@@ -74,7 +74,7 @@ export async function finalCutStage(a: {
       text, passes, signal: a.signal,
       progress: (p, index) => a.emit({ type: "finalcut", pass: p.label || p.type, index, of: passes.length }),
       env: {
-        open: deps.connect, scene: chat.connection, strip, now: deps.now,
+        open: (connection) => deps.connect(connection, a.signal), scene: chat.connection, strip, now: deps.now,
         context: { ...(chat.cast.character.name ? { characterName: chat.cast.character.name } : {}), role: "assistant", recentMessages: a.history.filter((m) => m.role !== "system" && m.content.trim()).slice(-10) },
         rulebook: rulebookOf(preset, custom?.customPresetPromptStates),
         userBanks: (await a.userBanks?.().catch(() => null)) ?? {},

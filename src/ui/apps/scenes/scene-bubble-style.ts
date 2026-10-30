@@ -10,6 +10,12 @@
 import { seeThrough } from "./bubble-opacity";
 import { RC, rcScope, rcSize } from "./rc-chrome";
 
+import { SURFACES } from "../../../extensions/surface-registry";
+
+/** The core layout on a phone: a scene under 30rem whose theme picked no layout variant (each variant draws its
+ * own narrow row). The portrait shrinks to a corner mark so the text takes the width. */
+const PHONE = `html:not(${SURFACES["scene.layout"].map((v) => `[data-surface-scene-layout="${v}"]`).join(",")}) .scs`;
+
 const BLACK = seeThrough("var(--stage-black)", 55);
 const EDGE = seeThrough("var(--stage-card)", 8);
 
@@ -72,4 +78,16 @@ ${RC} .scs:not([data-look~="noavatar"]) .msg .meta:not(:has(>:not(.ts))){display
 ${RC} .scs[data-look~="noavatar"] .msg .meta .ts{display:inline}
 `;
 
-export const BUBBLE_STYLE = SHARED + rcScope(ROLECALL);
+const PHONE_STYLE = `
+@container (max-width:30rem){
+${PHONE} .msg{display:block;padding-left:3.25rem}
+${PHONE} .msg.user{padding-left:0;padding-right:3.25rem}
+${PHONE} .msg>.pw{position:absolute;left:0;top:0;width:2.5rem;height:2.5rem;max-width:none}
+${PHONE} .msg.user>.pw{left:auto;right:0}
+${PHONE} .msg>.pw .por .ini{font-size:18px}
+${PHONE} .msg>.pw .pstamp{display:none}
+${PHONE} .msg>.body,${PHONE} .msg.user>.body{padding:0}
+${PHONE} .starting{margin-left:3.25rem}
+}
+`;
+export const BUBBLE_STYLE = SHARED + rcScope(ROLECALL) + PHONE_STYLE;

@@ -7,8 +7,8 @@ import { readFileSync } from "node:fs";
 import { stripComments } from "../../scripts/hooks/lib";
 import { DEFAULT_INVENTORY, applyInventory, readInventory } from "../core/trackers/inventory";
 import { parseTrackerData } from "../core/trackers";
-import { StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError, StudioValidationError } from "./errors";
+import { StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
+
 import { compendiumRig } from "./fake-compendium-rig";
 import { personEdit } from "./fake-director-rig";
 import { proposeTrackerRefresh } from "./scene-tracker-refresh";

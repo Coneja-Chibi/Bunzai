@@ -7,9 +7,9 @@
 import type { ChatOpening, ChatStore, JsonObject, PersonaStats } from "../stage/contracts/chat-store";
 import { breather } from "../stage/store/breather";
 import { turnOpenConflict } from "../stage/store/cast-rules";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
 import type { StudioStoreLike } from "./contracts";
-import { StudioNotFoundError, StudioValidationError } from "./errors";
+
 import { readChatCast } from "./cast-snapshot";
 import { bodyOf } from "../core/guards";
 import type { CharacterBody } from "../entities/character/schema";

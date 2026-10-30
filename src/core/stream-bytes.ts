@@ -48,7 +48,9 @@ export async function* chunksOf(source: ReadableStream<Uint8Array>, signal?: Abo
   } finally {
     signal?.removeEventListener("abort", cancel);
     await reader.cancel().catch(() => undefined);
-    reader.releaseLock();
+    // Bun 1.3: on a served request body, releaseLock after cancel throws inside Bun itself. The lock
+    // only guards this reader, which is finished either way, so a failed release changes nothing.
+    try { reader.releaseLock(); } catch { /* see above */ }
   }
 }
 
@@ -66,7 +68,10 @@ export async function pumpStream(source: ReadableStream<Uint8Array> | null, sink
         opts.onProgress?.(total);
       }
     }
-    if (!failure) await sink.finish();
+    if (!failure) {
+      opts.signal?.throwIfAborted();
+      await sink.finish();
+    }
   } catch (error) {
     failure = { ok: false, reason: opts.signal?.aborted ? "aborted" : "failed", error };
   }

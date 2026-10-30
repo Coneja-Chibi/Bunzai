@@ -10,23 +10,27 @@ import type { ChatFn } from "./provider";
 import type { ModelInfo } from "./models";
 import { allowedHost, assertReady, EgressBlocked, guardedFetch } from "./egress";
 import { spokes } from "./registry";
+import { speaksHttp } from "./spoke";
 
 /**
- * A spoke's own chat, when it has one, or null for the ordinary HTTP case.
+ * A spoke's own chat, when it has one, or null for the ordinary AI SDK case.
  *
- * Resolved through the same registry and the same readiness check as a model, so a provider that is
- * not an HTTP model still cannot send before it is set up. There is no guarded fetch here because
- * there is no fetch: such a spoke states its own egress story in its own file.
+ * Resolved through the same registry and the same readiness check as a model, so it still cannot send
+ * before it is set up. No fetch is built here: a CLI spoke makes no request and states its own egress
+ * story in its own file, and an HTTP spoke with its own chat (Ollama) builds its guarded fetch itself.
  */
 export async function spokeChat(
   config: ProviderConfig | null,
   signal?: AbortSignal,
+  system?: string,
+  /** The same signal with the turn's hang cap: an HTTP spoke's own chat gets it, a local CLI (whose runs are long by design) does not. */
+  capped?: AbortSignal,
 ): Promise<ChatFn | null> {
   if (!config) return null;
   const spoke = (await spokes()).get(config.kind);
   if (!spoke?.chat) return null;
   assertReady(config, spoke);
-  return spoke.chat(config, signal);
+  return spoke.chat(config, speaksHttp(spoke) && capped ? capped : signal, system);
 }
 
 /** Build the model for a config, or fail closed if it is unset, unknown, or missing a key. */
@@ -48,7 +52,8 @@ export async function buildModel(config: ProviderConfig | null): Promise<Languag
 /** Query the provider's live model list through the same egress gate. Returns null when the spoke
  * has no models endpoint (manual entry). Request failures remain errors so setup can explain and
  * retry them instead of misreporting every failure as an empty model list. */
-export async function listModelsFor(config: ProviderConfig): Promise<ModelInfo[] | null> {
+export async function listModelsFor(config: ProviderConfig, signal?: AbortSignal): Promise<ModelInfo[] | null> {
+  signal?.throwIfAborted();
   const spoke = (await spokes()).get(config.kind);
   if (!spoke?.listModels) return null;
   assertReady(config, spoke);
@@ -74,6 +79,6 @@ export async function listModelsFor(config: ProviderConfig): Promise<ModelInfo[]
     f.preconnect = (): void => {};
     return f as unknown as FetchFunction;
   });
-  const fetch = spoke.chat && !spoke.model ? refusing() : guardedFetch(allowedHost(config, spoke));
-  return spoke.listModels(config, fetch);
+  const fetch = speaksHttp(spoke) ? guardedFetch(allowedHost(config, spoke)) : refusing();
+  return spoke.listModels(config, fetch, signal);
 }

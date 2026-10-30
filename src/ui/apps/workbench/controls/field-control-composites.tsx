@@ -124,6 +124,7 @@ export function renderSub(
     case "prose":
       return (
         <ExpandTextarea
+          grow
           label={sf.label}
           className={`${styles.in} ${styles.ta}`}
           spellCheck={false}

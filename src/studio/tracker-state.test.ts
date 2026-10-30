@@ -3,6 +3,7 @@
  * the person's write on the newest reply (several modules in one step, all or nothing), and every refusal with its sentence.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { trackerDeltas } from "../core/trackers";
 import { DEFAULT_INVENTORY, applyInventory, readInventory } from "../core/trackers/inventory";
 import { DEFAULT_RESOURCES, readResources } from "../core/trackers/resources";
@@ -10,8 +11,8 @@ import type { JsonValue } from "../stage/contracts/chat-store";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { handleTrackerStateRoute, parseTrackerWrite } from "../ui/server-chats-tracker-state";
 import { studioErr } from "../ui/server-security";
-import { StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError, StudioValidationError } from "./errors";
+import { StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
+
 import { dataAt } from "./fake-director-rig";
 import { readTrackerStates, undoTrackerUpdate, writeTrackerStates, type TrackerWriteInput } from "./tracker-state";
 
@@ -20,6 +21,7 @@ const key = { name: "Rusty Key", description: "", category: "key" as const, rari
 const withKey = (id: string) => applyInventory(DEFAULT_INVENTORY, { kind: "add", item: key, id, at: 1 });
 
 async function rig() {
+  const runtime = createTurnRuntime();
   const chats = memoryChatStore(() => 1_000);
   const chat = await chats.createChat({ title: "Night", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: { kind: "character", id: "vera", body: { identity: { name: "Vera" } } } } });
   const branch = chat.activeBranchId;
@@ -30,10 +32,10 @@ async function rig() {
   const states = async () => (await readTrackerStates(chats, (await chats.getChat(chat.id))!, branch))!;
   const write = async (over: Partial<TrackerWriteInput> & Pick<TrackerWriteInput, "writes">) => {
     const at = await states();
-    return writeTrackerStates(chats, { chatId: chat.id, branchId: branch, messageId: reply.id, expectedVersion: at.branchVersion, ...over }, now);
+    return writeTrackerStates(runtime, chats, { chatId: chat.id, branchId: branch, messageId: reply.id, expectedVersion: at.branchVersion, ...over }, now);
   };
   const data = (module: "resources" | "inventory") => dataAt(chats, branch, module);
-  return { chats, chat, branch, reply, states, write, data };
+  return { runtime, chats, chat, branch, reply, states, write, data };
 }
 
 describe("the read", () => {
@@ -91,12 +93,12 @@ describe("the person's write", () => {
     const stale = (await r.states()).branchVersion;
     await r.chats.appendMessage(r.branch, { role: "user", content: "more" });
     const writes = [{ module: "resources" as const, data: { ...DEFAULT_RESOURCES, hp: 40 } as unknown as JsonValue }];
-    await expect(writeTrackerStates(r.chats, { chatId: r.chat.id, branchId: r.branch, messageId: r.reply.id, writes, expectedVersion: stale }, now)).rejects.toThrow("moved on");
+    await expect(writeTrackerStates(r.runtime, r.chats, { chatId: r.chat.id, branchId: r.branch, messageId: r.reply.id, writes, expectedVersion: stale }, now)).rejects.toThrow("moved on");
     const open = await r.chats.beginTurn(r.branch, { kind: "reply" });
-    await expect(writeTrackerStates(r.chats, { chatId: r.chat.id, branchId: r.branch, messageId: (await r.states()).tipId!, writes, expectedVersion: (await r.states()).branchVersion }, now)).resolves.toBeDefined();
+    await expect(writeTrackerStates(r.runtime, r.chats, { chatId: r.chat.id, branchId: r.branch, messageId: (await r.states()).tipId!, writes, expectedVersion: (await r.states()).branchVersion }, now)).resolves.toBeDefined();
     await r.chats.dropTurn(open!.id);
-    await expect(writeTrackerStates(r.chats, { chatId: "nope", branchId: r.branch, messageId: r.reply.id, writes, expectedVersion: 1 }, now)).rejects.toBeInstanceOf(StudioNotFoundError);
-    await expect(writeTrackerStates(r.chats, { chatId: r.chat.id, branchId: "nope", messageId: r.reply.id, writes, expectedVersion: 1 }, now)).rejects.toBeInstanceOf(StudioNotFoundError);
+    await expect(writeTrackerStates(r.runtime, r.chats, { chatId: "nope", branchId: r.branch, messageId: r.reply.id, writes, expectedVersion: 1 }, now)).rejects.toBeInstanceOf(StudioNotFoundError);
+    await expect(writeTrackerStates(r.runtime, r.chats, { chatId: r.chat.id, branchId: "nope", messageId: r.reply.id, writes, expectedVersion: 1 }, now)).rejects.toBeInstanceOf(StudioNotFoundError);
   });
 });
 

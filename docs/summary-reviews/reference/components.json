@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/components",
   "sourcePath": "docs/reference/components.md",
-  "sourceHash": "sha256:48382c6366efc996bad4bc6359fc2c5d67bc0e63eda72b5e3dc16a5d1d17bfbf",
-  "semanticSummaryHash": "sha256:b99be5a292a3107ac082529c1603ad0bea27e0af7bd831fa04287a15f9177522",
+  "sourceHash": "sha256:56dd655f3589cc729ea899823d73df12f415d6595d3934a54adf22f81f2d3e76",
+  "semanticSummaryHash": "sha256:77e925df0f7afeb3d361e2a9956117b17e6785cf8a0004ba4acb9c5ae96ae188",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only; generated table cells truncate at fixed width so two cut-off points moved with the shorter name",
-  "reviewedAt": "2026-10-29T20:48:08.160Z"
+  "reviewer": "integration_review",
+  "notes": "Reviewed regenerated Dramaturg component exports and updated shared component signatures against owning source; catalog remains generated lookup metadata, not behavioral verification.",
+  "reviewedAt": "2026-10-30T03:37:04.880Z"
 }

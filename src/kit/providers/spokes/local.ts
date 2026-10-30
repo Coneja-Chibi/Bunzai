@@ -1,11 +1,15 @@
-/** Local (Ollama / LM Studio): an OpenAI-compatible server on your machine. Keyless, zero egress. */
+/**
+ * A local OpenAI-compatible server (LM Studio, llama.cpp, Kobold): keyless, zero egress. These size their context window when they
+ * load a model. Ollama has its own spoke (spokes/ollama.ts): through this OpenAI-compatible path Ollama cannot be told its window and
+ * silently cuts a long prompt.
+ */
 import type { ProviderSpoke } from "../spoke";
 import { openAICompatModels } from "../models";
 import { LOCAL_PARAMS } from "../../../stage/params/dialects";
 
 const local: ProviderSpoke = {
   id: "local",
-  label: "Local (Ollama / LM Studio)",
+  label: "Local OpenAI-compatible (LM Studio, llama.cpp)",
   brand: "#5AD07A",
   // No fixed host: the egress allowlist is derived from the user's base URL (localhost).
   defaultModel: "llama3.1",
@@ -23,7 +27,7 @@ const local: ProviderSpoke = {
   async listModels({ apiKey, baseURL }, fetch) {
     return openAICompatModels(baseURL ?? "http://localhost:11434/v1", apiKey, fetch);
   },
-  // Ollama, LM Studio, llama.cpp: RoleCall's adaptForLlamaCpp.
+  // LM Studio, llama.cpp, Kobold: RoleCall's adaptForLlamaCpp.
   scene: { params: LOCAL_PARAMS, base: (c) => c.baseURL ?? "http://localhost:11434/v1" },
 };
 

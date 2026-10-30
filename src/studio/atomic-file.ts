@@ -7,30 +7,7 @@
 import { open, rename, unlink } from "node:fs/promises";
 import { dirname, extname, join, resolve } from "node:path";
 import { randomBytes } from "node:crypto";
-import { hasErrorName } from "../core/guards";
-import { StudioValidationError } from "./errors";
-
-export class StudioWriteError extends Error {
-  readonly code = "studio_write" as const;
-  constructor(message = "could not write file", options?: { cause?: unknown }) {
-    super(message, options);
-    this.name = "StudioWriteError";
-  }
-}
-
-export class StudioConflictError extends Error {
-  readonly code = "studio_conflict" as const;
-  constructor(message = "file already exists") {
-    super(message);
-    this.name = "StudioConflictError";
-  }
-}
-
-export const isStudioWriteError = (error: unknown): error is StudioWriteError =>
-  error instanceof StudioWriteError || hasErrorName(error, "StudioWriteError");
-
-export const isStudioConflictError = (error: unknown): error is StudioConflictError =>
-  error instanceof StudioConflictError || hasErrorName(error, "StudioConflictError");
+import { StudioValidationError, StudioWriteError, StudioConflictError } from "./errors";
 
 const tmpName = (finalPath: string): string => {
   const dir = dirname(finalPath);
@@ -50,7 +27,7 @@ const tmpName = (finalPath: string): string => {
  * The `created` flag is load-bearing: on the EEXIST path the file is someone else's and must NOT be
  * unlinked, or the cleanup would destroy the very data the exclusive open was protecting.
  */
-export async function writeExclusive(finalPath: string, body: string): Promise<void> {
+export async function writeExclusive(finalPath: string, body: string | Uint8Array): Promise<void> {
   let handle: Awaited<ReturnType<typeof open>> | undefined;
   let created = false;
   try {

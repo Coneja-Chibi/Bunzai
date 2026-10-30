@@ -44,6 +44,7 @@ export interface PieceSummary extends PieceSummaryContent {
   kind: StudioEntityKind;
   revision: string;
   version: number;
+  /** Monotonic identity of the committed live row, including coalesced autosaves. */
   writeId: number;
   updatedAt: number;
 }

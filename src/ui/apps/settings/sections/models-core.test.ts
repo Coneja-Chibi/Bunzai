@@ -9,6 +9,7 @@ import {
   draftFrom,
   draftProblem,
   emptyDraft,
+  offeredModel,
   providerLabel,
   saveBody,
   type ProviderKind,
@@ -28,6 +29,12 @@ const saved: SafeProvider = {
 };
 
 describe("draftProblem", () => {
+  test("a local server needs its base URL, unless its provider has a default address (Ollama)", () => {
+    const blank = { ...emptyDraft(LOCAL), model: "m" };
+    expect(draftProblem(blank, LOCAL)).toContain("needs a base URL");
+    const OLLAMA: ProviderKind = { ...LOCAL, id: "ollama", defaultBaseURL: "http://localhost:11434" };
+    expect(draftProblem({ ...blank, kind: "ollama" }, OLLAMA)).toBeNull();
+  });
   test("a new provider needs its key", () => {
     const draft = { ...emptyDraft(ANTHROPIC) };
     expect(draftProblem(draft, ANTHROPIC)).toContain("needs an API key");
@@ -109,5 +116,18 @@ describe("providerLabel", () => {
   test("an unknown kind still renders as something", () => {
     // A vault written by a newer build can name a spoke this one does not ship.
     expect(providerLabel({ ...saved, kind: "future" }, [ANTHROPIC])).toContain("future");
+  });
+});
+
+describe("offeredModel", () => {
+  test("an untouched field (empty, or the pre-filled default) the server does not have becomes the first model it offers", () => {
+    const offered = [{ id: "gemma4:26b" }, { id: "chargen3:latest" }];
+    expect(offeredModel("llama3.1", offered, "llama3.1")).toBe("gemma4:26b");
+    expect(offeredModel("", offered, "llama3.1")).toBe("gemma4:26b");
+    expect(offeredModel("chargen3:latest", offered, "llama3.1")).toBe("chargen3:latest");
+    expect(offeredModel("llama3.1", [], "llama3.1")).toBe("llama3.1");
+  });
+  test("a model the person typed is never replaced, offered or not", () => {
+    expect(offeredModel("my-finetune:q8", [{ id: "gemma4:26b" }], "llama3.1")).toBe("my-finetune:q8");
   });
 });

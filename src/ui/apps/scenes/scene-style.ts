@@ -1,7 +1,6 @@
 /** The scene page's styles: RoleCall's StandardLayout, from the approved wireframe (rc-port/chat.html). The default theme's wing shell (push-aside, rail, panel surface, hero, tabs) is scene-wing-style.ts. */
 import { seeThrough } from "./bubble-opacity";
 import { narrowRail } from "./narrow-rail";
-
 export const SCENE_STYLE = `
 .scs{--accent:var(--bk-scene-accent,var(--bk-accent));--accent-deep:var(--bk-scene-accent-deep,var(--bk-accent-deep));container-type:inline-size;position:relative;height:100%;min-height:0;overflow:hidden;background:var(--stage-well);color:var(--stage-soft);font-family:var(--font-big)}
 .scs .bgm{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,color-mix(in srgb,var(--accent) 7%,transparent),transparent 60%),var(--stage-well)}

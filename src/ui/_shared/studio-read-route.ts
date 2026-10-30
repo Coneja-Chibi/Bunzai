@@ -2,7 +2,6 @@
  * Runtime-neutral Studio read routes, shared by authenticated desktop routing and temporary browser Studio.
  */
 import type { StudioStoreLike } from "../../studio/contracts";
-import { entityRevision } from "../../entities/canonical-revision";
 import { compendiumChunks } from "../../formats/rolecall/compendium";
 import { downloadResponse } from "./byte-stream";
 import { openPackZip, PackExportError } from "./pack-export";
@@ -28,9 +27,13 @@ export async function handleStudioRead(
         const light = await store.readLight(kind ?? "", id);
         return light ? json(light) : json({ error: "not found" }, 404);
       }
+      if (url.searchParams.get("revision") === "1") {
+        const stored = await store.readVersioned(kind ?? "", id);
+        return stored ? json({ entity: stored.entity, revision: stored.revision }) : json({ error: "not found" }, 404);
+      }
       const entity = await store.read(kind ?? "", id);
       if (!entity) return json({ error: "not found" }, 404);
-      return json(url.searchParams.get("revision") === "1" ? { entity, revision: entityRevision(entity) } : entity);
+      return json(entity);
     }
     if (path === "/api/studio/export-pack") {
       // A stored pack printed as a ZIP of its pictures, each read from the library as its turn comes.

@@ -4,6 +4,7 @@
  * the guidance so the bubble can offer "Edit guided re-roll". Fixtures are scene-turn-preset.test.ts's own.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { PresetBody, PresetPrompt } from "../entities/preset/schema";
 import { buildGuidedSwipeDirective } from "../core/assembly/guided-swipe";
 import type { Message } from "../stage/contracts/chat-store";
@@ -45,7 +46,7 @@ async function scene(opts: { preset?: boolean; model?: string } = {}) {
       return { content: "Colder.", finish_reason: "stop", raw: {} } as ProviderCompletion;
     },
   };
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }),
     readPreset: async () => quill, readLorebook: async () => null,

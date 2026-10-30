@@ -18,7 +18,7 @@ import { undoAll, undoableReceipts, undoReceipt } from "../studio/compendium-und
 import { libraryStateFor } from "../studio/library-content";
 import { handleCompendiumAiRoute } from "./server-chats-compendium-ai";
 import { handleStandardizeRoute } from "./server-chats-compendium-standardize";
-import { connect } from "./server-chats-turn";
+import { connect } from "../kit/providers/scene-connect";
 import { err, json } from "./server-security";
 
 type Body = Record<string, unknown>;

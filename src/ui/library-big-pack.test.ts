@@ -22,7 +22,7 @@ import { libraryContentFor } from "../studio/library-content";
 const opened: OpenedLibrary[] = [];
 const dirs: string[] = [];
 afterEach(async () => {
-  for (const l of opened.splice(0)) l.close();
+  for (const l of opened.splice(0)) await l.close();
   await Promise.all(dirs.splice(0).map(removeTempDir));
 });
 

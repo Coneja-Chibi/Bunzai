@@ -7,9 +7,9 @@
  */
 import { chunkMessages, parseReconcile, propose, reconcileMessages, repairReconcile, RECONCILE_MAX_MESSAGES, type Proposal } from "../core/participants/reconcile";
 import type { Chat } from "../stage/contracts/chat-store";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError, StudioNotFoundError } from "./errors";
 import { bodyOf, optStr, recOr } from "../core/guards";
-import { StudioNotFoundError } from "./errors";
+
 import { loadCast } from "./scene-turn-load";
 import { askJson, type Ask } from "./compendium-ask";
 import type { CompendiumDeps } from "./compendium-deps";

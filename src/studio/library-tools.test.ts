@@ -1,5 +1,6 @@
 /** Library tools a scene links, through the real turn and tool loop against a scripted provider. */
 import { expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { ToolBody } from "../entities/tool/schema";
 import type { ChatPromptingPatch } from "../stage/contracts/chat-store";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
@@ -32,7 +33,7 @@ async function turn(prompting: ChatPromptingPatch, script: ProviderCompletion[])
   await chats.appendMessages(chat.activeBranchId, [{ role: "user", content: "I try my luck." }]);
   const sent: ProviderRequest[] = [];
   const provider: Provider = { id: "conn", async send(request) { sent.push(structuredClone(request)); return script.shift() ?? say("done"); } };
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000, tools: true }),
     narratorTools: (ctx: Parameters<typeof libraryTools>[0]) => libraryTools(ctx, async (kind, id) => LIBRARY[`${kind}:${id}`] ?? null, []),

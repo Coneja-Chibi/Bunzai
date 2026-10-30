@@ -140,10 +140,11 @@ describe("SQLite ChatStore: writes are single transactions", () => {
     const m = await store.appendMessage(chat.activeBranchId, { role: "user", content: "a" });
     await store.editSwipe(m!.id, m!.swipes[0]!.id, "b");
     await store.fork(chat.activeBranchId, m!.id);
+    await store.appendDramaturg(chat.id, [{ role: "user", text: "why" }], { expectedRevision: 0 });
     now = 2_000;
     await store.deleteChat(chat.id);
     expect(await store.purgeChats(3_000)).toBe(1);
-    for (const table of ["branches", "messages", "swipes", "swipe_history"]) {
+    for (const table of ["branches", "messages", "swipes", "swipe_history", "dramaturg_threads"]) {
       expect(d.db.query(`SELECT count(*) AS n FROM ${table}`).get()).toEqual({ n: 0 });
     }
   });

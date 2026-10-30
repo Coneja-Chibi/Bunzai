@@ -3,6 +3,7 @@
  * new version's prompt and tick leave the cast alone and it stays pending for the reply after, which carries it once and spends it. Run through the real turn on both stores.
  */
 import { afterEach, describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { ChatStore } from "../stage/contracts/chat-store";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
@@ -29,7 +30,7 @@ describe.each(STORES)("a cast and a regenerate of the reply it was recorded on (
     const sent: ProviderRequest[] = [];
     const says = { text: "Maybe." };
     const provider: Provider = { id: "fake", async send(request) { sent.push(request); return { content: says.text, finish_reason: "stop", raw: {} } as ProviderCompletion; } };
-    const deps = { chats, state: memoryStateStore(), connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }), readPreset: async () => null, readLorebook: async () => null, now: () => 1_000, randomSeed: () => 7 };
+    const deps = { runtime: createTurnRuntime(), chats, state: memoryStateStore(), connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }), readPreset: async () => null, readLorebook: async () => null, now: () => 1_000, randomSeed: () => 7 };
     const turn = async (kind: "reply" | "swipe" | "continue" = "reply") => runTurn(deps, { chatId: chat.id, kind, expectedVersion: (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion! }, () => undefined);
     const book = async () => (await dataAt(chats, chat.activeBranchId, "spellbook")) as { spells: { cooldownRemaining: number }[]; pendingCast?: string };
     return { chats, chat, sent, turn, book, says };

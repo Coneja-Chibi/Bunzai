@@ -10,7 +10,7 @@
  * Blank therefore means "keep the one you have", which is what makes changing a model on a saved
  * provider not require finding the key again.
  */
-import { useCallback, useEffect, useState, type JSX } from "react";
+import { useCallback, useEffect, useRef, useState, type JSX } from "react";
 import type { AppContext } from "../../../app-contract";
 import { apiFetchJson } from "../../../_shared/api-fetch";
 import { toErrorMessage } from "../../../_shared/error-message";
@@ -23,6 +23,7 @@ import {
   draftFrom,
   draftProblem,
   emptyDraft,
+  offeredModel,
   providerLabel,
   saveBody,
   type ProviderDraft,
@@ -52,9 +53,20 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
   const [models, setModels] = useState<{ id: string; label?: string }[]>([]);
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
+  const [modelProblem, setModelProblem] = useState<string | null>(null);
   const [tested, setTested] = useState<Record<string, string>>({});
   /** Somebody chose "Type an id...", so the picker stands aside until the draft changes. */
   const [typing, setTyping] = useState(false);
+  /** The current lookup owns the picker; superseded requests cannot change it. */
+  const modelRequest = useRef<AbortController | null>(null);
+  /** The pending re-ask after the Base URL changes. */
+  const refetch = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelModels = useCallback(() => {
+    modelRequest.current?.abort();
+    if (refetch.current) { clearTimeout(refetch.current); refetch.current = null; }
+  }, []);
+  useEffect(() => cancelModels, [cancelModels]);
 
   const reload = useCallback(async (): Promise<void> => {
     try {
@@ -86,6 +98,8 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(saveBody(draft)),
       });
+      cancelModels();
+      setModelProblem(null);
       setDraft(null);
       setModels([]);
       await reload();
@@ -132,17 +146,33 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
    * BY SAVED ID OR BY DRAFT KIND. Asking by id alone meant the list arrived only for a provider that
    * already existed, which is one screen too late: the model is chosen while ADDING one.
    */
-  const loadModels = async (target: { id: string } | { kind: string }): Promise<void> => {
+  const loadModels = async (target: { id: string } | { kind: string; baseURL?: string; options?: Readonly<Record<string, string>> }): Promise<void> => {
+    cancelModels();
+    const controller = new AbortController();
+    modelRequest.current = controller;
+    setModelProblem(null);
     try {
       const reply = await apiFetchJson<{ models: { id: string; label?: string }[] }>(
         "/api/agent/providers/models",
-        { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(target) },
+        { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(target), signal: controller.signal },
       );
+      if (controller.signal.aborted || modelRequest.current !== controller) return;
+      if ("kind" in target) {
+        setDraft((d) => (d && d.kind === target.kind ? { ...d, model: offeredModel(d.model, reply.models, kindOf(target.kind)?.defaultModel) } : d));
+      }
       setModels(reply.models);
     } catch {
-      // Plenty of providers publish no list, and typing the id is a perfectly good path.
+      if (controller.signal.aborted) return;
       setModels([]);
+      setModelProblem("Could not load this provider's models. Check the Base URL or type a model ID.");
     }
+  };
+
+  const queueModels = (next: ProviderDraft): void => {
+    if (next.id !== undefined) return;
+    cancelModels();
+    setModels([]);
+    refetch.current = setTimeout(() => void loadModels({ kind: next.kind, ...(next.baseURL.trim() ? { baseURL: next.baseURL.trim() } : {}), options: next.options }), 500);
   };
 
   return (
@@ -203,7 +233,7 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
               setModels([]);
               setTyping(false);
               // The add form opens already knowing what its first provider offers.
-              if (first) void loadModels({ kind: first.id });
+                if (first) void loadModels({ kind: first.id });
             }}
           >
             {"Add a model"}
@@ -285,7 +315,9 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
               <select
                 value={draft.options[option.key] ?? option.defaultValue}
                 onChange={(e) => {
-                  setDraft({ ...draft, options: { ...draft.options, [option.key]: e.target.value } });
+                  const next = { ...draft, options: { ...draft.options, [option.key]: e.target.value } };
+                  setDraft(next);
+                  queueModels(next);
                 }}
               >
                 {option.choices.map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (c) => <option key={c.value} value={c.value}>{c.label}</option>)}
@@ -307,8 +339,12 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
               {"Base URL"}
               <input
                 value={draft.baseURL}
-                placeholder="http://localhost:1234/v1"
-                onChange={(e) => { setDraft({ ...draft, baseURL: e.target.value }); }}
+                placeholder={kindOf(draft.kind)?.defaultBaseURL ? `${kindOf(draft.kind)!.defaultBaseURL} (leave blank for this)` : "http://localhost:1234/v1"}
+                onChange={(e) => {
+                  const next = { ...draft, baseURL: e.target.value };
+                  setDraft(next);
+                  queueModels(next);
+                }}
               />
             </label>
           )}
@@ -328,7 +364,7 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
 
           <div className={styles.formActs}>
             <Button variant="primary" disabled={busy} onClick={() => { void save(); }}>{"Save"}</Button>
-            <Button variant="quiet" disabled={busy} onClick={() => { setDraft(null); setProblem(null); }}>
+            <Button variant="quiet" disabled={busy} onClick={() => { cancelModels(); setDraft(null); setProblem(null); setModelProblem(null); }}>
               {"Cancel"}
             </Button>
           </div>
@@ -336,6 +372,7 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
       )}
 
       {problem !== null && <p className={styles.problem}>{problem}</p>}
+      {modelProblem !== null && <p role="status" className={styles.problem}>{modelProblem}</p>}
     </div>
   );
 }

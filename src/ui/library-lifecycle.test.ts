@@ -16,11 +16,24 @@ import { StudioStore } from "../studio/store";
 import { createSessionStore } from "../kit/sessions/store";
 import { createLibrary, type LibraryHandle, type LibraryPhase } from "./library-root";
 import { removeTempDir } from "../studio/test-temp-dir";
+import { libraryFor } from "../studio/library-content";
 
 const handles: LibraryHandle[] = [];
 const dirs: string[] = [];
+
+test("close during opening waits for resources and prevents reopening the closed handle", async () => {
+  const dir = studio();
+  const handle = createLibrary(dir, { vault: fakeComputer(), skipOpenMaintenance: true });
+  const opening = handle.open();
+  const closing = handle.close();
+  const [opened] = await Promise.all([opening, closing]);
+  expect(libraryFor(dir)?.chats).not.toBe(opened!.chats);
+  expect(() => opened!.database.db.query("SELECT 1").get()).toThrow(/closed/i);
+  expect(await handle.open()).toBeNull();
+  expect(handle.close()).toBe(closing);
+});
 afterEach(async () => {
-  for (const h of handles.splice(0)) h.close();
+  for (const h of handles.splice(0)) await h.close();
   await Promise.all(dirs.splice(0).map(removeTempDir));
 });
 const studio = (): string => {
@@ -138,7 +151,7 @@ test("unlocked() waits for a password library to be unlocked, so settings are ne
   await first.unlocked();
   await ring.confirmWords(ring.beginWords());
   await ring.setPassword("moonlit harbor", { mode: "each-open" });
-  first.close();
+  await first.close();
 
   const again = createLibrary(dir, opts);
   handles.push(again);
@@ -171,7 +184,7 @@ test("unlock pushes the first-readable signal itself; no timer running, and none
   await first.unlocked();
   await ring.confirmWords(ring.beginWords());
   await ring.setPassword("moonlit harbor", { mode: "each-open" });
-  first.close();
+  await first.close();
 
   const again = createLibrary(dir, opts);
   handles.push(again);

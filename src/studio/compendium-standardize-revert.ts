@@ -9,7 +9,7 @@
 import { toErrorMessage } from "../error-message";
 import { isActive, type RevertResult } from "../core/compendium";
 import type { CompendiumReceipt } from "../stage/contracts/chat-store";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError } from "./errors";
 import type { CompendiumDeps } from "./compendium-deps";
 import { runOf } from "./compendium-standardize";
 import { undoableReceipts, undoReceipt } from "./compendium-undo";

@@ -4,6 +4,7 @@
  * Inspector's pause shows for the same state, the same "about N tokens", and that building it writes nothing and calls no model.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
@@ -26,7 +27,7 @@ async function scene(opts: { connection?: boolean } = {}) {
   await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }]);
   const sent: ProviderRequest[] = [];
   const provider: Provider = { id: "fake", async send(request) { sent.push(request); return { content: "Colder.", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state,
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }),
     readPreset: async () => null, readLorebook: async () => null,
@@ -69,7 +70,7 @@ describe("forecastRequest", () => {
     for (let i = 0; i < 200 && !review; i++) await Bun.sleep(5);
     expect(forecast.tokens).toBe(review!.tokens);
     expect(forecast.messages.map((m) => m.content)).toEqual(review!.messages.map((m) => m.content));
-    answerReview(s.chat.id, review!.turnId, { kind: "cancel" });
+    answerReview(s.deps.runtime, s.chat.id, review!.turnId, { kind: "cancel" });
     await done;
   });
 

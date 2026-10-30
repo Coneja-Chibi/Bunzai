@@ -117,3 +117,9 @@ export function buildSerializeReport(
   }
   return serializeReport({ dropped, warnings }, target.coverage ? "declared" : "unknown");
 }
+
+/** The same serialize report with codec-specific warnings appended, counts recomputed. */
+export function withWarnings(report: SerializeReport, warnings: readonly string[]): SerializeReport {
+  const { escrowed, dropped, escrowShadowed } = report;
+  return serializeReport({ escrowed, dropped, escrowShadowed, warnings: [...report.warnings, ...warnings] }, report.coverage);
+}

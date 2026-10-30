@@ -20,6 +20,11 @@ describe("accentVars", () => {
   test("a piece accent that already clears the floors keeps the same deep tone", () => {
     expect(accentVars("#ff9ebb", floors)!["--a-deep"]).toBe(accentRole("#ff9ebb", floors)!.deep);
   });
+  test("a piece accent also mints --a-text, its hue held to the theme's text floors, for words drawn in the accent", () => {
+    const paper = floorsOf(parsePalette((JSON.parse(readFileSync(new URL("../../extensions/themes/paper/manifest.json", import.meta.url), "utf8")) as { appearance: { palette: unknown } }).appearance.palette));
+    for (const f of [floors, paper]) expect(accentVars("#c8305a", f)!["--a-text"]).toBe(accentRole("#c8305a", f)!.text);
+    expect(accentVars("#c8305a", paper)!["--a-text"]).not.toBe("#c8305a"); // too light for Paper's ivory: nudged darker
+  });
   test("without readable floors a hex accent paints only --a, so CSS falls back to the theme's deep accent", () => {
     expect(accentVars("#336699", null)).toEqual({ "--a": "#336699" });
   });

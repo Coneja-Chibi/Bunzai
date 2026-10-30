@@ -10,4 +10,5 @@ export default variantCss("editor.fields", "form-on-paper", `
 & [data-editor="frame"] [data-ef="field"][data-wide]{grid-template-columns:minmax(0,1fr)}
 & [data-editor="frame"] [data-ef="label"]{text-align:right;font-family:var(--font-mono);font-size:var(--text-meta);color:var(--text-soft)}
 & [data-editor="frame"] [data-ef="hint"]{grid-column:2;font-family:var(--font-mono);font-style:italic}
+& [data-editor="frame"] [data-ef="field"][data-wide] > [data-ef]{grid-column:1 / -1}
 `);

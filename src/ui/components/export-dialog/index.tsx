@@ -1,6 +1,7 @@
 /**
- * ExportDialog - pick a platform, read honesty lines, download the file.
- * Uses InkDialog chrome; honesty is pure (honesty.ts). Download is the only DOM edge.
+ * ExportDialog - pick a platform, read honesty lines, save the file into its own folder under the
+ * studio's Export folder (or download it where the host keeps none). Uses InkDialog chrome; honesty
+ * is pure (honesty.ts). Download is the only DOM edge.
  */
 import { Button, ListRow } from "../button";
 import { useEffect, useMemo, useState, type JSX } from "react";
@@ -8,6 +9,7 @@ import type { AppContext, CoverageInfo, FormatInfo } from "../../app-contract";
 import { InkDialog } from "../ink-dialog";
 import { toErrorMessage } from "../../_shared/error-message";
 import { exportBlob, triggerDownload } from "./download";
+import { noExportFolder } from "../../_shared/export-folder";
 import {
   behaviorFlagsFromBody,
   buildExportHonesty,
@@ -112,14 +114,22 @@ export function ExportDialog({
         throw new Error(msg);
       }
       const { blob, filename } = exportBlob(out, name);
-      triggerDownload(blob, filename);
+      // The file lands in its own folder under the studio's Export folder. A host with none (a remote
+      // device, the browser edition) downloads instead, and so does a failed save: the file is never lost.
+      let where = "";
+      try {
+        where = ` to ${(await ctx.api.saveExportFolder(`${target?.friendly || targetId} ${name}`, { [filename]: blob })).dir}`;
+      } catch (e) {
+        triggerDownload(blob, filename);
+        if (!noExportFolder(e)) where = ` (downloaded; Export folder copy did not finish: ${toErrorMessage(e)})`;
+      }
       const loss = out.report.dropped.length;
       const lossLine = out.report.coverage === "unknown"
         ? " · loss unknown"
         : loss > 0
           ? ` · ${loss} field${loss === 1 ? "" : "s"} not carried`
           : "";
-      ctx.setStatus(`exported ${filename}${lossLine}`);
+      ctx.setStatus(`exported ${filename}${where}${lossLine}`);
       onClose();
     } catch (e) {
       setErr(toErrorMessage(e));

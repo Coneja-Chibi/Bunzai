@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/formats/README",
   "sourcePath": "docs/reference/formats/README.md",
-  "sourceHash": "sha256:b8bbd9c03c28c7e37f59e5d6d4ad5028f2da166081554b12e6ca7c98eccad9ea",
-  "semanticSummaryHash": "sha256:a027f0c6786b6c06c7bd569577127847eba9dfd3310dc3381776e21d81fb1470",
+  "sourceHash": "sha256:d8fa36f7095069ff493b5fa067d9b8ee95ef863280f7e104e2fdfcb8268e138d",
+  "semanticSummaryHash": "sha256:790a592b2660f30c082d32229fdf1774f98262d72295c7e7f10df2847da53210",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:48:08.889Z"
+  "reviewer": "integration_review",
+  "notes": "Reviewed changed source and summaries against format adapters, shared export writer, host-only routes and UI delivery paths. Independently ran 38 format, stream and export-route tests; importer mapping retains dated co-developer provenance, external-host import and packaged behavior unverified.",
+  "reviewedAt": "2026-10-30T01:00:03.027Z"
 }

@@ -24,11 +24,13 @@ import { emptyTrash, openLibrary, type OpenedLibrary } from "./library-root";
 import { createSessionStore } from "../kit/sessions/store";
 import { __resetTokenCacheForTests, __tokenCacheStatsForTests, countText } from "../core/tokens/base";
 import { removeTempDir } from "../studio/test-temp-dir";
+import { createRoleplayCore } from "../rp-core";
+import { sceneRuntimeFor } from "./server-scene-runtime";
 
 const opened: OpenedLibrary[] = [];
 const dirs: string[] = [];
 afterEach(async () => {
-  for (const l of opened.splice(0)) l.close();
+  for (const l of opened.splice(0)) await l.close();
   await Promise.all(dirs.splice(0).map(removeTempDir));
 });
 const studio = () => {
@@ -36,6 +38,29 @@ const studio = () => {
   dirs.push(d);
   return join(d, "Bunzai Studio");
 };
+
+test("library shutdown awaits an owned turn before releasing its database and keys", async () => {
+  const library = await openLibrary(studio(), { vault: fakeComputer(), skipOpenMaintenance: true });
+  const chats = library.chats;
+  const chat = await chats.createChat({ title: "Shutdown", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: card("vera") } });
+  await chats.setConnection(chat.id, { id: "test", model: "test" });
+  await chats.appendMessage(chat.activeBranchId, { role: "user", content: "Hello" });
+  let entered!: () => void, release!: () => void;
+  const started = new Promise<void>((resolve) => { entered = resolve; });
+  const gate = new Promise<void>((resolve) => { release = resolve; });
+  const core = createRoleplayCore({ chats, state: library.stateStore!, readPreset: async () => null, readLorebook: async () => null, now: () => 1_000, randomSeed: () => 7,
+    connect: async () => { entered(); await gate; return { kind: "openrouter", provider: { id: "test", async send() { throw new Error("must not send after shutdown"); } } }; },
+  }, sceneRuntimeFor(chats));
+  const events: string[] = [];
+  const version = (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion!;
+  const turn = core.runTurn({ chatId: chat.id, kind: "reply", expectedVersion: version }, (event) => events.push(event.type));
+  await started;
+  const closing = library.close();
+  expect(await chats.getChat(chat.id)).not.toBeNull();
+  release();
+  await Promise.all([turn, closing]);
+  expect(events).toEqual(["stopped"]);
+});
 const card = (id: string) =>
   ({ schemaVersion: CANONICAL_SCHEMA_VERSION, kind: "character", id, body: { identity: { name: id }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {} } }) as never;
 
@@ -55,12 +80,12 @@ test("reopening on the same computer unlocks by itself; another computer finds i
   const here = fakeComputer();
   const first = (await openLibrary(dir, { vault: here }))!;
   await new StudioStore(dir).save(card("vera"));
-  first.close();
+  await first.close();
   const again = (await openLibrary(dir, { vault: here }))!;
   opened.push(again);
   expect(again.state).toBe("unlocked");
   expect(await new StudioStore(dir).read("character", "vera")).not.toBeNull();
-  again.close();
+  await again.close();
   opened.splice(0);
   const elsewhere = (await openLibrary(dir, { vault: fakeComputer() }))!;
   opened.push(elsewhere);
@@ -171,7 +196,7 @@ test("Kit's old transcript files are copied in once, sealed, and a transcript de
   }
   expect(readFileSync(join(sessionsDir, "s1.json"), "utf8")).toBe(JSON.stringify(transcript));
   expect(await kit.remove("s1")).toBe(true);
-  first.close();
+  await first.close();
   const again = (await openLibrary(dir, { vault: here, sessionsDir }))!;
   opened.push(again);
   expect(await createSessionStore().read("s1")).toBeNull();
@@ -181,7 +206,7 @@ test("a failed session import releases the partially opened library and its deri
   const dir = studio();
   const vault = fakeComputer();
   const initial = await openLibrary(dir, { vault, skipOpenMaintenance: true });
-  initial.close();
+  await initial.close();
   const db = new Database(join(dir, LIBRARY_FILE));
   db.run("CREATE TRIGGER fail_kit_session_insert BEFORE INSERT ON kit_sessions BEGIN SELECT RAISE(ABORT, 'fixture failure'); END");
   db.close();
@@ -194,7 +219,7 @@ test("a failed session import releases the partially opened library and its deri
   expect(failure).toBeInstanceOf(Error);
   const repair = new Database(join(dir, LIBRARY_FILE));
   repair.run("DROP TRIGGER fail_kit_session_insert");
-  repair.close();
+  await repair.close();
 
   __resetTokenCacheForTests();
   const reopened = await openLibrary(dir, { vault });
@@ -216,12 +241,12 @@ test("opening the library empties the Trash of scenes deleted more than 3 days a
   };
   const first = (await openLibrary(dir, { vault }))!;
   await cut("Old");
-  first.close();
+  await first.close();
   try {
     setSystemTime(new Date(start + 2 * DAY));
     const second = (await openLibrary(dir, { vault }))!;
     await cut("Recent");
-    second.close();
+    await second.close();
     setSystemTime(new Date(start + 4 * DAY));
     opened.push((await openLibrary(dir, { vault }))!);
     expect((await libraryChatsFor(dir)!.chatGraveyard()).chats.map((c) => c.title)).toEqual(["Recent"]);
@@ -258,13 +283,13 @@ test("opening the library purges a message cut more than 1 day ago, keeps a newe
   const old = await chats.appendMessage(chat.activeBranchId, { role: "user", content: "cut long ago" });
   const fresh = await chats.appendMessage(chat.activeBranchId, { role: "user", content: "cut lately" });
   await chats.cutMessages(chat.activeBranchId, old!.id, "one");
-  first.close();
+  await first.close();
   try {
     setSystemTime(new Date(start + 1.5 * DAY));
     const second = (await openLibrary(dir, { vault }))!;
     await libraryChatsFor(dir)!.cutMessages(chat.activeBranchId, fresh!.id, "one");
     await libraryChatsFor(dir)!.deleteChat(gone.id);
-    second.close();
+    await second.close();
     setSystemTime(new Date(start + 2.5 * DAY));
     opened.push((await openLibrary(dir, { vault }))!);
     const kept = (await libraryChatsFor(dir)!.readMessages(chat.activeBranchId, { limit: 10 })).messages;

@@ -9,6 +9,8 @@
   border-bottom: 2px solid var(--stage-seam);
 }
 
+.compact { display: flex; align-items: center; }
+
 .bar {
   flex: 1;
   height: 0.55rem;

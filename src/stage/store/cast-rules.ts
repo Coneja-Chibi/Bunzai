@@ -3,7 +3,7 @@
  * 26): validating a persona swap, the stamp a user message keeps, and which cast a card revert lands on.
  * Pure helpers; each backend does its own reads and writes around them.
  */
-import { StudioConflictError } from "../../studio/atomic-file";
+import { StudioConflictError } from "../../studio/errors";
 import type { Cast, CastRef, JsonObject, Message } from "../contracts/chat-store";
 import { checkCast, checkSnapshot, fail } from "./chat-rules";
 import { isWhole } from "./scalar-rules";

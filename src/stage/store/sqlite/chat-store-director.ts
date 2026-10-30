@@ -2,7 +2,7 @@
  * The SQLite ChatStore's Story Director: the sealed settings cell `chats.director_json` and the sealed per-reply snapshots in `director_states`
  * (migration 42), one per version of a reply, copied with the reply when a take forks. Every read and write is one transaction, so an edit and a turn never overwrite each other unseen.
  */
-import { StudioConflictError } from "../../../studio/atomic-file";
+import { StudioConflictError } from "../../../studio/errors";
 import type { ChatStore, DirectorSettings, DirectorSnapshot, DirectorState } from "../../contracts/chat-store";
 import { checkArchiveItems, checkDirectorSettings, checkDirectorState, mergeArchive, mergeDirectorSettings } from "../director-rules";
 import type { ChatSqlKit } from "./chat-store-cuts";

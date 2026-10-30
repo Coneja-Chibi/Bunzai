@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "FORMAT-SUPPORT",
   "sourcePath": "docs/FORMAT-SUPPORT.md",
-  "sourceHash": "sha256:207075ce161d92d9c2168c7d8219594865b42f514c66c7f8f56f5176d3488c67",
-  "semanticSummaryHash": "sha256:02e53b7ca7d9aa2a32c3d8d528fbe9a2f497801d44c3b1615160db8c9dbaaee9",
+  "sourceHash": "sha256:27dc476ed88372f57e2a16b1f9f08f44f9b4d30c02cf41bacbef21dfbe86a092",
+  "semanticSummaryHash": "sha256:b01b6cd6275c84449fd16e28451465afc36b91ee7975d650af6eed6894995823",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:48:06.867Z"
+  "reviewer": "integration_review",
+  "notes": "Reviewed changed source and summaries against format adapters, shared export writer, host-only routes and UI delivery paths. Independently ran 38 format, stream and export-route tests; importer mapping retains dated co-developer provenance, external-host import and packaged behavior unverified.",
+  "reviewedAt": "2026-10-30T01:00:02.643Z"
 }

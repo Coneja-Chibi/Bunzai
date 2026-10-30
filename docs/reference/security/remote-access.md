@@ -118,6 +118,12 @@ remote/LAN-served handler, every `/api/remote/*` route (turn access on/off, kick
 (open a browser on the host), `/api/shutdown`, `/api/restart`, and settings writes. Those belong to the
 local owner alone.
 
+`/api/export-folder` and its file-upload route are host-only too: they write plaintext exports to the
+host's disk. Remote and LAN clients keep browser downloads on their own device instead. Each host export
+uses a new bounded-name folder, accepts files separately under the archive byte cap, never overwrites a
+completed file, and removes only a failed upload's own exclusive file. Cancellation before opening a file
+cannot be reported as a successful empty export. Handler tests exercise the local token and remote refusal.
+
 ## Kicking a device
 
 The owner can remove any connected device from the host. Over Tailscale, the app writes a kick command to

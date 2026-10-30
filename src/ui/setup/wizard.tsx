@@ -37,7 +37,7 @@ const CSS = `
 .vsetup .qcard{background:var(--panel);border:var(--ink-border);box-shadow:10px 10px 0 0 var(--ink);
   padding:clamp(1.25rem,3vw,1.875rem)}
 .vsetup .lock{display:inline-flex;align-items:baseline;font-size:clamp(1.35rem,1rem+1.4vw,1.5625rem)}
-.vsetup .lock svg{height:1.06em;width:auto;align-self:baseline;transform:translateY(.1em);margin-right:.22em}
+.vsetup .lock img{height:1.6em;width:1.6em;object-fit:contain;align-self:center;margin-right:.22em}
 .vsetup .lock .txt{font-family:var(--font-big);font-weight:900;letter-spacing:-.01em}
 .vsetup .lock .quad{display:inline-block;width:.17em;height:.17em;background:var(--rose);margin-left:.09em}
 .vsetup .top{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
@@ -65,7 +65,7 @@ const CSS = `
 .vsetup .skip a{font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.06em;
   color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .vsetup .skip a:hover{color:var(--ink)}
-.vsetup .house{position:sticky;top:1.5rem;display:flex;flex-direction:column}
+.vsetup .house{position:sticky;top:1.5rem;display:flex;flex-direction:column;min-width:0}
 .vsetup .house-cap{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;
   margin-bottom:.7rem;flex-wrap:wrap}
 .vsetup .hc-k{font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.28em;
@@ -108,21 +108,11 @@ const CSS = `
 }
 `;
 
-/** The illuminated V (docs/media/hoplight-v.svg): crossed searchlights, bunny ears - THE logo. */
+/** The same bunny-b mark served to the app window and favicon, beside the wordmark. */
 function Lockup(): JSX.Element {
   return (
     <span className="lock">
-      <svg viewBox="0 0 184 171" aria-label="Bunzai">
-        {/* hardcode-ok: locked brand mark, always rose, not a themed surface */}
-        <g fill="var(--rose)">
-          <path d="M0 12 51 0 117 171 82 136Z" />
-          <path d="M135 0 184 12 101 136 67 171Z" />
-        </g>
-        <g fill="var(--stage-white)">
-          <path d="m34 33 11-4 34 82-8-10Z" />
-          <path d="m140 29 11 4-38 68-8 10Z" />
-        </g>
-      </svg>
+      <img src={assetUrl("icon-256.png")} alt="" />
       <span className="txt">Bunzai</span>
       <span className="quad" />
     </span>

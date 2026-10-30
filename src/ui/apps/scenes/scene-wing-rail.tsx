@@ -59,13 +59,13 @@ function RailItem({ wing, on, offset, help: helpAt, railHovered, onToggle }: { w
   );
 }
 
-function Rail({ side, open, onToggle }: { side: "l" | "r"; open: string | null; onToggle(id: string): void }): JSX.Element {
+function Rail({ side, open, onToggle, wings }: { side: "l" | "r"; open: string | null; onToggle(id: string): void; wings: readonly Wing[] }): JSX.Element {
   const nav = useRef<HTMLElement>(null);
   const [hovered, setHovered] = useState(false);
   const [offset, setOffset] = useState(60);
   const [helpAt, setHelpAt] = useState(60 + TIP_SPAN);
   const clear = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const collapsed = WINGS.some((w) => w.id === open && w.side === side);
+  const collapsed = wings.some((w) => w.id === open && w.side === side);
   useEffect(() => () => { if (clear.current) clearTimeout(clear.current); }, []);
   // The rail stays at the edge while the panel opens beneath it: start the labels where the panel ends.
   useEffect(() => {
@@ -93,11 +93,13 @@ function Rail({ side, open, onToggle }: { side: "l" | "r"; open: string | null; 
   };
   return (
     <nav ref={nav} className={`rail ${side}`} data-part="scene.wings" aria-label={side === "l" ? "Scene wings" : "Tool wings"} onPointerEnter={enter} onPointerLeave={leave}>
-      {WINGS.filter((w) => w.side === side).map((w) => <RailItem key={w.id} wing={w} on={open === w.id} offset={offset} help={helpAt} railHovered={hovered} onToggle={onToggle} />)}
+      {/* bounded-ok: navigation uses built-in wings and the two bundled rail Props, never user-content rows. */}
+      {wings.filter((w) => w.side === side).map((w) => <RailItem key={w.id} wing={w} on={open === w.id} offset={offset} help={helpAt} railHovered={hovered} onToggle={onToggle} />)}
     </nav>
   );
 }
 
-export function WingRails({ open, onToggle }: { open: string | null; onToggle(id: string): void }): JSX.Element {
-  return <><Rail side="l" open={open} onToggle={onToggle} /><Rail side="r" open={open} onToggle={onToggle} /></>;
+export function WingRails({ open, onToggle, extra = [] }: { open: string | null; onToggle(id: string): void; extra?: readonly Wing[] }): JSX.Element {
+  const wings = [...WINGS, ...extra];
+  return <><Rail side="l" open={open} onToggle={onToggle} wings={wings} /><Rail side="r" open={open} onToggle={onToggle} wings={wings} /></>;
 }

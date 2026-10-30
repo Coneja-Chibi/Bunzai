@@ -11,7 +11,7 @@ import type { Provider } from "../../stage/contracts/provider";
 import type { ProviderConfig } from "./config";
 import { allowedHost, assertReady, EgressBlocked, guardedFetch } from "./egress";
 import { spokes } from "./registry";
-import type { ProviderSpoke } from "./spoke";
+import type { ModelTraits, ProviderSpoke } from "./spoke";
 
 /** Why a scene cannot send through this spoke, or null when it can. */
 export function sceneRefusal(spoke: ProviderSpoke | undefined): string | null {
@@ -30,7 +30,13 @@ const NO_TOOLS = /(^|[/:-])(o1-mini|o1-preview|text-embedding|whisper|tts|dall-e
 /** Whether a scene sends tools to this model: its spoke has a scene endpoint and the model is not one that refuses them. */
 export const sceneTools = (spoke: ProviderSpoke | undefined, model: string): boolean => Boolean(spoke?.scene) && !NO_TOOLS.test(model);
 
-export async function sceneProvider(config: ProviderConfig): Promise<Provider> {
+export async function sceneProvider(config: ProviderConfig, signal?: AbortSignal): Promise<Provider> {
+  return (await resolveSceneProvider(config, signal)).provider;
+}
+
+/** Resolves native capabilities once, alongside the provider that will use them. */
+export async function resolveSceneProvider(config: ProviderConfig, signal?: AbortSignal): Promise<{ provider: Provider; traits?: ModelTraits }> {
+  signal?.throwIfAborted();
   const spoke = (await spokes()).get(config.kind);
   const refusal = sceneRefusal(spoke);
   if (refusal || !spoke?.scene) throw new EgressBlocked(refusal ?? "this connection cannot be used by scenes.");
@@ -40,14 +46,16 @@ export async function sceneProvider(config: ProviderConfig): Promise<Provider> {
   // Refused here with a plain reason; the gate would refuse the request anyway, as a failed send.
   const host = allowedHost(config, spoke);
   if (new URL(baseUrl).host !== host) throw new EgressBlocked(`refused to reach ${new URL(baseUrl).host}; this connection only talks to ${host}.`);
+  // A spoke with its own native transport (Ollama's /api/chat) builds it, through the same one-host gate.
+  if (spoke.scene.resolve) return spoke.scene.resolve(config, guardedFetch(host), config.name ?? spoke.label, signal);
   const customHeaders = config.headers && Object.keys(config.headers).length > 0 ? JSON.stringify(config.headers) : undefined;
   if (spoke.scene.native === "anthropic") {
-    return createAnthropicProvider(
+    return { provider: createAnthropicProvider(
       { id: config.id ?? config.kind, ...(spoke.scene.params ? { params: spoke.scene.params } : {}), ...(config.baseURL ? { baseUrl: config.baseURL } : {}), ...(config.apiKey ? { apiKey: config.apiKey } : {}), ...(customHeaders ? { customHeaders } : {}) },
       { fetch: guardedFetch(host), label: config.name ?? spoke.label },
-    );
+    ) };
   }
-  return createOpenAICompatibleProvider(
+  return { provider: createOpenAICompatibleProvider(
     {
       id: config.id ?? config.kind,
       baseUrl,
@@ -57,5 +65,5 @@ export async function sceneProvider(config: ProviderConfig): Promise<Provider> {
       ...(spoke.scene.support ? { support: spoke.scene.support } : {}),
     },
     { fetch: guardedFetch(host), label: config.name ?? spoke.label },
-  );
+  ) };
 }

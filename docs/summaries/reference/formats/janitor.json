@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/janitor",
+  "sourcePath": "docs/reference/formats/janitor.md",
+  "sourceHash": "sha256:6566951f96147c789f9ade7911d8bc253a683ace57e5388ed7dc36c40a6d1d07",
+  "summary": "The external importer mapping is a co-developer inspection dated 2026-10-24; current tests prove emitted files against that mapping, not a live external import. JanitorAI format is the developer reference for Bunzai's export-only Janitor target. Janitor has no character file and no official card export; its only importer hides in the avatar upload on create_character and reads a PNG chara tEXt chunk. The folder src/formats/janitor default-exports the janitor character codec, writing .png only, and janitor-lorebook, the SillyTavern world info codec under Janitor's id for the Scripts editor's Import JSON. Both return 0 from detect, so Janitor-bound PNGs import through the SillyTavern reader, and toCanonical delegates to that reader. The importer ignores ccv3, JSON and charx, recognizes CCv3 not at all, and on its V1 branch maps top-level description to Personality and top-level personality to the public Description, so a plain ST card lands swapped. The adapter builds the normal V2 card through the Tavern codec, rewrites the six top-level mirror fields the way Janitor reads them, keeps data an ordinary V2 card, embeds chara only, uses the inline portrait or else the imported source PNG, and reports dropped fields plus warnings for an empty definition, a missing first message or a PNG over 10 MB.",
+  "topics": [
+    "janitor export-only target",
+    "avatar importer chara chunk",
+    "V1 branch field swap",
+    "top-level mirror fields",
+    "chara-only PNG",
+    "portrait or source carrier",
+    "janitor-lorebook ST world info",
+    "Scripts Import JSON",
+    "detect 0 SillyTavern reads"
+  ],
+  "sections": [
+    {
+      "slug": "what-janitors-importer-reads",
+      "title": "What Janitor's importer reads",
+      "level": 2,
+      "sourceHash": "sha256:44cf58ac5d4f5dd50e3a9a842aa06f8cd59c9e3a000c601fd6133ec2307ea2a5",
+      "summary": "Janitor's importer reads only the chara keyword: ccv3 is ignored, JSON and charx are refused, and the avatar input takes images up to 10 MB. Checks run in order Text-gen-webui, TavernAI Character with all six top-level keys present, Character.AI shapes, then Character Card V2; CCv3 is not recognized. On the V1 branch top-level description fills Personality, the definition, and top-level personality fills the public Description bio; on the pure V2 branch data.description lands in the bio. Every recognized field is written even when empty, and alternate greetings, tags, creator notes, character_book, system prompt and post-history instructions are dropped.",
+      "topics": [
+        "chara keyword only",
+        "CCv3 not recognized",
+        "V1 V2 detection order",
+        "description personality swap",
+        "dropped fields"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-the-adapter-writes",
+      "title": "What the adapter writes",
+      "level": 2,
+      "sourceHash": "sha256:ed2f58483150c8b3a9c4c5253a5eb7c45d3723e28b9533a2d9722a9cc9d8d8a8",
+      "summary": "fromCanonical builds the normal V2 card through v2CardObject in card-png.ts, so a V3 card yields its V2 backfill, then sets six top-level mirrors: name, description as data.description plus data.personality joined by a blank line for Janitor's Personality, personality as creator_notes for the public bio, scenario, first_mes and mes_example. data stays an ordinary V2 card readable by SillyTavern. charaOnlyPng embeds under chara alone, carried by the inline PNG portrait or else the PNG the card was imported from; a card with neither is refused naming janitor. The report names dropped fields from coverage.ts and warns on an empty definition, a missing first message, or a PNG over the 10 MB avatar limit.",
+      "topics": [
+        "v2CardObject backfill",
+        "mirror field table",
+        "definition fold",
+        "charaOnlyPng carrier fallback",
+        "report warnings"
+      ],
+      "children": []
+    },
+    {
+      "slug": "lorebooks",
+      "title": "Lorebooks",
+      "level": 2,
+      "sourceHash": "sha256:b23b84f445a3c92a1bf416b2d1a955dc9f31dd7efd5022365dc1b30b055c81de",
+      "summary": "Janitor lorebooks are Scripts of type lorebook, separate objects linked to bots. The Scripts editor imports SillyTavern world info JSON, its tooltip key importSillyTavernFile, so janitor-lorebook is the ST worldbook codec under Janitor's id. Linked lorebooks never travel inside the PNG and the export dialog says so.",
+      "topics": [
+        "Scripts lorebook type",
+        "importSillyTavernFile",
+        "janitor-lorebook codec",
+        "no book in PNG"
+      ],
+      "children": []
+    },
+    {
+      "slug": "source-of-truth",
+      "title": "Source of truth",
+      "level": 2,
+      "sourceHash": "sha256:7baef3077573ba9e96b28c4a313a78e1449b76d37741b21c71d9c07cd02da824",
+      "summary": "The source-of-truth table names where each claim on this page lives. src/formats/janitor/index.ts is the character adapter: it builds the V2 card, applies the Janitor-specific handling, embeds the chara chunk, and attaches the serialize report with its warnings; it also default-exports the lorebook codec beside it. src/formats/janitor/coverage.ts declares which canonical paths the Janitor importer keeps, which drives the dropped list in every report and the export dialog's honesty lines. src/formats/_shared/card-png.ts holds v2CardObject and charaOnlyPng, shared with the other chara-only host, including the fallback from the portrait to the imported source PNG. src/formats/_shared/host-worldbook.ts wraps the SillyTavern worldbook codec under a host id. src/formats/janitor/janitor.test.ts pins the chunk keywords, field placement, refusals and report contents.",
+      "topics": [
+        "janitor index coverage",
+        "card-png helpers",
+        "host-worldbook",
+        "janitor tests"
+      ],
+      "children": []
+    }
+  ]
+}

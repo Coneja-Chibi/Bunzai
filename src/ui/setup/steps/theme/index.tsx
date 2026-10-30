@@ -21,8 +21,12 @@ const flavorOf = (id: string): "light" | "dark" | "greenroom" | "theater" => FLA
 
 const CSS = `
 .pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr));gap:.8rem}
-.pair [data-control="card"]{gap:.7rem;align-items:center;padding-top:.95rem}
-.pair [data-control="card"]>.mock{order:-1}
+.pair>span{display:flex;min-width:0}
+.pair [data-control="card"]{width:100%;display:grid;grid-template-rows:auto 1rem minmax(2.5rem,auto);
+  gap:.7rem;align-items:center;padding-top:.95rem}
+.pair [data-slot="mark"]{grid-row:2}
+.pair [data-slot="heading"]{grid-row:3}
+.pair [data-control="card"]>.mock{grid-row:1}
 .mock{width:100%;aspect-ratio:4/3;border:2px solid currentColor;display:flex;overflow:hidden}
 .mock .mbar{width:26%;border-right:2px solid currentColor;display:flex;flex-direction:column;gap:6px;padding:7px 6px}
 .mock .mbar span{height:6px;background:currentColor;opacity:.55;display:block}

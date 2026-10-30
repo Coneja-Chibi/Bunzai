@@ -8,8 +8,8 @@ import { SCENE_ACTION_TIERS } from "../kit/tools/safety/scene-tiers";
 import { DEFAULT_RESOURCES } from "../core/trackers/resources";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { DIRECTOR_EDIT_TIER, DIRECTOR_HISTORY_MAX, editDirector, readDirectorPanel, readEdit } from "./scene-director-edit";
-import { StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError, StudioValidationError } from "./errors";
+import { StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
+
 
 const vera = { kind: "character", id: "vera", body: { identity: { name: "Vera" }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {} } };
 

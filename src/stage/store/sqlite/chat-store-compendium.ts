@@ -3,11 +3,11 @@
  * file-size cap. Rule 38's choices are the sealed cell `chats.compendium_json` (migration 34); rule 39's receipts are
  * `compendium_receipts` (migration 35), where the ids, the take, the message, the kind, the status and the times stay
  * readable and the writes, model and reason are one sealed cell. Rule 40's stored tree layouts (chat-store-trees.ts) and rule 41's
- * participant roster (chat-store-participants.ts) are spread in beside them. Every write is one transaction, so a settle that
+ * participant roster (chat-store-participants.ts) are spread in beside them, and so is rule 48's Dramaturg (chat-store-dramaturg.ts). Every write is one transaction, so a settle that
  * fails leaves the receipt as it was. Nothing here deletes a receipt; the scene's purge cascades them.
  */
 import type { ChatCompendium, ChatStore, CompendiumReceipt, ReceiptKind, ReceiptStatus } from "../../contracts/chat-store";
-import { StudioConflictError } from "../../../studio/atomic-file";
+import { StudioConflictError } from "../../../studio/errors";
 import { fail } from "../chat-rules";
 import { checkCompendium, mergeCompendium } from "../compendium-rules";
 import { applySettle, checkReceiptInput, checkReceiptPage, checkSettle, receiptBody, requireReceiptSize } from "../receipt-rules";
@@ -17,6 +17,7 @@ import { finalCutMethods } from "./chat-store-final-cut";
 import { trackerMethods } from "./chat-store-trackers";
 import { summaryMethods } from "./chat-store-summary";
 import { directorMethods } from "./chat-store-director";
+import { dramaturgMethods } from "./chat-store-dramaturg";
 import { treeMethods } from "./chat-store-trees";
 import type { ChatSqlKit } from "./chat-store-cuts";
 import { isQuarantinableDecodeError } from "./quarantine";
@@ -29,7 +30,7 @@ interface ReceiptSql {
 const COLUMNS = "id, chat_id, branch_id, message_id, swipe_id, kind, status, at, settled_at, cell";
 const COLUMN = "compendium_receipts.cell";
 
-type CompendiumMethods = Pick<ChatStore, "setCompendium" | "appendReceipt" | "settleReceipt" | "receipt" | "listReceipts" | "sweepReceipts" | "appendTree" | "currentTree" | "undoTree" | "updateParticipants" | "setRegex" | "setFinalCut" | "setTracker" | "setSummarySettings" | "setSummaryError" | "setDirectorSettings" | "archiveDirector" | "getDirector" | "putDirector">;
+type CompendiumMethods = Pick<ChatStore, "setCompendium" | "appendReceipt" | "settleReceipt" | "receipt" | "listReceipts" | "sweepReceipts" | "appendTree" | "currentTree" | "undoTree" | "updateParticipants" | "setRegex" | "setFinalCut" | "setTracker" | "setSummarySettings" | "setSummaryError" | "setDirectorSettings" | "archiveDirector" | "getDirector" | "putDirector" | "getDramaturg" | "setDramaturgSettings" | "appendDramaturg" | "clearDramaturg">;
 
 export function compendiumMethods(k: ChatSqlKit): CompendiumMethods {
   const { cipher } = k;
@@ -70,6 +71,7 @@ export function compendiumMethods(k: ChatSqlKit): CompendiumMethods {
     ...trackerMethods(k),
     ...summaryMethods(k),
     ...directorMethods(k),
+    ...dramaturgMethods(k),
 
     async setCompendium(chatId, patchRaw) {
       const patch = checkCompendium(patchRaw);

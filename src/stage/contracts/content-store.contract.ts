@@ -6,8 +6,8 @@
 import { describe, expect, test } from "bun:test";
 import { entityRevision } from "../../entities/canonical-revision";
 import { parseCanonicalEntity } from "../../entities/runtime-schema";
-import { StudioConflictError } from "../../studio/atomic-file";
-import { StudioNotFoundError, StudioReadError, StudioValidationError } from "../../studio/errors";
+import { StudioConflictError, StudioNotFoundError, StudioReadError, StudioValidationError } from "../../studio/errors";
+
 import { createContentStore } from "../store/content-store";
 import { buildPartText } from "../store/content-store-write";
 import type { DocumentBackend, PartChange } from "./content-store";

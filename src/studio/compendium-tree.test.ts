@@ -7,7 +7,7 @@ import { describe, expect, test } from "bun:test";
 import { emptyLoreEntry } from "../core/lore/empty-book";
 import { buildTree, layoutToTree, readBook, resolveTree } from "../core/compendium";
 import type { LorebookEntry } from "../entities/lorebook/schema";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError } from "./errors";
 import { compendiumRig, HARBOR, WOLF } from "./fake-compendium-rig";
 import { buildCompendiumTree, moveEntryInTree, undoCompendiumTree } from "./compendium-tree";
 import { writeBook } from "./world-book-writer";

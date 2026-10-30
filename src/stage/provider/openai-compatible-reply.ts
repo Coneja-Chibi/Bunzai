@@ -13,7 +13,7 @@ import {
 } from "../contracts/provider";
 import { readTokenReport } from "../../core/tokens/usage";
 import { appendStreamDelta } from "./stream-core";
-import { normalizeFinishReason } from "./transport-core";
+import { badReply, normalizeFinishReason } from "./transport-core";
 import { isRecord, str as asText, type Rec } from "../../core/guards";
 const pushDistinct = (parts: string[], text: string) => {
   if (text && !parts.includes(text)) parts.push(text);
@@ -84,9 +84,6 @@ export function extractContent(value: unknown): string {
 
 /** The reply's usage, read by the token meter's reader: every shape an OpenAI-compatible host sends. */
 const readUsage = (body: unknown): ProviderUsage | undefined => readTokenReport(body);
-
-const badReply = (message: string) =>
-  new ProviderError(message, { category: "api_error", code: "backend_error", status: 502 });
 
 /**
  * A chat completion body read into the contract. `reasoningFallback` is RoleCall's non-stream rule:

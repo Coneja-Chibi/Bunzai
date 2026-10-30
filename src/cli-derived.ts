@@ -31,6 +31,6 @@ export async function runDerived(action: string | undefined, studioDir: string, 
     else for (const row of rows) console.log(`  ${row.family}: ${row.hits} hits, ${row.misses} misses, ${row.persistedRows} saved rows, ${row.bytes} bytes, ${row.meanCostMs.toFixed(2)} ms mean`);
     return 0;
   } finally {
-    opened.close();
+    await opened.close();
   }
 }

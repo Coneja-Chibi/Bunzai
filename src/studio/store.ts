@@ -148,10 +148,9 @@ export class StudioStore {
     return this.content().readPortraitContent(assertStudioEntityKind(kind), assertSafeStudioId(id));
   }
 
-  /** A piece and the library's version of it, which a chat names as the version it started from. */
-  async readVersioned(kind: string, id: string): Promise<{ entity: AnyEntity; version: number } | null> {
-    const stored = await this.content().read(assertStudioEntityKind(kind), assertSafeStudioId(id));
-    return stored ? { entity: stored.entity, version: stored.version } : null;
+  /** A hydrated piece with the stored revision and version from the same read. */
+  async readVersioned(kind: string, id: string): Promise<{ entity: AnyEntity; revision: string; version: number } | null> {
+    return this.content().read(assertStudioEntityKind(kind), assertSafeStudioId(id));
   }
 
   /** Moves one piece to the library's Trash; its name is free at once. True when something was live. */
@@ -175,11 +174,8 @@ export class StudioStore {
 
   /** Brings a piece back from the Trash, always under its own id: deleted ids are never reused. */
   async restore(graveId: string): Promise<EntitySummary | null> {
-    const content = this.content();
-    const back = await content.restore(graveId);
-    if (!back) return null;
-    const summary = await content.summary(back.kind, back.id);
-    return summary ? summaryOfListing(summary) : null;
+    const back = await this.content().restore(graveId);
+    return back ? summaryOfListing(back) : null;
   }
 
   /** Keep-both unless `overwrite`: a taken id saves beside it as `<id>-2`, `<id>-3`, and so on. */
@@ -189,7 +185,7 @@ export class StudioStore {
     const prior = opts?.overwrite ? studioStampOf((await content.read(kind, id).catch(() => null))?.entity) : {};
     const stamped = stampForStudio({ ...entity, id }, prior, now());
     const saved = await content.save(stamped.entity, opts);
-    return { id: saved.id, kind, name: saved.name, importedAt: stamped.importedAt, accent: stamped.accent, version: saved.version, writeId: saved.writeId, revision: saved.revision };
+    return summaryOfListing(saved);
   }
 
   /**
@@ -199,26 +195,23 @@ export class StudioStore {
   async duplicate(kindRaw: string, idRaw: string): Promise<EntitySummary | null> {
     const kind = assertStudioEntityKind(kindRaw);
     const id = assertSafeStudioId(idRaw);
-    let stamped: { importedAt: string; accent: string | undefined } | undefined;
     const saved = await this.content().duplicate(kind, id, (entity) => {
       const accent = studioStampOf(entity)["accent"];
       const made = stampForStudio(entity, typeof accent === "string" ? { accent } : {}, now());
-      stamped = { importedAt: made.importedAt, accent: made.accent };
       return made.entity;
     });
-    if (!saved || !stamped) return null;
-    return { id: saved.id, kind, name: saved.name, importedAt: stamped.importedAt, accent: stamped.accent, version: saved.version, writeId: saved.writeId, revision: saved.revision };
+    return saved ? summaryOfListing(saved) : null;
   }
 
   /** Create one entity at its exact requested id only when no live piece holds it. */
   async compareAndCreate(raw: unknown): Promise<CompareCreateResult> {
-    const { entity, kind, id } = parseInput(raw);
+    const { entity } = parseInput(raw);
     const stamped = stampForStudio(entity, {}, now());
     const made = await this.content().create(stamped.entity);
     if (made.status === "exists") return { status: "exists" };
     return {
       status: "saved",
-      summary: { id, kind, name: made.summary.name, importedAt: stamped.importedAt, accent: stamped.accent, version: made.summary.version, writeId: made.summary.writeId, revision: made.summary.revision },
+      summary: summaryOfListing(made.summary),
     };
   }
 
@@ -236,20 +229,14 @@ export class StudioStore {
     if (result.status !== "saved") return { status: result.status };
     return {
       status: "saved",
-      summary: { id, kind, name: result.summary.name, importedAt: stamped.importedAt, accent: stamped.accent, version: result.summary.version, writeId: result.summary.writeId, revision: result.summary.revision },
+      summary: summaryOfListing(result.summary),
       revision: result.summary.revision,
     };
   }
 
   /**
-   * Send-only-what-changed save (S5/P3). Unlike `compareAndSave`, this never reads the live entity
-   * first and never stamps: `stampForStudio` needs the PRIOR entity to carry its bag of small fields
-   * forward, and reading that entity here would pay back the whole-entity cost the patch path exists
-   * to avoid. `EntitySummary.importedAt`/`accent` are therefore omitted from a patch's own summary,
-   * not wrong: they are optional fields precisely for a listing row that has not stamped anything new.
-   * The Studio escrow stamp changes only through `save`/`compareAndSave`, never through a patch
-   * (`ContentStore.patch` itself refuses any attempt to change `original["vaud-studio"]` via
-   * `patch.original`).
+   * Send-only-what-changed save: no whole-entity read or new studio stamp. The result carries the
+   * exact listing snapshot the ContentStore committed, including the preserved studio stamp.
    */
   async comparePatch(kindRaw: string, idRaw: string, expectedRevision: string, patch: PiecePatch, uploads: readonly PartBlob[] = [], intent: import("../stage/contracts/content-store").SaveIntent = "manual"): Promise<CompareSaveResult> {
     const kind = assertStudioEntityKind(kindRaw);
@@ -258,7 +245,7 @@ export class StudioStore {
     if (result.status !== "saved") return { status: result.status };
     return {
       status: "saved",
-      summary: { id, kind, name: result.summary.name, version: result.summary.version, writeId: result.summary.writeId, revision: result.summary.revision },
+      summary: summaryOfListing(result.summary),
       revision: result.summary.revision,
     };
   }

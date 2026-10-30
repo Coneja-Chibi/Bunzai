@@ -203,6 +203,43 @@ describe("the provider surface", () => {
     expect(listed.providers.some((p) => p.kind === "claude-sub" && p.model === "opus")).toBe(true);
   });
 
+  test("OLLAMA ASKS FOR A BASE URL BUT HAS A DEFAULT: the form shows it, and a blank one saves", async () => {
+    // Ollama supplies its own chat (its native API) yet makes HTTP requests: it is asked for an address, which may stay blank.
+    const body = (await (await handleAgentRoutes(
+      "/api/agent/providers", get("/api/agent/providers"), STUDIO,
+    ))?.json()) as { kinds: { id: string; needsBaseUrl: boolean; defaultBaseURL?: string; options?: { key: string }[] }[] };
+    const ollama = body.kinds.find((k) => k.id === "ollama");
+    expect(ollama).toMatchObject({ needsBaseUrl: true, defaultBaseURL: "http://localhost:11434" });
+    expect(ollama?.options?.map((o) => o.key)).toEqual(["numCtx"]);
+    const res = await handleAgentRoutes(
+      "/api/agent/providers/save",
+      post("/api/agent/providers/save", { kind: "ollama", model: "gemma4:26b", options: { numCtx: "32768" } }),
+      STUDIO,
+    );
+    expect(res?.status).toBe(200);
+  });
+
+  test("a new Ollama connection's model list comes from the address typed, sized by the window chosen", async () => {
+    const real = globalThis.fetch;
+    const asked: string[] = [];
+    globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = new Request(input, init).url;
+      asked.push(url);
+      return Response.json({ models: [{ name: "far:latest", capabilities: ["completion"], details: { parameter_size: "8B", context_length: 131_072 } }] });
+    }) as typeof fetch;
+    try {
+      const res = await handleAgentRoutes(
+        "/api/agent/providers/models",
+        post("/api/agent/providers/models", { kind: "ollama", baseURL: "http://10.0.0.5:11434", options: { numCtx: "8192", stray: "x", bad: 3 } }),
+        STUDIO,
+      );
+      expect(await res?.json()).toMatchObject({ models: [{ id: "far:latest", context: 8_192 }] });
+      expect(asked).toEqual(["http://10.0.0.5:11434/api/tags"]);
+    } finally {
+      globalThis.fetch = real;
+    }
+  });
+
   test("a custom endpoint with no base URL is still refused", async () => {
     // The guard above narrowed; it must not have been removed.
     const res = await handleAgentRoutes(

@@ -1,16 +1,10 @@
 /**
- * The one place the app wires the encrypted library in: the D18 composition root named by
- * It opens `library.db` inside the studio folder, unlocks
- * it with this computer's own copy when there is one, and hands its stores (the pieces and the Studio's
- * own documents) to every Studio store through `addLibrary`. A folder that still holds a plain
- * Hoplight library is imported first; the app never runs on the folder itself. Kit and the
- * MCP server await `openLibrary` before they start; the programs with a window use `createLibrary`,
- * which holds the Studio shut while the library opens (an import in progress included), so the window
- * can come up first and show the load-in.
- *
- * The stores are handed over even while locked: they then refuse every call (LockedError), the
- * server answers 423, and the shell shows the stage door; unlocking later needs no re-wiring.
+ * Composition root for the encrypted library's stores, sessions and lifecycle. Imports legacy folders
+ * before exposing stores; locked or failed libraries never fall back to plain files. Window hosts use
+ * createLibrary while the UI loads; Kit and MCP await openLibrary. Locked stores refuse calls until
+ * unlock, without rewiring. Shutdown awaits owned scene work before releasing storage and keys.
  */
+import { closeSceneRuntime } from "./server-scene-runtime";
 import { existsSync, mkdirSync, readdirSync, renameSync, rmSync } from "node:fs";
 import { attachDerivedPersistence } from "../core/derive/derive";
 import { toErrorMessage } from "./_shared/error-message";
@@ -73,7 +67,7 @@ export interface OpenedLibrary {
    */
   rebuildScheduler?: RebuildScheduler;
   /** Stops handing out the library and closes the database. */
-  close(): void;
+  close(): Promise<void>;
 }
 /** One spelling per folder: Windows and macOS paths are not case-sensitive. */
 const samePath = (a: string, b: string): boolean => {
@@ -319,7 +313,7 @@ export async function openLibrary(studioDir: string, options: OpenOptions = {}):
       pieceChanges: (after, limit) => stores.backend.pieceChanges(after, limit),
       ...(imported ? { imported } : {}),
       rebuildScheduler,
-      close() { closeResources(); },
+      async close() { await closeSceneRuntime(stores.chats); closeResources(); },
     };
   } catch (error) {
     try { closeResources(); } catch { /* Preserve the open failure after releasing every resource. */ }
@@ -364,7 +358,7 @@ export interface LibraryHandle {
   /** Announces an explicit `/api/library/lock` (server-library.ts): the one lock path this handle
    *  does not itself call, so it cannot otherwise tell the stream apart from a no-op re-lock. */
   noticeLocked(): void;
-  close(): void;
+  close(): Promise<void>;
 }
 
 /**
@@ -388,6 +382,7 @@ export function createLibrary(
   let library: OpenedLibrary | null = null;
   let stopSnapshots = () => {};
   let opening: Promise<OpenedLibrary | null> | null = null;
+  let closing: Promise<void> | null = null;
   let readable!: () => void;
   const firstReadable = new Promise<void>((resolve) => (readable = resolve));
   let seenReadable = false;
@@ -447,7 +442,7 @@ export function createLibrary(
   };
 
   return {
-    studioDir, open: () => (opening ??= open()),
+    studioDir, open: () => closing ? Promise.resolve(null) : (opening ??= open()),
     async phase() {
       if (!library) return state;
       return { phase: (await library.keyring.status()).state === "unlocked" ? "unlocked" : "locked" };
@@ -489,11 +484,13 @@ export function createLibrary(
       idleLock.notify("locked");
     },
     close() {
-      idleLock.clear();
-      stopSnapshots();
-      stopWaiting();
-      library?.close();
-      unclaim();
+      return closing ??= (async () => {
+        await opening;
+        idleLock.clear();
+        stopSnapshots();
+        stopWaiting();
+        try { await library?.close(); } finally { unclaim(); }
+      })();
     },
   };
 }

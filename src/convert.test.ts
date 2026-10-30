@@ -10,6 +10,7 @@ import {
   type FormatAdapter,
 } from "./core";
 import { emptyLorebookBody } from "./core/lore";
+import type { CanonicalCharacter } from "./entities/character/schema";
 import type { ParsedCanonicalEntity } from "./entities/runtime-schema";
 import { convertFile, emitBundle, readPieces } from "./convert";
 import { withLinksRenamed } from "./core/links";
@@ -18,7 +19,6 @@ import { characterAdapter as rcCharacter } from "./formats/rolecall/index";
 import { characterAdapter as risuCharacter } from "./formats/risu/index";
 import stWorldbook from "./formats/sillytavern/lorebook";
 import rcLorebook from "./formats/rolecall/lorebook";
-import type { CanonicalCharacter } from "./entities/character/schema";
 import { emptySkillBody } from "./entities/skill/schema";
 import type { CanonicalLorebook } from "./entities/lorebook/schema";
 
@@ -57,6 +57,10 @@ function makeCardWithBook() {
 }
 
 const asText = (c: unknown) => ({ text: JSON.stringify(c) });
+
+const SAMPLE_PORTRAIT = `data:image/png;base64,${Buffer.from(
+  await Bun.file(join(import.meta.dir, "../samples/sillytavern/characters/Seraphina.png")).arrayBuffer(),
+).toString("base64")}`;
 
 function minimalEntity(kind: FormatAdapter["kind"]): ParsedCanonicalEntity {
   const envelope = { schemaVersion: CANONICAL_SCHEMA_VERSION, id: `conversion-${kind}` };
@@ -250,6 +254,10 @@ test("every registered adapter can traverse the generic same-kind conversion sea
     // its output is owned by the sillytavern-preset reader, so self-read is not its wire contract.
     if (adapter.id === "lumiverse-preset") continue;
     const entity = minimalEntity(adapter.kind);
+    // A PNG-only writer (JanitorAI, Saucepan) cannot emit a card without art, so give it some.
+    if (adapter.kind === "character" && adapter.outputExtensions.every((ext) => ext === "png")) {
+      (entity as unknown as CanonicalCharacter).body.media.portrait = { role: "portrait", ref: SAMPLE_PORTRAIT, mime: "image/png", primary: true };
+    }
     const emitted = (
       adapter.fromCanonical as (value: ParsedCanonicalEntity) => AdapterOutput
     )(entity);

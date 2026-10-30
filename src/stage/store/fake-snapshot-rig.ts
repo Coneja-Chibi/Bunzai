@@ -88,6 +88,7 @@ export function asBeforeHealthCheck(file: string): void {
     db.run("DROP TABLE director_states");
     for (const table of ["swipe_deltas", "message_deltas", "state_keyframes", "branch_state", "branch_base"]) db.run(`DROP TABLE ${table}`);
     db.run("ALTER TABLE turn_checkpoints DROP COLUMN deltas_json");
+    db.run("DROP TABLE dramaturg_threads");
     db.run("DROP TABLE persona_stats");
     db.run("ALTER TABLE swipes DROP COLUMN cut_at");
     db.run("ALTER TABLE messages DROP COLUMN hidden");

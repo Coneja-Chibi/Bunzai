@@ -2,7 +2,7 @@
  * The input checks and the status machine for Compendium receipts, applied by every
  * ChatStore implementation. The 64 KB cap is measured on the plaintext JSON so memory and SQLite refuse the same receipt.
  */
-import { StudioConflictError } from "../../studio/atomic-file";
+import { StudioConflictError } from "../../studio/errors";
 import { isOneOf, isPlainObject, type Rec } from "../../core/guards";
 import {
   RECEIPT_KINDS, RECEIPT_MAX_BYTES, RECEIPT_OPS, RECEIPT_STATUSES,

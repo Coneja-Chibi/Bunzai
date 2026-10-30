@@ -369,6 +369,16 @@ materialization. Shared decoding charges each repeated blob expansion before con
 unreadable stored payloads through the existing damage boundary. Desktop and CLI build definitions
 include literal worker entrypoints; source packaging definitions and probes have not been executed.
 
+## Reusable roleplay core
+
+`src/rp-core.ts` exports `createRoleplayCore`. The caller supplies a `ChatStore`, `StateStore`, provider resolver, library readers, clock and random seed. It uses the existing turn orchestration and canonical assembly, skills, trackers and Final Cut. It does not create a second session journal. The source API can be imported by Bun; the Node core smoke bundles and executes a real scripted turn under Node.
+
+Its `dramaturg` methods prepare, inspect and stop the scene consultant using that same runtime and provider resolver. Accepted work remains owned through startup, streaming and the final conversation write; shutdown cancels and awaits it. The ChatStore owns the revision-guarded sealed conversation in migration 46, alongside the existing scene-state migrations 43 through 45. Snapshot restore classifies the new table explicitly. Read-only tools use the current narrator tool loop without changing its reply-scoped write or deadline rules.
+
+Create one core per opened store. Its live runtime owns turn controllers, inspection and regex waits, background tracker rounds, recovery operations and promises returned by the optional host `afterEvent` callback. Independent stores may use colliding identifiers. Await `close()` before closing storage; new turn/recovery mutations refuse after closure. Desktop composition shares one runtime across routes, and library shutdown awaits that runtime. The host remains responsible for other jobs it starts outside this API.
+
+Desktop uses `src/ui/server-scene-composition.ts` to supply library readers, provider connections, Compendium hooks and automatic summary hooks. Those host hooks retain their existing scene lanes; the reusable API tracks their returned promises through shutdown. The terminal session runner accepts a configured core from its caller. This is a source API, not a published standalone package or proof of packaged-platform behavior.
+
 ## The CLI
 
 `src/cli.ts` is the thin app layer. Commands:
@@ -384,6 +394,8 @@ include literal worker entrypoints; source packaging definitions and probes have
 | `bunzai export <folder> [studio]` | Write the library out as a plain, unencrypted studio folder the import reads back. |
 | `bunzai derived --stats|--clear [studio]` | Inspect or clear rebuildable derived-cache rows in the encrypted library. |
 | `bunzai version` / `bunzai help` | The obvious. |
+
+`src/cli-rp-session.ts` provides a terminal session runner over an injected core and scene store. Text sends a message; `/continue`, `/swipe`, `/help` and `/quit` control it. It cannot run imported regex: an enabled prompt rule fails before provider egress, and an enabled Final Cut input rule refuses that pass rather than executing the rule in the host. It is tested with scripted input and providers, and has no standalone CLI command yet. Cross-process ownership of an encrypted library must be enforced before a second process can safely use crash recovery alongside desktop.
 
 ## Source of truth
 

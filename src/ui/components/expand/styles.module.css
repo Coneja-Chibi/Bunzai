@@ -117,3 +117,8 @@
   /* a resize grip is meaningless at full viewport */
   resize: none;
 }
+
+/* a growing editor is already as tall as its text, so a drag grip would only be undone by the next keystroke */
+.frame > textarea[data-grow] {
+  resize: none;
+}

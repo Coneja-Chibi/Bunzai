@@ -15,16 +15,8 @@ export { STALE_SESSION } from "./_shared/session-marker";
 import { ADAPTER_INPUT_MAX_BYTES } from "../core/adapter-input";
 import { JSON_BODY_MAX_BYTES } from "../core/media/limits";
 import { hasErrorName, isRecord } from "../core/guards";
-import {
-  isLibraryLocked,
-  isStudioNotFoundError,
-  isSceneCastMissingError,
-  isStudioBusyError,
-  isStudioReadError,
-  STUDIO_BUSY_CODE,
-  isStudioValidationError,
-} from "../studio/errors";
-import { isStudioConflictError, isStudioWriteError } from "../studio/atomic-file";
+import { isLibraryLocked, isStudioNotFoundError, isSceneCastMissingError, isStudioBusyError, isStudioReadError, STUDIO_BUSY_CODE, isStudioValidationError, isStudioConflictError, isStudioWriteError } from "../studio/errors";
+
 
 /** Inspect upload ceiling (bytes): the same file ceiling every other door uses, so a file the studio
  *  accepts is never one Kit's importer refuses. JSON routes use a lower cap. */
@@ -189,16 +181,22 @@ export async function readBodyCapped(
 /**
  * Stream a request body straight to a file with the same cap contract as readBodyCapped, holding one chunk at a
  * time: a `.lvbak` can be multi-gigabyte by design. The caller owns `destPath`'s lifecycle (its directory, and
- * removing the file whether this succeeds or fails).
+ * removing non-exclusive files whether this succeeds or fails). Exclusive sinks remove their own
+ * incomplete file; a declared-length refusal never opens or removes the destination.
  */
 export async function streamBodyToFile(
   req: Request,
   destPath: string,
   limit: number,
+  file: { mode?: number; flags?: "w" | "wx" } = {},
 ): Promise<{ ok: true; bytes: number } | { ok: false; response: Response }> {
+  if (req.signal.aborted) {
+    void req.body?.cancel().catch(() => undefined);
+    return { ok: false, response: refusal("aborted") };
+  }
   const refused = refuseDeclaredLength(req, limit);
   if (refused) return { ok: false, response: refused };
-  const result = await pumpStream(req.body, await fileSink(destPath), { limit, signal: req.signal });
+  const result = await pumpStream(req.body, await fileSink(destPath, file.mode, file.flags), { limit, signal: req.signal });
   return result.ok ? result : { ok: false, response: refusal(result.reason) };
 }
 

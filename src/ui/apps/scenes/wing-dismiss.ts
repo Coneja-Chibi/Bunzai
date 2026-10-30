@@ -1,7 +1,6 @@
 /**
- * How a wing is put away in the default theme (RoleCall `WingPanelContainer.tsx` pointerdown listener): opening a wing pushes the chat aside instead of pausing it, and a press anywhere
- * outside the panel closes it. The rail, a dialog layered over the scene, a pop-out, and anything portaled outside the scene own their own presses. Other themes keep the pause and the
- * Scene Paused mark (their wings variants lay a panel over the scene), so the listener is only on for the default theme.
+ * A press on the scene outside its open wing closes it. The rail, a dialog, a pop-out and anything
+ * portaled outside the scene retain their own presses. Other themes also retain the Scene Paused control.
  */
 import { useEffect, useRef, type RefObject } from "react";
 
@@ -16,12 +15,12 @@ export function isOwnPress(e: Pick<Event, "target" | "composedPath">, root: Elem
   return !(e.target instanceof Node && root?.contains(e.target));
 }
 
-/** While a wing is open in the default theme, a press outside it calls `onClose`. */
+/** While a wing is open, a press on the scene outside it calls `onClose`. */
 export function useWingDismiss(open: boolean, root: RefObject<Element | null>, onClose: () => void): void {
   const close = useRef(onClose);
   close.current = onClose;
   useEffect(() => {
-    if (!open || !pushesAside()) return undefined;
+    if (!open) return undefined;
     const press = (e: PointerEvent): void => { if (!isOwnPress(e, root.current)) close.current(); };
     document.addEventListener("pointerdown", press);
     return () => document.removeEventListener("pointerdown", press);

@@ -21,7 +21,7 @@ import { apiReq, filledSec } from "./server-test-rig";
 const handles: LibraryHandle[] = [];
 const dirs: string[] = [];
 afterEach(async () => {
-  for (const h of handles.splice(0)) h.close();
+  for (const h of handles.splice(0)) await h.close();
   await Promise.all(dirs.splice(0).map(removeTempDir));
 });
 

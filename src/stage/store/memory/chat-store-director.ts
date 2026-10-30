@@ -2,7 +2,7 @@
  * The memory ChatStore's Story Director: the settings ride on the chat record, a snapshot rides on the swipe it belongs to, so a fork's copy of
  * a message carries it (copyRecord), a cut version or message hides it, and a purge takes it. The same guard and tip rule as the SQLite store.
  */
-import { StudioConflictError } from "../../../studio/atomic-file";
+import { StudioConflictError } from "../../../studio/errors";
 import type { Branch, ChatStore, DirectorSnapshot } from "../../contracts/chat-store";
 import { checkArchiveItems, checkDirectorSettings, checkDirectorState, mergeArchive, mergeDirectorSettings } from "../director-rules";
 import type { ChatRecord, MessageRecord } from "./chat-records";

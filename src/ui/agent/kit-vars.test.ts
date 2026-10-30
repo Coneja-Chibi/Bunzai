@@ -7,7 +7,12 @@
  * the other arrangement once, as two damage-reason unions that printed `undefined` on 123 files.
  */
 import { describe, expect, test } from "bun:test";
-import { theme, verbColor } from "../../kit/render/theme";
+import { readdirSync, readFileSync } from "node:fs";
+import { kindColor, theme, verbColor } from "../../kit/render/theme";
+import { LINE_NAMES, parsePalette, SURFACE_NAMES, TEXT_NAMES, type ThemePalette } from "../../extensions/theme-appearance";
+import { accentRole, floorsOf } from "../_shared/accent-role";
+import { contrastRatio } from "../_shared/color-math";
+import { LINE_PROPS, surfaceProp, textProp } from "../shell/theme-tokens";
 import { kitVars, verbOf } from "./kit-vars";
 
 describe("kitVars", () => {
@@ -35,6 +40,65 @@ describe("kitVars", () => {
     const vars = kitVars() as unknown as Record<string, string>;
     expect(vars["--kit-verb-delete"]).toBe(verbColor["delete"]);
     expect(vars["--kit-verb-read"]).toBe(verbColor["read"]);
+  });
+});
+
+/** The bundled palettes, by theme id: Paper is the light one, the rest are dark. */
+const themesDir = new URL("../../extensions/themes/", import.meta.url);
+const PALETTES = Object.fromEntries(readdirSync(themesDir, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => [
+  d.name,
+  parsePalette((JSON.parse(readFileSync(new URL(`${d.name}/manifest.json`, themesDir), "utf8")) as { appearance: { palette: unknown } }).appearance.palette),
+])) as Record<string, ThemePalette>;
+const dashedName = (name: string): string => `--kit-${name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`;
+
+/** A `var(--bk-*)` reference resolved against one palette; a hex stays itself. */
+function resolve(value: string, p: ThemePalette): string {
+  const ref = /^var\((--bk-[a-z-]+)\)$/.exec(value)?.[1];
+  if (!ref) return value;
+  for (const n of SURFACE_NAMES) if (surfaceProp(n) === ref) return p.surface[n];
+  for (const n of TEXT_NAMES) if (textProp(n) === ref) return p.text[n];
+  for (const n of LINE_NAMES) if (LINE_PROPS[n] === ref) return p.line[n];
+  throw new Error(`unresolvable ${value}`);
+}
+
+describe("kitVars on the painted theme", () => {
+  const GROUNDS = ["well", "recess", "floor", "panel", "lift", "row", "sunken", "stamp", "stampDim"] as const;
+  const INKS = ["text", "bright", "soft", "quiet", "mut"] as const;
+  const ACCENTS = ["rose", "teal", "gold", "violet", "alive", "red"] as const;
+
+  test("a dark theme keeps Kit's own palette, untouched", () => {
+    for (const name of ["theater", "greenroom", "stage"]) expect(kitVars(floorsOf(PALETTES[name]!))).toEqual(kitVars());
+  });
+
+  test("a light theme lays the window on the theme's own grounds and inks, so every ink reads on every ground", () => {
+    const p = PALETTES["paper"]!;
+    const vars = kitVars(floorsOf(p)) as unknown as Record<string, string>;
+    for (const g of GROUNDS) {
+      expect(vars[dashedName(g)], g).toMatch(/^var\(--bk-surface-/);
+      for (const ink of INKS) expect(contrastRatio(resolve(vars[dashedName(ink)]!, p), resolve(vars[dashedName(g)]!, p)), `${ink} on ${g}`).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  test("on a light theme Kit's accents keep their hue, held to the theme's text floors", () => {
+    const p = PALETTES["paper"]!, floors = floorsOf(p);
+    const vars = kitVars(floors) as unknown as Record<string, string>;
+    const accents: [string, string][] = [
+      ...ACCENTS.map((n) => [dashedName(n), theme[n]] as [string, string]),
+      ...Object.entries(verbColor).map(([v, hex]) => [`--kit-verb-${v}`, hex] as [string, string]),
+      ...Object.entries(kindColor).map(([k, hex]) => [`--kit-kind-${k}`, hex] as [string, string]),
+    ];
+    for (const [key, hex] of accents) {
+      expect(vars[key], key).toBe(accentRole(hex, floors)!.text);
+      for (const s of floors.surfaces) expect(contrastRatio(vars[key]!, s), `${key} on ${s}`).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  test("on a light theme Kit's white words sit on deep fills that hold the theme's onDeep", () => {
+    const p = PALETTES["paper"]!, floors = floorsOf(p);
+    const vars = kitVars(floors) as unknown as Record<string, string>;
+    expect(vars["--kit-white"]).toBe(`var(${textProp("onDeep")})`);
+    const white = resolve(vars["--kit-white"]!, p);
+    for (const deep of ["roseDeep", "tealDeep", "violetDeep"] as const) expect(contrastRatio(white, vars[dashedName(deep)]!), deep).toBeGreaterThanOrEqual(4.5);
   });
 });
 

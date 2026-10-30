@@ -6,6 +6,7 @@ import type { AppContext, InspectArchiveResult, InspectResult, SaveBundleResult,
 import { apiFetch, apiFetchJson } from "./_shared/api-fetch";
 import { ADAPTER_INPUT_MAX_BYTES } from "../core/adapter-input";
 import { readSceneTurn } from "./apps/scenes/scene-turn-stream";
+import { readDramaturgStream, refusalOf } from "./apps/scenes/props/dramaturg/dramaturg-stream";
 import { isCanonicalMediaReference } from "../entities/_shared/media-reference";
 import type { PiecePatch } from "../stage/contracts/content-store";
 import { isRecord } from "../core/guards";
@@ -266,6 +267,15 @@ export const api: AppContext["api"] = {
   editSceneDirector: async (chatId, edit, expectedVersion) => postJson("/api/chats/director-edit", { chatId, edit, expectedVersion }),
   undoSceneTrackerUpdate: async (chatId, module, messageId) => postJson("/api/chats/director-tracker-undo", { chatId, module, messageId }),
   setSceneDirectorSettings: async (chatId, patch) => postJson("/api/chats/director-settings", { chatId, patch }),
+  getSceneDramaturg: async (chatId) => apiFetchJson(`/api/chats/dramaturg?chatId=${encodeURIComponent(chatId)}`, { requireToken: false }),
+  setSceneDramaturgSettings: async (chatId, patch) => postJson("/api/chats/dramaturg-settings", { chatId, patch }),
+  clearSceneDramaturg: async (chatId, revision) => postJson("/api/chats/dramaturg-clear", { chatId, revision }),
+  askSceneDramaturg: async (chatId, question, revision, onEvent, signal) => {
+    const res = await apiFetch("/api/chats/dramaturg-turn", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chatId, question, revision }), ...(signal ? { signal } : {}) });
+    if (!res.ok) throw await refusalOf(res);
+    await readDramaturgStream(res, onEvent);
+  },
+  stopSceneDramaturg: async (chatId, revision) => { await postJson("/api/chats/dramaturg-stop", { chatId, ...(revision === undefined ? {} : { revision }) }); },
   backfillSceneSummary: async (chatId, signal) =>
     apiFetchJson("/api/chats/summary-backfill", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chatId }), ...(signal ? { signal } : {}) }),
   summarizeSceneNow: async (chatId, signal) =>
@@ -335,6 +345,21 @@ export const api: AppContext["api"] = {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(extension ? { entity, targetId, extension } : { entity, targetId }),
     }),
+  saveExportFolder: async (label, files) => {
+    const { dir, folder } = await postJson<{ dir: string; folder: string }>("/api/export-folder", { label });
+    // One request per file, streamed to disk by the server: a run of big packs is never one body.
+    // The server mints each final name ("Vera (2).png" on a clash), so the answer lists those.
+    const saved: string[] = [];
+    for (const [name, blob] of Object.entries(files)) {
+      const { name: savedAs } = await apiFetchJson<{ name: string }>(`/api/export-folder/file?folder=${encodeURIComponent(folder)}&name=${encodeURIComponent(name)}`, {
+        method: "POST",
+        headers: { "content-type": "application/octet-stream" },
+        body: blob,
+      });
+      saved.push(savedAs);
+    }
+    return { dir, files: saved };
+  },
   duplicateEntity: async (kind, id) => postJson("/api/studio/duplicate", { kind, id }),
   exportStoredPack: (id) => streamed(`/api/studio/export-pack?id=${encodeURIComponent(id)}`, "print the pack"),
   exportCompendium: (id) => streamed(`/api/studio/export-compendium?id=${encodeURIComponent(id)}`, "export the compendium"),

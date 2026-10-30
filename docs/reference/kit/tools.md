@@ -64,13 +64,13 @@ session:
   only for the kinds something can reference (lorebook, pack, regex).
 - `studio_transfer` previews a crossing: it serializes one stored piece through another platform's
   adapter and reports what the crossing costs, without writing anything.
-- `studio_export` performs the crossing and writes the file into `<studio>/exports`. The model
+- `studio_export` performs the crossing and writes the file into a fresh `<studio>/Export/<timestamp> Kit <id>/` folder. The model
   supplies no path component at all: it names a piece and a target format, and the filename is
   derived from the piece id plus the adapter's own extension. Containment is therefore structural
   rather than validated, which is what makes a model-callable file write safe. Writes are
   create-only, because an export that silently replaced an earlier one could destroy a file already
-  sent to somebody and there is no revision history to recover it from. Binary carriers are refused
-  rather than mangled.
+  sent to somebody and there is no revision history to recover it from. Text and binary carriers share
+  the exclusive-write owner, which syncs file contents and removes its own incomplete file on failure.
 - Both call one shared `convertStoredPiece`, so a preview can never report different losses than the
   write that follows it. The conversion graph is imported lazily so it stays out of Kit's cold start.
 - `macro_lookup` answers "what does this macro do here, and what is it on that platform?" from the

@@ -4,6 +4,7 @@
  * connect. Fixtures are scene-turn.test.ts's own.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { ProviderError, type Provider, type ProviderCompletion } from "../stage/contracts/provider";
 import type { ChatConnection } from "../stage/contracts/chat-store";
 import { memoryChatStore } from "../stage/store/chat-store";
@@ -43,7 +44,7 @@ async function scene(providers: Record<string, Provider>) {
   const chat = await chats.createChat({ title: "Night", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: vera } });
   await chats.setConnection(chat.id, { id: "main", model: "vera-1" });
   await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }, { role: "user", content: "Any storms?" }]);
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats,
     state,
     connect: async (c: ChatConnection): Promise<Connected | null> => (providers[c.id] ? { provider: providers[c.id]!, kind: "openrouter", context: 32_000 } : null),
@@ -58,7 +59,7 @@ async function scene(providers: Record<string, Provider>) {
     return runTurn(deps, { chatId: chat.id, kind: "reply", expectedVersion: v, ...(fallback ? { fallback } : {}) }, (e) => events.push(e));
   };
   const texts = async () => (await chats.readMessages(chat.activeBranchId, { limit: 50 })).messages.map((m) => m.swipes[m.current]!.content);
-  return { chats, chat, events, turn, texts };
+  return { deps, chats, chat, events, turn, texts };
 }
 
 const FB: ChatConnection = { id: "backup", model: "vera-lite" };
@@ -105,7 +106,7 @@ describe("fallback model", () => {
     const s = await scene({ main: waiting, backup: backup.provider });
     const running = s.turn(FB);
     for (let i = 0; i < 100 && !s.events.some((e) => e.type === "start"); i++) await Bun.sleep(5);
-    expect(stopTurn(s.chat.id, (s.events[0] as { turnId: string }).turnId)).toBe(true);
+    expect(stopTurn(s.deps.runtime, s.chat.id, (s.events[0] as { turnId: string }).turnId)).toBe(true);
     await running;
     expect(backup.asked).toEqual([]);
     expect(s.events.at(-1)).toEqual({ type: "stopped", message: null });

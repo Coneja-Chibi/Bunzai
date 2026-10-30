@@ -9,8 +9,8 @@
  */
 import { parseCanonicalEntity, type ParsedCanonicalEntity } from "../../entities/runtime-schema";
 import { normalizeAuthoredSentinelLiterals } from "../../entities/piece-parts-blob";
-import { StudioConflictError } from "../../studio/atomic-file";
-import { StudioReadError, StudioValidationError, StudioNotFoundError } from "../../studio/errors";
+import { StudioConflictError, StudioReadError, StudioValidationError, StudioNotFoundError } from "../../studio/errors";
+
 import { assertSafeStudioId, assertStudioEntityKind } from "../../studio/path-policy";
 import { entityName } from "../../studio/summary";
 import { compareDocumentOrder } from "../contracts/document-order";
@@ -124,8 +124,9 @@ export function createContentStore(
   /** A brand-new entity at exactly this id, only if no live entity holds it (graves never do). */
   async function writeFresh(entity: ParsedCanonicalEntity, kind: EntityKind, id: string): Promise<ContentSummary | null> {
     const built = freshWrite(entity, kind, id, clock(), "create");
-    const wrote = await backend.write(built.row, built.version, { when: "absent" }, buildSummary(built.entity), built.change);
-    return wrote ? contentSummaryOf(built.row, built.entity) : null;
+    const summary = buildSummary(built.entity);
+    const wrote = await backend.write(built.row, built.version, { when: "absent" }, summary, built.change);
+    return wrote ? contentSummaryOf(built.row, built.entity, summary.content) : null;
   }
 
   /**
@@ -145,17 +146,18 @@ export function createContentStore(
     }
     const t = clock();
     const built = await diffWrite(backend, current, entity, parts, revision, reason, t);
+    const summary = buildSummary(built.entity);
     const wrote = await backend.write(
       built.row,
       built.version,
       { when: "writeId", expected: current.writeId },
-      buildSummary(built.entity),
+      summary,
       built.change,
     );
     if (!wrote) return null;
     // After the write, not inside it: a crash in between only leaves extra versions, never fewer.
     await backend.pruneVersions(current.kind, current.id, keepVersions);
-    return contentSummaryOf(built.row, built.entity);
+    return contentSummaryOf(built.row, built.entity, summary.content);
   }
 
   const liveRow = (kind: string, id: string): Promise<DocumentRow | null> => backend.get(kind, id);

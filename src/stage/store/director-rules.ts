@@ -10,6 +10,7 @@ import {
 import { checkConnection, fail, isJson } from "./chat-rules";
 import { EFFORTS } from "./prompting-rules";
 import { isWhole } from "./scalar-rules";
+import { applySettingsPatch } from "./settings-patch";
 
 const KEYS = ["personality", "model", "reasoning", "commandMode", "temperature", "autoRetry", "creativity", "autoUpdate", "every", "callsPerReply", "instructions"] as const;
 const oneOf = <T extends string>(key: string, v: unknown, list: readonly T[]): T => (typeof v === "string" && (list as readonly string[]).includes(v) ? (v as T) : fail(`${key} must be ${list.join(", ")} or null`));
@@ -66,8 +67,7 @@ export function mergeArchive(old: DirectorArchive | undefined, add: Partial<Dire
 
 /** The settings after a checked patch; undefined when nothing is left to keep. */
 export function mergeDirectorSettings(old: DirectorSettings | undefined, patch: DirectorSettingsPatch): DirectorSettings | undefined {
-  const next: Record<string, unknown> = { ...old };
-  for (const [key, v] of Object.entries(patch)) if (v === null) delete next[key]; else if (v !== undefined) next[key] = v;
+  const next = applySettingsPatch(old, patch);
   return Object.keys(next).length > 0 ? (next as DirectorSettings) : undefined;
 }
 

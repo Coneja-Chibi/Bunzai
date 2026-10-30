@@ -2,7 +2,7 @@
 
 Auto-generated from live adapters (`bun run scripts/format-matrix.ts`).
 Canonical schema version: **1**.
-Generated: 2026-10-29.
+Generated: 2026-10-30.
 
 ## How to use
 
@@ -16,30 +16,34 @@ bun run bunzai validate path/to/card.json
 Default portable character shape for thin hosts (C.AI Tools dumps, Crushon import, etc.):
 **SillyTavern / CCv3** (`sillytavern` adapter).
 
-## Characters (9)
+## Characters (11)
 
 | id | kind | writes | label |
 | --- | --- | --- | --- |
 | `agnai` | character | .json | Agnai (Agnaistic) character (.json) |
 | `backyard` | character | .json | Backyard.ai / Faraday character (legacy json) |
 | `byaf` | character | .byaf | Backyard archive (.byaf) |
+| `janitor` | character | .png | JanitorAI character (PNG for the avatar importer) |
 | `lumiverse` | character | .json, .charx | Lumiverse character (ST + modules) |
 | `pygmalion` | character | .json, .png | Pygmalion character (flat JSON / PNG) |
 | `risu` | character | .charx | RisuAI .charx (zip: card.json + assets) |
 | `rolecall` | character | .json | RoleCall character card (v3, png/json) |
+| `saucepan` | character | .png | Saucepan companion (PNG for the Companion Importer) |
 | `sillytavern` | character | .json, .png | SillyTavern character card (v2/v3, png/json) |
 | `vaud-json` | character | .json | Bunzai native (.json) |
 
-## Lorebooks (7)
+## Lorebooks (9)
 
 | id | kind | writes | label |
 | --- | --- | --- | --- |
 | `agnai-lorebook` | lorebook | .json | Agnai memory book (json) |
+| `janitor-lorebook` | lorebook | .json | JanitorAI lorebook (ST world info for Scripts > Import JSON) |
 | `marinara-lorebook` | lorebook | .json | Marinara-Engine lorebook (native .marinara.json export) |
 | `novelai-lorebook` | lorebook | .lorebook | NovelAI lorebook (native export .lorebook / json) |
 | `risu-lorebook` | lorebook | .json | RisuAI lorebook (native export json) |
 | `rolecall-lorebook` | lorebook | .json | RoleCall lorebook (v1 export json) |
 | `rolecall-compendium` | lorebook | .json | RoleCall compendium export (compendium.json) |
+| `saucepan-lorebook` | lorebook | .json | Saucepan lorebook (ST world info for the Lorebook Importer) |
 | `sillytavern-lorebook` | lorebook | .json | SillyTavern world info (worldbook json) |
 
 ## Personas (4)

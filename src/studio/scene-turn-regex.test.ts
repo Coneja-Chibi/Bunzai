@@ -4,6 +4,7 @@
  * and it fails closed. Fixtures follow scene-turn-review.test.ts.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { RegexSetBody } from "../entities/regex/schema";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
@@ -28,7 +29,7 @@ async function scene(sets: Record<string, RegexSetBody | null>, ids = Object.key
   await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }, { role: "user", content: "Any storms?" }, { role: "assistant", content: "Maybe storms." }]);
   const sent: ProviderRequest[] = [];
   const provider: Provider = { id: "fake", async send(request) { sent.push(request); return { content: "Colder.", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }),
     readPreset: async () => null, readLorebook: async () => null,
@@ -43,7 +44,7 @@ async function scene(sets: Record<string, RegexSetBody | null>, ids = Object.key
     const version = (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion!;
     return runTurn(deps, { chatId: chat.id, kind: "swipe", expectedVersion: version, inspect }, emit);
   };
-  return { chats, chat, sent, events, next, run };
+  return { deps, chats, chat, sent, events, next, run };
 }
 
 const set = (...rules: ReturnType<typeof rule>[]): RegexSetBody => ({ name: "s", rules } as unknown as RegexSetBody);
@@ -61,7 +62,7 @@ describe("the scene's prompt regex", () => {
       { index: expect.any(Number), role: "user", depth: 0, text: "Any storms?" },
     ]);
     const user = regex.items.find((i) => i.role === "user")!;
-    expect(answerRegex(s.chat.id, regex.turnId, { kind: "done", texts: { [user.index]: "Any weather?" } })).toBe(true);
+    expect(answerRegex(s.deps.runtime, s.chat.id, regex.turnId, { kind: "done", texts: { [user.index]: "Any weather?" } })).toBe(true);
     await turn;
     expect(s.sent[0]!.messages.at(-1)!.content).toBe("Any weather?");
     expect(s.sent[0]!.messages.some((m) => m.content === "Evening.")).toBe(true);
@@ -73,7 +74,7 @@ describe("the scene's prompt regex", () => {
     const turn = s.run();
     const regex = await asked;
     const long = "Any weather and many more long words to count, one after another, for a while?";
-    answerRegex(s.chat.id, regex.turnId, { kind: "done", texts: { [regex.items.find((i) => i.role === "user")!.index]: long } });
+    answerRegex(s.deps.runtime, s.chat.id, regex.turnId, { kind: "done", texts: { [regex.items.find((i) => i.role === "user")!.index]: long } });
     await turn;
     expect((await s.chats.lastRequest(s.chat.activeBranchId))!.texts.at(-1)).toBe(long);
     const done = s.events.find((e) => e.type === "done") as Extract<TurnEvent, { type: "done" }>;
@@ -96,7 +97,7 @@ describe("the scene's prompt regex", () => {
     const asked = s.next("regex");
     const turn = s.run();
     const regex = await asked;
-    answerRegex(s.chat.id, regex.turnId, { kind: "failed", error: "regex worker exceeded 750ms" });
+    answerRegex(s.deps.runtime, s.chat.id, regex.turnId, { kind: "failed", error: "regex worker exceeded 750ms" });
     await turn;
     expect(s.sent).toHaveLength(0);
     expect(s.events.at(-1)).toMatchObject({ type: "failed", code: "regex_unavailable", message: expect.stringContaining("nothing was sent") });
@@ -108,7 +109,7 @@ describe("the scene's prompt regex", () => {
     const asked = s.next("regex");
     const turn = s.run();
     const regex = await asked;
-    answerRegex(s.chat.id, regex.turnId, { kind: "done", texts: { 99: "x" } });
+    answerRegex(s.deps.runtime, s.chat.id, regex.turnId, { kind: "done", texts: { 99: "x" } });
     await turn;
     expect(s.sent).toHaveLength(0);
     expect(s.events.at(-1)).toMatchObject({ type: "failed", code: "regex_unavailable" });
@@ -119,7 +120,7 @@ describe("the scene's prompt regex", () => {
     const asked = s.next("regex");
     const turn = s.run();
     const regex = await asked;
-    expect(stopTurn(s.chat.id, regex.turnId)).toBe(true);
+    expect(stopTurn(s.deps.runtime, s.chat.id, regex.turnId)).toBe(true);
     await turn;
     expect(s.sent).toHaveLength(0);
     expect(s.events.at(-1)).toMatchObject({ type: "stopped", message: null });
@@ -132,11 +133,11 @@ describe("the scene's prompt regex", () => {
     const turn = s.run(true);
     const regex = await asked;
     const user = regex.items.find((i) => i.role === "user")!;
-    answerRegex(s.chat.id, regex.turnId, { kind: "done", texts: { [user.index]: "Any weather?" } });
+    answerRegex(s.deps.runtime, s.chat.id, regex.turnId, { kind: "done", texts: { [user.index]: "Any weather?" } });
     const review = await reviewed;
     expect(review.messages.at(-1)!.content).toBe("Any weather?");
     const other = review.messages.findIndex((m) => m.content === "Evening.");
-    answerReview(s.chat.id, review.turnId, { kind: "send", edits: { [other]: "Good evening." } });
+    answerReview(s.deps.runtime, s.chat.id, review.turnId, { kind: "send", edits: { [other]: "Good evening." } });
     await turn;
     expect(s.sent[0]!.messages.map((m) => m.content)).toEqual(expect.arrayContaining(["Good evening.", "Any weather?"]));
   });
@@ -150,7 +151,7 @@ describe("macros in a replacement (RoleCall's expandMacro, after the rule)", () 
     const regex = await asked;
     expect(regex.macros).toMatchObject({ user: expect.any(String), char: "Vera" });
     const user = regex.items.find((i) => i.role === "user")!;
-    answerRegex(s.chat.id, regex.turnId, { kind: "done", texts: { [user.index]: "{{user}} asked \u0001\u0001user\u0002\u0002" } });
+    answerRegex(s.deps.runtime, s.chat.id, regex.turnId, { kind: "done", texts: { [user.index]: "{{user}} asked \u0001\u0001user\u0002\u0002" } });
     await turn;
     expect(s.sent[0]!.messages.at(-1)!.content).toBe("User asked {{user}}");
   });
@@ -161,7 +162,7 @@ describe("macros in a replacement (RoleCall's expandMacro, after the rule)", () 
     const turn = s.run();
     const regex = await asked;
     const user = regex.items.find((i) => i.role === "user")!;
-    answerRegex(s.chat.id, regex.turnId, { kind: "done", texts: { [user.index]: "{{user}} asked" } });
+    answerRegex(s.deps.runtime, s.chat.id, regex.turnId, { kind: "done", texts: { [user.index]: "{{user}} asked" } });
     await turn;
     expect(s.sent[0]!.messages.at(-1)!.content).toBe("{{user}} asked");
   });

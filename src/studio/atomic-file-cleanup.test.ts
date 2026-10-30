@@ -8,10 +8,12 @@
  * atomic-file.test.ts so the patch cannot reach the real-filesystem tests there.
  */
 import { describe, expect, test, beforeEach, afterEach } from "bun:test";
-import { readFile, writeFile, open, access } from "node:fs/promises";
+import { readFile, writeFile, open, access, readdir } from "node:fs/promises";
 import { join } from "node:path";
-import { writeExclusive, StudioWriteError, StudioConflictError } from "./atomic-file";
+import { writeExclusive } from "./atomic-file";
+import { StudioWriteError, StudioConflictError } from "./errors";
 import { tempDir } from "./test-temp-dir";
+import { StudioExports } from "./exports";
 
 type WriteFileFn = (...args: unknown[]) => Promise<unknown>;
 
@@ -58,6 +60,17 @@ describe("writeExclusive cleanup", () => {
       await expect(writeExclusive(p, '{"v":1}')).rejects.toBeInstanceOf(StudioWriteError);
     });
     expect(await exists(p)).toBe(false);
+  });
+
+  test("a failed binary export removes its partial artifact through the shared write owner", async () => {
+    await withOneFailingWrite(async () => {
+      const error = await new StudioExports(root).write("binary", "png", new Uint8Array([137, 80, 78, 71]))
+        .then(() => null, (failure: unknown) => failure);
+      expect(error).toBeInstanceOf(StudioWriteError);
+    });
+    const folders = await readdir(join(root, "Export"));
+    expect(folders).toHaveLength(1);
+    expect(await readdir(join(root, "Export", folders[0]!))).toEqual([]);
   });
 
   test("the retry after a failed write succeeds instead of hitting a phantom conflict", async () => {

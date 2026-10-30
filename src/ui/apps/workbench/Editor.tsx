@@ -478,7 +478,7 @@ export function CharacterEditor({ entity, revision, ctx, piece, topRight }: Char
     <CharacterEditorView
       ctx={ctx} piece={piece} topRight={topRight}
       prefs={{ targets, toggleTarget, clearTargets, offTarget, pickOffTarget, editorScale, setEditorScale, stepScale, editorLayout, setEditorLayout, mode, setMode, onboarded, scaleMin, scaleMax }}
-      bodyViews={bodyViews} coverage={coverage} platformLabel={platformLabel} doneCount={doneCount} chips={chips}
+      bodyViews={bodyViews} coverage={coverage} platformLabel={platformLabel} chips={chips}
       nativeStub={nativeStub} setNativeStub={setNativeStub} workshop={workshop} setWorkshop={setWorkshop}
       saving={saving} dirty={dirty} doSave={doSave} openExport={() => void openExport()}
       exportOpen={exportOpen} setExportOpen={setExportOpen} exportEntity={exportEntity}

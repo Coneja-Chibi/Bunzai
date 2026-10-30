@@ -139,6 +139,7 @@ export const KIT_METER_STYLE = `
 export const KIT_ASK_STYLE = `
 .kit-ask{display:flex;flex-direction:column;margin:.35rem 0 .1rem;
   border-left:2px solid var(--accent);background:var(--kit-recess)}
+.kit-ask:focus{outline:none}
 .kit-ask__head{display:flex;justify-content:space-between;background:var(--kit-panel);
   padding:.2rem .5rem;font-family:var(--font-mono);font-size:var(--text-meta);letter-spacing:.08em;
   color:var(--kit-quiet)}

@@ -1,203 +1,105 @@
-/**
- * Editor chrome: platform lens tabstrip + header row (name, scale, mode bar, save/export).
- * Pure presentational; state stays in Editor.tsx. Renders BOTH the desktop chrome and the
- * mobile grammar (design/vs-mobile-editors.html); Editor.module.css picks one by pane width.
- */
-import { Button, IconButton } from "../../../components/button";
-import type { JSX, ReactNode } from "react";
+/** Studio Strip: character identity and actions above compact platform, view and progress controls. */
+import { useState, type JSX, type ReactNode } from "react";
 import type { CoverageInfo } from "../../../app-contract";
-import { LensRail } from "../../../components/lens-rail";
-import { MobileEditorHead, type MobileMenuItem } from "../../../components/mobile-editor-head";
+import { Button, IconButton } from "../../../components/button";
+import { InkDialog } from "../../../components/ink-dialog";
 import { PlatformTabs, type OffTarget } from "../../../components/platform-tabs";
 import { ProgressChecklist } from "../../../components/progress-checklist";
-import { EditorModeBar } from "./editor-modebar";
+import { EditorArrangement, EditorModeSwitch } from "./editor-modebar";
 
-export function EditorTabstrip({
-  coverage,
-  targets,
-  platformLabel,
-  toggleTarget,
-  clearTargets,
-  offTarget,
-  pickOffTarget,
-  lensActive,
-  lensVisibleCount,
-  lensTotalCount,
-  doneCount,
-  chips,
-  styles,
-}: {
+export interface EditorChromeProps {
+  name: string;
+  version: string;
+  onClose(): void;
   coverage: CoverageInfo[];
   targets: string[];
   platformLabel(id: string): string;
   toggleTarget(id: string): void;
   clearTargets(): void;
   offTarget: OffTarget;
-  pickOffTarget(m: OffTarget): void;
+  pickOffTarget(mode: OffTarget): void;
   lensActive: boolean;
   lensVisibleCount: number;
   lensTotalCount: number;
-  doneCount: number;
   chips: ReadonlyArray<readonly [string, boolean]>;
-  styles: Readonly<Record<string, string>>;
-}): JSX.Element {
-  const lensPlatforms = coverage
-    .filter((c) => c.lens !== false)
-    .map((c) => ({ id: c.id, label: platformLabel(c.id) }));
-  return (
-    <>
-      <div className={`${styles.tabstrip} ${styles.desktopChrome}`} data-tour="lens" data-editor="tabs">
-        <PlatformTabs
-          platforms={lensPlatforms}
-          selected={targets}
-          onToggle={toggleTarget}
-          onClear={clearTargets}
-          offTarget={offTarget}
-          onOffTarget={pickOffTarget}
-        />
-        <span className={styles.done}>
-          {lensActive && (
-            <span
-              className={styles.lensStat}
-              title="How many body fields stay on for the selected platform(s). Off-target fields are removed."
-            >
-              {`Lens ${lensVisibleCount}/${lensTotalCount}`}
-            </span>
-          )}
-          <span className={styles.frac}>{`${doneCount}/${chips.length}`}</span>
-          {chips.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ ([label, ok]) => (
-            <span key={label} className={`${styles.chip}${ok ? ` ${styles.chipOk}` : ""}`}>
-              {label}
-            </span>
-          ))}
-        </span>
-      </div>
-      <div className={styles.mobileChrome}>
-        <LensRail
-          platforms={lensPlatforms}
-          selected={targets}
-          onToggle={toggleTarget}
-          onClear={clearTargets}
-          offTarget={offTarget}
-          onOffTarget={pickOffTarget}
-        />
-        <ProgressChecklist
-          items={chips}
-          extraStat={lensActive ? `Lens ${lensVisibleCount}/${lensTotalCount}` : undefined}
-        />
-      </div>
-    </>
-  );
-}
-
-export function EditorHeader({
-  name,
-  version,
-  onClose,
-  editorScale,
-  stepScale,
-  setEditorScale,
-  scaleMin,
-  scaleMax,
-  onboarded,
-  mode,
-  setMode,
-  editorLayout,
-  setEditorLayout,
-  layoutLocked,
-  hasBehavior,
-  workshop,
-  setWorkshop,
-  saving,
-  dirty,
-  doSave,
-  openExport,
-  topRight,
-  styles,
-}: {
-  name: string;
-  version: string;
-  onClose(): void;
   editorScale: number;
   stepScale(dir: -1 | 1): void;
-  setEditorScale(n: number): void;
+  setEditorScale(scale: number): void;
   scaleMin: number;
   scaleMax: number;
-  onboarded: boolean;
   mode: "grid" | "interview";
-  setMode(m: "grid" | "interview"): void;
+  setMode(mode: "grid" | "interview"): void;
   editorLayout: "bento" | "playbill";
-  setEditorLayout(l: "bento" | "playbill"): void;
-  /** a theme's editor.frame sets the arrangement, so Bento | Playbill cannot choose */
+  setEditorLayout(layout: "bento" | "playbill"): void;
   layoutLocked: boolean;
   hasBehavior: boolean;
   workshop: boolean;
-  setWorkshop(v: boolean): void;
+  setWorkshop(on: boolean): void;
   saving: boolean;
   dirty: boolean;
   doSave(): void;
   openExport(): void;
   topRight?: ReactNode;
   styles: Readonly<Record<string, string>>;
-}): JSX.Element {
-  const kebab: MobileMenuItem[] = [
-    { label: "Export", onPick: openExport },
-    { label: onboarded && mode === "interview" ? "Grid mode" : "Guided mode", onPick: () => setMode(mode === "interview" ? "grid" : "interview"), disabled: !onboarded },
-    { label: editorLayout === "bento" ? "Playbill layout" : "Bento layout", onPick: () => setEditorLayout(editorLayout === "bento" ? "playbill" : "bento"), disabled: layoutLocked },
-    ...(hasBehavior ? [{ label: workshop ? "Leave workshop" : "Workshop", onPick: () => setWorkshop(!workshop) }] : []),
-    { label: "Bigger text", onPick: () => stepScale(1), disabled: editorScale >= scaleMax },
-    { label: "Smaller text", onPick: () => stepScale(-1), disabled: editorScale <= scaleMin },
-    { label: "Reset scale", onPick: () => setEditorScale(1) },
-  ];
+}
+
+export function EditorChrome(p: EditorChromeProps): JSX.Element {
+  const [panel, setPanel] = useState<"platforms" | "view" | null>(null);
+  const platforms = p.coverage.filter((c) => c.lens !== false).map((c) => ({ id: c.id, label: p.platformLabel(c.id) }));
+  const target = p.targets.length === 0 ? "Full card" : p.targets.map(p.platformLabel).join(", ");
+  const status = p.saving ? "Saving…" : p.dirty ? "Unsaved changes" : "Saved locally";
   return (
-    <>
-    <div className={styles.mobileChrome}>
-      <MobileEditorHead
-        name={name}
-        sub={`${version !== "" && version.length <= 16 ? `${version} · ` : ""}${saving ? "saving…" : dirty ? "unsaved changes" : "saved locally"}`}
-        dirty={dirty}
-        saving={saving}
-        onBack={onClose}
-        onSave={() => void doSave()}
-        menu={kebab}
-      />
-    </div>
-    <div className={`${styles.hdr} ${styles.desktopChrome}`} data-editor="head">
-      <IconButton label="Close" size="sm" icon="lucide:arrow-left" onClick={onClose} />
-      <b>{name.toUpperCase()}</b>
-      {version !== "" && version.length <= 16 && (
-        <span className={styles.vchip}>{version}</span>
-      )}
-      <span className={styles.hdrRight}>
-        <span className={styles.escale} title="Scale the editor">
-          <IconButton label="Scale editor down" size="sm" icon="lucide:minus" onClick={() => stepScale(-1)} disabled={editorScale <= scaleMin} title="Smaller" />
-          <Button variant="quiet" size="sm" onClick={() => setEditorScale(1)} title="Reset to 100%">{`${Math.round(editorScale * 100)}%`}</Button>
-          <IconButton label="Scale editor up" size="sm" icon="lucide:plus" onClick={() => stepScale(1)} disabled={editorScale >= scaleMax} title="Bigger" />
+    <section className={p.styles.studioChrome} aria-label="Character editor controls">
+      <div className={p.styles.studioHead} data-editor="head">
+        <IconButton label="Close" variant="quiet" size="sm" icon="lucide:arrow-left" onClick={p.onClose} />
+        <div className={p.styles.studioIdentity}>
+          <b>{p.name}</b>
+          <span>Character{p.version !== "" && p.version.length <= 16 ? ` · ${p.version}` : ""} · <span role="status">{status}</span></span>
+        </div>
+        <div className={p.styles.studioActions}>
+          <Button variant={p.dirty ? "primary" : "quiet"} size="sm" data-tour="save" disabled={p.saving || !p.dirty} onClick={() => void p.doSave()} title="Save · ctrl+s">Save</Button>
+          <Button variant={p.dirty ? "secondary" : "primary"} size="sm" onClick={p.openExport}>Export</Button>
+        </div>
+      </div>
+      <div className={p.styles.studioTools} data-editor="tabs">
+        <span className={p.styles.studioTarget} data-tour="lens">
+          <Button variant="quiet" size="sm" menu aria-haspopup="dialog" aria-expanded={panel === "platforms"} onClick={() => setPanel("platforms")} title={`Writing for: ${target}`}>
+            <span className={p.styles.studioTargetLabel}>{`Writing for: ${target}`}</span>
+          </Button>
         </span>
-        <EditorModeBar
-          mode={mode}
-          setMode={setMode}
-          editorLayout={editorLayout}
-          setEditorLayout={setEditorLayout}
-          layoutLocked={layoutLocked}
-          hasBehavior={hasBehavior}
-          workshop={workshop}
-          setWorkshop={setWorkshop}
-          styles={styles}
-        />
-        <Button
-          variant="primary"
-          data-tour="save"
-          disabled={saving || !dirty}
-          onClick={() => void doSave()}
-          title="Save · ctrl+s"
-        >
-          {saving ? "Saving…" : dirty ? "Save" : "● Saved locally"}
-        </Button>
-        <Button onClick={openExport} title="Export to a platform file">Export</Button>
-        {topRight}
-      </span>
-    </div>
-    </>
+        <EditorModeSwitch mode={p.mode} setMode={p.setMode} />
+        <span data-tour="layout">
+          <Button variant="quiet" size="sm" menu aria-haspopup="dialog" aria-expanded={panel === "view"} onClick={() => setPanel("view")}>View options</Button>
+        </span>
+        {p.topRight}
+        <div className={p.styles.studioProgress}>
+          <ProgressChecklist compact items={p.chips} extraStat={p.lensActive ? `Lens ${p.lensVisibleCount}/${p.lensTotalCount}` : undefined} />
+        </div>
+      </div>
+      {panel !== null && (
+        <InkDialog ariaLabel={panel === "platforms" ? "Writing for platform" : "View options"} onDismiss={() => setPanel(null)}>
+          <div className={p.styles.studioDialog}>
+            <div className={p.styles.studioDialogHead}>
+              <h2>{panel === "platforms" ? "Writing for platform" : "View options"}</h2>
+              <IconButton variant="quiet" size="sm" label="Close options" icon="lucide:x" onClick={() => setPanel(null)} />
+            </div>
+            {panel === "platforms" ? (
+              <PlatformTabs platforms={platforms} selected={p.targets} onToggle={p.toggleTarget} onClear={p.clearTargets} offTarget={p.offTarget} onOffTarget={p.pickOffTarget} />
+            ) : (
+              <>
+                <EditorArrangement mode={p.mode} editorLayout={p.editorLayout} setEditorLayout={p.setEditorLayout} layoutLocked={p.layoutLocked} hasBehavior={p.hasBehavior} workshop={p.workshop} setWorkshop={p.setWorkshop} />
+                <div className={p.styles.studioScale} role="group" aria-label="Editor scale">
+                  <span>Text size</span>
+                  <IconButton variant="quiet" label="Scale editor down" size="sm" icon="lucide:minus" onClick={() => p.stepScale(-1)} disabled={p.editorScale <= p.scaleMin} />
+                  <Button variant="quiet" size="sm" onClick={() => p.setEditorScale(1)} title="Reset to 100%">{`${Math.round(p.editorScale * 100)}%`}</Button>
+                  <IconButton variant="quiet" label="Scale editor up" size="sm" icon="lucide:plus" onClick={() => p.stepScale(1)} disabled={p.editorScale >= p.scaleMax} />
+                </div>
+              </>
+            )}
+            <Button size="sm" onClick={() => setPanel(null)}>Done</Button>
+          </div>
+        </InkDialog>
+      )}
+    </section>
   );
 }

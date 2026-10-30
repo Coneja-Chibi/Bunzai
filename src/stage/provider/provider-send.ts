@@ -15,7 +15,7 @@ import {
   type WireRequest,
 } from "../contracts/provider";
 import type { ParamSupport } from "../params/wire";
-import { classifyHttpFailure, createLineSplitter } from "./transport-core";
+import { badReply, classifyHttpFailure, createLineSplitter } from "./transport-core";
 
 export type Fetch = (url: string, init: RequestInit) => Promise<Response>;
 
@@ -67,7 +67,7 @@ export function createProviderSend<Connection extends { id: string; params?: Par
       try {
         json = JSON.parse(text);
       } catch {
-        throw new ProviderError(`${label} sent a reply that is not JSON.`, { category: "api_error", code: "backend_error", status: 502 });
+        throw badReply(`${label} sent a reply that is not JSON.`);
       }
       return deps.parseCompletion(json);
     }

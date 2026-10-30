@@ -5,6 +5,7 @@
  * (studio/final-cut-rerun.ts). A failed model call is a 502 carrying the provider's category and code, as a draft's is.
  */
 import { str } from "../core/guards";
+import { sceneRuntimeFor } from "./server-scene-runtime";
 import type { ChatFinalCutPatch, ChatStore } from "../stage/contracts/chat-store";
 import { ProviderError } from "../stage/contracts/provider";
 import type { StateStore } from "../stage/contracts/state-store";
@@ -12,7 +13,7 @@ import { deleteAgent, deleteBank, finalCutBanksOf, listAgents, listBanks, saveAg
 import { applyFinalCutRerun, rerunFinalCut } from "../studio/final-cut-rerun";
 import type { TurnDeps } from "../studio/scene-turn";
 import type { ReadPreset } from "../studio/scene-turn-load";
-import { connect } from "./server-chats-turn";
+import { connect } from "../kit/providers/scene-connect";
 import { err, json } from "./server-security";
 
 type Body = Record<string, unknown>;
@@ -45,7 +46,7 @@ export async function handleFinalCutRoute(req: Request, url: URL, chats: ChatSto
   }
   if (p === "/api/chats/final-cut/rerun") {
     try {
-      return json(await rerunFinalCut({ chats, connect, readPreset, ...(readRegex ? { readRegex } : {}), now: Date.now, finalCutBanks: () => finalCutBanksOf(state) }, { chatId: str(b["chatId"]), messageId: str(b["messageId"]) }, req.signal));
+      return json(await rerunFinalCut({ runtime: sceneRuntimeFor(chats), chats, connect, readPreset, ...(readRegex ? { readRegex } : {}), now: Date.now, finalCutBanks: () => finalCutBanksOf(state) }, { chatId: str(b["chatId"]), messageId: str(b["messageId"]) }, req.signal));
     } catch (e) {
       if (e instanceof ProviderError) return json({ error: e.message, code: e.code, category: e.category }, 502);
       throw e;

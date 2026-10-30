@@ -4,8 +4,8 @@
  * prompt until it is back. Every implementation runs it through chatStoreContract.
  */
 import { describe, expect, test } from "bun:test";
-import { StudioConflictError } from "../../studio/atomic-file";
-import { StudioValidationError } from "../../studio/errors";
+import { StudioConflictError, StudioValidationError } from "../../studio/errors";
+
 import type { ChatStore, Message } from "./chat-store";
 import { chatRig } from "./chat-store.contract-rig";
 

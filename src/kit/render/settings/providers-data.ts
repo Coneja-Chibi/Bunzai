@@ -5,6 +5,7 @@
  * endpoint. Adding a provider file to spokes/ makes it appear here with no edit.
  */
 import { spokes } from "../../providers/registry";
+import { asksBaseURL } from "../../providers/spoke";
 import type { ProviderChoice } from "./model";
 
 export async function loadChoices(): Promise<ProviderChoice[]> {
@@ -16,9 +17,9 @@ export async function loadChoices(): Promise<ProviderChoice[]> {
       brand: spoke.brand,
       defaultModel: spoke.defaultModel ?? "",
       keyless: spoke.keyless ?? false,
-      // Custom and local endpoints supply their own URL. A spoke with its own `chat` makes no HTTP
-      // request at all, so asking for one would be a required field with nowhere to go.
-      needsBaseURL: !spoke.host && !spoke.chat,
+      // Custom and local endpoints supply their own URL; a spoke with only its own `chat` makes no HTTP
+      // request, so asking would be a required field with nowhere to go (asksBaseURL). Ollama has a default.
+      needsBaseURL: asksBaseURL(spoke) && !spoke.defaultBaseURL,
       options: spoke.options ?? [],
     }),
   );

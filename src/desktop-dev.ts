@@ -17,6 +17,9 @@ import { startUi } from "./ui/server";
 import { openInBrowser } from "./ui/server-security";
 import { startDesktopWindow } from "./desktop-window-launch";
 import { focusExisting } from "./desktop-focus";
+import { detachEnvironFromGtk } from "./desktop-env";
+
+detachEnvironFromGtk(); // Linux: keeps libgtk-4's unsetenv from crashing Bun's Workers (desktop-env.ts)
 
 const PORT = 8321;
 const DEV_URL = `http://127.0.0.1:${PORT}`;
@@ -68,7 +71,8 @@ startDesktopWindow(() => new Worker(join(import.meta.dir, "desktop-window.ts")),
   // a silent worker crash is why "nothing pops up": surface it instead of dying quietly
   console.error("desktop-dev: window worker error:", (e as ErrorEvent).message ?? e);
   openInBrowser(uiUrl);
-}, () => {
+}, async () => {
   stop();
+  await library.close();
   process.exit(0);
 });

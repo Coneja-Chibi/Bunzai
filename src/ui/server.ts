@@ -25,6 +25,7 @@ import { CALLBACK_PATH, handleSpotifyCallback, handleSpotifyRoutes } from "./spo
 import type { StudioStoreLike, SettingsStoreLike } from "../studio/contracts";
 import { SettingsStore } from "../studio/settings";
 import { handleOpenRoute } from "./server-open";
+import { handleExportFolderRoute } from "./server-export-folder";
 import { EXTENSION_PLATFORMS } from "../formats/_shared/extension-platforms";
 import { LVBAK_ARCHIVE_BOUNDS } from "../formats/lumiverse-archive";
 import type { PackagedAssets } from "./assets";
@@ -353,7 +354,7 @@ export function createHandler(
           ?? await handleFrozenPortraitRoute(req, url, opened.chats, store)
           ?? err("not found", 404));
     }
-    const openRoute = await handleOpenRoute(p, req);
+    const openRoute = await handleOpenRoute(p, req) ?? await handleExportFolderRoute(p, url, req, store.studioPath());
     if (openRoute) return openRoute;
 
     if (p === "/api/studio/save-bundle" && req.method === "POST") {

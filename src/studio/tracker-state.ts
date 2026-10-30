@@ -16,8 +16,9 @@ import { TRACKER_STATE_MODULES, hasTrackerState, parseTrackerData, readTrackerDa
 import { slotOf } from "../generated/slots";
 import type { Chat, ChatStore, JsonValue } from "../stage/contracts/chat-store";
 import type { TrackerModule } from "../stage/contracts/chat-tracker-types";
-import { isStudioConflictError, StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError, StudioValidationError } from "./errors";
+import { isStudioConflictError, StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
+
+import type { TurnRuntime } from "./scene-turn-runtime";
 import { turnRunning } from "./scene-turn-running";
 import { firstLive } from "./scene-trackers";
 
@@ -142,11 +143,11 @@ export interface TrackerWriteInput {
 export type TrackerChats = Reader & Pick<ChatStore, "getChat" | "listBranches" | "recordMessageDeltas">;
 type Writer = TrackerChats;
 
-export async function writeTrackerStates(chats: Writer, input: TrackerWriteInput, now: () => number): Promise<TrackerStates> {
+export async function writeTrackerStates(runtime: TurnRuntime, chats: Writer, input: TrackerWriteInput, now: () => number): Promise<TrackerStates> {
   const chat = await chats.getChat(input.chatId);
   if (!chat) throw new StudioNotFoundError("that scene is gone");
   if (!(await chats.listBranches(chat.id)).some((b) => b.id === input.branchId)) throw new StudioNotFoundError("that take is gone");
-  if (turnRunning(chat.id)) throw new StudioConflictError(TURN_RUNNING);
+  if (turnRunning(runtime, chat.id)) throw new StudioConflictError(TURN_RUNNING);
   const tail = await chats.readMessagesBefore(input.branchId, { limit: 1, liveOnly: true });
   if (tail.messages[0]?.id !== input.messageId) throw new StudioConflictError(MOVED_ON);
   const state = await chats.sceneState(input.branchId);

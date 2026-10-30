@@ -4,6 +4,7 @@
  * version, close_skill takes it out, and a picked skill's close rule closes it when its triggers stop matching.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { openSkills } from "../core/skill";
 import { emptySkillBody, type SkillBody } from "../entities/skill/schema";
 import type { ProviderCompletion, ProviderRequest, Provider } from "../stage/contracts/provider";
@@ -28,7 +29,7 @@ async function scene(script: ProviderCompletion[], library: Record<string, Skill
   const queue = [...script];
   const provider: Provider = { id: "conn", async send(request) { sent.push(structuredClone(request)); return queue.shift() ?? say("done"); } };
   const read = async (kind: string, id: string) => (kind === "skill" && library[id] ? { schemaVersion: "1", kind: "skill", id, body: library[id] } : null);
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(), narratorTools: narratorTools(read), readLibrary: read,
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000, tools: true }),
     readPreset: async () => null, readLorebook: async () => null, now: () => (now += 10), randomSeed: () => 7,

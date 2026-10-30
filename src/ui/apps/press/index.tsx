@@ -4,8 +4,7 @@
  * staged queue, grouped as BUNDLES (a character owns his linked lorebooks; riders droppable per run),
  * each card carrying its readiness against the run's target (readiness-core over the same coverage
  * claims the Write-for lens trusts). One target per run, filenames + flavors per row, the lever,
- * one zip out. Ledger and drag-reorder are follow-up slices, named here so absence reads as
- * not-yet, never as done.
+ * one zip out, also written to its own folder under the studio's Export folder.
  */
 import { kindOf } from "../../../generated/kinds";
 import { Button, ListRow, Segmented } from "../../components/button";
@@ -18,6 +17,7 @@ import type { AppContext, CoverageInfo, StudioEntitySummary, BunzaiApp } from ".
 import { SETTING_KEYS } from "../../../studio/settings-shape";
 import { mediaExportSummary } from "../../components/export-dialog/honesty";
 import { drainToBlob, saveBlob } from "../../_shared/download-sink";
+import { noExportFolder } from "../../_shared/export-folder";
 import { streamOf } from "../../_shared/byte-stream";
 import { zipStored } from "../../../core/media/pack-zip";
 import { toErrorMessage } from "../../_shared/error-message";
@@ -63,6 +63,8 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
   const [rows, setRows] = useState<RunRow[] | null>(null);
   const [running, setRunning] = useState(false);
   const [zip, setZip] = useState<{ blob: Blob; filename: string } | null>(null);
+  /** where the run's files landed on disk (`<studio>/Export/<stamp> <platform>`), when they did */
+  const [savedTo, setSavedTo] = useState<string | null>(null);
   const [fileNames, setFileNames] = useState<Record<string, string>>({});
   const [flavors, setFlavors] = useState<Record<string, FileFlavor>>({});
   const [loadNote, setLoadNote] = useState<string | null>(null);
@@ -180,12 +182,14 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
   const resetRun = (): void => {
     setRows(null);
     setZip(null);
+    setSavedTo(null);
   };
 
   const run = async (): Promise<void> => {
     if (!platform || set.length === 0 || running) return;
     setRunning(true);
     setZip(null);
+    setSavedTo(null);
     const plan = planRun(set, platform);
     setRows([...plan]);
     const files: Record<string, Blob> = {};
@@ -257,7 +261,19 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
       const stamp = asciiSlug(platform.friendly);
       setZip({ blob: zipped, filename: `vaude-press-${stamp}.zip` });
     }
-    ctx.setStatus(`press run · ${foldSummary(plan)}`);
+    // Every run also lands in its own folder under the studio's Export folder. A host with none (a
+    // remote device, the browser edition) keeps the download button alone.
+    let savedLine = "";
+    if (packed) {
+      try {
+        const { dir } = await ctx.api.saveExportFolder(platform.friendly, files);
+        setSavedTo(dir);
+        savedLine = ` · saved to ${dir}`;
+      } catch (e) {
+        if (!noExportFolder(e)) savedLine = ` · Export folder copy did not finish: ${toErrorMessage(e)}`;
+      }
+    }
+    ctx.setStatus(`press run · ${foldSummary(plan)}${savedLine}`);
     setRunning(false);
   };
 
@@ -435,6 +451,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
                   ? foldSummary(planRun(set, platform))
                   : `${set.length} in the run · pick a platform`)}
             </span>
+            {savedTo && <span className={styles.sum} title={savedTo}>saved to {savedTo}</span>}
             {zip && (
               <Button onClick={() => void saveBlob(zip.blob, zip.filename)}>
                 Download the bundle

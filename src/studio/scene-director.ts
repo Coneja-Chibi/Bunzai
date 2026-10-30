@@ -108,7 +108,7 @@ export async function runDirector(
   const carry = (b: DirectorState | null, replaced: DirectorState | null | undefined, missed: DirectorEditRecord[]): DirectorState => replay(replay(b ?? emptyDirectorState(), replaced0?.state, missed), replaced, missed);
 
   const denied = tierRefusal("director.plan", deps.tiers);
-  const target: Connected | null = denied ? null : settings.model ? await deps.connect(settings.model) : scene.connected;
+  const target: Connected | null = denied ? null : settings.model ? await deps.connect(settings.model, signal) : scene.connected;
   const model = settings.model?.model ?? scene.model;
   const report = computeMomentum(state, turn);
   const lines: Omit<DirectorActivity, "id">[] = [entry("turn_start", "info", `Turn ${turn} - Director planning`, `Command mode: ${settings.commandMode === "tagged" ? "Tagged" : "Tool call"}. Model native-tool capability: ${target?.tools === true ? "native tools available" : "tool support unknown"}.`, model)];

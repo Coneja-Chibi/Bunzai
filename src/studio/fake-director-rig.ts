@@ -2,6 +2,8 @@
  * The Story Director's turn-loop test rig: a scene on the memory store with a scripted provider that answers the narrator and the planner separately, the planner's answers queued (a completion, an
  * error, "hang" until aborted, or a promise to release), and the helpers the turn tests share. Used by tests only.
  */
+import { publishSceneTrackers } from "./scene-events";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { DIRECTOR_HEADER } from "../core/assembly/director";
 import { typedEntry } from "../core/compendium/fixture-book";
 import { DIRECTOR_PROP_ID } from "../core/director/settings";
@@ -76,7 +78,7 @@ export async function buildScene(opts: SceneOptions, stores: (clock: () => numbe
     },
   };
   const sleeps: number[] = [];
-  const deps = {
+  const deps = { runtime: createTurnRuntime(publishSceneTrackers),
     chats, state,
     connect: async (_c?: { id: string; model: string }): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000, ...(opts.tools === false ? {} : { tools: true }) }),
     readPreset: async () => null, readLorebook: async (id: string) => (id === "b1" ? BOOK : null), now: () => (now += 10), randomSeed: () => 7,
@@ -90,7 +92,7 @@ export async function buildScene(opts: SceneOptions, stores: (clock: () => numbe
   const tip = async () => (await chats.readMessages(chat.activeBranchId, { limit: 50 })).messages.at(-1)!;
   const stored = async () => { const m = await tip(); return chats.getDirector(chat.id, m.id); };
   /** Waits for the Director's background tracker round to have written (or undone) everything. */
-  const settle = settleTrackerRounds;
+  const settle = () => settleTrackerRounds(deps.runtime);
   return { chats, chat, deps, planner, narrator, tracker, settle, aborted, sleeps, events, turn, tip, stored };
 }
 export const contents = (r: ProviderRequest) => r.messages.map((m) => m.content);

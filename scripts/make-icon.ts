@@ -1,12 +1,13 @@
 /**
  * Rasterize the bunny-b mark (a lowercase b whose stem is one ear, a leaf ear floating beside it, and a little
- * ghost cut out of its face) into build/vaude.ico and build/vaude-256.png.
+ * ghost cut out of its face) into build/vaude.ico, the transparent 256px mark, and opaque install icons.
  * Pure Bun: a minimal PNG encoder (zlib via node:zlib + hand CRC) wrapped in an ICO container
  * (Vista+ ICOs embed PNG directly). No imagemagick, no deps - the five-line-helper doctrine.
  * The ICO carries 16-256px; 16-32 use a second drawing (bigger ghost and eyes, thicker ear) so he survives.
  */
 import { deflateSync } from "node:zlib";
 import { mkdir } from "node:fs/promises";
+import { INSTALL_ICON_SIZES } from "../src/ui/assets";
 
 type Pt = [number, number];
 
@@ -90,8 +91,9 @@ function painter(dr: Drawing): (p: Pt) => boolean {
 }
 
 /** 4x supersampled coverage; the drawing is framed so its centre (48, 53.5) sits mid-tile. */
-function render(size: number): Uint8Array {
+function render(size: number, maskable = false): Uint8Array {
   const dr = size <= 32 ? SMALL : FULL;
+  const frame = dr.frame * (maskable ? 0.72 : 1);
   const paint = painter(dr);
   const rgba = new Uint8Array(size * size * 4);
   for (let y = 0; y < size; y++) {
@@ -101,14 +103,15 @@ function render(size: number): Uint8Array {
         for (let sx = 0; sx < 4; sx++) {
           const u = ((x + (sx + 0.5) / 4) / size) * 100;
           const v = ((y + (sy + 0.5) / 4) / size) * 100;
-          if (paint([48 + (u - 50) / dr.frame, 53.5 + (v - 50) / dr.frame])) hit++;
+          if (paint([48 + (u - 50) / frame, 53.5 + (v - 50) / frame])) hit++;
         }
       }
       const i = (y * size + x) * 4;
-      rgba[i] = RED.r;
-      rgba[i + 1] = RED.g;
-      rgba[i + 2] = RED.b;
-      rgba[i + 3] = Math.round((hit / 16) * 255); // transparent ground; the mark floats
+      const alpha = hit / 16;
+      rgba[i] = maskable ? Math.round(0x11 + (RED.r - 0x11) * alpha) : RED.r;
+      rgba[i + 1] = maskable ? Math.round(0x11 + (RED.g - 0x11) * alpha) : RED.g;
+      rgba[i + 2] = maskable ? Math.round(0x13 + (RED.b - 0x13) * alpha) : RED.b;
+      rgba[i + 3] = maskable ? 255 : Math.round(alpha * 255);
     }
   }
   return rgba;
@@ -186,4 +189,5 @@ const pngs = SIZES.map((size) => encodePng(render(size), size));
 const ico = wrapIco(pngs, SIZES);
 await Bun.write("build/vaude-256.png", pngs[SIZES.indexOf(256)]!);
 await Bun.write("build/vaude.ico", ico);
+for (const size of INSTALL_ICON_SIZES) await Bun.write(`build/vaude-${size}.png`, encodePng(render(size, true), size));
 console.log(`wrote build/vaude.ico (${ico.length}b, ${SIZES.join("/")}px) + build/vaude-256.png`);

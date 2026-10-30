@@ -31,6 +31,7 @@ const ROLECALL = `
 .scs .menu.cm{left:50%;right:auto;bottom:calc(100% + 12px);transform:translateX(-50%);min-width:300px;max-width:min(340px,calc(100cqw - 16px));max-height:70vh;overflow-y:auto;padding:6px;border-radius:0;background:color-mix(in srgb,var(--stage-panel) 94%,transparent);backdrop-filter:blur(40px) saturate(1.4);box-shadow:6px 6px 0 0 var(--stage-black),inset 0 1px 0 0 color-mix(in srgb,var(--stage-card) 12%,transparent),inset 0 -1px 0 0 color-mix(in srgb,var(--stage-black) 40%,transparent);isolation:isolate;scrollbar-width:thin;scrollbar-color:var(--bk-role-brand-text) color-mix(in srgb,var(--stage-black) 40%,transparent);animation:cm-in .15s ease-out}
 @keyframes cm-in{from{opacity:0;transform:translateX(-50%) translateY(8px) scale(.95)}to{opacity:1;transform:translateX(-50%)}}
 @container (max-width:520px){.scs .menu.cm{left:0;transform:none;animation:none}}
+
 @media (prefers-reduced-motion:reduce){.scs .menu.cm{animation:none}.scs .dockbar .cap{transition:none}}
 .scs .menu.cm [role="group"]+[role="group"]{margin-top:4px;padding-top:4px;border-top:1px solid color-mix(in srgb,var(--stage-card) 6%,transparent)}
 .scs .menu.cm .sec{padding:10px 12px 6px;font:800 var(--rc-s-p7rem) var(--font-fancy);letter-spacing:.22em;text-transform:uppercase;color:var(--bk-role-brand-text);text-shadow:1px 1px 0 var(--stage-black)}
@@ -41,4 +42,11 @@ const ROLECALL = `
 .scs .menu.cm .ct[data-tone="mute"]{background:var(--rc-zinc-600)}
 `;
 
-export const COMPOSER_STYLE = SHARED + rcScope(ROLECALL) + BUBBLE_STYLE + RC_SIZE_STYLE;
+const PHONE = `@container (max-width:30rem){
+html:root .scs .dockbar{padding:8px}
+html:root .scs .dockbar .cap{gap:6px;padding:8px 10px}
+html:root .scs .dockbar .cap textarea{max-height:5.5rem;font-size:16px;line-height:22px}
+html:root .scs .cap .hint{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}`;
+
+export const COMPOSER_STYLE = SHARED + rcScope(ROLECALL) + BUBBLE_STYLE + PHONE + RC_SIZE_STYLE;

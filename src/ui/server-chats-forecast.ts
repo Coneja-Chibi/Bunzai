@@ -15,7 +15,7 @@ import { narratorTools } from "../studio/library-tools";
 import type { ReadPreset } from "../studio/scene-turn-load";
 import type { ReadLorebook } from "../studio/scene-lore";
 import { choiceDefaultsOf, promptBudgetOf, toolBudgetOf } from "./server-scene-readers";
-import { connect } from "./server-chats-turn";
+import { connect } from "../kit/providers/scene-connect";
 import { json } from "./server-security";
 
 type Body = Record<string, unknown>;

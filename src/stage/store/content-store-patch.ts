@@ -452,18 +452,19 @@ export async function patchPiece(
       dropCachedPiece(token, kind, id);
       return current ? { status: "stale" } : { status: "missing" };
     }
-    return { status: "saved", summary: contentSummaryOf(row, next) };
+    return { status: "saved", summary: contentSummaryOf(row, next, buildSummary(next, (sha) => known.blobs.has(sha) || known.held.has(sha)).content) };
   }
   const coalesce = intent === "autosave" && row.autosaveStartedAt !== null && t >= row.autosaveStartedAt && t - row.autosaveStartedAt < AUTOSAVE_WINDOW_MS;
   const nextVersion = coalesce ? row.version : row.version + 1;
   const autosaveStartedAt = intent === "autosave" ? (coalesce ? row.autosaveStartedAt : t) : null;
   const nextRow = { ...row, revision, version: nextVersion, writeId: row.writeId + 1, autosaveStartedAt, updatedAt: t };
 
+  const summary = buildSummary(next, (sha) => known.blobs.has(sha) || known.held.has(sha));
   const wrote = await backend.write(
     nextRow,
     { kind, id, version: nextVersion, revision, savedAt: t, reason: intent === "autosave" ? "autosave" : "save", autosaveStartedAt },
     { when: "writeId", expected: row.writeId, ...(coldValid ? { valid: coldValid } : {}) },
-    buildSummary(next),
+    summary,
     change,
   );
   if (!wrote) {
@@ -475,8 +476,8 @@ export async function patchPiece(
   await backend.pruneVersions(kind, id, keepVersions);
   if (coldValid && !coldValid()) {
     dropCachedPiece(token, kind, id);
-    return { status: "saved", summary: contentSummaryOf(nextRow, next) };
+    return { status: "saved", summary: contentSummaryOf(nextRow, next, summary.content) };
   }
   setCachedPiece(token, kind, id, { writeId: nextRow.writeId, version: nextVersion, revision, entity: next, parts });
-  return { status: "saved", summary: contentSummaryOf(nextRow, next) };
+  return { status: "saved", summary: contentSummaryOf(nextRow, next, summary.content) };
 }

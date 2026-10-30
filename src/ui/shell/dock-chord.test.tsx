@@ -137,9 +137,46 @@ describe("pressing the chord", () => {
     editor.remove();
   });
 
-  test("a bare number is left alone", () => {
+  test("a bare number opens its tile too, because a browser tab never hands the page ctrl+digit", () => {
     press({ key: "2", code: "Digit2" });
+    expect(useShellStore.getState().activeAppId).toBe("library");
+  });
+
+  test("a bare number typed into a field, or already spent by a surface, changes nothing", () => {
+    const editor = dom.window.document.createElement("textarea");
+    dom.window.document.body.append(editor);
+    press({ key: "2", code: "Digit2" }, editor);
     expect(useShellStore.getState().activeAppId).toBe("workbench");
+    editor.remove();
+
+    // The agent's ask panel picks option 2 with this key and prevents its default.
+    const panel = dom.window.document.createElement("div");
+    panel.addEventListener("keydown", (e) => { e.preventDefault(); });
+    dom.window.document.body.append(panel);
+    press({ key: "2", code: "Digit2" }, panel);
+    expect(useShellStore.getState().activeAppId).toBe("workbench");
+    panel.remove();
+  });
+
+  test("an open modal owns the digits, so nothing switches under it", () => {
+    const modal = dom.window.document.createElement("div");
+    modal.setAttribute("aria-modal", "true");
+    const button = dom.window.document.createElement("button");
+    modal.append(button);
+    dom.window.document.body.append(modal);
+    press({ key: "3", code: "Digit3" }, button);
+    expect(useShellStore.getState().activeAppId).toBe("workbench");
+    modal.remove();
+
+    // ProtectedDialog's native <dialog> (the Kit Gate, the library lock) carries no aria-modal.
+    const gate = dom.window.document.createElement("dialog");
+    gate.setAttribute("open", "");
+    const approve = dom.window.document.createElement("button");
+    gate.append(approve);
+    dom.window.document.body.append(gate);
+    press({ key: "3", code: "Digit3" }, approve);
+    expect(useShellStore.getState().activeAppId).toBe("workbench");
+    gate.remove();
   });
 
   test("a dialog on screen owns the keyboard", () => {
@@ -160,6 +197,9 @@ describe("finding the chord without being told", () => {
     expect(dom.window.document.querySelector('[aria-label="Show dock"][aria-hidden="false"]')).not.toBeNull();
     press({ key: "2", code: "Digit2", ctrlKey: true });
     expect(useShellStore.getState().activeAppId).toBe("library");
+    const tile = dom.window.document.querySelector("[data-app-id]")!;
+    expect(tile.getAttribute("title")).toBe("The Workbench (1)");
+    expect(tile.lastElementChild?.textContent).not.toBe("1");
   });
 
   test("every tile wears the chord that opens it", () => {
@@ -167,9 +207,9 @@ describe("finding the chord without being told", () => {
       el.getAttribute("title"),
     );
     expect(titles).toEqual([
-      "The Workbench (ctrl+1)",
-      "The Library (ctrl+2)",
-      "The Press (ctrl+3)",
+      "The Workbench (1)",
+      "The Library (2)",
+      "The Press (3)",
       "Settings (ctrl+,)",
     ]);
   });
@@ -178,8 +218,8 @@ describe("finding the chord without being told", () => {
     // The point of deriving hints from the key map: press what the third tile says, arrive at the
     // third tile. A hand-listed help panel is where these two drift apart.
     const third = dom.window.document.querySelectorAll("[data-app-id]")[2]!;
-    expect(third.getAttribute("title")).toBe("The Press (ctrl+3)");
-    press({ key: "3", code: "Digit3", ctrlKey: true });
+    expect(third.getAttribute("title")).toBe("The Press (3)");
+    press({ key: "3", code: "Digit3" });
     expect(useShellStore.getState().activeAppId).toBe("press");
   });
 });

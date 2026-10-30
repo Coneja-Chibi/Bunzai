@@ -9,11 +9,15 @@
  * common case: a plain textarea whose value lives in its parent.
  */
 import { Button } from "../button";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useId, useRef, useState } from "react";
 import type { JSX, ReactNode, TextareaHTMLAttributes } from "react";
 import { DialogCore } from "../dialog-core";
+import { useAutoGrow } from "./auto-grow";
 import { applyCaret, readCaret, type Caret } from "./expand-core";
 import styles from "./styles.module.css";
+
+/** true inside the fullscreen sheet, where the editor fills the viewport and must not size itself to its text */
+const InSheet = createContext(false);
 
 /** the text control the box is wrapping: the first one inside the frame, either side of the swap. */
 const editorIn = (root: HTMLElement | null): HTMLTextAreaElement | null => root?.querySelector("textarea") ?? null;
@@ -109,7 +113,9 @@ export function ExpandBox({ label, children, onExpandedChange }: ExpandBoxProps)
                   Collapse
                 </Button>
               </div>
-              <div className={styles.body}>{children}</div>
+              <div className={styles.body}>
+                <InSheet.Provider value>{children}</InSheet.Provider>
+              </div>
         </DialogCore>
       }
     </div>
@@ -119,13 +125,24 @@ export function ExpandBox({ label, children, onExpandedChange }: ExpandBoxProps)
 export interface ExpandTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   /** names the editor on the control and as the dialog's title */
   label: string;
+  /** inline, as tall as its text (the card editor's fields), so a long prompt shows whole; the sheet still fills the viewport */
+  grow?: boolean;
 }
 
 /** A textarea that can go fullscreen: drop-in for a raw one, same props, same value ownership. */
-export function ExpandTextarea({ label, ...rest }: ExpandTextareaProps): JSX.Element {
+export function ExpandTextarea({ label, grow = false, ...rest }: ExpandTextareaProps): JSX.Element {
   return (
     <ExpandBox label={label}>
-      <textarea {...rest} />
+      <GrowingTextarea grow={grow} {...rest} />
     </ExpandBox>
   );
+}
+
+/** the textarea itself, fitted to its text when asked to grow and it is not the one in the sheet */
+function GrowingTextarea({ grow, ...rest }: Omit<ExpandTextareaProps, "label"> & { grow: boolean }): JSX.Element {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  const inSheet = useContext(InSheet);
+  const fit = grow && !inSheet;
+  useAutoGrow(ref, fit, rest.value);
+  return <textarea ref={ref} data-grow={fit ? "" : undefined} {...rest} />;
 }

@@ -34,7 +34,7 @@ export function PopoutPlaceholder({ kind, onBack }: { kind: PopoutKind; onBack()
 export function PopoutPanel({ kind, c, saved, view, onDrop, onClose }: { kind: PopoutKind; c: PopoutContext; saved: Pos | null; view: Box; onDrop(pos: Pos): void; onClose(): void }): JSX.Element {
   const panel = useRef<HTMLDivElement>(null);
   const [drag, setDrag] = useState<{ pos: Pos; from: { x: number; y: number; at: Pos } } | null>(null);
-  const width = kind.width ?? POPOUT_WIDTH;
+  const width = Math.min(kind.width ?? POPOUT_WIDTH, view.width);
   const size = (): Box => ({ width, height: panel.current?.offsetHeight ?? 0 });
   const at = clampPopout(drag?.pos ?? saved ?? defaultPopout(kind, view), size(), view);
 

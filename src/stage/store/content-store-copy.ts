@@ -8,8 +8,8 @@ import { revisionFromParts } from "../../entities/canonical-revision";
 import { decompose } from "../../entities/piece-parts";
 import type { KnownBlobs } from "../../entities/piece-parts-blob";
 import type { ParsedCanonicalEntity } from "../../entities/runtime-schema";
-import { StudioConflictError } from "../../studio/atomic-file";
-import { StudioValidationError } from "../../studio/errors";
+import { StudioConflictError, StudioValidationError } from "../../studio/errors";
+
 import { assertSafeStudioId } from "../../studio/path-policy";
 import type { ContentSummary, DocumentBackend, EntityKind } from "../contracts/content-store";
 import { holdFill } from "./content-store-hold";
@@ -52,8 +52,9 @@ export async function duplicateHeld(
           row: { kind, id: copyId, revision, version: 1, writeId: 1, autosaveStartedAt: null, createdAt: t, updatedAt: t },
           version: { kind, id: copyId, version: 1, revision, savedAt: t, reason: "create" as const, autosaveStartedAt: null },
         };
-        const wrote = await backend.write(made.row, made.version, { when: "absent" }, buildSummary(copy), { put: next.map(buildPartText), drop: [] });
-        if (wrote) return contentSummaryOf(made.row, copy);
+        const summary = buildSummary(copy, (sha) => known.blobs.has(sha) || known.held.has(sha));
+        const wrote = await backend.write(made.row, made.version, { when: "absent" }, summary, { put: next.map(buildPartText), drop: [] });
+        if (wrote) return contentSummaryOf(made.row, copy, summary.content);
       }
       throw new StudioValidationError("no free id left for keep-both");
     } finally {

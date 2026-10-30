@@ -33,6 +33,8 @@ export interface NarratorTool<A = unknown> {
   definition: ProviderToolDefinition;
   parse(raw: unknown): { args: A } | { error: string };
   run(args: A, signal: AbortSignal | undefined, deadline?: ToolDeadline): Promise<ToolOutcome>;
+  /** The longest answer passed on whole; past it the answer is cut and says so. Absent: 12,000 characters. A tool that pages itself declares its page. */
+  resultCap?: number;
 }
 
 export interface ToolCallRecord {
@@ -162,7 +164,8 @@ export async function sendWithTools(
           const began = config.now();
           const outcome = await tool.run(checked.args as never, io.signal, left === undefined || tool.stateScoped ? undefined : { at: began + left, now: config.now }).finally(() => { spent += config.now() - began; });
           ok = true;
-          text = outcome.text.length > RESULT_CAP && !tool.stateScoped ? `${outcome.text.slice(0, RESULT_CAP)}\n[cut: the result was longer than ${RESULT_CAP} characters]` : outcome.text;
+          const cap = tool.resultCap ?? RESULT_CAP;
+          text = outcome.text.length > cap && !tool.stateScoped ? `${outcome.text.slice(0, cap)}\n[cut: the result was longer than ${cap} characters]` : outcome.text;
           detail = outcome.detail;
         } catch (e) {
           io.signal?.throwIfAborted();

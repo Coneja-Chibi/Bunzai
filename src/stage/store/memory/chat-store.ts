@@ -7,8 +7,8 @@
  * atomic the way one SQLite transaction is: every value handed out is a deep copy, so a caller can
  * never reach inside the store.
  */
-import { StudioConflictError } from "../../../studio/atomic-file";
-import { ChatAlreadyImportedError } from "../../../studio/errors";
+import { StudioConflictError, ChatAlreadyImportedError } from "../../../studio/errors";
+
 import type { Branch, CastSnapshotCodec, Chat, ChatStore, Message, SceneFolder, WriteGuard } from "../../contracts/chat-store";
 import { copyRecord, forkPositionOf, publicMessage, type ChatRecord, type MessageRecord } from "./chat-records";
 import { folderMethods } from "./chat-store-folders";

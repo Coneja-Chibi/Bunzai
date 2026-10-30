@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/kit/tools",
   "sourcePath": "docs/reference/kit/tools.md",
-  "sourceHash": "sha256:41b009903182b13bb84a5ea7ed73fa29cf669070cc6c0eff940e5d2770e8ec93",
+  "sourceHash": "sha256:c3de89e54478c5da15771687bc5c4dfb531d70ce6f41363bea0d992497cd0a19",
   "summary": "Kit content tools separates model-facing runtime tools from terminal slash commands. Its lifecycle covers all eight canonical kinds through pure previews, one four-domain discovery catalog, complete draft evidence, guarded semantic review, documentation query, whole-piece reads, and bounded result handles. Twenty-six direct tools start a turn, or twenty-five without an engine checkout; search reveals up to five deferred schemas, browse reveals none, and exact describe reveals one. Typed creation covers character, lorebook, persona, preset, regex, pack, quick-reply set, and HTML document without an existing target. Duplicate retains escrow, delete is explicitly classified, and transfer previews adapter costs without writing. External MCP tools join the same exact-name egress gate and bounded result store, and connection changes invalidate the cached session. Guarded apply uses the application review card; atomic create-only apply refuses occupied IDs and verifies storage. Unit and integration proof exists, while a real-provider terminal run remains outstanding.",
   "topics": [
     "runtime tools vs slash",
@@ -21,8 +21,8 @@
       "slug": "built-lifecycle",
       "title": "Built lifecycle",
       "level": 2,
-      "sourceHash": "sha256:55747b76244f26ec19b39d106ae6921e68f3428a9be3bd01d5da3e849fa807ba",
-      "summary": "Built lifecycle connects all eight canonical content kinds to Kit. Entity capability folders own stable IDs, search, exposure, and pure semantic operations; Kit discovers and adapts them into one registry. Eight typed create workflows draft without writing: character, lorebook, persona, preset, regex, pack, quick-reply set, and HTML document. Duplicate carries body, profiles, and escrow. studio_delete alone destroys canonical content and remains direct because deferred apply workflows are rejected. studio_transfer previews another adapter without writing. Preset verification, regex diagnostics, drawing-to-regex transcription, shared-folder search and import, rail opening, whole-piece reads, and HTML document update complete the live lifecycle. The change session retains one baseline, composed operations, warnings, platform impact, and escrow until a separately authorized apply.",
+      "sourceHash": "sha256:4970c120b0dc2a9f871ae018c17bbd3e86470b06581dd71467d84d53f5acbbd8",
+      "summary": "Built lifecycle connects all eight canonical content kinds to Kit. Entity capability folders own stable IDs, search, exposure, and pure semantic operations; Kit discovers and adapts them into one registry. Eight typed create workflows draft without writing: character, lorebook, persona, preset, regex, pack, quick-reply set, and HTML document. Duplicate carries body, profiles, and escrow. studio_delete alone destroys canonical content and remains direct because deferred apply workflows are rejected. studio_transfer previews another adapter without writing. Preset verification, regex diagnostics, drawing-to-regex transcription, shared-folder search and import, rail opening, whole-piece reads, and HTML document update complete the live lifecycle. The change session retains one baseline, composed operations, warnings, platform impact, and escrow until a separately authorized apply. studio_export writes text and binary artifacts create-only into fresh timestamped Export folders through the shared synced write owner.",
       "topics": [
         "six content bundles",
         "duplicate carries escrow",

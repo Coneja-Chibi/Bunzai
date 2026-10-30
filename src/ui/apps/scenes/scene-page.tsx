@@ -42,7 +42,7 @@ import { ZoomArt } from "./scene-portrait-zoom";
 import { CHAR_TONE, USER_TONE, useSceneAccents } from "./scene-accents";
 import { DeleteTakeDialog, ForkDialog, TakesControl } from "./scene-takes";
 import { WingPanel, WingRails } from "./scene-wings";
-import { wingOf } from "./scene-wing-data";
+import { wingOf, propWings } from "./scene-wing-data";
 import { WingSlot } from "./scene-wing-frame";
 import { useWingShell } from "./use-wing-shell";
 import { SwapLine } from "./cast/swap-line";
@@ -53,7 +53,7 @@ import { SamplerHistoryContext } from "./sampler-history";
 import { useSceneReasoning } from "./scene-reasoning";
 import { reasoningOf } from "./scene-reasoning-core";
 import { sceneStageProps } from "./props/prop-contract";
-import { sceneProps } from "./props/registry";
+import { useRegisteredProps } from "./scene-prop-wing";
 import { WING_POPOUTS } from "./popout/kinds";
 import { popoutKindsFor } from "./popout/popout-core";
 import { PopoutHost, PopoutSlot } from "./popout/popout-host";
@@ -103,14 +103,15 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   const [greeting, setGreeting] = useState(0);
   const [editing, setEditing] = useState<{ id: string; text: string } | null>(null);
   const [wing, setWing] = useState<string | null>(null);
-  const { root, widthOf, resizeOf } = useWingShell(ctx.prefs, wing, setWing);
+  const { list: registeredProps, wings: propWingCatalog } = useRegisteredProps();
+  const { root, widthOf, resizeOf } = useWingShell(ctx.prefs, wing, setWing, propWingCatalog);
   const messenger = chatLayoutOf(ctx.prefs) === "messenger";
   const { msnRequest, msnOpen, setMsnOpen, openWing, away, stageRequest } = useMessengerOpen(messenger, wing, setWing);
   const [, setPrefTick] = useState(0); // the app prefs are not reactive: a display switch re-renders the page by hand
   const [presetBody, setPresetBody] = useState<PresetBody | null>(null);
   const reasoning = useSceneReasoning(ctx.api, scene?.chat.preset, scene?.chat.prompting);
   const [loreBooks, setLoreBooks] = useState<SceneLoreBook[] | null>(null);
-  const registeredProps = sceneProps(); const propsState = useSceneProps(ctx, chatId);
+  const propsState = useSceneProps(ctx, chatId);
   const propsOn = propsState.load.state === "ready" ? propsState.load.on : null;
   const speakers = useDialogueSpeakers(ctx, scene, propsOn);
   const programs = useScenePrograms(messenger, scene ?? undefined, propsOn, registeredProps, ctx.prefs, ctx.pieces);
@@ -371,7 +372,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
       {problem.castGone ? <Button variant="danger" onClick={() => trashScene(ctx, chatId, onBack)}>Move to Trash</Button> : <Button variant="primary" onClick={load}>Try again</Button>}<Button variant="quiet" onClick={onBack}>Back to Scenes</Button>
     </div></div></div></div>
   );
-  const side = wingOf(wing)?.side; const replaceScene = (next: OpenScene): void => { loadGeneration.current++; setMacroMessages(new Map()); setScene(next); };
+  const side = wingOf(wing, propWingCatalog)?.side; const replaceScene = (next: OpenScene): void => { loadGeneration.current++; setMacroMessages(new Map()); setScene(next); };
   const takeName = scene?.takes.find((t) => t.id === scene.chat.activeBranchId);
   const painted = lookRoot(look);
   const switchTake = (id: string): void => void act("take", { branchId: id });
@@ -384,7 +385,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   /** One wing's panel: in its slot beside the chat (Full Chat), or bare as a Messenger program opened on `tab`. */
   const wingBody = (id: string, tab?: string, bare = false): JSX.Element => (
     <SamplerHistoryContext.Provider value={scene ? { messages: scene.messages, total: scene.messageCount } : undefined}>
-      <WingPanel id={id} {...(tab ? { tab } : {})} {...(bare ? { bare, single: true } : { resize: resizeOf(id) })} {...(wingArgs ? wingPanels(wingArgs, tab, bare) : {})} />
+      <WingPanel id={id} {...(tab ? { tab } : {})} {...(bare ? { bare, single: true } : { resize: resizeOf(id) })} {...(wingArgs ? wingPanels(wingArgs, tab, bare) : {})} {...(scene ? { propWing: { list: registeredProps, on: propsOn, failed: propsState.load.state === "failed", host: { ctx, chat: scene.chat, onChat: (chat) => setScene((s) => s ? { ...s, chat } : s) } } } : {})} />
     </SamplerHistoryContext.Provider>
   );
   const chat = (
@@ -476,7 +477,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
         </header>
         {chat}
       </div>
-      <WingRails open={wing} onToggle={(id) => setWing(wing === id ? null : id)} />
+      <WingRails open={wing} onToggle={(id) => setWing(wing === id ? null : id)} extra={propWings(registeredProps, propsOn)} />
       {wing && <><div className="wback" aria-hidden="true" /><div data-part="scene.paused"><Tile kind="icon" size="lg" label="Close the wing" icon={<Ic name="lucide:pause" size={26} />} caption="SCENE PAUSED" onClick={() => setWing(null)} /></div></>}
       {(["l", "r"] as const).map((sd) => (
         <WingSlot key={sd} side={sd} open={side === sd}>{wing && side === sd && wingBody(wing)}</WingSlot>

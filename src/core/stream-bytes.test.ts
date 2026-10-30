@@ -84,6 +84,10 @@ test("a null body is an empty success", async () => {
   expect(await readStreamCapped(null, 10)).toEqual({ ok: true, bytes: new Uint8Array(0) });
 });
 
+test("an already-aborted null body remains cancellation instead of empty success", async () => {
+  expect(await readStreamCapped(null, 10, { signal: AbortSignal.abort() })).toMatchObject({ ok: false, reason: "aborted" });
+});
+
 test("a refused cancel never hides the real outcome", async () => {
   const stream = new ReadableStream<Uint8Array>({ pull: (c) => c.enqueue(bytes(8)), cancel() { throw new Error("cancel refused"); } });
   expect(await readStreamCapped(stream, 4)).toMatchObject({ ok: false, reason: "too-large" });

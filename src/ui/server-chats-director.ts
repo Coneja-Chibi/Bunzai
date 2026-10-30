@@ -8,7 +8,7 @@ import type { ChatStore } from "../stage/contracts/chat-store";
 import { StudioNotFoundError, StudioValidationError } from "../studio/errors";
 import { isTrackerModule } from "../core/trackers";
 import { editDirector, readDirectorPanel, undoDirectorTracker } from "../studio/scene-director-edit";
-import { connect } from "./server-chats-turn";
+import { connect } from "../kit/providers/scene-connect";
 import { json } from "./server-security";
 
 type Body = Record<string, unknown>;

@@ -10,7 +10,7 @@ import { isTrackerModule } from "../core/trackers";
 import { StudioValidationError } from "../studio/errors";
 import type { StudioStoreLike } from "../studio/contracts";
 import { proposeTrackerItem, type TrackerItemDeps, type TrackerItemInput } from "../studio/scene-tracker-item";
-import { connect } from "./server-chats-turn";
+import { connect } from "../kit/providers/scene-connect";
 import { providerJson } from "./server-provider-json";
 
 type Body = Record<string, unknown>;

@@ -2,12 +2,13 @@
  * The docked Agent window's Premiere frame: one Panel with the house surface, and Kit's palette remapped onto the
  * theme's own roles for this subtree only. The transcript, ask card, meters and widgets in src/ui/agent are shared with
  * the floating Kit panel and read `--kit-*` colors; remapping those variables on the docked root restyles them here
- * while the floating panel (which renders `section`, not the Panel) keeps Kit's terminal palette untouched.
+ * while floating panels keep Kit's palette on dark themes. Light themes use Kit's shared readable theme mapping.
  */
 import type { CSSProperties, JSX, ReactNode } from "react";
 import { Panel } from "../../components/panel";
 import { RoomHeader } from "../../components/room-header";
-import { kitVars } from "../../agent/kit-vars";
+import { isLightKit, kitVars } from "../../agent/kit-vars";
+import { usePaintedFloors } from "../../_shared/use-scoped-accents";
 
 /** Kit palette name to the theme token that stands in for it in the docked room. */
 const REMAP: Record<string, string> = {
@@ -49,17 +50,19 @@ const REMAP: Record<string, string> = {
   "verb-send": "var(--bk-role-action-text)",
 };
 
-const premiereVars = (): CSSProperties => {
+const premiereVars = (base: CSSProperties): CSSProperties => {
   const vars: Record<string, string> = {};
   for (const [name, value] of Object.entries(REMAP)) vars[`--kit-${name}`] = value;
-  return { ...kitVars(), ...vars } as CSSProperties;
+  return { ...base, ...vars } as CSSProperties;
 };
 
 /** The room's root: the floating Kit panel keeps a plain section, the docked room is the framed Panel. */
 export function RoomFrame({ floating, children }: { floating: boolean; children: ReactNode }): JSX.Element {
-  if (floating) return <section className="agent-room" data-room="floating" style={kitVars()}>{children}</section>;
+  const floors = usePaintedFloors();
+  const vars = kitVars(floors);
+  if (floating) return <section className="agent-room" data-room="floating" style={vars}>{children}</section>;
   return (
-    <Panel data-part="agent.window" className="agent-room" data-room="docked" style={premiereVars()}>
+    <Panel data-part="agent.window" className="agent-room" data-room="docked" style={floors && isLightKit(floors) ? vars : premiereVars(vars)}>
       {children}
     </Panel>
   );

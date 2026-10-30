@@ -4,7 +4,8 @@
  */
 import { basename, dirname, extname, isAbsolute, join, normalize, resolve } from "node:path";
 import { realpath, stat } from "node:fs/promises";
-import { StudioWriteError, writeAtomicReplace } from "./studio/atomic-file";
+import { writeAtomicReplace } from "./studio/atomic-file";
+import { StudioWriteError } from "./studio/errors";
 import { isZipBytes } from "./core/bytes";
 
 export type ConvertFlags =

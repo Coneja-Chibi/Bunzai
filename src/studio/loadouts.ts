@@ -12,8 +12,8 @@
 import { isRecord } from "../core/guards";
 import { LOADOUT_CAP, UNDO_MS } from "../core/loadout-panels";
 import type { StateStore } from "../stage/contracts/state-store";
-import { StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError, StudioValidationError } from "./errors";
+import { StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
+
 import { parseLoadoutInput, parseReceipt, type LoadoutReceipt, type LoadoutRecord } from "./loadout-record";
 import { serializer } from "./serial";
 

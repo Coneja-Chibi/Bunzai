@@ -65,15 +65,16 @@ async function afterDone(deps: CompendiumDeps, chatId: string, kind: TurnKind, l
   await runHistorian(deps, chatId, chat.activeBranchId, landed.id).catch(() => undefined);
 }
 
-const later = (chatId: string, work: () => Promise<void>): void => void enqueue(chatId, work).catch(() => undefined);
+const later = (chatId: string, work: () => Promise<void>): Promise<void> => enqueue(chatId, work).catch(() => undefined);
 
 /**
  * The turn route's one call per event. It only schedules: the stream is never held, and a failure cannot reach the reply.
  * Nothing is logged: the content of a book and a reply never goes to a log (F12).
  */
-export function onTurnEvent(deps: CompendiumDeps, chatId: string, kind: TurnKind, event: TurnEvent): void {
-  if (event.type === "start" && kind === "reply") later(chatId, () => fileOlder(deps, chatId));
-  else if (event.type === "done") later(chatId, () => afterDone(deps, chatId, kind, event.message));
+export function onTurnEvent(deps: CompendiumDeps, chatId: string, kind: TurnKind, event: TurnEvent): Promise<void> {
+  if (event.type === "start" && kind === "reply") return later(chatId, () => fileOlder(deps, chatId));
+  if (event.type === "done") return later(chatId, () => afterDone(deps, chatId, kind, event.message));
+  return Promise.resolve();
 }
 
 /**

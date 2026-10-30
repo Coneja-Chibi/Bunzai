@@ -146,7 +146,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | CharacterCard | src/ui/apps/library/rc-cards.tsx | (props: CardProps) | ContentCharacterCard (RC's DiscoveryCharacterCardV3 in library mode), for characters and |  |
 | CharacterDefaultRows | src/ui/apps/scenes/messenger/settings/character-defaults.tsx | ({ a }: { a: WingArgs }) |  |  |
 | CharacterEditor | src/ui/apps/workbench/Editor.tsx | ({ entity, revision, ctx, piece, topRight }: CharacterEditorProps) |  | .room .stage .soon .ghostRoom .ghostErr .skel .ghostActions .recents ... |
-| CharacterEditorView | src/ui/apps/workbench/presenters/character-editor-view.tsx | ({ ctx, piece, topRight, prefs, bodyViews, coverage, platformLabel, doneCount, chips, nativeStub, setNativeStub, work... |  |  |
+| CharacterEditorView | src/ui/apps/workbench/presenters/character-editor-view.tsx | ({ ctx, piece, topRight, prefs, bodyViews, coverage, platformLabel, chips, nativeStub, setNativeStub, workshop, setWo... |  |  |
 | CharacterFilter | src/ui/apps/scenes/scene-lore-advanced.tsx | ({ entry, onPatch }: { entry: LorebookEntry; onPatch: Patch }) |  |  |
 | CharacterFilterBlock | src/ui/apps/workbench/lore/platforms/filter-block.tsx | ({ entry, styles, onPatch, }: { entry: LorebookEntry; styles: Readonly<Record<string, string>>; onPatch: (patch: Part... |  |  |
 | CharacterForm | src/ui/apps/scenes/cast/cast-character-tab.tsx | ({ ctx, id, chatId, chat, editor, summary, art, version, variants, variantId, busy, onVariant }: { ctx: AppContext; i... | The Character tab: the card's fields in RoleCall's order, the look strip, and the pinned Save. |  |
@@ -263,21 +263,22 @@ The answer for the common needs, before searching the table below. For buttons, 
 | Dossier | src/ui/components/stage-dossier/index.tsx | ({ act, title, accent, hero, children, }: { act: string; title: string; accent?: string; hero?: boolean; children: Re... | A dossier: the act label, a marquee with one colored word, the flourish, then the body. | .dossier .hero .head .act .marquee .flourish .direction .paren ... |
 | Dot | src/ui/components/button/surfaces.tsx | ({ kind = "pager", label, current, pressed, color, vars, title, "data-part": part, type = "button", ...rest }: DotProps) |  | .tile .card .dot .icon .swatch .thumb .mark .app ... |
 | DraftStatusStrip | src/ui/apps/scenes/scene-draft-status.tsx | ({ drafts, persona }: { drafts: ComposerDrafts; persona: string }) |  |  |
+| DramaturgSettings | src/ui/apps/scenes/props/dramaturg/dramaturg-settings.tsx | ({ ctx, chat }: { ctx: AppContext; chat: Chat }) |  |  |
 | Drawer | src/ui/apps/scenes/compendium/standardize/standardize-cards.tsx | ({ run, onCancel }: { run: RunSnapshot; onCancel(): void }) |  |  |
 | DrillRow | src/ui/apps/scenes/messenger/frames/settings-rows.tsx | ({ label, description, value, onOpen }: RowCopy & { value?: string; onOpen(): void }) | A row that opens a deeper page: value and chevron. |  |
 | DropVeil | src/ui/shell/DropVeil.tsx | () |  |  |
 | EditBox | src/ui/apps/scenes/scene-edit-box.tsx | ({ value, onChange, onSave, onCancel }: { value: string; onChange(text: string): void; onSave(): void; onCancel(): vo... |  |  |
+| EditorArrangement | src/ui/apps/workbench/presenters/editor-modebar.tsx | (p: { mode: ModeProps["mode"]; editorLayout: "bento" \| "playbill"; setEditorLayout(layout: "bento" \| "playbill"): voi... |  |  |
+| EditorChrome | src/ui/apps/workbench/presenters/editor-chrome.tsx | (p: EditorChromeProps) |  |  |
 | EditorConflict | src/ui/apps/workbench/editor-conflict.tsx | ({ what, onTakeTheirs, onKeepMine }: EditorConflictProps) |  | .bar .text .title .actions |
 | EditorControls | src/ui/apps/scenes/final-cut/fc-editor.tsx | ({ pass, onChange }: { pass: FinalCutPass; onChange: Change }) |  |  |
 | EditorDialogs | src/ui/apps/workbench/presenters/editor-dialogs.tsx | ({ exportOpen, setExportOpen, spritesOpen, setSpritesOpen, setSpritesFocusLabel, spritesFocusLabel, namedOpen, setNam... |  |  |
 | EditorEhead | src/ui/components/editor-ehead/index.tsx | ({ mark, kind, deck, name, onNameChange, namePlaceholder, nameAriaLabel, meta, dirty, saving, onSave, saveTitle = "Sa... |  | .ehead .spine .spineMark .spineText .kind .spineName .spineMeta .num ... |
 | EditorField | src/ui/apps/workbench/layout/editor-field.tsx | ({ label, hint, required, htmlFor, meter, wide, children }: EditorFieldProps) |  | .dim .dot .full .rail .hint |
-| EditorHeader | src/ui/apps/workbench/presenters/editor-chrome.tsx | ({ name, version, onClose, editorScale, stepScale, setEditorScale, scaleMin, scaleMax, onboarded, mode, setMode, edit... |  |  |
 | EditorLayout | src/ui/apps/workbench/layout/editor-layout.tsx | ({ label, sections, rail, active: activeProp, onActiveChange, railWidth = "narrow" }: EditorLayoutProps) |  | .dim .dot .full .rail .hint |
 | EditorLeftCard | src/ui/apps/workbench/presenters/editor-left.tsx | ({ artUrl, draft, piece, vary, styles, setField, mediaCaps, spriteCount, namedCount, setSpritesOpen, setSpritesFocusL... |  |  |
-| EditorModeBar | src/ui/apps/workbench/presenters/editor-modebar.tsx | (props: EditorModeBarProps) |  |  |
+| EditorModeSwitch | src/ui/apps/workbench/presenters/editor-modebar.tsx | ({ mode, setMode }: ModeProps) |  |  |
 | EditorPage | src/ui/apps/scenes/messenger/settings/scene/finalcut-editor.tsx | ({ env }: { env: SceneEnv }) |  |  |
-| EditorTabstrip | src/ui/apps/workbench/presenters/editor-chrome.tsx | ({ coverage, targets, platformLabel, toggleTarget, clearTargets, offTarget, pickOffTarget, lensActive, lensVisibleCou... |  |  |
 | EmojiPicker | src/ui/apps/scenes/cast/emoji-picker.tsx | ({ anchor, onPick, onClose }: { anchor: HTMLElement \| null; onPick(emoji: string): void; onClose(): void }) | RoleCall's emoji picker, portaled under its button and loaded when first opened. |  |
 | Empty | src/ui/apps/scenes/compendium/cells/cell.tsx | ({ children }: { children: ReactNode }) |  |  |
 | Empty | src/ui/apps/scenes/compendium/storyboards/dossier-parts.tsx | ({ children }: { children: ReactNode }) |  |  |
@@ -297,7 +298,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | EventsPanel | src/ui/apps/scenes/props/trackers/events/events-panel.tsx | ({ ctx, chat, onChat, popOut }: PopoutContext) |  |  |
 | ExampleMode | src/ui/apps/workbench/regex/example-mode.tsx | ({ exampleText, styles, onChangeExamples }: ExampleModeProps) |  |  |
 | ExpandBox | src/ui/components/expand/index.tsx | ({ label, children, onExpandedChange }: ExpandBoxProps) | Wraps one editor with an expand control and the fullscreen sheet it expands into. | .frame .inlineToggle .away .scrim .sheet .head .title .hint ... |
-| ExpandTextarea | src/ui/components/expand/index.tsx | ({ label, ...rest }: ExpandTextareaProps) | A textarea that can go fullscreen: drop-in for a raw one, same props, same value ownership. | .frame .inlineToggle .away .scrim .sheet .head .title .hint ... |
+| ExpandTextarea | src/ui/components/expand/index.tsx | ({ label, grow = false, ...rest }: ExpandTextareaProps) | A textarea that can go fullscreen: drop-in for a raw one, same props, same value ownership. | .frame .inlineToggle .away .scrim .sheet .head .title .hint ... |
 | ExportButton | src/ui/apps/scenes/compendium/export-button.tsx | ({ ctx, bookId, bookName }: { ctx: AppContext; bookId: string; bookName: string }) |  |  |
 | ExportDialog | src/ui/components/export-dialog/index.tsx | ({ ctx, entity, name, hasPackage = false, onClose, }: ExportDialogProps) |  | .sheet .title .sub .chips .chip .list .honesty .line ... |
 | ExpressionGroups | src/ui/components/expression-map/groups.tsx | ({ value, onChange }: ExpressionGroupsProps) |  | .wrap .group .head .name .add |
@@ -622,7 +623,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | ProfileRows | src/ui/apps/scenes/messenger/settings/user/profile.tsx | ({ a, open }: { a: WingArgs; open: OpenProgram }) |  |  |
 | ProgramPortals | src/ui/apps/scenes/messenger/shell/program-holders.tsx | ({ ids, programs, holderOf, render }: { ids: readonly string[]; programs: readonly P[]; holderOf: HolderOf; render(pr... | Renders each visited program into its holder, wherever the holder currently sits. |  |
 | ProgramSlot | src/ui/apps/scenes/messenger/shell/program-holders.tsx | ({ holder }: { holder: HTMLElement }) | The open surface's slot for one program: the holder sits here while this is mounted. |  |
-| ProgressChecklist | src/ui/components/progress-checklist/index.tsx | ({ items, extraStat }: ProgressChecklistProps) | Bar + count chip; the checklist itself lives in a bottom sheet. | .prog .bar .row .ok .no .pendingLabel |
+| ProgressChecklist | src/ui/components/progress-checklist/index.tsx | ({ items, extraStat, compact = false }: ProgressChecklistProps) | Bar + count chip; the checklist itself lives in a bottom sheet. | .prog .compact .bar .row .ok .no .pendingLabel |
 | PromptBlocksPage | src/ui/apps/scenes/messenger/settings/scene/prompt-blocks.tsx | ({ env }: { env: SceneEnv }) | The page body: choices, then one switch per block, then the way to the prompt text. |  |
 | PromptEditor | src/ui/apps/scenes/scene-preset-parts.tsx | ({ prompt, loadedAt, presetName, note, prefs, onText, onClose }: { prompt: PresetPrompt \| null; loadedAt: number; pre... | One block's text. Typing saves to the preset after a pause (RoleCall saves after 500 ms). |  |
 | PromptEditPanel | src/ui/apps/workbench/preset/prompt-edit-panel.tsx | ({ block, stops, writeFor, groups, onSetGroup, onClose, onPatch, }: PromptEditPanelProps) |  | .sideHead .sideHeadTitle .sideEmpty .sideEmptyTitle .sideEmptyHint .sideBody .sideRow .sideHintLine ... |
@@ -634,6 +635,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | PropTile | src/ui/apps/scenes/props/prop-tile.tsx | ({ prop, on, tips, onToggle, onGear, subOn }: { prop: SceneProp; on: boolean; tips: boolean; onToggle(): void; onGear... |  |  |
 | PropTip | src/ui/apps/scenes/props/prop-tip.tsx | ({ title, tip, notes = [], tone, enabled, children }: { title: string; tip: PropTipContent; notes?: readonly string[]... |  |  |
 | PropTool | src/ui/apps/scenes/messenger/settings/bodies.tsx | ({ a, prop }: { a: WingArgs; prop: SceneProp }) | A Prop's own panel while the Prop is on (Story Director, the trackers). |  |
+| PropWingBody | src/ui/apps/scenes/scene-prop-wing.tsx | ({ prop, state }: { prop: SceneProp; state: PropWingHost }) |  |  |
 | Proscenium | src/ui/components/proscenium/index.tsx | ({ label, art, children }: { label: string; art: ReactNode; children: ReactNode }) |  | .frame .inset .screen .content .overlay |
 | Prose | src/ui/apps/scenes/prose.tsx | ({ text, speakers }: { text: string; speakers?: readonly Speaker[] }) |  |  |
 | ProseSection | src/ui/apps/scenes/cast/cast-parts.tsx | ({ title, icon, tone, value, onChange, rows = 3, placeholder, note, disabled, "data-part": part }: { title: string; i... | A prose section: RoleCall's titled card with a text area that can go fullscreen. |  |
@@ -901,7 +903,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | WebView | src/ui/apps/workbench/lore/web-view.tsx | ({ body, onSelect, onFallbackCards }: WebViewProps) |  | .wrap .filters .svg .edge .edgeDim .node .nodeDim .label ... |
 | WingFrame | src/ui/apps/scenes/scene-wing-frame.tsx | ({ wing, extra, resize, children }: { wing: Wing; extra?: string; resize?: WingResize; children: ReactNode }) |  |  |
 | WingPanel | src/ui/apps/scenes/scene-wings.tsx | ({ id, tab, bare, single, castPanel, booth, ai, aiGeneration, stage, prompting, world, props, finalCut, context, resi... |  |  |
-| WingRails | src/ui/apps/scenes/scene-wing-rail.tsx | ({ open, onToggle }: { open: string \| null; onToggle(id: string): void }) |  |  |
+| WingRails | src/ui/apps/scenes/scene-wing-rail.tsx | ({ open, onToggle, extra = [] }: { open: string \| null; onToggle(id: string): void; extra?: readonly Wing[] }) |  |  |
 | WingResizeEdge | src/ui/apps/scenes/wing-resize-edge.tsx | (props: WingResize & { side: "l" \| "r"; label: string }) |  |  |
 | WingSlot | src/ui/apps/scenes/scene-wing-frame.tsx | ({ side, open, children }: { side: "l" \| "r"; open: boolean; children?: ReactNode }) | One side's box for the open wing. Its width is the scene root's `--wing-w`; the rail reads its `data-*` to place its labels. |  |
 | WordList | src/ui/components/stage-dossier/index.tsx | ({ words }: { words: readonly string[] }) | Numbered words, shown to be written down. | .dossier .hero .head .act .marquee .flourish .direction .paren ... |

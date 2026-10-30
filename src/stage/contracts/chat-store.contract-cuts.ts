@@ -4,8 +4,8 @@
  * that ends each of them. chatStoreContract runs it, so every implementation gets it.
  */
 import { describe, expect, test } from "bun:test";
-import { StudioConflictError } from "../../studio/atomic-file";
-import { StudioValidationError } from "../../studio/errors";
+import { StudioConflictError, StudioValidationError } from "../../studio/errors";
+
 import type { ChatStore } from "./chat-store";
 import { CAST, SNAP, chatRig } from "./chat-store.contract-rig";
 

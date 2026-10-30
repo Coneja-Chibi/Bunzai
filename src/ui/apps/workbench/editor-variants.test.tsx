@@ -39,6 +39,16 @@ describe("editor variant stylesheets", () => {
     expect(grid, "label column scales down in a narrow cell").toContain("clamp(");
   });
 
+  test("a wide field gives its label, box and hint the full width under every grid variant (the hint's column 2 pushed the Prefill box into a narrow column on the right)", () => {
+    const lines = EDITOR_VARIANTS_STYLE.split(String.fromCharCode(10));
+    const grids = [...new Set(lines.filter((r) => r.includes("[data-ef=\"field\"]{display:grid")).map((r) => /editor-fields="([a-z-]+)"/.exec(r)?.[1]))];
+    expect(grids).toEqual(["labeled-rows", "form-on-paper"]);
+    for (const variant of grids) {
+      const span = lines.find((r) => r.includes(`"${variant}"`) && r.includes("[data-ef=\"field\"][data-wide] > [data-ef]{grid-column:1 / -1"));
+      expect(span, variant).toBeDefined();
+    }
+  });
+
   test("the variants only select inside an editor frame or its header", () => {
     expect(EDITOR_VARIANTS_STYLE).not.toMatch(/data-surface-editor-[a-z]+="[a-z-]+"\] (?!\[data-editor)/);
   });

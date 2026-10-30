@@ -17,7 +17,7 @@ import { apiReq, filledSec } from "./server-test-rig";
 const roots: string[] = [];
 const libraries: LibraryHandle[] = [];
 export async function cleanupChatRouteRigs(): Promise<void> {
-  for (const library of libraries.splice(0)) library.close();
+  for (const library of libraries.splice(0)) await library.close();
   await Promise.all(roots.splice(0).map(removeTempDir));
 }
 

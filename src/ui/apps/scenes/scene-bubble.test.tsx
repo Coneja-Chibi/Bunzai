@@ -121,6 +121,18 @@ test("on a wide window a tap does not open the bar (hover owns it)", async () =>
   } finally { Object.defineProperty(window, "innerWidth", { value: w, configurable: true }); }
 });
 
+test("a narrow scene inside a wide window reveals message actions when tapped", async () => {
+  const w = window.innerWidth;
+  Object.defineProperty(window, "innerWidth", { value: 1400, configurable: true });
+  try {
+    const root = await show({});
+    root.className = "scs";
+    root.getBoundingClientRect = () => ({ width: 454 }) as DOMRect;
+    await act(async () => { root.querySelector<HTMLElement>(".prose")!.click(); });
+    expect(root.querySelector(".msg")!.classList.contains("tap")).toBe(true);
+  } finally { Object.defineProperty(window, "innerWidth", { value: w, configurable: true }); }
+});
+
 test("a reply Final Cut ran on wears a scissors button that opens its activity; a failed pass says so, and a reply it never ran on has none", async () => {
   const opened: string[] = [];
   const root = await show({ finalCut: { passes: 2, changed: true, failed: 0 }, onFinalCut: (id) => opened.push(id) });

@@ -14,10 +14,8 @@ import {
 } from "../contracts/provider";
 import { readTokenReport } from "../../core/tokens/usage";
 import { appendStreamDelta } from "./stream-core";
-import { normalizeFinishReason } from "./transport-core";
+import { badReply, normalizeFinishReason } from "./transport-core";
 import { isRecord, str as asText, type Rec } from "../../core/guards";
-
-const badReply = (message: string) => new ProviderError(message, { category: "api_error", code: "backend_error", status: 502 });
 
 /** One completion body, in Anthropic's own shape (`{content: [...], stop_reason, usage}`), read into
  * the contract. `usage` is handed to the token meter's reader unchanged: it already knows this shape

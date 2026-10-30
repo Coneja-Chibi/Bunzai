@@ -13,6 +13,7 @@ import type { DraftInput } from "../studio/scene-draft";
 import type { SummaryState } from "../studio/scene-summary";
 import type { DirectorEdit, DirectorPanel } from "../studio/scene-director-edit";
 import type { DirectorSettingsPatch } from "../stage/contracts/director-types";
+import type { DramaturgApi } from "./app-contract-dramaturg";
 import type { TrackerItemInput } from "../studio/scene-tracker-item";
 import type { TrackerRefresh, TrackerRefreshInput } from "../studio/scene-tracker-refresh";
 import type { TurnEvent } from "../studio/scene-turn";
@@ -41,7 +42,7 @@ export interface SceneConnectionInfo {
 /** The settings a loadout reads and writes, straight from the store: the scene's own fields and the persona's id. */
 export type SceneSettings = Pick<Chat, "connection" | "preset" | "lore" | "props" | "prompting" | "backdrop" | "regex" | "finalCut"> & { persona: string | null };
 
-export interface ScenesApi {
+export interface ScenesApi extends DramaturgApi {
   /** Scenes (src/studio/scenes.ts): the library's chats, newest first. */
   listScenes(): Promise<SceneSummary[]>;
   openScene(id: string): Promise<OpenScene>;

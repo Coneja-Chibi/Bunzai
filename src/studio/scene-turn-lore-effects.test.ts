@@ -9,6 +9,7 @@
  * `{{incvar}}` is held to the same rule, and a turn that does not commit, or a continue, writes none.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { ProviderError, type Provider, type ProviderCompletion } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
@@ -50,7 +51,7 @@ async function scene(entries: LorebookEntry[]) {
   const main = make(() => behave.mode);
   const backup = make(() => behave.fallbackMode);
   const book = { id: "b1", name: "Book", body: { ...emptyLorebookBody("Book"), entries } };
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state, connect: async (c: { id: string }): Promise<Connected | null> => ({ provider: c.id === "backup" ? backup : main, kind: "openrouter", context: 32_000 }),
     readPreset: async () => null, readLorebook: async (id: string) => (id === "b1" ? book : null), now: () => (now += 10), randomSeed: () => 7,
   };
@@ -117,7 +118,7 @@ describe("what writes nothing", () => {
     const run = s.turn("reply", { inspect: true });
     for (let i = 0; i < 200 && !s.events.some((e) => e.type === "review"); i++) await Bun.sleep(5);
     const review = s.events.find((e) => e.type === "review") as Extract<TurnEvent, { type: "review" }>;
-    answerReview(s.chat.id, review.turnId, { kind: "cancel" });
+    answerReview(s.deps.runtime, s.chat.id, review.turnId, { kind: "cancel" });
     await run;
     expect(await s.local()).toEqual({});
     expect(await s.globals()).toEqual({});
@@ -178,7 +179,7 @@ describe("a turn that does not commit leaves no trace of its effects", () => {
     for (let i = 0; i < 200 && !s.events.some((e) => e.type === "start"); i++) await Bun.sleep(5);
     await Bun.sleep(20);
     const start = s.events.find((e) => e.type === "start") as Extract<TurnEvent, { type: "start" }>;
-    stopTurn(s.chat.id, start.turnId);
+    stopTurn(s.deps.runtime, s.chat.id, start.turnId);
     await run;
     expect(await s.local()).toEqual({});
     expect(await s.globals()).toEqual({});
@@ -190,7 +191,7 @@ describe("a turn that does not commit leaves no trace of its effects", () => {
     const run = s.turn("reply");
     for (let i = 0; i < 200 && !s.events.some((e) => e.type === "text"); i++) await Bun.sleep(5);
     const start = s.events.find((e) => e.type === "start") as Extract<TurnEvent, { type: "start" }>;
-    stopTurn(s.chat.id, start.turnId);
+    stopTurn(s.deps.runtime, s.chat.id, start.turnId);
     await run;
     expect(await s.local()).toEqual({ storms: 1 });
     expect((await s.globals())["season"]!.value).toBe("autumn");
@@ -258,7 +259,7 @@ describe("scene state: variables follow the versions that are shown", () => {
     expect(await s.local()).toEqual({ kept: "yes" });
     const run = s.turn("reply", { inspect: true });
     for (let i = 0; i < 200 && !s.events.some((e) => e.type === "review"); i++) await Bun.sleep(5);
-    answerReview(s.chat.id, (s.events.find((e) => e.type === "review") as Extract<TurnEvent, { type: "review" }>).turnId, { kind: "cancel" });
+    answerReview(s.deps.runtime, s.chat.id, (s.events.find((e) => e.type === "review") as Extract<TurnEvent, { type: "review" }>).turnId, { kind: "cancel" });
     await run;
     expect(await s.local()).toEqual({ kept: "yes" });
     s.behave.mode = "hang";
@@ -266,7 +267,7 @@ describe("scene state: variables follow the versions that are shown", () => {
     const stopped = s.turn("reply");
     for (let i = 0; i < 200 && s.events.filter((e) => e.type === "start").length === started; i++) await Bun.sleep(5);
     await Bun.sleep(20);
-    stopTurn(s.chat.id, (s.events.filter((e) => e.type === "start").at(-1) as Extract<TurnEvent, { type: "start" }>).turnId);
+    stopTurn(s.deps.runtime, s.chat.id, (s.events.filter((e) => e.type === "start").at(-1) as Extract<TurnEvent, { type: "start" }>).turnId);
     await stopped;
     expect(await s.local()).toEqual({ kept: "yes" });
     s.behave.mode = "answer";

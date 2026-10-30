@@ -5,6 +5,7 @@
  * edit that keeps the pass's text. Fixtures follow scene-turn-regex.test.ts.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { createPass, type FinalCutPass } from "../core/final-cut/pass";
 import { readTrace } from "../core/final-cut/trace";
 import type { PresetBody } from "../entities/preset/schema";
@@ -41,7 +42,7 @@ async function scene(passes: FinalCutPass[] | null, answer: (request: ProviderRe
       return { content: "", raw: {}, ...a } as ProviderCompletion;
     },
   };
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }),
     readPreset: async () => extra.preset ?? null, readLorebook: async () => null, now: () => (now += 10), randomSeed: () => 7,
@@ -51,12 +52,12 @@ async function scene(passes: FinalCutPass[] | null, answer: (request: ProviderRe
   const emit = (e: TurnEvent) => {
     if (e.type === "start") turnId = e.turnId;
     events.push(e);
-    if (e.type === "regex" && extra.regex) queueMicrotask(() => answerRegex(chat.id, e.turnId, extra.regex!.answer(e)));
+    if (e.type === "regex" && extra.regex) queueMicrotask(() => answerRegex(deps.runtime, chat.id, e.turnId, extra.regex!.answer(e)));
   };
   const run = async (kind: "reply" | "swipe" | "continue" = "reply") => runTurn(deps, { chatId: chat.id, kind, expectedVersion: (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion! }, emit);
   const last = async () => (await chats.readMessages(chat.activeBranchId, { limit: 10 })).messages.at(-1)!;
   const trace = async () => { const m = await last(); return (await chats.swipeTrace(m.id, m.swipes[m.current]!.id)) as { finalCut?: Record<string, unknown> } | null; };
-  return { chats, chat, sent, events, run, last, trace };
+  return { deps, chats, chat, sent, events, run, last, trace };
 }
 const editor = (extra: Partial<FinalCutPass> = {}): FinalCutPass => ({ ...createPass("editor"), outputMode: "tagged", ...extra });
 
@@ -116,7 +117,7 @@ describe("a scene with Final Cut on", () => {
 
   test("Stop during a pass keeps the reply, and no further pass runs", async () => {
     const s = await scene([{ ...editor(), order: 0 }, { ...createPass("translator"), outputMode: "tagged", order: 10 }], (_r, turn) => {
-      stopTurn(s.chat.id, turn());
+      stopTurn(s.deps.runtime, s.chat.id, turn());
       return new DOMException("stopped", "AbortError") as unknown as Error;
     });
     await s.run();

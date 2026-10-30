@@ -3,7 +3,7 @@ import { describe, expect, test } from "bun:test";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { DIRECTOR_PROP_ID } from "../core/director/settings";
 import { SCENE_ACTION_TIERS } from "../kit/tools/safety/scene-tiers";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError } from "./errors";
 import { editDirector } from "./scene-director-edit";
 import { tierRefusal } from "./scene-director-tier";
 import { runDirector } from "./scene-director";

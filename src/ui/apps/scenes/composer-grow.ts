@@ -4,6 +4,7 @@
  * height, clamped to `maxRows` lines plus the box's own padding and border; past the cap the box scrolls.
  */
 import { useLayoutEffect, type RefObject } from "react";
+import { useInlineResize } from "../../_shared/use-inline-resize";
 
 export const COMPOSER_MAX_ROWS = 10;
 
@@ -14,7 +15,8 @@ export function fitComposer(el: HTMLTextAreaElement, maxRows: number = COMPOSER_
   if (!Number.isFinite(line)) return;
   const px = (v: string): number => parseFloat(v) || 0;
   const chrome = px(css.paddingTop) + px(css.paddingBottom) + px(css.borderTopWidth) + px(css.borderBottomWidth);
-  const limit = line * maxRows + chrome;
+  const cssCap = css.maxHeight.endsWith("px") ? px(css.maxHeight) : Infinity;
+  const limit = Math.min(line * maxRows + chrome, cssCap);
   el.style.height = "auto";
   const wanted = el.scrollHeight + px(css.borderTopWidth) + px(css.borderBottomWidth);
   el.style.height = `${Math.min(wanted, limit)}px`;
@@ -24,4 +26,5 @@ export function fitComposer(el: HTMLTextAreaElement, maxRows: number = COMPOSER_
 /** Re-fits the box after every change of `value` (a draft restored, a steering text, a send that empties it). */
 export function useComposerGrow(box: RefObject<HTMLTextAreaElement | null>, value: string): void {
   useLayoutEffect(() => { if (box.current) fitComposer(box.current); }, [box, value]);
+  useInlineResize(box, fitComposer);
 }

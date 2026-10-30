@@ -32,11 +32,15 @@ export const PREF_PANEL_MINIMISED = "agent.panelMinimised";
 export const AGENT_STYLE = `
 .agent-room{position:relative;display:flex;flex-direction:column;height:100%;min-height:0;background:var(--kit-well);
   color:var(--kit-text);font-family:var(--font-body);font-size:var(--text-body)}
-.agent-room{--agent-primary:var(--rose);--agent-selection:var(--rose);--agent-action:var(--rose-deep);
+.agent-room{--agent-primary:var(--kit-rose);--agent-selection:var(--rose);--agent-action:var(--rose-deep);
   --agent-danger:var(--danger);--agent-structure:var(--edge);--agent-control:var(--stage-line)}
-html[data-surface-ui-panel="gilt-frame"] .agent-room{--agent-primary:var(--action-primary);--agent-selection:var(--accent);
+html[data-surface-ui-panel="gilt-frame"] .agent-room{--agent-primary:var(--bk-role-action-text);--agent-selection:var(--accent);
   --agent-action:var(--action-primary);--agent-danger:var(--danger);--agent-structure:var(--chrome-structure);
   --agent-control:var(--control-boundary);background:var(--stage-well);color:var(--text)}
+/* On that theme ground, whatever sits straight on it speaks the theme's text, not Kit's: Kit's bright keys vanish on a light well. */
+html[data-surface-ui-panel="gilt-frame"] .agent-room .kit-hints__key{color:var(--text)}
+html[data-surface-ui-panel="gilt-frame"] .agent-room .kit-hints__label{color:var(--text-faint)}
+html[data-surface-ui-panel="gilt-frame"] .agent-room .agent-room__block summary{color:var(--text-dim)}
 
 /* The header: panel ground, a seam beneath, nothing shouting. */
 .agent-room__head{background:var(--kit-panel);border-bottom:1px solid var(--kit-seam);

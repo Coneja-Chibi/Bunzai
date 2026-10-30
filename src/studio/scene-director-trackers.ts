@@ -23,10 +23,11 @@ import { slotOf } from "../generated/slots";
 import { DIRECTOR_ACTIVITY_MAX, type DirectorActivity, type DirectorState } from "../stage/contracts/director-types";
 import type { ChatConnection, ChatStore } from "../stage/contracts/chat-store";
 import type { TrackerModule } from "../stage/contracts/chat-tracker-types";
-import { isStudioConflictError } from "./atomic-file";
+import { isStudioConflictError } from "./errors";
 import { askText, type Ask, type Messages } from "./compendium-ask";
 import { tierRefusal, type DirectorTiers } from "./scene-director-tier";
-import { publishSceneTrackers, type TrackerOutcome, type TrackerOutcomes } from "./scene-events";
+import type { TurnRuntime } from "./scene-turn-runtime";
+import { type TrackerOutcome, type TrackerOutcomes } from "./scene-events";
 import { keepUnedited } from "./tracker-state";
 import type { Connected } from "./scene-turn";
 
@@ -40,7 +41,7 @@ export type Line = Omit<DirectorActivity, "id">;
 
 export interface TrackerRoundDeps {
   chats: RoundChats;
-  connect(connection: ChatConnection): Promise<Connected | null>;
+  connect(connection: ChatConnection, signal?: AbortSignal): Promise<Connected | null>;
   now(): number;
   tiers?: DirectorTiers;
   /** The per-request budget; absent: TRACKER_ROUND_TIMEOUT_MS. */
@@ -175,7 +176,7 @@ export async function runTrackerRound(deps: TrackerRoundDeps, input: TrackerRoun
   const denied = tierRefusal("director.trackers", deps.tiers);
   if (denied) return stop(`Tracker update skipped: ${denied}`);
   const target = settings.model ?? chat.connection;
-  const connected = target ? await deps.connect(target) : null;
+  const connected = target ? await deps.connect(target, signal) : null;
   if (!target || !connected) return stop("Tracker update skipped: the Story Director has no connection to ask");
   const budget: Budget = { left: settings.callsPerReply };
   const outcomes: TrackerOutcomes[] = [];
@@ -208,24 +209,24 @@ function settled(list: readonly TrackerOutcomes[]): TrackerOutcomes[] {
 
 // ---- the round in the background ---------------------------------------------------------------------------------------------------------------------------------------------
 
-const running = new Map<string, { controller: AbortController; done: Promise<void> }>();
-
 /** Starts the round for a committed reply and returns at once. */
-export function startTrackerRound(deps: TrackerRoundDeps, input: TrackerRoundInput): void {
+export function startTrackerRound(runtime: TurnRuntime, deps: TrackerRoundDeps, input: TrackerRoundInput): void {
+  if (runtime.closed) return;
+  const running = runtime.trackerRounds;
   const controller = new AbortController();
-  const done = runTrackerRound(deps, input, controller.signal).then((list) => { if (list.length > 0) publishSceneTrackers({ chatId: input.chatId, modules: settled(list) }); }).catch(() => undefined).finally(() => { if (running.get(input.chatId)?.controller === controller) running.delete(input.chatId); });
+  const done = runTrackerRound(deps, input, controller.signal).then((list) => { if (list.length > 0) runtime.onTrackers({ chatId: input.chatId, modules: settled(list) }); }).catch(() => undefined).finally(() => { if (running.get(input.chatId)?.controller === controller) running.delete(input.chatId); });
   running.set(input.chatId, { controller, done });
 }
 
 /** Stops the scene's round, if one is running, and waits for it to have written everything it wrote: a new turn reads the trackers only after this. */
-export async function cancelTrackerRound(chatId: string): Promise<void> {
-  const round = running.get(chatId);
+export async function cancelTrackerRound(runtime: TurnRuntime, chatId: string): Promise<void> {
+  const round = runtime.trackerRounds.get(chatId);
   if (!round) return;
   round.controller.abort();
   await round.done;
 }
 
 /** Waits for every round that is running; for tests and a clean shutdown. */
-export async function settleTrackerRounds(): Promise<void> {
-  await Promise.all([...running.values()].map((r) => r.done));
+export async function settleTrackerRounds(runtime: TurnRuntime): Promise<void> {
+  await Promise.all([...runtime.trackerRounds.values()].map((r) => r.done));
 }

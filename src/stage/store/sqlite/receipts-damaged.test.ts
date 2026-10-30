@@ -4,7 +4,7 @@
  * readable, a sweep never throws on it, and nothing reseals the broken cell (that would destroy the evidence).
  */
 import { afterEach, describe, expect, test } from "bun:test";
-import { StudioConflictError } from "../../../studio/atomic-file";
+import { StudioConflictError } from "../../../studio/errors";
 import { sqliteChatStore } from "../sqlite-chat-store";
 import { type StageDatabase } from "./database";
 import { freshDatabase, testCipher } from "./test-support";

@@ -2,7 +2,8 @@
 import { describe, expect, test, beforeEach } from "bun:test";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { isStudioConflictError, isStudioWriteError, writeAtomicReplace, writeExclusive, StudioConflictError, StudioWriteError } from "./atomic-file";
+import { writeAtomicReplace, writeExclusive } from "./atomic-file";
+import { isStudioConflictError, isStudioWriteError, StudioConflictError, StudioWriteError } from "./errors";
 import { tempDir } from "./test-temp-dir";
 
 describe("atomic-file", () => {

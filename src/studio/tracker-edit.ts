@@ -8,8 +8,9 @@ import { heldAs } from "../core/scene-state/fold";
 import { applyTrackerUpdates } from "../core/tracker";
 import { slotOf } from "../generated/slots";
 import type { ChatStore } from "../stage/contracts/chat-store";
-import { isStudioConflictError, StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError, StudioValidationError } from "./errors";
+import { isStudioConflictError, StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
+
+import type { TurnRuntime } from "./scene-turn-runtime";
 import { turnRunning } from "./scene-turn-running";
 import { linkedTrackers, type ReadTracker } from "./library-trackers";
 import { sceneTrackers, type SceneTrackers } from "./scene-trackers";
@@ -34,12 +35,12 @@ export interface TrackerEditInput {
 /**
  * Applies the edit and answers the trackers as they now stand.
  */
-export async function editSceneTracker(chats: ChatStore, read: ReadTracker | undefined, input: TrackerEditInput, now: () => number): Promise<SceneTrackers> {
+export async function editSceneTracker(runtime: TurnRuntime, chats: ChatStore, read: ReadTracker | undefined, input: TrackerEditInput, now: () => number): Promise<SceneTrackers> {
   const chat = await chats.getChat(input.chatId);
   if (!chat) throw new StudioNotFoundError("that scene is gone");
   if (!(await chats.listBranches(chat.id)).some((b) => b.id === input.branchId)) throw new StudioNotFoundError("that take is gone");
   if (!chat.prompting?.trackers?.includes(input.trackerId)) throw new StudioValidationError("this scene does not use that tracker");
-  if (turnRunning(chat.id)) throw new StudioConflictError(TURN_RUNNING);
+  if (turnRunning(runtime, chat.id)) throw new StudioConflictError(TURN_RUNNING);
   const tail = await chats.readMessagesBefore(input.branchId, { limit: 1, liveOnly: true });
   if (tail.messages[0]?.id !== input.messageId) throw new StudioConflictError(MOVED_ON);
   const state = await chats.sceneState(input.branchId);

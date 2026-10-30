@@ -39,6 +39,12 @@ export function floorsFromSnapshot(key: string): AccentFloors | null {
   return { surfaces: v.slice(0, 6), track: v[6]!, text: v[7]!, onTint: v[8]!, onDeep: v[9]! };
 }
 
+/** The painted theme's floors, re-read when the root's theme changes (one object per theme); null when none are readable. */
+export function usePaintedFloors(): AccentFloors | null {
+  const key = useSyncExternalStore(subscribe, snapshot, () => "");
+  return useMemo(() => floorsFromSnapshot(key), [key]);
+}
+
 /** Style for a container: the character's, persona's and scene's scoped properties; undefined when none has a color. */
 export function useScopedAccents(colors: Partial<Record<AccentScope, string | undefined>>): CSSProperties | undefined {
   const key = useSyncExternalStore(subscribe, snapshot, () => "");

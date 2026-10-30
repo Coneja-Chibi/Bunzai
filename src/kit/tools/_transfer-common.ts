@@ -81,8 +81,10 @@ export interface ConversionSuccess {
   ok: true;
   /** The serialized wire text. */
   payload: string;
-  /** Null when the adapter emitted binary; callers that must write a file refuse on this. */
+  /** Null when the adapter emitted binary; `bytes` then holds the file. */
   text: string | null;
+  /** The binary file (a PNG card, a .charx, a .byaf), when the adapter emitted one. */
+  bytes: Uint8Array | null;
   suggestedExtension: string;
   loss: ReturnType<ConversionKit["buildSerializeReport"]>;
   macros?: MacroTransferReport;
@@ -337,6 +339,7 @@ export async function convertStoredPiece(
     return {
       ok: true,
       text,
+      bytes: out.bytes ?? null,
       payload: text ?? `<${out.bytes?.byteLength ?? 0} bytes of ${out.suggestedExtension}>`,
       suggestedExtension: out.suggestedExtension,
       loss,

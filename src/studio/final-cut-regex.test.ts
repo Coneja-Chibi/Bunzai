@@ -4,6 +4,7 @@
  * event and uses the answer. It runs no rule itself, fails closed, and a scene with no such rule asks nothing.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { RegexSetBody } from "../entities/regex/schema";
 import type { TurnEvent } from "./scene-turn";
 import { answerRegex } from "./scene-turn-regex";
@@ -13,9 +14,10 @@ const rule = (id: string, over: Record<string, unknown> = {}) => ({ id, label: i
 const set = (...rules: ReturnType<typeof rule>[]): RegexSetBody => ({ name: "s", rules } as unknown as RegexSetBody);
 
 function rig(sets: Record<string, RegexSetBody | null>, signal = new AbortController().signal) {
+  const runtime = createTurnRuntime();
   const events: TurnEvent[] = [];
-  const make = () => finalCutRegexInput({ setIds: Object.keys(sets), readRegex: async (id) => sets[id] ?? null, turnId: "t1", chatId: "c1", names: { user: "Ann", char: "Vera" }, signal, emit: (e) => events.push(e) });
-  return { events, make };
+  const make = () => finalCutRegexInput({ runtime, setIds: Object.keys(sets), readRegex: async (id) => sets[id] ?? null, turnId: "t1", chatId: "c1", names: { user: "Ann", char: "Vera" }, signal, emit: (e) => events.push(e) });
+  return { runtime, events, make };
 }
 const tick = () => new Promise((r) => setTimeout(r, 5));
 
@@ -31,7 +33,7 @@ describe("finalCutRegexInput", () => {
     expect(asked.rules.map((x) => x.id)).toEqual(["0:r1"]);
     expect(asked.items).toEqual([{ index: 0, role: "assistant", depth: 0, text: "The cold came." }]);
     expect(asked.macros).toEqual({ user: "Ann", char: "Vera" });
-    expect(answerRegex("c1", "t1", { kind: "done", texts: { 0: "The warm came." } })).toBe(true);
+    expect(answerRegex(r.runtime, "c1", "t1", { kind: "done", texts: { 0: "The warm came." } })).toBe(true);
     expect(await out).toBe("The warm came.");
   });
   test("a text the page leaves alone comes back unchanged, and each pass asks again", async () => {
@@ -39,12 +41,12 @@ describe("finalCutRegexInput", () => {
     const prep = (await r.make())!;
     const one = prep("a");
     await tick();
-    answerRegex("c1", "t1", { kind: "done", texts: {} });
+    answerRegex(r.runtime, "c1", "t1", { kind: "done", texts: {} });
     expect(await one).toBe("a");
     const two = prep("b");
     await tick();
     expect(r.events).toHaveLength(2);
-    answerRegex("c1", "t1", { kind: "done", texts: { 0: "B" } });
+    answerRegex(r.runtime, "c1", "t1", { kind: "done", texts: { 0: "B" } });
     expect(await two).toBe("B");
   });
   test("no sets, no display rule, only disabled or prompt-only rules, or overlay rules: nothing is asked", async () => {
@@ -59,11 +61,11 @@ describe("finalCutRegexInput", () => {
     const prep = (await r.make())!;
     const failed = prep("x");
     await tick();
-    answerRegex("c1", "t1", { kind: "failed", error: "blocked by policy" });
+    answerRegex(r.runtime, "c1", "t1", { kind: "failed", error: "blocked by policy" });
     await expect(failed).rejects.toThrow(FinalCutRegexError);
     const odd = prep("x");
     await tick();
-    answerRegex("c1", "t1", { kind: "done", texts: { 5: "y" } });
+    answerRegex(r.runtime, "c1", "t1", { kind: "done", texts: { 5: "y" } });
     await expect(odd).rejects.toThrow("not asked about");
     const stop = new AbortController();
     const s = rig({ s1: set(rule("r1")) }, stop.signal);

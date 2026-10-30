@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "docId": "decisions/ADR-014-reusable-roleplay-core",
+  "sourcePath": "docs/decisions/ADR-014-reusable-roleplay-core.md",
+  "sourceHash": "sha256:e65d256732152c525f0cb9556adc6afc9d51d45b0356c48bda6494e7aaf07fe7",
+  "summary": "The accepted consolidation direction retains one reusable turn engine and canonical scene model for desktop and terminal hosts. The source API exposes existing orchestration with injected stores, providers and library readers; skills, trackers, presets, macros, assembly and Final Cut keep their owners. The runtime owns only in-flight tasks, cancellation, gates and tracker rounds, while ChatStore owns durable scenes, checkpoints, versions and deltas. Hosts reuse a runtime per opened store, await accepted work before storage closes and refuse new work after shutdown. Host background promises must cover their writes. Imported scripts remain sealed under ADR-009, so terminal hosts without an isolated worker fail closed for applicable regex. Desktop consumes the API; the injected terminal runner is tested, while a standalone shared-library CLI remains withheld until cross-process checkpoint ownership is durable. Browser bundling and a scripted Node turn establish source compatibility only. Broader patch reconciliation and packaged verification remain outstanding, and old repository ancestry stays excluded.",
+  "topics": ["one reusable turn engine", "ChatStore authority", "runtime shutdown", "terminal host limits", "sealed scripts"],
+  "sections": [
+    {
+      "slug": "decision",
+      "title": "Decision",
+      "level": 2,
+      "sourceHash": "sha256:705eca47807d5fa5538aee913aacd2a319d7c89ff387bc613b17c58ae9c0d250",
+      "summary": "Bunzai absorbs co-developer improvements into its existing canonical owners rather than adopting a second default engine or journal. The public core injects storage, providers and readers. Its runtime owns cancellation, review and regex gates, tracker rounds and accepted tasks; ChatStore owns all persisted scene state. Hosts reuse one runtime for an opened store, await work before closing storage and admit no new operation after shutdown. afterEvent promises cover host writes. Other jobs remain host-owned, and imported regex requires ADR-009's isolated worker.",
+      "topics": ["canonical ownership", "injected dependencies", "awaited task lifetime", "ADR-009"],
+      "children": []
+    },
+    {
+      "slug": "current-implementation-and-limits",
+      "title": "Current implementation and limits",
+      "level": 2,
+      "sourceHash": "sha256:addb6de7730ee824d22bdb7955ff3bdef63574d5137b18b8fae85d749c8e66e5",
+      "summary": "Desktop streaming consumes the reusable source API and explicit store-scoped runtime. The terminal runner supports injected send, continue and swipe operations with fail-closed regex tests. A standalone CLI is withheld because SQLite serialization cannot establish whether another process still owns a checkpoint; durable cross-process ownership remains required. Browser bundling and a scripted Node execution prove source behavior, not a packaged artifact or published library. Remaining co-developer patches are reconciled separately without importing the old repository's ancestry.",
+      "topics": ["desktop API consumption", "injected terminal runner", "cross-process ownership gap", "source-only evidence"],
+      "children": []
+    }
+  ]
+}

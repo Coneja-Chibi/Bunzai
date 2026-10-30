@@ -9,7 +9,8 @@
  * as plain HTTP errors. From the checkpoint on, every outcome is an event.
  */
 import { toErrorMessage } from "../error-message";
-import { running } from "./scene-turn-running";
+import { runOwnedTurn, type TurnRuntime } from "./scene-turn-runtime";
+import { registerTurn } from "./scene-turn-running";
 export { stopTurn } from "./scene-turn-running";
 export { commitAnyway, discardWaiting, resumeScene } from "./scene-turn-resume";
 import { outOfTimeOf } from "../core/assembly/macro-report";
@@ -26,8 +27,8 @@ import { countPrompt, estimateFor, modelKey } from "../core/tokens";
 import type { ChatConnection, ChatStore, Generation, JsonObject, Message } from "../stage/contracts/chat-store";
 import { ProviderError, type Provider, type ProviderEvent, type ProviderRole } from "../stage/contracts/provider";
 import type { StateStore } from "../stage/contracts/state-store";
-import { StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError, StudioValidationError } from "./errors";
+import { StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
+
 import { assembleRequest, openedWith, overflowMessage, prepareRequest, shapeRequest } from "./scene-turn-build";
 import { tickDeltas } from "./scene-turn-ticks";
 import { loadTurn, type ReadPreset, type TurnKind } from "./scene-turn-load";
@@ -86,10 +87,11 @@ export interface Connected {
 }
 
 export interface TurnDeps {
+  runtime: TurnRuntime;
   chats: ChatStore;
   state: StateStore;
   /** Resolves the scene's saved connection; null when Kit no longer has it. */
-  connect(connection: ChatConnection): Promise<Connected | null>;
+  connect(connection: ChatConnection, signal?: AbortSignal): Promise<Connected | null>;
   /** The library's current body of the scene's preset (ChatStore rule 19). */
   readPreset: ReadPreset;
   /** The library's current body of a lorebook the scene reads (2e-d4 plan step 1). */
@@ -133,13 +135,13 @@ const SAVE_EVERY_MS = 1_000;
  * its id) and the resume sweep are unchanged, and it is released however the turn ends, a refusal before the checkpoint included.
  */
 export async function runTurn(deps: TurnDeps, input: Parameters<typeof runTurnBody>[1], emit: (event: TurnEvent) => void): Promise<void> {
-  const claim = `starting:${crypto.randomUUID()}`;
-  running.set(claim, { chatId: input.chatId, controller: new AbortController() });
-  try {
-    await runTurnBody(deps, input, emit);
-  } finally {
-    running.delete(claim);
-  }
+  return runOwnedTurn(deps.runtime, input.chatId, async (controller) => {
+    try { await runTurnBody(deps, input, emit, controller); }
+    catch (error) {
+      if (!controller.signal.aborted) throw error;
+      emit({ type: "stopped", message: null });
+    }
+  });
 }
 
 async function runTurnBody(
@@ -147,6 +149,7 @@ async function runTurnBody(
   /** `fallback`: the person's Fallback Model (Control Booth), tried once if the scene's model fails before writing anything. `guidance`: a guided re-roll's instruction, a swipe's alone. */
   input: { chatId: string; kind: TurnKind; expectedVersion: number; fallback?: ChatConnection; guidance?: string; /** Prompt Inspector on: stop with the exact request before anything is written or sent. */ inspect?: boolean },
   emit: (event: TurnEvent) => void,
+  controller: AbortController,
 ): Promise<void> {
   const { chats, state } = deps;
   const guidance = input.guidance?.trim() ?? "";
@@ -155,9 +158,9 @@ async function runTurnBody(
   const chat = await chats.getChat(input.chatId);
   if (!chat) throw new StudioNotFoundError("that scene does not exist");
   // A tracker round still running for the last reply writes the trackers this turn reads: it stops and finishes writing or undoing first.
-  await cancelTrackerRound(chat.id);
+  await cancelTrackerRound(deps.runtime, chat.id);
   if (!chat.connection) throw new NoConnectionError();
-  let connected = await deps.connect(chat.connection);
+  let connected = await deps.connect(chat.connection, controller.signal);
   if (!connected) throw new NoConnectionError("this scene's connection is gone from Kit; pick another in the AI wing");
   const loaded = await loadTurn(chats, chat.id, input.kind, deps.readPreset, deps.readLorebook, deps.readLibrary, deps.choiceDefaults);
   if (!loaded) throw new StudioNotFoundError("that scene does not exist");
@@ -173,11 +176,12 @@ async function runTurnBody(
   const stored = (streamed: string): string => (input.kind === "continue" ? continuationAddition(original, streamed, !modelTakesPrefill(model)) : streamed);
   const writes = turnWrites(deps.now);
   const toolsTurn = await toolTurn(deps.narratorTools, input.kind, chat, loaded, deps.randomSeed(), writes, await deps.toolBudgetMs?.());
+  if (controller.signal.aborted) { emit({ type: "stopped", message: null }); return; }
   const turn = await chats.beginTurn(loaded.branchId, target, { expectedVersion: input.expectedVersion });
   if (!turn) throw new StudioNotFoundError("that scene does not exist");
+  if (controller.signal.aborted) { await chats.dropTurn(turn.id); emit({ type: "stopped", message: null }); return; }
 
-  const controller = new AbortController();
-  running.set(turn.id, { chatId: chat.id, controller });
+  registerTurn(deps.runtime, turn.id, chat.id, controller);
   emit({ type: "start", turnId: turn.id, kind: input.kind, messageId: turn.messageId });
   let text = "";
   // Once the reply is in hand, nothing may throw it away: an error saving it keeps the checkpoint,
@@ -188,6 +192,7 @@ async function runTurnBody(
   /** The Director's call is stopped with the turn, and also whenever the turn ends for any other reason: a failure after it started must not leave it running, billed, behind a turn that is over. */
   const directorStop = new AbortController();
   controller.signal.addEventListener("abort", () => directorStop.abort(controller.signal.reason), { once: true });
+  if (controller.signal.aborted) directorStop.abort(controller.signal.reason);
   try {
     const started = deps.now();
     const prep = await prepareRequest(deps, chat, loaded, connected, model, started);
@@ -220,7 +225,7 @@ async function runTurnBody(
     let edits: Readonly<Record<number, string>> = {};
     const shape = (forModel: string) => shapeRequest({ chat, loaded, kind: input.kind, original, built, connected }, forModel, edits);
     let messages = shape(model);
-    const regex = await promptRegex({ setIds: chat.regex?.sets, readRegex: deps.readRegex, trace: result.trace, messages, expansion: result.expansion, turnId: turn.id, chatId: chat.id, signal: controller.signal, emit });
+    const regex = await promptRegex({ runtime: deps.runtime, setIds: chat.regex?.sets, readRegex: deps.readRegex, trace: result.trace, messages, expansion: result.expansion, turnId: turn.id, chatId: chat.id, signal: controller.signal, emit });
     if (regex.stop) { await chats.dropTurn(turn.id); emit(regex.stop); return; }
     const regexEdits = regex.edits;
     edits = regexEdits;
@@ -237,7 +242,7 @@ async function runTurnBody(
     if (input.inspect) {
       // F16: the one pause gate. Cancel and Stop drop the checkpoint, so nothing was written, saved or sent.
       emit({ type: "review", turnId: turn.id, messages: messages.map((m) => ({ role: m.role, content: m.content })), tokens: estimate.mid, params: requestParams(traceOptions(options, connected.provider.params, model)), ...(sentTools(toolsTurn, connected).length > 0 ? { tools: sentTools(toolsTurn, connected) } : {}) });
-      const decision = await awaitReview(turn.id, chat.id, controller.signal);
+      const decision = await awaitReview(deps.runtime, turn.id, chat.id, controller.signal);
       if (decision.kind === "cancel") {
         await chats.dropTurn(turn.id);
         emit({ type: "stopped", message: null });
@@ -300,7 +305,7 @@ async function runTurnBody(
         // never the model that just failed. One try; if it fails too, the main model's error is the one reported.
         const fb = input.fallback;
         const eligible = !controller.signal.aborted && !text && reasoningFrom === undefined && toolsTurn.calls.length === 0 && isFallbackWorthy(first) && !(fb?.id === chat.connection.id && fb.model === model);
-        const next = fb && eligible ? await deps.connect(fb).catch(() => null) : null;
+        const next = fb && eligible ? await deps.connect(fb, controller.signal).catch(() => null) : null;
         if (!fb || !next) throw first;
         const before = { connected, model, messages, trace, route };
         route = [failedAttempt(route[0]!, first), { connectionId: fb.id, kind: next.kind, model: fb.model }];
@@ -390,7 +395,10 @@ async function runTurnBody(
       await learnReply(state, modelKey(connected.kind, model, completion.model), messages.map((m) => m.content), completion.usage, deps.now()).catch(() => undefined);
     }
   } catch (error) {
-    if (answered) {
+    if (controller.signal.aborted && !text && !answered) {
+      await chats.dropTurn(turn.id).catch(() => undefined);
+      emit({ type: "stopped", message: null });
+    } else if (answered) {
       // Best-effort: the checkpoint then holds the whole reply, not just the last periodic save.
       await chats.saveCheckpoint(turn.id, { content: stored(text) }).catch(() => undefined);
       emit({ type: "failed", category: "api_error", code: "backend_error", message: "The reply arrived but could not be saved yet. It is kept, and comes back when the scene reopens.", draft: stored(text) });
@@ -402,7 +410,7 @@ async function runTurnBody(
     }
   } finally {
     directorStop.abort();
-    running.delete(turn.id);
+    deps.runtime.running.delete(turn.id);
   }
 
   /** Commits guarded by the version the turn began from; a conflict keeps the checkpoint, holding the whole text. */
@@ -426,8 +434,8 @@ async function runTurnBody(
       const stored = director ? await commitDirector(deps, input.chatId, director, message, replaced) : true;
       if (stored !== true) emit({ type: "director", status: "failed", reason: stored });
       // After the reply, in the background: the Director updates the trackers that are on and due from the exchange that just happened. Never on Stop or Continue.
-      if (as === "done" && stored === true && director?.status === "planned" && input.kind !== "continue") {
-        startTrackerRound({ chats, connect: deps.connect, now: deps.now }, {
+      if (!deps.runtime.closed && as === "done" && stored === true && director?.status === "planned" && input.kind !== "continue") {
+        startTrackerRound(deps.runtime, { chats, connect: deps.connect, now: deps.now }, {
           chatId: input.chatId, branchId: loadedTurn.branchId, messageId: message.id, swipeId: message.swipes[message.current]!.id, turn: director.turn, ...exchange, reply: message.swipes[message.current]?.content ?? result.content, ...(director.directive ? { directive: summaryOf(director.directive) } : {}),
         });
       }

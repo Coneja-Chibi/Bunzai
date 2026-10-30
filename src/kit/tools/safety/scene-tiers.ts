@@ -28,6 +28,7 @@ export const SCENE_ACTION_TIERS = {
   "director.plan": "write",
   "director.edit": "write",
   "director.trackers": "write",
+  "dramaturg.ask": "write",
   "tracker.generate": "draft",
   "tracker.refresh": "draft",
   "tracker.forecast": "draft",

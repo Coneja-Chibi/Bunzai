@@ -14,7 +14,7 @@ import { sceneProps } from "./registry";
 
 const BASE = "src/ui/apps/scenes";
 /** Calls that spend the person's model, and calls that leave the machine. */
-const MODEL = /generate-kit|proposeTrackerItem|proposeTrackerRefresh|AddByModel|RefreshByModel/;
+const MODEL = /generate-kit|proposeTrackerItem|proposeTrackerRefresh|AddByModel|RefreshByModel|askSceneDramaturg/;
 const NETWORK = /uploadAssetFromUrl|addLinkToPack|spotifyGet|spotifyPost|spotifyFeedFor/;
 
 const filesIn = (dir: string): string[] =>

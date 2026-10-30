@@ -3,7 +3,8 @@ import { expect, test } from "bun:test";
 import { readdirSync, unlinkSync } from "node:fs";
 import { open } from "node:fs/promises";
 import { join } from "node:path";
-import { StudioWriteError, writeAtomicReplace } from "./atomic-file";
+import { writeAtomicReplace } from "./atomic-file";
+import { StudioWriteError } from "./errors";
 import { withTempDir } from "./test-temp-dir";
 
 test("closes its temporary handle before unlinking it and preserves the write cause", async () => {

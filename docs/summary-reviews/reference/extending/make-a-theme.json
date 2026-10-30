@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/extending/make-a-theme",
   "sourcePath": "docs/reference/extending/make-a-theme.md",
-  "sourceHash": "sha256:66d28b51d1f5c7fa03d82cc0ef65daa5bb7e950de04239f9bf35aebb59511fc4",
-  "semanticSummaryHash": "sha256:e15c7c8829df2bc9867687688e20e682bfc4f6d661efb7f5e4ef7f1e88b9e242",
+  "sourceHash": "sha256:5847b54ad143cff9f4cd8fdeb00369eef5e2c25a55da2f58d31b5953d84bdfdd",
+  "semanticSummaryHash": "sha256:23baef150400bf68b7b67a82408a451238cd488040e2a3b7e5a7b0fda11c4f55",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:47:45.965Z"
+  "reviewer": "integration_review",
+  "notes": "Verified Dramaturg model control uses the existing protected-control owner and is included in the protected owners table and documentation. No new theme authority; protected and storage-pin focused tests pass.",
+  "reviewedAt": "2026-10-30T03:37:04.472Z"
 }

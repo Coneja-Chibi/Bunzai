@@ -75,6 +75,10 @@ async function shapeFiles(): Promise<string[]> {
     "src/core/summary/row-shape.ts",
     // The shape of a stored delta and of the state rebuilt from them.
     "src/core/scene-state/types.ts",
+    "src/stage/store/sqlite/migration-46-dramaturg.ts",
+    "src/stage/contracts/dramaturg-types.ts",
+    "src/stage/store/dramaturg-rules.ts",
+    "src/stage/store/settings-patch.ts",
     "src/stage/store/sqlite/document-backend.ts",
     "src/stage/store/sqlite/piece-parts-sql.ts",
     "src/stage/store/sqlite/blob-sql.ts",
@@ -454,7 +458,13 @@ async function shapeFiles(): Promise<string[]> {
 // 2026-10-28, one ceiling on opening a piece: the cold-read budget is SANITY_PIECE_BYTES (entities/_shared/sanity.ts) on every read path, and the separate caps on parts (1,000 in process, 20,000 in the worker), references and JSON values are gone (each is charged against the budget). DocumentBackend.livePartsBounded takes only the charge. No stored key or shape changes. The pin was recomputed.
 // 2026-10-29, the Skill kind: a new kind folder, so a new decoder (src/entities/skill/runtime-schema.ts, the 16th runtime-schema) and a new member of the generated kind-schemas union; the lorebook decoder only exports its trigger and selective-logic schemas for the skill decoder to share (no lorebook shape changes); a new scene-state slot `skills` (a fields slot, writers turn and person) stored like every slot. ADDITIVE: an older build has no skill folder and ignores the slot. No migration. The pin was recomputed.
 // 2026-10-29: src/core/trackers/state.ts (pinned) reads a module's stored object through the shared recOr instead of its own copy. Same value read, no stored key or shape changes. COMPATIBLE. The pin was recomputed.
-const PINNED_SHAPE_HASH = "fa3337c6fe77a017063c66b10cc23ccccf79a8fe9a03fe76b185a5e53724cdea";
+// 2026-10-29, co-developer Dramaturg intake: migration 46 adds the sealed, revision-guarded per-scene conversation.
+// Existing migrations 43 through 45 are unchanged. The new types and strict record decoder are pinned;
+// damaged records fail closed without replacing their cell. Older builds refuse the unknown migration.
+// 2026-10-30: the checked nullable settings merge has one shared owner, settings-patch.ts (now pinned).
+// COMPATIBLE extraction: Director/Summary retain references and undefined-empty behavior;
+// Dramaturg still clones supplied values. Memory/SQLite contract and damaged-record tests pass.
+const PINNED_SHAPE_HASH = "8a3daa5ef9515482dccd492537ae5ed9f97b61d70a92225d1ae57b2c2373c93f";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");

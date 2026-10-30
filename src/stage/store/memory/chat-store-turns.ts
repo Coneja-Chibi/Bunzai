@@ -5,7 +5,7 @@
  * the memory store.
  */
 import type { ChatStore, Message, TurnCheckpoint, WriteGuard } from "../../contracts/chat-store";
-import { StudioConflictError } from "../../../studio/atomic-file";
+import { StudioConflictError } from "../../../studio/errors";
 import { checkGuard, checkProgress, checkTurnResult, checkTurnTarget } from "../chat-rules";
 import { continuedGeneration } from "../continue-rules";
 import { checkRerun, traceWithRerun } from "../final-cut-rules";

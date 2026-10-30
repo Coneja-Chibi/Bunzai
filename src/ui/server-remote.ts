@@ -94,6 +94,7 @@ export function isHostOnlyRoute(p: string, method: string): boolean {
      * host-only: it answers questions about the host's filesystem.
      */
     p.startsWith("/api/macro-lab/") ||
+    p.startsWith("/api/export-folder") || // writes into the host's own Documents; a remote device downloads instead
     /**
      * MCP CONNECTIONS, and this one is not a judgement call: a server entry is a command this
      * machine executes at the next session build. Accepting one from a tailed-in or LAN device

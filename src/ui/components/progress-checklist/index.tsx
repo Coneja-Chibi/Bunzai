@@ -1,6 +1,5 @@
 /**
- * ProgressChecklist - the narrow-pane form of the editor's done-chips: one bar plus a count
- * chip; tapping opens a BottomSheet checklist (design/vs-mobile-editors.html frame 2).
+ * Completion summary and shared checklist, with a compact control for editor toolbars.
  */
 import { Button } from "../button";
 import { useState, type JSX } from "react";
@@ -12,21 +11,22 @@ export interface ProgressChecklistProps {
   items: ReadonlyArray<readonly [string, boolean]>;
   /** Extra stat appended to the tap chip, e.g. "Lens 18/49". */
   extraStat?: string;
+  compact?: boolean;
 }
 
 /** Bar + count chip; the checklist itself lives in a bottom sheet. */
-export function ProgressChecklist({ items, extraStat }: ProgressChecklistProps): JSX.Element {
+export function ProgressChecklist({ items, extraStat, compact = false }: ProgressChecklistProps): JSX.Element {
   const [open, setOpen] = useState(false);
   const done = items.filter(([, ok]) => ok).length;
   const pct = items.length === 0 ? 0 : Math.round((done / items.length) * 100);
 
   return (
-    <div className={styles.prog}>
-      <span className={styles.bar} role="progressbar" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={done}>
+    <div className={compact ? styles.compact : styles.prog}>
+      {!compact && <span className={styles.bar} role="progressbar" aria-label="Completion" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={done}>
         <i style={{ width: `${pct}%` }} />
-      </span>
-      <Button size="sm" onClick={() => setOpen(true)}>
-        {`${done}/${items.length} done${extraStat !== undefined ? ` · ${extraStat}` : ""}`}
+      </span>}
+      <Button variant={compact ? "quiet" : "secondary"} size="sm" onClick={() => setOpen(true)}>
+        {`${done} of ${items.length} complete${extraStat !== undefined ? ` · ${extraStat}` : ""}`}
       </Button>
       {open && (
         <BottomSheet title={`What's done · ${done}/${items.length}`} onDismiss={() => setOpen(false)}>

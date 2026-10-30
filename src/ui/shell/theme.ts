@@ -9,6 +9,7 @@ import { isThemePackageId } from "../../extensions/theme-id";
 import { surfaceAttribute, SURFACES, type SurfaceId } from "../../extensions/surface-registry";
 import { installControlsStyle } from "../_shared/controls-style";
 import { DEFAULT_STUDIO_THEME, isStudioTheme, type StudioTheme } from "../../studio/settings-shape";
+import { relativeLuminance } from "../_shared/color-math";
 import { paintMod } from "./theme-mod";
 import { FLOOR_PROPS, floorsFromStyle, houseAccentProperties, THEME_PROPERTY_NAMES, themeProperties } from "./theme-tokens";
 
@@ -74,6 +75,8 @@ export function paintTheme(appearance: EffectiveThemeAppearance, houseAccent?: s
   if (root.dataset.theme !== themeId) root.dataset.theme = themeId;
   const chrome = checked.appearance?.shape.chrome ?? "bunzai";
   if (root.dataset.chrome !== chrome) root.dataset.chrome = chrome;
+  const scheme = hostScheme(checked);
+  if (root.dataset.hostScheme !== scheme) root.dataset.hostScheme = scheme;
   const props = checked.appearance ? themeProperties(checked.appearance, houseAccent) : {};
   const view = root.ownerDocument?.defaultView;
   if (!checked.appearance && houseAccent && view) {
@@ -95,6 +98,16 @@ export function paintTheme(appearance: EffectiveThemeAppearance, houseAccent?: s
     if (variant) root.setAttribute(attribute, variant); else root.removeAttribute(attribute);
   }
   paintMod(checked, assetUrls);
+}
+
+/**
+ * Which of the host's two palettes the protected surfaces wear (tokens.css): light when the theme's base surface is
+ * light, so a permission panel is not a dark island in a light theme. 0.179 is the luminance where black text and
+ * white text read equally well on a surface. Core paints the dark fallback palette, so it keeps the dark one.
+ */
+function hostScheme(checked: EffectiveThemeAppearance): "light" | "dark" {
+  const base = checked.appearance?.palette.surface.base;
+  return base && relativeLuminance(base) > 0.179 ? "light" : "dark";
 }
 
 /** The requested setting remains user intent; effective package authorization is resolved separately. */

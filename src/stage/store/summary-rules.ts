@@ -3,6 +3,7 @@
  */
 import type { ChatSummary, SummarySettings, SummarySettingsPatch, TakeSummaryInput } from "../contracts/chat-summary-types";
 import { isPlainObject } from "../../core/guards";
+import { applySettingsPatch } from "./settings-patch";
 import { checkConnection, fail } from "./chat-rules";
 import { checkWhole } from "./scalar-rules";
 
@@ -54,8 +55,7 @@ export function summaryDefaultsOf(raw: unknown): SummarySettingsPatch | null {
 
 /** The settings after a checked patch; undefined when nothing is left to keep. */
 export function mergeSummarySettings(old: SummarySettings | undefined, patch: SummarySettingsPatch): SummarySettings | undefined {
-  const next: Record<string, unknown> = { ...old };
-  for (const [key, v] of Object.entries(patch)) if (v === null) delete next[key]; else if (v !== undefined) next[key] = v;
+  const next = applySettingsPatch(old, patch);
   return Object.keys(next).length > 0 ? (next as SummarySettings) : undefined;
 }
 

@@ -36,15 +36,7 @@
 @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 800; font-display: swap; src: url("fonts/jetbrains-mono-latin-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 
 :root {
-  /* Immutable host-only palette for password, recovery, package approval, and write confirmation. */
-  --host-ink:#f3f1ee; --host-canvas:#111113; --host-panel:#1b1b1e; --host-row:#19191b;
-  --host-edge:#4b4842; --host-seam:#343230; --host-text-soft:#d4d1cc; --host-text-dim:#b8b4ad;
-  --host-gold:#bca56d; --host-rose:#ff9ebb; --host-rose-deep:#854256;
-  --host-action:#075b8e; --host-selection:#6942a7; --host-success:#17613c; --host-warning:#765000; --host-danger:#a51c36;
-  --host-boundary:#77736c; --host-focus:#dfc982; --host-disabled:#29262d; --host-disabled-fg:#d0cbd3;
-  --host-danger-bg:#3a1d2a; --host-danger-edge:#7a3a52; --host-danger-text:#ff9fb1; --host-ok:#76e3a8;
-  --host-warn:#ffe08a; --host-warn-ink:#3a2f12; --host-link:#bcd7ff;
-  /* Velvet premiere landing: theme-stable Vaudeville stage roles. */
+  /* Owner-approved velvet premiere landing, 2026-10-02: theme-stable Vaudeville stage roles. */
   --premiere-canvas: #0a0a0b;
   --premiere-panel: #141216;
   --premiere-hard: #000000;
@@ -140,6 +132,34 @@
   --sig-6: #d3a9e6; --sig-6-deep: #6c4e78;  /* orchid */
   --sig-7: #b2d8c0; --sig-7-deep: #496253;  /* sage */
   --sig-8: #a9bfd6; --sig-8-deep: #4a5968;  /* steel */
+}
+
+/* Immutable host-only palette for password, recovery, package approval, and write confirmation. Declared on the
+   root, and again on a protected surface with a dark ground of its own (the Kit Gate on Kit's palette), which
+   keeps it under a light theme. */
+:root, .host-dark-ground {
+  --host-ink:#f3f1ee; --host-canvas:#111113; --host-panel:#1b1b1e; --host-row:#19191b;
+  --host-edge:#4b4842; --host-seam:#343230; --host-text-soft:#d4d1cc; --host-text-dim:#b8b4ad;
+  --host-gold:#bca56d; --host-rose:#ff9ebb; --host-rose-deep:#854256;
+  --host-action:#075b8e; --host-selection:#6942a7; --host-success:#17613c; --host-warning:#765000; --host-danger:#a51c36;
+  --host-boundary:#77736c; --host-focus:#dfc982; --host-disabled:#29262d; --host-disabled-fg:#d0cbd3;
+  --host-danger-bg:#3a1d2a; --host-danger-edge:#7a3a52; --host-danger-text:#ff9fb1; --host-ok:#76e3a8;
+  --host-warn:#ffe08a; --host-warn-ink:#3a2f12; --host-link:#bcd7ff;
+  --host-scheme: dark;
+}
+
+/* The host's light palette for the same protected surfaces, under a light theme. The painter (shell/theme.ts) sets
+   data-host-scheme from how light the theme's base surface is; a theme cannot set it, nor name any --host-* value
+   (extensions/theme-css.ts), so it only ever picks between two host palettes, each held to the theme contrast floors. */
+:root[data-host-scheme="light"] {
+  --host-ink:#1d1a16; --host-canvas:#f6f1e7; --host-panel:#fffdf8; --host-row:#efe8da;
+  --host-edge:#b9ae98; --host-seam:#ddd3c0; --host-text-soft:#3d372e; --host-text-dim:#5c5446;
+  --host-gold:#7a5c12; --host-rose:#9e2449; --host-rose-deep:#854256;
+  --host-action:#075b8e; --host-selection:#6942a7; --host-success:#17613c; --host-warning:#765000; --host-danger:#a51c36;
+  --host-boundary:#7d7362; --host-focus:#8a5a00; --host-disabled:#e6dfd2; --host-disabled-fg:#5c5446;
+  --host-danger-bg:#f9e3e6; --host-danger-edge:#c9798a; --host-danger-text:#9b1530; --host-ok:#17613c;
+  --host-warn:#6b4a00; --host-warn-ink:#fbf0d0; --host-link:#0b5a8c;
+  --host-scheme: light;
 }
 
 /* Aliases and derived plates: ONE declaration list for the page and the protected layer, so each resolves against its own --bk-* values. */
@@ -320,6 +340,8 @@
     --bk-persona-accent:initial !important; --bk-persona-accent-text:initial !important; --bk-persona-accent-deep:initial !important;
     --bk-scene-accent:initial !important; --bk-scene-accent-text:initial !important; --bk-scene-accent-deep:initial !important;
     visibility: visible !important; pointer-events: auto !important;
+    /* native controls (a select, a file picker) draw in the host's scheme, never in one a theme or mod set on the page */
+    color-scheme: var(--host-scheme) !important;
     /* Mod CSS can scale html (a font size, a zoom) and every rem and px under a protected surface follows. theme-mod.ts measures that
        and writes the inverse here, so protected text keeps the size an unmodded page gets in the user's browser. */
     zoom: var(--host-type-zoom, 1) !important;

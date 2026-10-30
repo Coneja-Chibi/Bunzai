@@ -4,6 +4,7 @@
  * in the scene, is a 409, data that is not a state of the module is a 400, a scene or take that is gone is a 404.
  */
 import { isRecord, str } from "../core/guards";
+import { sceneRuntimeFor } from "./server-scene-runtime";
 import { isTrackerModule } from "../core/trackers";
 import type { ChatStore, JsonValue } from "../stage/contracts/chat-store";
 import { StudioNotFoundError, StudioValidationError } from "../studio/errors";
@@ -46,5 +47,5 @@ export async function handleTrackerStateRoute(req: Request, url: URL, chats: Cha
     if (!found) throw new StudioNotFoundError("that scene is gone");
     return json(found);
   }
-  return req.method === "POST" && b ? json(await writeTrackerStates(chats, parseTrackerWrite(b), now)) : null;
+  return req.method === "POST" && b ? json(await writeTrackerStates(sceneRuntimeFor(chats), chats, parseTrackerWrite(b), now)) : null;
 }

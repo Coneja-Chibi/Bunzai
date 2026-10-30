@@ -1,6 +1,6 @@
 {
-  "generated": "2026-10-29",
-  "count": 128,
+  "generated": "2026-10-30",
+  "count": 131,
   "pages": [
     {
       "docId": "01-VISION",
@@ -123,12 +123,20 @@
       "semanticSummaryHash": "sha256:42b51ce426f2b4d7c512c1bf644fda811d6cf294659ab65ff0ddc451339570b2"
     },
     {
+      "docId": "decisions/ADR-014-reusable-roleplay-core",
+      "status": "APPROVED",
+      "verdict": "APPROVE",
+      "reviewer": "integration_review",
+      "sourceHash": "sha256:e65d256732152c525f0cb9556adc6afc9d51d45b0356c48bda6494e7aaf07fe7",
+      "semanticSummaryHash": "sha256:790f91956c8f3f0046671a889f7967b18a168a93653236c8ded8f0f53933bdf0"
+    },
+    {
       "docId": "FORMAT-SUPPORT",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:207075ce161d92d9c2168c7d8219594865b42f514c66c7f8f56f5176d3488c67",
-      "semanticSummaryHash": "sha256:02e53b7ca7d9aa2a32c3d8d528fbe9a2f497801d44c3b1615160db8c9dbaaee9"
+      "reviewer": "integration_review",
+      "sourceHash": "sha256:27dc476ed88372f57e2a16b1f9f08f44f9b4d30c02cf41bacbef21dfbe86a092",
+      "semanticSummaryHash": "sha256:b01b6cd6275c84449fd16e28451465afc36b91ee7975d650af6eed6894995823"
     },
     {
       "docId": "guide/converting",
@@ -334,9 +342,9 @@
       "docId": "reference/architecture",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:9ffb72e840316f219cdc59848a4457246db11ed49a7f9c9356b11fc615c1a463",
-      "semanticSummaryHash": "sha256:34e7f890e452035100b55b7c887818710a3cce051e9040caf4be984609efdfbe"
+      "reviewer": "integration_review",
+      "sourceHash": "sha256:71efe7756fdaeae512f8611c8e50ecce6661f1bbdd2026696355bf851c011103",
+      "semanticSummaryHash": "sha256:c8b1ff2d39e09ca5e2118871f23aea88d51c5c9ce4562d6080658af7e844d175"
     },
     {
       "docId": "reference/audits",
@@ -358,9 +366,9 @@
       "docId": "reference/components",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:48382c6366efc996bad4bc6359fc2c5d67bc0e63eda72b5e3dc16a5d1d17bfbf",
-      "semanticSummaryHash": "sha256:b99be5a292a3107ac082529c1603ad0bea27e0af7bd831fa04287a15f9177522"
+      "reviewer": "integration_review",
+      "sourceHash": "sha256:56dd655f3589cc729ea899823d73df12f415d6595d3934a54adf22f81f2d3e76",
+      "semanticSummaryHash": "sha256:77e925df0f7afeb3d361e2a9956117b17e6785cf8a0004ba4acb9c5ae96ae188"
     },
     {
       "docId": "reference/concepts/bundles",
@@ -582,9 +590,9 @@
       "docId": "reference/extending/make-a-theme",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:66d28b51d1f5c7fa03d82cc0ef65daa5bb7e950de04239f9bf35aebb59511fc4",
-      "semanticSummaryHash": "sha256:e15c7c8829df2bc9867687688e20e682bfc4f6d661efb7f5e4ef7f1e88b9e242"
+      "reviewer": "integration_review",
+      "sourceHash": "sha256:5847b54ad143cff9f4cd8fdeb00369eef5e2c25a55da2f58d31b5953d84bdfdd",
+      "semanticSummaryHash": "sha256:23baef150400bf68b7b67a82408a451238cd488040e2a3b7e5a7b0fda11c4f55"
     },
     {
       "docId": "reference/extending/new-kind",
@@ -609,6 +617,14 @@
       "reviewer": "sonnet-docs-reviewer",
       "sourceHash": "sha256:d2ed670ab15d27241a4a8c64c818a0129a9793c7990a02686f2ab14975b316d2",
       "semanticSummaryHash": "sha256:a29acaeff6679fed0ddf8d38897008b017c5dd968c773cc0b75e2d5cfa5c06a0"
+    },
+    {
+      "docId": "reference/formats/janitor",
+      "status": "APPROVED",
+      "verdict": "APPROVE",
+      "reviewer": "integration_review",
+      "sourceHash": "sha256:6566951f96147c789f9ade7911d8bc253a683ace57e5388ed7dc36c40a6d1d07",
+      "semanticSummaryHash": "sha256:e8a558f3e6ef7a61a8e700edecd4ad09c7c500492ce9301d5d9284d13c1601d9"
     },
     {
       "docId": "reference/formats/lumiverse",
@@ -646,9 +662,9 @@
       "docId": "reference/formats/README",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:b8bbd9c03c28c7e37f59e5d6d4ad5028f2da166081554b12e6ca7c98eccad9ea",
-      "semanticSummaryHash": "sha256:a027f0c6786b6c06c7bd569577127847eba9dfd3310dc3381776e21d81fb1470"
+      "reviewer": "integration_review",
+      "sourceHash": "sha256:d8fa36f7095069ff493b5fa067d9b8ee95ef863280f7e104e2fdfcb8268e138d",
+      "semanticSummaryHash": "sha256:790a592b2660f30c082d32229fdf1774f98262d72295c7e7f10df2847da53210"
     },
     {
       "docId": "reference/formats/risu",
@@ -673,6 +689,14 @@
       "reviewer": "sonnet-docs-reviewer",
       "sourceHash": "sha256:d4196e37f3912d9fb7146723b7a7dc2904850cbe03e5622d6c32895129c88111",
       "semanticSummaryHash": "sha256:3839762ca47bb210e78254b5269698742a1198bb93969a0277dc0954a074e8b2"
+    },
+    {
+      "docId": "reference/formats/saucepan",
+      "status": "APPROVED",
+      "verdict": "APPROVE",
+      "reviewer": "integration_review",
+      "sourceHash": "sha256:22e33c33d4ee623c84cea997d0d90b2c70e65840b0d542fd8e61d94b6b1d9a48",
+      "semanticSummaryHash": "sha256:67cfa15c346ed9e45e520784b11f58dfde05465f6a72fe5ad9dd17e6bd9be487"
     },
     {
       "docId": "reference/formats/sillytavern",
@@ -710,9 +734,9 @@
       "docId": "reference/kit/tools",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:41b009903182b13bb84a5ea7ed73fa29cf669070cc6c0eff940e5d2770e8ec93",
-      "semanticSummaryHash": "sha256:748e1811d96a3d6a5792635bae56ce28a8189d6eaa30b389dbdae8f4fcf2a227"
+      "reviewer": "integration_review",
+      "sourceHash": "sha256:c3de89e54478c5da15771687bc5c4dfb531d70ce6f41363bea0d992497cd0a19",
+      "semanticSummaryHash": "sha256:e6c6f6d59e9fbb0a0175253de407639bce06d5f2c86103d4e454d7fbfda121cd"
     },
     {
       "docId": "reference/macro-engine",
@@ -966,9 +990,9 @@
       "docId": "reference/security/remote-access",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:46c3091e60a1f10de2f2208758c262b68bafdb1eccdddc1df50f6e7a9828fab3",
-      "semanticSummaryHash": "sha256:31f4bdec118838f48da4343ad83b7573151e1ddff35a2129eb9d586011768cb5"
+      "reviewer": "integration_review",
+      "sourceHash": "sha256:0920bf075535a09af739f7758fe368a843575bae8e4ad67907d5eeeb41b326dc",
+      "semanticSummaryHash": "sha256:f8ef41ee5eb68bb3e107dbb10d4b4353de68d79d99a72ab83d9ece0f2643b5a8"
     },
     {
       "docId": "reference/security/safe-rendering",
@@ -990,9 +1014,9 @@
       "docId": "reference/security/secrets-and-keys",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:b8756aba3800d1c567aa6377e651f67e67283f5ddf1e3caf52f4596e42733b62",
-      "semanticSummaryHash": "sha256:3a28c6d4ea23c602d94796e60a7d359805295039204d0d8e0aae7f899fd556e9"
+      "reviewer": "integration_review",
+      "sourceHash": "sha256:f2afef9437a87d3ebd5b9644647ece47b263f9e7c36a44498987ce3d502de46a",
+      "semanticSummaryHash": "sha256:259c21dae48038cfe42df28c3a36127693fbdc448ee16e9d882cac7916c01158"
     },
     {
       "docId": "reference/security/untrusted-content",
@@ -1014,9 +1038,9 @@
       "docId": "reference/ui",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:c67c960de2283741d97c7aa19698827dcbb4ac164fd594632977e0c7d83ceedc",
-      "semanticSummaryHash": "sha256:ca431c59c02accaf7b0935435b80547255007c927aadbcf323b57e359cb6fb10"
+      "reviewer": "integration_review",
+      "sourceHash": "sha256:0d527b31aea8edbca112190dace1bdb870f38cf405beb74316e2471e2c477baf",
+      "semanticSummaryHash": "sha256:a2021e8255681295ec2e2d56980ca9a13759be54a6358339e1cea6f9e0a4873c"
     },
     {
       "docId": "reference/updates",

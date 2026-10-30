@@ -3,6 +3,7 @@
  * tone each wing carries, the task line on its rail label, the long help under a long hover, and the width it opens at (`getLeftPanelWidth` / `getRightPanelWidth`, rail padding inside the width).
  */
 import type { IconName } from "../../_shared/ic";
+import type { SceneProp } from "./props/prop-contract";
 
 export interface Wing {
   id: string;
@@ -33,4 +34,11 @@ export const WINGS: readonly Wing[] = [
 /** The tab a wing opens on: the one a Messenger program names (messenger/programs.ts), else the wing's own first. */
 export const tabOr = <T extends string>(tabs: readonly T[], tab: string | undefined, first: T): T => tabs.find((t) => t === tab) ?? first;
 
-export const wingOf = (id: string | null): Wing | undefined => WINGS.find((w) => w.id === id);
+export const propWingId = (id: string): string => `prop:${id}`;
+
+/** Derived from the registered Props, with no separately maintained wing catalog. */
+export function propWings(list: readonly SceneProp[], on: readonly string[] | null): Wing[] {
+  return list.flatMap((p) => p.rail && p.panel && on?.includes(p.id) ? [{ id: propWingId(p.id), side: "r" as const, label: p.name, blurb: p.rail.blurb, detail: p.rail.blurb, icon: p.icon, tone: p.tone, width: p.panel.width ?? 500 }] : []);
+}
+
+export const wingOf = (id: string | null, extra?: readonly Wing[]): Wing | undefined => WINGS.find((w) => w.id === id) ?? extra?.find((w) => w.id === id);

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "FORMAT-SUPPORT",
   "sourcePath": "docs/FORMAT-SUPPORT.md",
-  "sourceHash": "sha256:207075ce161d92d9c2168c7d8219594865b42f514c66c7f8f56f5176d3488c67",
-  "summary": "Auto-generated format support matrix from the live adapter registry, grouped by canonical content kind, in the kind hub's order and names, with adapter id, output extensions, and human label. It documents CLI listing, inspection, conversion, and validation, with SillyTavern CCv3 as the default portable character shape for thin hosts. The current registry has nine character, seven lorebook, four persona, one pack, four preset, one Script Sheet, five regex-set, one quick-reply and one prompt-format adapter. The pack adapter, image-pack, writes a zip of pictures and sounds. Tools (kind tool), dice (kind dice), formulas (kind formula), trackers (kind tracker), skills (kind skill) and drawings (kind htmldoc) have no import or export format yet, and their sections say so. Notes explain content-sniff detection, fixture-proven same-format round trips, honest cross-format loss reporting, and sample locations. Because the page is generated, counts and rows change only with the registry.",
+  "sourceHash": "sha256:27dc476ed88372f57e2a16b1f9f08f44f9b4d30c02cf41bacbef21dfbe86a092",
+  "summary": "Auto-generated format support matrix from the live adapter registry, grouped by canonical content kind, in the kind hub's order and names, with adapter id, output extensions, and human label. It documents CLI listing, inspection, conversion, and validation, with SillyTavern CCv3 as the default portable character shape for thin hosts. The current registry has eleven character, nine lorebook, four persona, one pack, four preset, one Script Sheet, five regex-set, one quick-reply and one prompt-format adapter. The pack adapter, image-pack, writes a zip of pictures and sounds. Tools (kind tool), dice (kind dice), formulas (kind formula), trackers (kind tracker), skills (kind skill) and drawings (kind htmldoc) have no import or export format yet, and their sections say so. Notes explain content-sniff detection, fixture-proven same-format round trips, honest cross-format loss reporting, and sample locations. Because the page is generated, counts and rows change only with the registry.",
   "topics": [
     "format support matrix",
     "live adapter registry",
@@ -36,35 +36,35 @@
       "shortSource": true
     },
     {
-      "slug": "characters-9",
-      "title": "Characters (9)",
+      "slug": "characters-11",
+      "title": "Characters (11)",
       "level": 2,
-      "sourceHash": "sha256:9f0b9835e19d46947c6aac0f6b69817213300b1a2ba0804c0ccff63c9512aa4b",
-      "summary": "Nine character adapters. agnai writes .json for Agnai Agnaistic. backyard writes .json for Backyard.ai or Faraday legacy json. byaf writes .byaf Backyard archives. lumiverse writes .json and .charx for ST plus modules. pygmalion writes .json and .png flat character. risu writes .charx zip with card.json and assets. rolecall writes .json for RoleCall v3 png or json cards. sillytavern writes .json for SillyTavern CCv2 and v3 png or json. vaud-json writes .json as Bunzai native. All are kind character.",
+      "sourceHash": "sha256:9cdb66374f6df12121b7afce338998b7fc9760103517f5d7a30425aa2f9eb171",
+      "summary": "Eleven character adapters share the canonical character kind. Agnai, Backyard, RoleCall and Bunzai native write JSON. BYAF writes Backyard archives; Risu writes charx. Lumiverse writes JSON and charx. Pygmalion and SillyTavern write JSON or PNG. JanitorAI and Saucepan are export-only PNG targets using recorded importer mappings. Detection remains owned by each adapter, so export-only targets do not claim imported files.",
       "topics": [
         "agnai backyard byaf",
         "lumiverse pygmalion risu",
         "rolecall sillytavern",
         "vaud-json native",
-        "character adapters nine",
+        "character adapters eleven",
         "charx png json"
       ],
       "children": [],
       "shortSource": true
     },
     {
-      "slug": "lorebooks-7",
-      "title": "Lorebooks (7)",
+      "slug": "lorebooks-9",
+      "title": "Lorebooks (9)",
       "level": 2,
-      "sourceHash": "sha256:a8a90b8d924add3e22693a4bda009a775af23f9ca97f2f6349a2584d069f5638",
-      "summary": "Seven lorebook adapters. agnai-lorebook writes .json Agnai memory books. marinara-lorebook writes .json native .marinara.json export. novelai-lorebook writes .lorebook for NovelAI native export or json. risu-lorebook writes .json RisuAI native export. rolecall-lorebook writes .json RoleCall v1 export. rolecall-compendium writes .json RoleCall compendium export. sillytavern-lorebook writes .json SillyTavern world info worldbook. All are kind lorebook.",
+      "sourceHash": "sha256:57faaa94dbdb84060341b5e2aa8addd6d23bdfad2757da66d1a85af41f57dca9",
+      "summary": "Nine lorebook adapters. JanitorAI and Saucepan add export-only ST world info JSON targets. agnai-lorebook writes .json Agnai memory books. marinara-lorebook writes .json native .marinara.json export. novelai-lorebook writes .lorebook for NovelAI native export or json. risu-lorebook writes .json RisuAI native export. rolecall-lorebook writes .json RoleCall v1 export. rolecall-compendium writes .json RoleCall compendium export. sillytavern-lorebook writes .json SillyTavern world info worldbook. All are kind lorebook.",
       "topics": [
         "agnai memory book",
         "marinara lorebook",
         "novelai .lorebook",
         "risu rolecall lorebook",
         "sillytavern world info",
-        "seven lorebook adapters"
+        "nine lorebook adapters"
       ],
       "children": [],
       "shortSource": true

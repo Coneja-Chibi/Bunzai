@@ -163,6 +163,22 @@ describe("window failure", () => {
     ).not.toThrow();
   });
 
+  test("names the system web view the platform needs, and on Linux how to stop the windowless studio", () => {
+    const said: string[] = [];
+    const error = console.error;
+    console.error = (...parts: unknown[]) => { said.push(parts.join(" ")); };
+    try {
+      withScratchHome(() => reportWindowFailure("http://127.0.0.1:8321", "load failed", () => {}, "linux"));
+      withScratchHome(() => reportWindowFailure("http://127.0.0.1:8321", "load failed", () => {}, "win32"));
+    } finally {
+      console.error = error;
+    }
+    const [linux, windows] = [said.find((l) => l.includes("WebKitGTK")) ?? "", said.find((l) => l.includes("WebView2")) ?? ""];
+    expect(linux).toContain("Settings > About");
+    expect(linux).not.toContain("WebView2");
+    expect(windows).not.toBe("");
+  });
+
   test("still records the failure, so the WebView2 cause is recoverable afterwards", () => {
     const path = withScratchHome(() => {
       reportWindowFailure("http://127.0.0.1:8321", new Error("ERR_DLOPEN_FAILED"), () => {});

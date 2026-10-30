@@ -43,21 +43,23 @@ export function makeChat(
   ambient?: () => string,
 ): ChatFn {
   return async (messages, tools, onDelta) => {
-    // A spoke that is not an HTTP model supplies its own chat. Asked first, because building a model
-    // for it would mean inventing a request shape it never makes.
-    const own = await spokeChat(config, abortSignal);
+    // A spoke with its own chat (a local CLI, or Ollama's native API) is asked first, because building an
+    // AI SDK model for it would mean inventing a request shape it never makes.
+    const system = ambient ? `${KIT_TOOL_PROTOCOL}
+
+${ambient()}` : KIT_TOOL_PROTOCOL;
+    const cap = AbortSignal.timeout(HANG_CAP_MS);
+    const capped = abortSignal ? AbortSignal.any([abortSignal, cap]) : cap;
+    const own = await spokeChat(config, abortSignal, system, capped);
     if (own) return own(messages, tools, onDelta);
     const model = await buildModel(config);
-    const cap = AbortSignal.timeout(HANG_CAP_MS);
     const result = streamText({
       model,
-      system: ambient ? `${KIT_TOOL_PROTOCOL}
-
-${ambient()}` : KIT_TOOL_PROTOCOL,
+      system,
       messages: messages.map(toAiMessage),
       tools: toAiTools(tools),
       toolChoice: "auto",
-      abortSignal: abortSignal ? AbortSignal.any([abortSignal, cap]) : cap,
+      abortSignal: capped,
     });
     for await (const part of result.fullStream) {
       if (part.type === "text-delta") onDelta?.({ kind: "text", text: part.text });

@@ -1,7 +1,7 @@
 /** One whole-entity read with writeId retries and the optional SQLite cold-worker owner. */
 import type { ParsedCanonicalEntity } from "../../entities/runtime-schema";
-import { StudioConflictError } from "../../studio/atomic-file";
-import { StudioReadError } from "../../studio/errors";
+import { StudioConflictError, StudioReadError } from "../../studio/errors";
+
 import { assertStudioEntityKind } from "../../studio/path-policy";
 import type { DocumentBackend, DocumentRow, EntityKind, PartText } from "../contracts/content-store";
 import type { PartRecord } from "../../entities/piece-parts";

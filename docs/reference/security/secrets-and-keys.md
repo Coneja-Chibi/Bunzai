@@ -40,9 +40,9 @@ the provider name appears in that file as plaintext (`src/kit/providers/vault.ts
 `src/kit/providers/vault.test.ts`).
 
 The decrypted provider list is cached in process memory after the first successful open. Writes encrypt a
-temporary sibling, apply owner-only mode `0600` where the platform supports it, and rename it over the
-vault. That protects the prior file from a partial write, but the implementation does not currently fsync
-the temporary file or its directory (`src/kit/providers/vault.ts`).
+temporary sibling created exclusively with owner-only mode `0600` where the platform supports it, sync
+the file contents, then rename it over the vault. That protects the prior file from a partial write;
+the containing directory is not fsynced (`src/kit/providers/vault.ts`; `src/studio/atomic-file.ts`).
 
 ### Backends and present platform boundary
 
@@ -123,6 +123,15 @@ or local spoke derives one host from the configured base URL. Before the network
 provider, a missing required key, or a request whose URL host differs from that one allowed host
 (`src/kit/providers/egress.ts`; `src/kit/providers/adapters.ts`). Model discovery uses the
 same gate.
+
+Native Ollama discovery (`/api/tags`, `/api/show`) and generation (`/api/chat`) use that same configured-host
+guard. Metadata reads are capped at 2 MiB, model lists at 512 entries, discovery at four concurrent workers
+and an eight-second overall deadline. Cancellation propagates through model resolution. One resolution
+supplies both model capabilities and its request's context budget; there is no process-wide metadata cache.
+The connection's context choice, capped by a reported positive model limit, owns `options.num_ctx`.
+Scene custom body overrides cannot replace or remove it. Missing metadata disables optional tool/thinking
+capabilities; malformed native reply records and Kit tool proposals that were not offered are rejected.
+These checks do not establish a model's quality, memory requirements or packaged-platform behavior.
 
 A provider credential necessarily travels to that configured endpoint as request authentication. It is
 not added to the model conversation, tool observation, session transcript, canonical entity, or export.

@@ -8,13 +8,14 @@
  * in memory, so what is applied is exactly what the server ran and never what a page sends.
  */
 import { randomUUID } from "node:crypto";
+import { runOwnedTask } from "./scene-turn-runtime";
 import { readTrace, type PassTrace } from "../core/final-cut/trace";
 import { activePasses } from "../core/final-cut/pass";
 import type { Bank } from "../core/final-cut/banks";
 import { resolveReasoning } from "../core/reasoning-capture";
 import type { ChatStore, JsonObject, Message } from "../stage/contracts/chat-store";
-import { StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError } from "./errors";
+import { StudioConflictError, StudioNotFoundError } from "./errors";
+
 import { finalCutStage } from "./scene-turn-final-cut";
 import type { ReadPreset } from "./scene-turn-load";
 import { WHOLE_BRANCH } from "./scene-branch";
@@ -38,34 +39,36 @@ export interface Rerun {
 }
 
 export async function rerunFinalCut(
-  deps: Pick<TurnDeps, "connect" | "now" | "readRegex"> & { chats: ChatStore; readPreset: ReadPreset; finalCutBanks?(): Promise<Record<string, Bank>> },
+  deps: Pick<TurnDeps, "connect" | "now" | "readRegex" | "runtime"> & { chats: ChatStore; readPreset: ReadPreset; finalCutBanks?(): Promise<Record<string, Bank>> },
   input: { chatId: string; messageId: string },
   signal: AbortSignal,
 ): Promise<Rerun> {
-  const chat = await deps.chats.getChat(input.chatId);
-  if (!chat) throw new StudioNotFoundError("that scene does not exist");
-  if (!chat.connection) throw new StudioConflictError("this scene has no connection; pick one in the AI wing");
-  if (activePasses(chat.finalCut?.passes).length === 0) throw new StudioConflictError("Enable at least one Final Cut pass before rerunning.");
-  const { messages } = await deps.chats.readMessages(chat.activeBranchId, { limit: WHOLE_BRANCH });
-  const live = messages.filter((m) => !m.cut);
-  const at = live.findIndex((m) => m.id === input.messageId);
-  const message = live[at];
-  if (!message || message.role !== "assistant") throw new StudioNotFoundError("that reply is gone");
-  const swipe = message.swipes[message.current]!;
-  const history = live.slice(0, at).map((m) => ({ role: m.role, content: m.swipes[m.current]!.content }));
-  const preset = chat.preset ? await deps.readPreset(chat.preset.id, chat.preset.kind).catch(() => null) : null;
-  const out = await finalCutStage({
-    deps, chat: { ...chat, finalCut: { ...chat.finalCut, on: true } }, text: swipe.content, history, format: resolveReasoning(preset?.reasoning, chat.prompting), signal, emit: () => undefined,
-    ...(deps.finalCutBanks ? { userBanks: deps.finalCutBanks } : {}),
+  return runOwnedTask(deps.runtime, async () => {
+    const chat = await deps.chats.getChat(input.chatId);
+    if (!chat) throw new StudioNotFoundError("that scene does not exist");
+    if (!chat.connection) throw new StudioConflictError("this scene has no connection; pick one in the AI wing");
+    if (activePasses(chat.finalCut?.passes).length === 0) throw new StudioConflictError("Enable at least one Final Cut pass before rerunning.");
+    const { messages } = await deps.chats.readMessages(chat.activeBranchId, { limit: WHOLE_BRANCH });
+    const live = messages.filter((m) => !m.cut);
+    const at = live.findIndex((m) => m.id === input.messageId);
+    const message = live[at];
+    if (!message || message.role !== "assistant") throw new StudioNotFoundError("that reply is gone");
+    const swipe = message.swipes[message.current]!;
+    const history = live.slice(0, at).map((m) => ({ role: m.role, content: m.swipes[m.current]!.content }));
+    const preset = chat.preset ? await deps.readPreset(chat.preset.id, chat.preset.kind).catch(() => null) : null;
+    const out = await finalCutStage({
+      deps, chat: { ...chat, finalCut: { ...chat.finalCut, on: true } }, text: swipe.content, history, format: resolveReasoning(preset?.reasoning, chat.prompting), signal, emit: () => undefined,
+      ...(deps.finalCutBanks ? { userBanks: deps.finalCutBanks } : {}),
+    });
+    if (!out) throw new StudioConflictError("There is nothing to rerun on this reply.");
+    if ("stop" in out) throw new StudioConflictError(out.stop.type === "failed" ? out.stop.message : "Final Cut was stopped.");
+    const now = deps.now();
+    for (const [id, p] of PENDING) if (now - p.made > PENDING_TTL_MS) PENDING.delete(id);
+    while (PENDING.size >= PENDING_MAX) PENDING.delete(PENDING.keys().next().value!);
+    const rerunId = randomUUID();
+    PENDING.set(rerunId, { chatId: chat.id, messageId: message.id, swipeId: swipe.id, before: swipe.content, after: out.text, at: now, ms: readTrace(out.trace)?.ms ?? 0, passes: readTrace(out.trace)?.passes ?? [], made: now });
+    return { rerunId, messageId: message.id, swipeId: swipe.id, text: out.text, run: out.trace, summary: out.summary };
   });
-  if (!out) throw new StudioConflictError("There is nothing to rerun on this reply.");
-  if ("stop" in out) throw new StudioConflictError(out.stop.type === "failed" ? out.stop.message : "Final Cut was stopped.");
-  const now = deps.now();
-  for (const [id, p] of PENDING) if (now - p.made > PENDING_TTL_MS) PENDING.delete(id);
-  while (PENDING.size >= PENDING_MAX) PENDING.delete(PENDING.keys().next().value!);
-  const rerunId = randomUUID();
-  PENDING.set(rerunId, { chatId: chat.id, messageId: message.id, swipeId: swipe.id, before: swipe.content, after: out.text, at: now, ms: readTrace(out.trace)?.ms ?? 0, passes: readTrace(out.trace)?.passes ?? [], made: now });
-  return { rerunId, messageId: message.id, swipeId: swipe.id, text: out.text, run: out.trace, summary: out.summary };
 }
 
 /** Writes a previewed re-run over the reply as an edit and keeps it in the reply's run. `recorded` is false when the reply has no run to add it to. */

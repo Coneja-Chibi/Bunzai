@@ -5,6 +5,7 @@
  * trace, the stored request and the Prompt Inspector all show the calls.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { emptyLoreEntry, emptyLorebookBody } from "../core/lore";
 import type { ChatCompendiumPatch, ChatPromptingPatch } from "../stage/contracts/chat-store";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
@@ -45,7 +46,7 @@ async function scene(script: ProviderCompletion[], prompting: ChatPromptingPatch
     run: opts.run ?? (async (a) => ({ text: `The ${a.what} is dark.`, detail: { seen: 1 } })),
   };
   const events: TurnEvent[] = [];
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000, ...(opts.tools === false ? {} : { tools: true }) }),
     narratorTools: () => [peek as NarratorTool<never>],
@@ -61,7 +62,7 @@ async function scene(script: ProviderCompletion[], prompting: ChatPromptingPatch
     const m = await last();
     return (await chats.swipeTrace(m.id, m.swipes[m.current]!.id)) as Record<string, any> | null;
   };
-  return { chats, chat, events, sent, turn, last, trace, branch: chat.activeBranchId };
+  return { deps, chats, chat, events, sent, turn, last, trace, branch: chat.activeBranchId };
 }
 
 describe("a reply with Narrator Tool Access on", () => {
@@ -109,7 +110,7 @@ describe("a reply with Narrator Tool Access on", () => {
   test("Stop in the middle of a tool keeps the text that arrived with the calls so far, and a Stop before any text stores nothing", async () => {
     let stopFrom: () => void = () => undefined;
     const s = await scene([{ ...ask("c1"), content: "Looking." }, say("never")], { toolAccess: true }, { run: async () => (stopFrom(), { text: "x" }) });
-    stopFrom = () => stopTurn(s.chat.id, (s.events.find((e) => e.type === "start") as Extract<TurnEvent, { type: "start" }>).turnId);
+    stopFrom = () => stopTurn(s.deps.runtime, s.chat.id, (s.events.find((e) => e.type === "start") as Extract<TurnEvent, { type: "start" }>).turnId);
     await s.turn();
     expect(s.sent).toHaveLength(1);
     const end = s.events.at(-1)!;
@@ -119,7 +120,7 @@ describe("a reply with Narrator Tool Access on", () => {
     expect((await s.trace())!["tools"].calls).toHaveLength(1);
 
     const empty = await scene([ask("c1"), say("never")], { toolAccess: true }, { run: async () => (stopFrom2(), { text: "x" }) });
-    function stopFrom2() { stopTurn(empty.chat.id, (empty.events.find((e) => e.type === "start") as Extract<TurnEvent, { type: "start" }>).turnId); }
+    function stopFrom2() { stopTurn(empty.deps.runtime, empty.chat.id, (empty.events.find((e) => e.type === "start") as Extract<TurnEvent, { type: "start" }>).turnId); }
     const before = (await empty.chats.readMessages(empty.branch, { limit: 50 })).messages.length;
     await empty.turn();
     expect(empty.events.at(-1)).toEqual({ type: "stopped", message: null });
@@ -133,7 +134,7 @@ describe("a reply with Narrator Tool Access on", () => {
     for (let i = 0; i < 200 && !s.events.some((e) => e.type === "review"); i++) await Bun.sleep(5);
     const review = s.events.find((e) => e.type === "review") as Extract<TurnEvent, { type: "review" }>;
     expect(review.tools).toEqual([{ name: "peek", description: "Look at the sky.", parameters: { type: "object", properties: { what: { type: "string" } } } }]);
-    answerReview(s.chat.id, review.turnId, { kind: "send", edits: {} });
+    answerReview(s.deps.runtime, s.chat.id, review.turnId, { kind: "send", edits: {} });
     await run;
   });
 });
@@ -171,7 +172,7 @@ describe("a reply that gets no tools", () => {
     for (let i = 0; i < 200 && !review.events.some((e) => e.type === "review"); i++) await Bun.sleep(5);
     const shown = review.events.find((e) => e.type === "review") as Extract<TurnEvent, { type: "review" }>;
     expect(shown.tools).toBeUndefined();
-    answerReview(review.chat.id, shown.turnId, { kind: "send", edits: {} });
+    answerReview(review.deps.runtime, review.chat.id, shown.turnId, { kind: "send", edits: {} });
     await run;
 
     const cont = await scene([say("Plain."), say(" And on.")], { toolAccess: true });
@@ -196,7 +197,7 @@ describe("the Compendium's lookup through a reply", () => {
     const sent: ProviderRequest[] = [];
     const script = [{ content: "", tool_calls: [{ id: "c1", type: "function" as const, function: { name: "explore_lorebook", arguments: '{"query":"lantern"}' } }], raw: {} } as ProviderCompletion, say("Mira does.")];
     const provider: Provider = { id: "conn", async send(request, io) { sent.push(structuredClone(request)); const next = script.shift() ?? say("done"); if (next.content) io?.onEvent?.({ channel: "content", delta: next.content }); return next; } };
-    const deps = { chats, state: memoryStateStore(), connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000, tools: true }), narratorTools: compendiumTools, readPreset: async () => null, readLorebook: async (id: string) => (id === "b1" ? book : null), now: () => (now += 10), randomSeed: () => 7 };
+    const deps = { runtime: createTurnRuntime(), chats, state: memoryStateStore(), connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000, tools: true }), narratorTools: compendiumTools, readPreset: async () => null, readLorebook: async (id: string) => (id === "b1" ? book : null), now: () => (now += 10), randomSeed: () => 7 };
     const events: TurnEvent[] = [];
     const version = (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion!;
     await runTurn(deps, { chatId: chat.id, kind: "reply", expectedVersion: version }, (e) => events.push(e));

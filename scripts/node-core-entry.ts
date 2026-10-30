@@ -4,6 +4,9 @@
  */
 import assert from "node:assert/strict";
 import * as core from "../src/core";
+import { createRoleplayCore } from "../src/rp-core";
+import { memoryChatStore } from "../src/stage/store/chat-store";
+import { memoryStateStore } from "../src/stage/store/memory/state-store";
 
 assert.equal(core.CANONICAL_SCHEMA_VERSION, "1");
 assert.equal(typeof core.loadFormats, "function");
@@ -47,7 +50,22 @@ async function streamingCoreSmoke(): Promise<void> {
 }
 
 // No top-level await: the bundle is executed as a plain script, so the entry drives its own async.
-streamingCoreSmoke().catch((error: unknown) => {
+async function roleplaySmoke(): Promise<void> {
+  const chats = memoryChatStore();
+  const chat = await chats.createChat({ title: "Node smoke", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: { kind: "character", id: "vera", body: { identity: { name: "Vera" }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {} } } } });
+  await chats.setConnection(chat.id, { id: "scripted", model: "test" });
+  await chats.appendMessage(chat.activeBranchId, { role: "user", content: "Hello" });
+  let sent = 0;
+  const engine = createRoleplayCore({ chats, state: memoryStateStore(), readPreset: async () => null, readLorebook: async () => null, now: () => 1_000, randomSeed: () => 7, connect: async () => ({ kind: "openrouter", provider: { id: "scripted", async send() { sent++; return { content: "Hello from Node.", finish_reason: "stop", raw: {} }; } } }) });
+  try {
+    const version = (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion!;
+    await engine.runTurn({ chatId: chat.id, kind: "reply", expectedVersion: version }, () => undefined);
+    assert.equal(sent, 1);
+    assert.equal((await chats.readMessages(chat.activeBranchId, { limit: 20 })).messages.at(-1)?.swipes[0]?.content, "Hello from Node.");
+  } finally { await engine.close(); }
+}
+
+Promise.all([streamingCoreSmoke(), roleplaySmoke()]).catch((error: unknown) => {
   console.error(error);
   process.exit(1);
 });

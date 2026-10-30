@@ -25,8 +25,8 @@ const CSS = `
 .floor .fl-k{position:absolute;right:14px;top:-8px;background:var(--stage-floor);padding:0 6px;
   font-family:var(--font-mono);font-weight:600;font-size:.625rem;letter-spacing:.12em;
   text-transform:uppercase;color:var(--stage-soft)}
-.troupe{display:flex;gap:.35rem;align-items:flex-end;justify-content:center;
-  margin-top:-3.6rem;position:relative;z-index:2;min-height:9.8rem;padding-top:.8rem}
+.troupe{display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-end;justify-content:center;
+  position:relative;z-index:2;min-height:9.8rem;padding:1rem}
 .fan-slot{transform:rotate(var(--rot)) translateY(var(--lift));transform-origin:50% 100%;
   transition:transform .18s ease-out}
 .dcard{width:6.5rem;background:var(--stage-deck);border:3px solid var(--stage-black);

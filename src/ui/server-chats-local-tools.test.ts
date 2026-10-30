@@ -13,7 +13,7 @@ import type { TrackerBody } from "../entities/tracker/schema";
 import { saveProvider } from "../kit/providers/vault";
 import type { SceneTrackers } from "../studio/scene-trackers";
 import { chatRouteRig, cleanupChatRouteRigs, vera } from "./fake-server-chats-rig";
-import { connect } from "./server-chats-turn";
+import { connect } from "../kit/providers/scene-connect";
 import { apiReq } from "./server-test-rig";
 
 afterEach(cleanupChatRouteRigs);

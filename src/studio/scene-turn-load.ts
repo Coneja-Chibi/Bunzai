@@ -26,10 +26,10 @@ import type { PersonaBody } from "../entities/persona/schema";
 import type { PresetBody } from "../entities/preset/schema";
 import type { CastSnapshot, Chat, ChatLore, ChatStore, JsonObject, Message, TakeSummary } from "../stage/contracts/chat-store";
 import { bodyOf, isRecord, str } from "../core/guards";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError, StudioValidationError } from "./errors";
 import { bodyReader, type BodyStore } from "./body-reader";
 import { asPresetBody, isWritingKind, sendProblem } from "../core/writing";
-import { StudioValidationError } from "./errors";
+
 import { withDefaults } from "../core/preset/choices";
 import { resolveBooks, type ReadLorebook } from "./scene-lore";
 import { storyboardsOf } from "./scene-storyboards";
@@ -93,6 +93,8 @@ export interface LoadedTurn {
   /** The library skills the scene links (library-skills.ts); the assembler decides which are on. */
   skills?: AssemblySkill[];
   branchVersion: number;
+  /** The take's messages as read, cut ones included, for a reader that needs the whole take (the Dramaturg) without reading it again. */
+  take: Message[];
   /** The tracker Props that are on and what they kept (ChatStore rules 21 and 43); absent when the scene keeps none. */
   trackers?: { entries: NonNullable<Chat["trackers"]>; on: string[] };
   /** The Storyboard Props that are on and the books they read (storyboards.ts); absent when none is on. */
@@ -209,6 +211,7 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
     ...(linked.length > 0 ? { linkedTrackers: linked } : {}),
     ...(skills.length > 0 ? { skills } : {}),
     branchVersion: page.branchVersion,
+    take: page.messages,
     ...(lore ? { lore } : {}),
     ...(entries && chat.props && Object.keys(entries).length > 0 ? { trackers: { entries, on: chat.props.on } } : {}),
     ...(storyboards ? { storyboards } : {}),

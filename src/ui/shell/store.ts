@@ -34,7 +34,8 @@ export type Theme = StudioTheme;
 const RECENTS_CAP = 60;
 let settingsMutationVersion = 0;
 const settingsRequests = createSettingsRequestQueue();
-const appearanceRequests = createAppearanceRequests(settingsRequests.wait, () => apiFetchJson<unknown>("/api/themes/effective"), isBrowserStudio());
+// Deadline as the revision poll's: a hung read falls back to core, never keeps a revoked theme painted.
+const appearanceRequests = createAppearanceRequests(settingsRequests.wait, () => apiFetchJson<unknown>("/api/themes/effective", { signal: AbortSignal.timeout(4000) }), isBrowserStudio());
 export {
   menus,
   findMenuTarget,

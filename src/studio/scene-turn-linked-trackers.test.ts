@@ -4,6 +4,7 @@
  * a bad batch writes nothing, a failed turn stamps nothing, and an unlinked or deleted tracker adds no block and no tool.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { SceneState } from "../core/scene-state/types";
 import { trackerValue, type TrackerRecord } from "../core/tracker";
 import type { TrackerBody } from "../entities/tracker/schema";
@@ -49,7 +50,7 @@ async function scene(script: (ProviderCompletion | Error)[], opts: Opts = {}) {
     },
   };
   const events: TurnEvent[] = [];
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: opts.context ?? 32_000, tools: true }),
     narratorTools: narratorTools(async (kind: string, id: string) => opts.pieces?.[`${kind}:${id}`] ?? null),

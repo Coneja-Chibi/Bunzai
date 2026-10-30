@@ -9,4 +9,5 @@ export default variantCss("editor.fields", "labeled-rows", `
 & [data-editor="frame"] [data-ef="field"][data-wide]{grid-template-columns:minmax(0,1fr)}
 & [data-editor="frame"] [data-ef="label"]{padding-top:.4rem}
 & [data-editor="frame"] [data-ef="hint"]{grid-column:2}
+& [data-editor="frame"] [data-ef="field"][data-wide] > [data-ef]{grid-column:1 / -1}
 `);

@@ -9,7 +9,7 @@
  * edit history, and generation details are sealed; the character id a chat is listed by is a keyed
  * hash; ids, sequence numbers, roles, and times (favored_at included) stay readable.
  */
-import { StudioConflictError } from "../../../studio/atomic-file";
+import { StudioConflictError } from "../../../studio/errors";
 import type { Branch, CastSnapshotCodec, Chat, ChatStore, Generation, Message, WriteGuard } from "../../contracts/chat-store";
 import {
   checkCast, checkCutoff, checkGuard, checkMessageInputs,

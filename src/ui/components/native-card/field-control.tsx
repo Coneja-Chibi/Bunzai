@@ -56,6 +56,7 @@ function JsonField({
   return (
     <>
       <ExpandTextarea
+        grow
         label={label}
         className={styles.ta}
         value={draft}
@@ -149,6 +150,7 @@ export function fieldControl(
       return (
         <div className={styles.note}>
           <ExpandTextarea
+            grow
             label={field.label}
             className={styles.ta}
             value={str(read(`${p}.prompt`))}
@@ -270,6 +272,7 @@ export function fieldControl(
     case "textarea":
       return (
         <ExpandTextarea
+          grow
           label={field.label}
           className={styles.ta}
           value={str(read(field.path))}

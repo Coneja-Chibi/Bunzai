@@ -3,6 +3,8 @@ dist/
 build/*
 !build/vaude.ico
 !build/vaude-256.png
+!build/vaude-192.png
+!build/vaude-512.png
 *.log
 .DS_Store
 .env

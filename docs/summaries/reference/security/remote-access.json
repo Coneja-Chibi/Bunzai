@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/security/remote-access",
   "sourcePath": "docs/reference/security/remote-access.md",
-  "sourceHash": "sha256:46c3091e60a1f10de2f2208758c262b68bafdb1eccdddc1df50f6e7a9828fab3",
+  "sourceHash": "sha256:0920bf075535a09af739f7758fe368a843575bae8e4ad67907d5eeeb41b326dc",
   "summary": "Canonical security reference for reaching the studio from another device without exposing it to the open internet. Remote access is off by default, driven only from Settings greater than Remote access never a terminal, with two independent modes: Tailscale private encrypted tailnet link and LAN connect-code plus per-device approval on the local network. Containers and SSH forwarding use the printed startup receipt with Studio port and optional sandbox port; browsing the server IP is refused by the trusted Host gate; one-port is enough for ordinary Studio work but both ports are required for Lua and regex benches; this guidance does not broaden hostAllowed or weaken token Origin checks. Two listeners one trust boundary: trusted 127.0.0.1 default 8321 with Host Origin and per-launch session token; untrusted 127.0.0.1:8788 only for the Tailscale sidecar with per-boot shared secret required on untrusted and refused on trusted. Tailscale owner gate admits only the studio owner's numeric user id fail closed. LAN gate uses CSPRNG connect code argon2id hashed never sent, per-IP throttle, pending approval with caps and 15 minute TTL, self-signed TLS; session cookie is HttpOnly SameSite Lax without Secure. Host-only surface blocks remote management, open, shutdown, restart, and settings writes. Owner can kick devices. The sidecar is not bundled: three locations are checked, and none reports the unavailable phase rather than a dead Enable control. The aux package fetches it from a release asset, verified against a baked SHA-256 pin before any bytes land. Sidecar lifecycle exits on parent death and kills orphans. What is proven lists unit tests and live end-to-end verification.",
   "topics": [
     "remote access off by default",
@@ -99,8 +99,8 @@
       "slug": "host-only-surface",
       "title": "Host-only surface",
       "level": 2,
-      "sourceHash": "sha256:bef81b1ed5176478352c6f8dca2dac1e9319034a1fa85528912bf3f70f2a28de",
-      "summary": "Whether a device tailed in over Tailscale or was approved on the LAN, it may USE the studio but must never reach management or host control. isHostOnlyRoute in server-remote refuses for any remote or LAN-served handler every api/remote route that turns access on or off or kicks devices, api/open that opens a browser on the host, api/shutdown, api/restart, and settings writes. Those belong to the local owner alone.",
+      "sourceHash": "sha256:30e8f7098fd1b9bc4c6486977f952bad6d61f746ac9444a168e7eeb980026024",
+      "summary": "Remote and LAN handlers refuse host management: remote-access controls, opening browsers, shutdown, restart and settings writes. Export-folder creation and file uploads are host-only because they write to the host disk; remote clients download locally instead. Bounded exclusive export writes preserve finished artifacts when a request is refused, remove only their own incomplete files and reject cancellation before opening. The same local token and origin checks still govern host requests.",
       "topics": [
         "isHostOnlyRoute",
         "remote management blocked",

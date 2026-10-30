@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:c67c960de2283741d97c7aa19698827dcbb4ac164fd594632977e0c7d83ceedc",
-  "semanticSummaryHash": "sha256:ca431c59c02accaf7b0935435b80547255007c927aadbcf323b57e359cb6fb10",
+  "sourceHash": "sha256:0d527b31aea8edbca112190dace1bdb870f38cf405beb74316e2471e2c477baf",
+  "semanticSummaryHash": "sha256:a2021e8255681295ec2e2d56980ca9a13759be54a6358339e1cea6f9e0a4873c",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:48:09.729Z"
+  "reviewer": "integration_review",
+  "notes": "Reviewed phone dock targets, safe-area rules and measured reserve against current Dock owner; checked shared composer resize and portrait/action selectors, and stable stored-revision HTTP save regression. Recorded live-browser evidence covers unchanged draft resize and uploaded-art Save/reload; physical-phone keyboards, actual installation and packaged behavior remain unverified.",
+  "reviewedAt": "2026-10-30T04:20:23.704Z"
 }

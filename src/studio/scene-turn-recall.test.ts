@@ -5,6 +5,7 @@
  * runs at all when the Compendium is off.
  */
 import { beforeEach, describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { emptyLoreEntry, emptyLorebookBody } from "../core/lore";
 import { ProviderError, type Provider, type ProviderCompletion } from "../stage/contracts/provider";
 import type { ChatCompendiumPatch } from "../stage/contracts/chat-store";
@@ -48,7 +49,7 @@ async function scene(compendium: ChatCompendiumPatch | null = { on: true }, answ
     },
   });
   const connected: string[] = [];
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state,
     connect: async (c: { id: string }): Promise<Connected | null> => { connected.push(c.id); return { provider: provider(c.id), kind: "openrouter", context: 32_000 }; },
     readPreset: async () => null, readLorebook: async (id: string) => (id === "b1" ? BOOK : null), now: () => (now += 10), randomSeed: () => 7,
@@ -107,7 +108,7 @@ describe("a reply with recall on", () => {
     for (let i = 0; i < 200 && !s.events.some((e) => e.type === "review"); i++) await Bun.sleep(5);
     const review = s.events.find((e) => e.type === "review") as Extract<TurnEvent, { type: "review" }>;
     expect(review.messages.some((m) => m.content.includes("[Lore: Mira]"))).toBe(true);
-    answerReview(s.chat.id, review.turnId, { kind: "send", edits: {} });
+    answerReview(s.deps.runtime, s.chat.id, review.turnId, { kind: "send", edits: {} });
     await run;
     expect(s.asked.length).toBe(1);
     expect(s.narrator.length).toBe(1);
@@ -168,7 +169,7 @@ describe("recall never blocks the reply", () => {
     const run = s.turn();
     for (let i = 0; i < 200 && !s.events.some((e) => e.type === "world"); i++) await Bun.sleep(5);
     const started = s.events.find((e) => e.type === "start") as Extract<TurnEvent, { type: "start" }>;
-    expect(stopTurn(s.chat.id, started.turnId)).toBe(true);
+    expect(stopTurn(s.deps.runtime, s.chat.id, started.turnId)).toBe(true);
     await run;
     expect(s.events.at(-1)).toEqual({ type: "stopped", message: null });
     expect(s.narrator.length).toBe(0);

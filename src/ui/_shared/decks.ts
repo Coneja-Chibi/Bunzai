@@ -58,7 +58,7 @@ export const knownDecks = (): DeckMeta[] => [...DECKS];
 /**
  * The style pair an accent-wearing root paints: --a (borders, spines, marks) plus --a-deep
  * (TEXT-BEARING fills). A piece accent is a hex: its --a-deep comes from accentRole under the active
- * theme's floors (useAccentVars supplies them), exactly like the scoped character and persona accents.
+ * theme's floors (useAccentVars supplies them), exactly like the scoped character and persona accents. Accent words use its text-held --a-text twin.
  * A deck or signature accent is a var(--deck-*) / var(--sig-*) reference whose -deep twin lives in tokens.css; anything
  * else (or a hex with no readable floors) omits --a-deep so CSS falls back to var(--accent-deep). No accent ->
  * undefined (the var() fallback chains rule).
@@ -66,7 +66,7 @@ export const knownDecks = (): DeckMeta[] => [...DECKS];
 export function accentVars(accent: string | undefined, floors: AccentFloors | null): Record<string, string> | undefined {
   if (!accent) return undefined;
   const role = floors ? accentRole(accent, floors) : null;
-  if (role) return { "--a": accent, "--a-deep": role.deep };
+  if (role) return { "--a": accent, "--a-deep": role.deep, "--a-text": role.text };
   const token = accent.match(/^var\(--((?:deck|sig)-[a-z0-9]+)\)$/);
   if (token) return { "--a": accent, "--a-deep": `var(--${token[1]}-deep)` };
   return { "--a": accent };

@@ -15,8 +15,8 @@ import { summaryPreview } from "./scene-summary-list";
 import { summaryDefaultsOf } from "../stage/store/summary-rules";
 import { DEFAULT_SUMMARY_PREF } from "../core/summary/settings";
 import { bodyOf, isRecord, str } from "../core/guards";
-import { StudioLockedError, StudioNotFoundError, StudioValidationError } from "./errors";
-import { StudioConflictError } from "./atomic-file";
+import { StudioLockedError, StudioNotFoundError, StudioValidationError, StudioConflictError } from "./errors";
+
 import type { SettingsStoreLike, StudioStoreLike } from "./contracts";
 import { hasPortrait } from "./portrait";
 import { pieceAccent } from "./summary";

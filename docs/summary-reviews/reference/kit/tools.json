@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/kit/tools",
   "sourcePath": "docs/reference/kit/tools.md",
-  "sourceHash": "sha256:41b009903182b13bb84a5ea7ed73fa29cf669070cc6c0eff940e5d2770e8ec93",
-  "semanticSummaryHash": "sha256:748e1811d96a3d6a5792635bae56ce28a8189d6eaa30b389dbdae8f4fcf2a227",
+  "sourceHash": "sha256:c3de89e54478c5da15771687bc5c4dfb531d70ce6f41363bea0d992497cd0a19",
+  "semanticSummaryHash": "sha256:e6c6f6d59e9fbb0a0175253de407639bce06d5f2c86103d4e454d7fbfda121cd",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:47:50.427Z"
+  "reviewer": "integration_review",
+  "notes": "Reviewed changed source and summaries against format adapters, shared export writer, host-only routes and UI delivery paths. Independently ran 38 format, stream and export-route tests; importer mapping retains dated co-developer provenance, external-host import and packaged behavior unverified.",
+  "reviewedAt": "2026-10-30T01:00:04.195Z"
 }

@@ -37,5 +37,12 @@
 @container ((max-width: 768px) or (max-height: 600px)) and (aspect-ratio > 1/1) {
   .bar { bottom: 0; }
 }
+@container (max-width: 40rem) {
+  .bar { bottom: 0; max-width: calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right)); }
+  .bar [data-control="tile"]:not(:disabled) { min-width: 44px; min-height: 44px; }
+  @media (pointer: coarse) {
+    :global(#shell:has(:is(textarea,[contenteditable]:not([contenteditable=false]),input:not([type=checkbox],[type=radio],[type=range],[type=button],[type=submit],[type=reset],[type=file],[type=color],[type=image])):focus)) .lane { display: none; }
+  }
+}
 @media (prefers-reduced-motion: reduce) { .bar,.lane > [data-control="icon"][data-part="shell.nav.handle"],.bar [data-control="tile"],.mark { transition: none; animation: none !important; } }
 @media (prefers-reduced-transparency: reduce) { .bar { backdrop-filter: none; background: var(--bk-dock-bottom); } }

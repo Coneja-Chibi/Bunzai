@@ -187,91 +187,28 @@
   --wb-info-bg: var(--action-primary);
   --wb-info-fg: var(--action-primary-fg);
 }
-.tabstrip {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: var(--stage-row);
-  border-bottom: 3px solid var(--stage-black);
-  padding: 0.45rem 0.9rem;
-  flex-wrap: wrap;
-}
-
-.done {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  flex-wrap: wrap;
-}
-
-/* fluid law: when the pane can't fit names + progress on one line, the progress chips become a
-   deliberate second row, left-aligned - not a right-floating orphan mid-wrap */
-@container (max-width: 74rem) {
-  .tabstrip {
-    gap: 0.4rem 0.8rem;
-  }
-  .done {
-    margin-left: 0;
-    flex-basis: 100%;
-  }
-}
-
-.escale {
-  display: flex;
-  align-items: center;
-  border: 2px solid var(--seam);
-  margin-right: 0.35rem;
-}
-
-.frac {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  color: var(--stage-mute);
-  margin-right: 0.2rem;
-}
-
-.lensStat {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  letter-spacing: 0.05em;
-  color: var(--stage-mute);
-  border: 2px solid var(--stage-seam);
-  padding: 0.1rem 0.35rem;
-  margin-right: 0.2rem;
-}
-
-.hdr {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  padding: 0.7rem 0.9rem;
-  border-bottom: 3px solid var(--stage-black);
-}
-
-.hdr b {
-  font-family: var(--font-big);
-  font-size: 1.05rem;
-  letter-spacing: 0.02em;
-  color: var(--stage-paper);
-}
-
-.vchip {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  background: var(--wb-info-bg);
-  color: var(--wb-info-fg);
-  border: 2px solid var(--stage-black);
-  padding: 0.12rem 0.4rem;
-}
-
-.hdrRight {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  flex-wrap: wrap;
+.studioChrome { container-type: inline-size; margin: .75rem 1rem; background: var(--panel); border: 1px solid var(--seam); }
+.studioHead { display: flex; align-items: center; gap: .85rem; flex-wrap: wrap; padding: 1rem; }
+.studioIdentity { display: flex; flex: 1; flex-direction: column; gap: .35rem; min-width: min(12rem, 100%); }
+.studioIdentity b { font: 650 1.4rem/1.2 var(--font-fancy); color: var(--text); overflow-wrap: anywhere; }
+.studioIdentity > span { font-size: var(--text-meta); color: var(--text-dim); }
+.studioActions { display: flex; align-items: center; gap: .65rem; margin-left: auto; }
+.studioTools { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; padding: .65rem 1rem; border-top: 1px solid var(--seam); }
+.studioTarget { min-width: 0; max-width: 100%; }
+.studioTargetLabel { /* clone-ok: platform labels have an independent container-relative width and share only standard ellipsis with the unrelated Docs title. */ display: block; max-width: min(28ch, 55cqi); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.studioProgress { margin-left: auto; max-width: 100%; }
+.studioDialog { display: flex; flex-direction: column; align-items: flex-start; gap: 1.25rem; min-width: 0; }
+.studioDialogHead { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; }
+.studioDialogHead h2 { margin: 0; font: 650 1.25rem/1.3 var(--font-fancy); }
+.studioDialog p { color: var(--text-dim); font-size: var(--text-control); }
+.studioScale { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem; }
+.studioScale > span { margin-right: .75rem; font-size: var(--text-control); }
+@container (max-width: 34rem) {
+  .studioChrome { margin: .5rem; }
+  .studioHead { padding: .75rem; }
+  .studioIdentity b { font-size: 1.15rem; }
+  .studioTools { padding: .5rem; gap: .4rem; }
+  .studioProgress { margin-left: 0; flex-basis: 100%; }
 }
 
 .flagOn {
@@ -349,22 +286,6 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-}
-
-/* Mobile grammar gate (design/vs-mobile-editors.html): the chrome renders BOTH grammars and the
-   pane width picks one. Components SWAP below 34rem, they do not shrink. Lives at the FILE END
-   on purpose: container queries add no specificity, a later base rule would override this. */
-.mobileChrome {
-  display: none;
-}
-
-@container (max-width: 34rem) {
-  .mobileChrome {
-    display: block;
-  }
-  .desktopChrome {
-    display: none;
-  }
 }
 
 :global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {

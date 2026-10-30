@@ -20,6 +20,7 @@ export const PROTECTED_CONTROLS = {
   "tracker-delete": "Delete and remove of tracker items",
   "director-model": "Story Director model and connection",
   "director-reset": "Story Director Reset DM",
+  "dramaturg-model": "Dramaturg model and connection",
 } as const;
 
 export type ProtectedControlId = keyof typeof PROTECTED_CONTROLS;

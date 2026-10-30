@@ -56,8 +56,8 @@ describe("bubble opacity and density", () => {
 describe("Show Avatars off", () => {
   test("it undoes every way a layout makes room for the portrait", () => {
     const off = STAGE_LOOK_STYLE.split("\n").filter((l) => l.includes('"noavatar"')).join("\n");
-    for (const file of readdirSync(here("./variants/scene.layout/"))) {
-      const css = readFileSync(here(`./variants/scene.layout/${file}`), "utf8");
+    // the core layout's own phone gutter (scene-style.ts) counts too
+    for (const css of [SCENE_STYLE, ...readdirSync(here("./variants/scene.layout/")).map((file) => readFileSync(here(`./variants/scene.layout/${file}`), "utf8"))]) {
       const msg = [...css.matchAll(/\.msg\{([^}]*)\}/g)].map((m) => m[1]!).join(";");
       if (msg.includes("grid-template-columns")) expect(off).toContain("grid-template-columns");
       if (/padding(-left)?:[^;]*rem/.test(msg) && /padding(-left)?:(0 0 [^;]*|[^;]*) /.test(msg + " ")) expect(off).toContain("padding-left:0");

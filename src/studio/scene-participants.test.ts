@@ -3,7 +3,7 @@
  * run and Undo retires it; malformed model output proposes and stores nothing; a retired NPC is never quietly brought back.
  */
 import { describe, expect, test } from "bun:test";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError } from "./errors";
 import { compendiumRig } from "./fake-compendium-rig";
 import { applyParticipants, proposeParticipants, undoParticipantRun } from "./scene-participants";
 

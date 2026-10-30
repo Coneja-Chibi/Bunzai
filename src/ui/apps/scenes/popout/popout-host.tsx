@@ -27,7 +27,11 @@ export function PopoutHost({ ctx, chat, kinds, onChat }: { ctx: AppContext; chat
     };
     measure();
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    // The layer's own size, not only the window's: before layout it has none (the window stands in), and the Studio's left rail
+    // folding or unfolding changes it with no window resize. Measured once, a panel opened at the window's edge hung off the scene.
+    const observer = typeof ResizeObserver === "undefined" || !layer.current ? null : new ResizeObserver(measure);
+    if (observer && layer.current) observer.observe(layer.current);
+    return () => { window.removeEventListener("resize", measure); observer?.disconnect(); };
   }, []);
   return <div className="po-layer" ref={layer} data-part="scene.popout">{kinds.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (k) => <Floating key={`${chat.id}:${k.id}`} kind={k} ctx={ctx} chat={chat} view={view} {...(onChat ? { onChat } : {})} />)}</div>;
 }

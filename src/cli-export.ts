@@ -46,6 +46,6 @@ export async function runExport(
     console.error(`  Nothing was exported: ${error.message}.`);
     return 1;
   } finally {
-    opened.close();
+    await opened.close();
   }
 }

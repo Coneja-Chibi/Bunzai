@@ -210,7 +210,7 @@ describe("the snapshot belongs to the reply", () => {
     for (let i = 0; i < 200 && !s.events.some((e) => e.type === "start"); i++) await Bun.sleep(5);
     for (let i = 0; i < 200 && s.planner.length === 0; i++) await Bun.sleep(5);
     const started = s.events.find((e) => e.type === "start") as Extract<TurnEvent, { type: "start" }>;
-    stopTurn(s.chat.id, started.turnId);
+    stopTurn(s.deps.runtime, s.chat.id, started.turnId);
     await run;
     expect(s.aborted).toEqual([true]);
     expect(s.events.at(-1)).toEqual({ type: "stopped", message: null });

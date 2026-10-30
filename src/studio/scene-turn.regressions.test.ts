@@ -12,6 +12,7 @@
  * tests everything else about the abort path through.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { Provider, ProviderCompletion, ProviderEvent } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
@@ -51,7 +52,7 @@ async function scene(provider: Provider) {
   const chat = await chats.createChat({ title: "Night", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: vera } });
   await chats.setConnection(chat.id, { id: "conn", model: "vera-1" });
   await chats.appendMessages(chat.activeBranchId, [{ role: "user", content: "Tell me a story." }]);
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats,
     state,
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }),
@@ -63,7 +64,7 @@ async function scene(provider: Provider) {
   const version = async () => (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion!;
   const events: TurnEvent[] = [];
   const turn = async () => runTurn(deps, { chatId: chat.id, kind: "reply", expectedVersion: await version() }, (e) => events.push(e));
-  return { chats, chat, events, turn };
+  return { deps, chats, chat, events, turn };
 }
 
 async function waitFor(events: TurnEvent[], type: TurnEvent["type"]): Promise<void> {
@@ -92,7 +93,7 @@ describe("a stopped turn never carries the previous turn's reasoning", () => {
     const version = (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion!;
     const running = runTurn(
       {
-        chats,
+        runtime: s.deps.runtime, chats,
         state: memoryStateStore(),
         connect: async (): Promise<Connected | null> => ({ provider: provider2, kind: "openrouter", context: 32_000 }),
         readPreset: async () => null,
@@ -105,7 +106,7 @@ describe("a stopped turn never carries the previous turn's reasoning", () => {
     );
     await waitFor(events, "text");
     const turnId = (events.find((e) => e.type === "start") as Extract<TurnEvent, { type: "start" }>).turnId;
-    expect(stopTurn(chat.id, turnId)).toBe(true);
+    expect(stopTurn(s.deps.runtime, chat.id, turnId)).toBe(true);
     await running;
     release();
 

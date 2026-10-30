@@ -1,8 +1,8 @@
 /** History reads and restores, pinned to the live row's monotonic write identity. */
 import { COLD_READ_LIMIT } from "./cold-read-budget";
 import type { ParsedCanonicalEntity } from "../../entities/runtime-schema";
-import { StudioConflictError } from "../../studio/atomic-file";
-import { StudioReadError } from "../../studio/errors";
+import { StudioConflictError, StudioReadError } from "../../studio/errors";
+
 import type { DocumentBackend, EntityKind } from "../contracts/content-store";
 import { revisionFromParts } from "../../entities/canonical-revision";
 import { decompose } from "../../entities/piece-parts";
@@ -63,20 +63,21 @@ export async function restoreStoredVersion(
     };
     const revision = revisionFromParts(decompose(old, undefined, known));
     if (revision === current.revision) {
-      if ((await backend.get(kind, id))?.writeId === current.writeId) return contentSummaryOf(current, old);
+      if ((await backend.get(kind, id))?.writeId === current.writeId) return contentSummaryOf(current, old, buildSummary(old, (sha) => known.blobs.has(sha) || known.held.has(sha)).content);
       continue;
     }
     const built = restoreWrite(current, old, version, clock(), revision);
+    const summary = buildSummary(built.entity, (sha) => known.blobs.has(sha) || known.held.has(sha));
     const wrote = await backend.write(
       built.row,
       built.version,
       { when: "writeId", expected: current.writeId },
-      buildSummary(built.entity),
+      summary,
       built.change,
     );
     if (!wrote) continue;
     await backend.pruneVersions(current.kind, current.id, keepVersions);
-    return contentSummaryOf(built.row, built.entity);
+    return contentSummaryOf(built.row, built.entity, summary.content);
   }
   throw new StudioConflictError(`${kind} ${id} changed repeatedly while restoring history`);
 }

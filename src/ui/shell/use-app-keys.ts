@@ -16,12 +16,17 @@ import { useShellStore } from "./store";
 export function useAppKeys(onNavigate?: () => void): void {
   useEffect(() => {
     const onKey = (event: KeyboardEvent): void => {
+      // A key a surface already spent (the ask panel's option digits) is not also a room change.
+      if (event.defaultPrevented) return;
       const state = useShellStore.getState();
       // A dialog that is up OWNS the keyboard. The follow prompt, the close-piece prompt and the
       // context menu are each asking a question with an Escape and an Enter in it; walking the user
       // to another room mid-question leaves an unanswered dialog over a screen it was not about.
-      if (event.defaultPrevented || state.followPrompt || state.pendingClose || state.openMenu ||
-        document.querySelector('[role="dialog"][aria-modal="true"], dialog[open]')) return;
+      if (state.followPrompt || state.pendingClose || state.openMenu) return;
+      // So does any other modal on screen: DialogCore's (the export dialog, attach-lore, ...) and the
+      // native <dialog> ProtectedDialog opens with showModal() (the Kit Gate, the library lock). A
+      // digit pressed in one must not switch the room underneath it.
+      if (document.querySelector('[aria-modal="true"], dialog[open]')) return;
 
       const roster = appRoster(state.manifests);
       const hit = appShortcut(

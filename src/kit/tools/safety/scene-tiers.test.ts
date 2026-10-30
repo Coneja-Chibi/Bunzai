@@ -41,6 +41,10 @@ describe("scene actions", () => {
     expect(SCENE_ACTION_TIERS["director.edit"]).toBe("write");
   });
 
+  test("a Dramaturg question is at the write tier: it writes the Dramaturg's own conversation and nothing else (enforced in scene-dramaturg.test.ts)", () => {
+    expect(SCENE_ACTION_TIERS["dramaturg.ask"]).toBe("write");
+  });
+
   test("every Compendium action at the write tier is gated by the book's write access where it runs", () => {
     const WHERE: Partial<Record<SceneAction, string>> = {
       "compendium.filing": "src/studio/compendium-filing.ts",

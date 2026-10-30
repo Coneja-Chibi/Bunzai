@@ -2,8 +2,8 @@
  * The ChatStore contract suite's summary half: a scene's summary settings, and a take's summary text, which is the `summary` slot (written on a message, or on a version through recordDeltas). chatStoreContract runs it on every backend.
  */
 import { describe, expect, test } from "bun:test";
-import { StudioConflictError } from "../../studio/atomic-file";
-import { StudioValidationError } from "../../studio/errors";
+import { StudioConflictError, StudioValidationError } from "../../studio/errors";
+
 import { heldAs } from "../../core/scene-state/fold";
 import type { Delta } from "../../core/scene-state/types";
 import { blockDeltas, layersOf, sawOf } from "../../core/summary/rows";

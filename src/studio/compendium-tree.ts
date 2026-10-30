@@ -11,12 +11,12 @@
 import { canWrite, isActive, resolveCompendium, readBook, categorizable, assembleLayout, categorizeMessages, assignMessages, categoryPaths, constraintBlock, DETAIL_TOKENS, entryLine, moveInLayout, parseAssignments, parseCategories, reassign, repairTree, resolvePreset, TOKEN_BUDGET, type RawCategory } from "../core/compendium";
 import { entityRevision } from "../kit/changes/revision";
 import type { StoredLayout, StoredTree } from "../stage/contracts/chat-store";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError, StudioNotFoundError } from "./errors";
 import { askJson, type Ask, type Parsed } from "./compendium-ask";
 import { sceneBooks, type CompendiumDeps } from "./compendium-deps";
 import { refineBuilt } from "./compendium-refine";
 import { runOf } from "./compendium-standardize";
-import { StudioNotFoundError } from "./errors";
+
 import type { Connected } from "./scene-turn";
 
 export interface BuildOptions {

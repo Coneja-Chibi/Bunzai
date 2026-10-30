@@ -18,6 +18,11 @@ const EXPECTED: Record<string, Record<string, string>> = {
   anthropic: { stop: "stop_sequences", top_k: "top_k" },
   custom: OPEN,
   local: { ...OPEN, grammar_string: "grammar" },
+  ollama: {
+    top_k: "top_k", min_p: "min_p", typical_p: "typical_p", seed: "seed", presence_penalty: "presence_penalty", frequency_penalty: "frequency_penalty",
+    stop: "stop", repetition_penalty: "repeat_penalty",
+    json_schema: "format", response_format: "format",
+  },
 };
 
 /** A value every parameter accepts and none treats as a no-op. */

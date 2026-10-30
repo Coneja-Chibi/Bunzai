@@ -7,7 +7,7 @@
  */
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError } from "./errors";
 import type { StudioFs } from "./fs-backend";
 
 export interface ContractSubject {

@@ -20,12 +20,12 @@ export const REASONING_EFFORT_OPTIONS: readonly { value: ReasoningEffortChoice; 
 ];
 
 /** The connection kinds (Kit spokes) whose request builders send the level; the rest ignore it. */
-export const EFFORT_KINDS: readonly string[] = ["anthropic", "openai", "openrouter", "google"];
+export const EFFORT_KINDS: readonly string[] = ["anthropic", "openai", "openrouter", "google", "ollama"];
 
 export const REASONING_PARAMS: readonly ParamDef[] = [
   {
     id: "reasoning_effort", label: "Reasoning Effort", group: "reasoning", kind: "select", default: "auto",
-    description: "How hard the model thinks before writing. This is NATIVE reasoning: the model runs a private thinking pass at the API level, separate from any <think> blocks in your preset. Sent to Anthropic, OpenAI, OpenRouter and Google connections; other connections ignore it.",
+    description: "How hard the model thinks before writing. This is NATIVE reasoning: the model runs a private thinking pass at the API level, separate from any <think> blocks in your preset. Sent to Anthropic, OpenAI, OpenRouter and Google connections, and to Ollama as thinking on or off for a model that thinks; other connections ignore it.",
     notes: "Auto sends nothing. Claude removes temperature, top_p and top_k when thinking is on. Budget percentages are approximate and provider-specific.",
   },
 ];

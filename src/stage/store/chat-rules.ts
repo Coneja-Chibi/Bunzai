@@ -4,8 +4,8 @@
  * stores cannot drift: a store that accepted what the other refuses would pass or fail the same
  * contract suite for different reasons.
  */
-import { StudioConflictError } from "../../studio/atomic-file";
-import { StudioValidationError } from "../../studio/errors";
+import { StudioConflictError, StudioValidationError } from "../../studio/errors";
+
 import { deepEq, isPlainObject } from "../../core/guards";
 import { checkWhole, fail, isJson, isWhole, onlyKeys } from "./scalar-rules";
 import { checkGeneration } from "./generation-rules";

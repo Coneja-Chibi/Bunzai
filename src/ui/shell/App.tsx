@@ -90,7 +90,7 @@ export function App({ forceSkipTitle = false, testListRetryDelaysMs, pieces: inj
   const tourIdRef = useRef<string | null>(null);
   const [tour, setTour] = useState<Tour | null>(null);
   const [tourOpen, setTourOpen] = useState(false);
-  // ctrl+1..9 / ctrl+comma / ctrl+alt+arrows -> mountApp. One listener, mounted here for the shell's
+  // 1..9 (or ctrl+1..9) / ctrl+comma / ctrl+alt+arrows -> mountApp. One listener, mounted here for the shell's
   // whole life; the chords themselves live in app-keys.ts and the dock prints them off the same table.
   const dismissTitle = useCallback(() => setShowTitle(false), [setShowTitle]);
   useAppKeys(dismissTitle);

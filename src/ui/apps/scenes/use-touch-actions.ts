@@ -6,7 +6,8 @@ export function useTouchActions(): [boolean, (e: MouseEvent) => void] {
   const [open, setOpen] = useState(false);
   const last = useRef(0);
   const onTap = useCallback((e: MouseEvent): void => {
-    if (!isNarrow(window.innerWidth) || ownsItsClick(e.target as Element | null)) return;
+    const width = e.currentTarget.closest(".scs")?.getBoundingClientRect().width ?? window.innerWidth;
+    if (!isNarrow(width) || ownsItsClick(e.target as Element | null)) return;
     const now = Date.now();
     if (!tapToggles(now, last.current)) return;
     last.current = now;

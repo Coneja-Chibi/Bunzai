@@ -35,7 +35,7 @@ const workbenchTour: Tour = {
       id: "layout",
       anchor: "layout",
       title: "Pick your layout",
-      body: "Click Bento or Playbill in the lit-up toggle and watch the fields rearrange. Bento shows them all at once; Playbill turns them into acts you page through.",
+      body: "Open View options to choose Bento or Playbill. Bento shows the fields together; Playbill turns them into acts you page through. Some themes set the arrangement for you.",
     },
     {
       id: "mode",
@@ -53,7 +53,7 @@ const workbenchTour: Tour = {
       id: "lens",
       anchor: "lens",
       title: "Aim at a platform",
-      body: "Tap the platforms you are building for. Fields that platform cannot carry dim out, so you always know what will travel.",
+      body: "Open Writing for and choose the platforms you are building for. The editor shows fields those platforms can carry. Choose the full card to see everything again.",
     },
     {
       id: "save",

@@ -11,7 +11,7 @@
  * text are sealed.
  */
 import { checkVariantId, turnOpenConflict } from "../cast-rules";
-import { StudioConflictError } from "../../../studio/atomic-file";
+import { StudioConflictError } from "../../../studio/errors";
 import type { Delta } from "../../../core/scene-state/types";
 import type { ChatPrompting, ChatStore, Generation, JsonObject, Message, TurnCheckpoint, WriteGuard } from "../../contracts/chat-store";
 import { checkConnection, checkGuard, checkLore, checkProgress, checkProps, checkTurnResult, checkTurnTarget } from "../chat-rules";

@@ -9,8 +9,8 @@ import { toErrorMessage } from "../error-message";
 import { heldFields, planUndo, readEntry, setFields } from "../core/compendium";
 import type { CompendiumReceipt, ReceiptKind, ReceiptWrite } from "../stage/contracts/chat-store";
 import type { CompendiumDeps } from "./compendium-deps";
-import { StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError } from "./errors";
+import { StudioConflictError, StudioNotFoundError } from "./errors";
+
 import { writeBook } from "./world-book-writer";
 
 const UNDOABLE = new Set(["filed", "partly_filed"]);

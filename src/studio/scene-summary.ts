@@ -22,8 +22,8 @@ import type { CharacterBody } from "../entities/character/schema";
 import type { Chat, ChatConnection, ChatStore, Message, SummarySettings, TakeSummary } from "../stage/contracts/chat-store";
 import { ProviderError } from "../stage/contracts/provider";
 import { checkTakeSummary } from "../stage/store/summary-rules";
-import { StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError } from "./errors";
+import { StudioConflictError, StudioNotFoundError } from "./errors";
+
 import { enqueue } from "./compendium-queue";
 import { WHOLE_BRANCH } from "./scene-branch";
 import type { Connected } from "./scene-turn";
@@ -146,8 +146,8 @@ async function pair(deps: SummaryDeps, d: Setup, read: Read, landed: Message): P
 }
 
 /** A reply, a new version or a continue has landed: run the automatic summary when it is due. Never throws; a failure is kept on the scene and the next run clears it. */
-export function summarizeAfter(deps: SummaryDeps, chatId: string, kind: TurnKind, landed: Message): void {
-  void enqueue(chatId, async () => {
+export function summarizeAfter(deps: SummaryDeps, chatId: string, kind: TurnKind, landed: Message): Promise<void> {
+  return enqueue(chatId, async () => {
     if (running.has(chatId)) return;
     try {
       const chat = await deps.chats.getChat(chatId);

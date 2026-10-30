@@ -41,10 +41,10 @@ test("polls from an injected baseline and stops through the scheduler handle", a
  */
 const dirs: string[] = [];
 const libraries: LibraryHandle[] = [];
-afterEach(() => {
+afterEach(async () => {
   // Close before removing: an open SQLite handle on a file about to be deleted is a Windows lock,
   // not a no-op, the same ordering library-lifecycle.test.ts's own afterEach uses.
-  for (const l of libraries.splice(0)) l.close();
+  for (const l of libraries.splice(0)) await l.close();
   for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true });
 });
 

@@ -7,7 +7,7 @@
 import { isActive } from "../core/compendium";
 import { str } from "../core/guards";
 import type { ChatStore } from "../stage/contracts/chat-store";
-import { StudioConflictError } from "../studio/atomic-file";
+import { StudioConflictError } from "../studio/errors";
 import type { CompendiumDeps } from "../studio/compendium-deps";
 import { enqueue } from "../studio/compendium-queue";
 import { cancelRun, dismissRun, runsOf, startStandardize } from "../studio/compendium-standardize";

@@ -90,9 +90,9 @@ describe("summary-content: matches summaryOfPiece + piece-facts", () => {
 
   test("stamps DERIVED_VERSION, pinned so a shape change below must bump it on purpose", () => {
     // Pinned to a literal, not the exported constant: a bump that forgets this line is a red test,
-    // not a silent pass (the exported constant would always equal itself). 2: PersonaFacts gained tagline and emoji.
-    expect(DERIVED_VERSION).toBe("2");
-    expect(buildSummary(fullCharacter).derivedVersion).toBe("2");
+    // not a silent pass. 3: verified held-media refs retain portrait metadata without opening bytes.
+    expect(DERIVED_VERSION).toBe("3");
+    expect(buildSummary(fullCharacter).derivedVersion).toBe("3");
   });
 
   test("the summary's own shape is pinned: a key added, renamed, or removed without bumping DERIVED_VERSION fails here", () => {

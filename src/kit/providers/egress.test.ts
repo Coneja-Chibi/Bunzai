@@ -23,6 +23,7 @@ test("registry discovers every drop-in provider and skips the template", () => {
     "local",
     "mistral",
     "nanogpt",
+    "ollama",
     "openai",
     "openrouter",
   ]);

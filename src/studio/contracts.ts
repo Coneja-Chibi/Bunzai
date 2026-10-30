@@ -29,8 +29,8 @@ export interface StudioStoreLike {
   readPortraitAsset?(kind: string, id: string): Promise<StoredPortraitAsset | null>;
   readPortraitContent?(kind: string, id: string): Promise<StoredPortraitContent | null>;
   importCompleted?(pieceCount: number): Promise<void>;
-  /** A piece and the library version it is at, which a chat freezes as its cast. */
-  readVersioned(kind: string, id: string): Promise<{ entity: ParsedCanonicalEntity; version: number } | null>;
+  /** A hydrated piece with its stored revision and library version, which a chat freezes as its cast. */
+  readVersioned(kind: string, id: string): Promise<{ entity: ParsedCanonicalEntity; revision: string; version: number } | null>;
   delete(kind: string, id: string): Promise<boolean>;
   deleteWithReceipt?(kind: string, id: string): Promise<Omit<import("../stage/contracts/content-store").PieceChangeEvent, "sequence"> | null>;
   /** The Trash, newest first. */

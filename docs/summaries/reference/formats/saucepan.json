@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/saucepan",
+  "sourcePath": "docs/reference/formats/saucepan.md",
+  "sourceHash": "sha256:22e33c33d4ee623c84cea997d0d90b2c70e65840b0d542fd8e61d94b6b1d9a48",
+  "summary": "The external importer mapping is a co-developer inspection dated 2026-10-24; current tests prove emitted files against that mapping, not a live external import. Saucepan format is the developer reference for Bunzai's export-only Saucepan target. Saucepan's Companion Importer at labs/companion-importer supports SillyTavern PNG v1 and v2 only, reading the chara tEXt chunk; its Backup JSON is not confirmed against a real file, so there is no Saucepan reader. src/formats/saucepan default-exports the saucepan character codec, writing .png, and saucepan-lorebook, ST world info for the Lorebook Importer; both return 0 from detect and the character codec's toCanonical delegates to the SillyTavern reader. The importer's fixed default map merges description personality and scenario into Information, sends creator_notes to Description, greetings to Scenarios, keeps examples name and tags, and discards system prompt, post-history, character_book and extensions; the result is a private draft and oversized fields are clipped with a toast. The adapter writes the normal V2 card under chara alone with no field rearranged, carried by the portrait or else the imported PNG, and saucepanWarnings reports every field over Saucepan's code-point limits plus a hint to map discarded prompts to Formatting Instructions by hand. Lorebooks are chapters with no keyword activation.",
+  "topics": [
+    "saucepan export-only target",
+    "Companion Importer chara PNG",
+    "default field map",
+    "code point limits",
+    "saucepanWarnings",
+    "Formatting Instructions hint",
+    "saucepan-lorebook ST world info",
+    "chapters no keywords"
+  ],
+  "sections": [
+    {
+      "slug": "what-saucepans-importer-reads",
+      "title": "What Saucepan's importer reads",
+      "level": 2,
+      "sourceHash": "sha256:c03613bb538a8278b51c25733964a2d81f7305d3aa2912dd3989568ff3de15ee",
+      "summary": "The importer takes PNG only and the chara keyword only, choosing V2 when data is present and V1 otherwise; no ccv3, JSON or charx. Default mapping, which the user can remap before saving: description personality and scenario merge into Information, creator_notes becomes the public Description, first_mes and alternate_greetings become Scenarios 1..N, mes_example becomes example dialogue, name and tags carry. System prompt, post-history instructions, character_book and extensions are dropped. The result is a private draft and oversized fields are clipped with a toast, not rejected.",
+      "topics": [
+        "PNG chara only",
+        "V1 V2 by data key",
+        "default mapping table",
+        "dropped prompts book",
+        "private draft clip toast"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-the-adapter-writes",
+      "title": "What the adapter writes",
+      "level": 2,
+      "sourceHash": "sha256:fc6de9f1967dfb49f9b21269ee6d85261c9c75a1e679d935cd85c21d8a45c476",
+      "summary": "The adapter writes the normal V2 card from the Tavern codec via v2CardObject, embedded under chara alone by charaOnlyPng, carried by the inline PNG portrait or else the imported PNG; no field is rearranged because Saucepan's defaults already read V2 as authored, and a card with no PNG art is refused. saucepanWarnings reports each field the importer would clip, counted in code points: Information over 120,000, Description over 20,000, example dialogue over 40,000, any scenario over 30,000, or more than 50 greetings. The default map is a fixed table keyed by field name with no entry for system_prompt or post_history_instructions, but the mapping step offers Select mapping per discarded field and Formatting Instructions accepts them; when either prompt is non-empty the report says so and warns past the 10,000 limit.",
+      "topics": [
+        "v2CardObject chara only",
+        "carrier fallback",
+        "clip limit warnings",
+        "fixed default map",
+        "Formatting Instructions manual map"
+      ],
+      "children": []
+    },
+    {
+      "slug": "lorebooks",
+      "title": "Lorebooks",
+      "level": 2,
+      "sourceHash": "sha256:7942af8d37c1cf94fc4782de0a506accc92537c42e8e540f9c481e9e2ed6827c",
+      "summary": "Saucepan lorebooks are chapters of title and text with no keyword activation. The Lorebook Importer takes any JSON and offers SillyTavern presets that map an entry's comment or keys to the chapter title and its content to the text; saucepan-lorebook writes ST world info for those presets and trigger keys survive only as text.",
+      "topics": [
+        "chapters title text",
+        "Lorebook Importer presets",
+        "saucepan-lorebook",
+        "keys as text"
+      ],
+      "children": []
+    },
+    {
+      "slug": "source-of-truth",
+      "title": "Source of truth",
+      "level": 2,
+      "sourceHash": "sha256:1880eaaca5773f21bb58815b78876f95fd0be339ca7123f468c84e7c6eb4dc28",
+      "summary": "The source-of-truth table names where each claim on this page lives. src/formats/saucepan/index.ts is the character adapter: it builds the V2 card, applies the Saucepan-specific handling, embeds the chara chunk, and attaches the serialize report with its warnings; it also default-exports the lorebook codec beside it. src/formats/saucepan/coverage.ts declares which canonical paths the Saucepan importer keeps, which drives the dropped list in every report and the export dialog's honesty lines. src/formats/_shared/card-png.ts holds v2CardObject and charaOnlyPng, shared with the other chara-only host, including the fallback from the portrait to the imported source PNG. src/formats/_shared/host-worldbook.ts wraps the SillyTavern worldbook codec under a host id. src/formats/saucepan/saucepan.test.ts pins the chunk keywords, field placement, refusals and report contents.",
+      "topics": [
+        "saucepan index coverage",
+        "card-png helpers",
+        "host-worldbook",
+        "saucepan tests"
+      ],
+      "children": []
+    }
+  ]
+}

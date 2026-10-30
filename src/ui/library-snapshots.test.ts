@@ -21,7 +21,7 @@ import { snapshotsDir, startSnapshotSchedule } from "./library-snapshots";
 const opened: OpenedLibrary[] = [];
 const dirs: string[] = [];
 afterEach(async () => {
-  for (const l of opened.splice(0)) l.close();
+  for (const l of opened.splice(0)) await l.close();
   await Promise.all(dirs.splice(0).map(removeTempDir));
 });
 const root = () => {
@@ -87,7 +87,7 @@ test("a snapshot copied into a new studio folder on a new computer opens with th
   const there = join(base, "New computer", "Studio");
   mkdirSync(there, { recursive: true });
   copyFileSync(join(snapshotsDir(here), `${snap.id}.db`), join(there, LIBRARY_FILE));
-  library.close();
+  await library.close();
   opened.splice(0);
 
   const newComputer = fakeComputer();
@@ -95,7 +95,7 @@ test("a snapshot copied into a new studio folder on a new computer opens with th
   expect(fresh.state).toBe("locked"); // the snapshot carries no key copy for any computer
   await fresh.keyring.unlockWithWords(words, { rememberComputer: true });
   expect(await ids(there)).toEqual(["vera"]);
-  fresh.close();
+  await fresh.close();
   opened.splice(0);
   expect((await open(there, newComputer)).state).toBe("unlocked"); // the new computer was remembered: no words next time
 });

@@ -10,6 +10,9 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { existsSync } from "node:fs";
+import { inflateSync } from "node:zlib";
+import extract from "png-chunks-extract";
+import type { PackagedAssets } from "./assets";
 import { bundleModule, bundleVendor, DEV_WATCH_ROOT, handleAssetRoutes, invalidateDevBundleCache } from "./server-static";
 
 /** Vendor/boot bundle content is identical on every rebuild (fixed repo source, nothing edited), so
@@ -140,4 +143,62 @@ describe("dev-bundle memo", () => {
 test("the dev watcher covers all of src, since an app bundle imports core, stage, entities and studio", () => {
   // A src/ui-only root let an edit in src/core serve a stale memoized bundle until restart.
   for (const dir of ["ui", "core", "stage", "entities", "studio", "formats"]) expect(existsSync(join(DEV_WATCH_ROOT, dir))).toBe(true);
+});
+
+describe("/app.webmanifest: installable to a phone's home screen", () => {
+  const pngSize = async (res: Response): Promise<string> => {
+    const head = new DataView(await res.arrayBuffer());
+    return `${head.getUint32(16)}x${head.getUint32(20)}`;
+  };
+  const manifest = async (): Promise<{ start_url: string; scope: string; display: string; icons: { src: string; sizes: string; type: string }[] }> =>
+    (await (await handleAssetRoutes("/app.webmanifest", undefined))!.json()) as never;
+
+  test("names a start URL, a scope and the 192 and 512 icons Chrome's install check asks for", async () => {
+    const m = await manifest();
+    expect(m.start_url).toBe("/");
+    expect(m.scope).toBe("/");
+    expect(m.display).toBe("standalone");
+    expect(m.icons.map((i) => i.sizes)).toEqual(expect.arrayContaining(["192x192", "512x512"]));
+  });
+
+  test("every icon it names is served at the size it claims, from source and from baked asset data", async () => {
+    const { icons } = await manifest();
+    const dev = await Promise.all(icons.map(async (i) => (await handleAssetRoutes(i.src, undefined))!));
+    const baked: Record<string, string> = {};
+    for (const [i, icon] of icons.entries()) baked[icon.src.slice(1)] = Buffer.from(await dev[i]!.clone().arrayBuffer()).toString("base64");
+    const packaged = { iconsB64: baked } as unknown as PackagedAssets;
+    for (const [i, icon] of icons.entries()) {
+      expect(dev[i]!.headers.get("content-type")).toBe(icon.type);
+      expect(await pngSize(dev[i]!)).toBe(icon.sizes);
+      expect(await pngSize((await handleAssetRoutes(icon.src, packaged))!)).toBe(icon.sizes);
+    }
+  });
+
+  test("an absent baked icon is an error instead of an empty successful response", async () => {
+    const response = await handleAssetRoutes("/icon-192.png", { iconsB64: {} } as unknown as PackagedAssets);
+    expect(response?.status).toBe(404);
+  });
+
+  test("maskable icons keep every painted pixel inside the central safe circle on an opaque ground", async () => {
+    for (const icon of (await manifest()).icons) {
+      const response = (await handleAssetRoutes(icon.src, undefined))!;
+      const chunks = extract(new Uint8Array(await response.arrayBuffer()));
+      const header = chunks.find((chunk) => chunk.name === "IHDR")!.data;
+      const size = new DataView(header.buffer, header.byteOffset).getUint32(0);
+      const pixels = inflateSync(Buffer.concat(chunks.filter((chunk) => chunk.name === "IDAT").map((chunk) => Buffer.from(chunk.data))));
+      let radius = 0, transparent = 0, filtered = 0;
+      for (let y = 0; y < size; y++) {
+        if (pixels[y * (size * 4 + 1)] !== 0) filtered++;
+        for (let x = 0; x < size; x++) {
+          const i = y * (size * 4 + 1) + 1 + x * 4;
+          if (pixels[i + 3] !== 255) transparent++;
+          if (pixels[i] !== 17 || pixels[i + 1] !== 17 || pixels[i + 2] !== 19) radius = Math.max(radius, Math.hypot(x + .5 - size / 2, y + .5 - size / 2));
+        }
+      }
+      expect(filtered).toBe(0); // The house generator deliberately writes unfiltered RGBA rows.
+      expect(transparent).toBe(0);
+      expect(radius).toBeGreaterThan(size * .2);
+      expect(radius).toBeLessThanOrEqual(size * .4);
+    }
+  });
 });

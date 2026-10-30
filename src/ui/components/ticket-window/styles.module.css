@@ -1,6 +1,6 @@
 /**
  * TicketWindow - transcribed 1:1 from the LOCKED vs-image-picker wire (booth + alternates strip):
- * black marquee naming the slot, art behind glass with a sheen, actions as perforated ticket stubs,
+ * an ink marquee naming the slot, art behind glass with a sheen, actions as perforated ticket stubs,
  * and the filmstrip of alternates riding under the booth in every deployment. Stage tokens only;
  * accent chips wear dark ink per the tokens contract (reads in both themes).
  */
@@ -20,7 +20,8 @@
   justify-content: space-between;
   gap: 0.5rem;
   background: var(--stage-black);
-  color: var(--stage-white);
+  /* text, not onDeep: the contract holds text against ink (4.5:1), and on a light palette ink is light */
+  color: var(--stage-card);
   font-family: var(--font-mono);
   font-weight: 600;
   font-size: var(--text-meta);
@@ -29,8 +30,9 @@
   padding: 0.4rem 0.6rem;
 }
 
-.marqueeTitle{
-  color: var(--a);
+.marqueeTitle {
+  /* --a is for marks only; words take its text-held twin (accentVars), or plain text with no piece accent */
+  color: var(--a-text, var(--stage-card));
   font-style: normal;
   white-space: nowrap;
   overflow: hidden;

@@ -4,6 +4,7 @@
  * leaves nothing behind; off means no pause. Fixtures follow scene-turn-guided.test.ts.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
@@ -24,7 +25,7 @@ async function scene() {
   await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }, { role: "user", content: "Any storms?" }, { role: "assistant", content: "Maybe." }]);
   const sent: ProviderRequest[] = [];
   const provider: Provider = { id: "fake", async send(request) { sent.push(request); return { content: "Colder.", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }),
     readPreset: async () => null, readLorebook: async () => null,
@@ -39,7 +40,7 @@ async function scene() {
     return runTurn(deps, { chatId: chat.id, kind, expectedVersion: version, inspect }, emit);
   };
   const reply = async () => (await chats.readMessages(chat.activeBranchId, { limit: 20 })).messages[2]!;
-  return { chats, chat, sent, events, reviewed, run, reply };
+  return { deps, chats, chat, sent, events, reviewed, run, reply };
 }
 
 describe("the Prompt Inspector's pause", () => {
@@ -51,7 +52,7 @@ describe("the Prompt Inspector's pause", () => {
     expect(review.messages.at(-1)).toEqual({ role: "user", content: "Any storms?" });
     expect(review.messages.some((m) => m.content === "Evening.")).toBe(true);
     expect(s.events.map((e) => e.type)).toEqual(["start", "review"]);
-    answerReview(s.chat.id, review.turnId, { kind: "cancel" });
+    answerReview(s.deps.runtime, s.chat.id, review.turnId, { kind: "cancel" });
     await turn;
   });
 
@@ -59,7 +60,7 @@ describe("the Prompt Inspector's pause", () => {
     const s = await scene();
     const turn = s.run("swipe", true);
     const review = await s.reviewed;
-    expect(answerReview(s.chat.id, review.turnId, { kind: "send", edits: {} })).toBe(true);
+    expect(answerReview(s.deps.runtime, s.chat.id, review.turnId, { kind: "send", edits: {} })).toBe(true);
     await turn;
     expect(s.sent).toHaveLength(1);
     expect(s.sent[0]!.messages.map((m) => ({ role: m.role, content: m.content }))).toEqual(review.messages);
@@ -72,7 +73,7 @@ describe("the Prompt Inspector's pause", () => {
     const turn = s.run("swipe", true);
     const review = await s.reviewed;
     const last = review.messages.length - 1;
-    answerReview(s.chat.id, review.turnId, { kind: "send", edits: { [last]: "Any storms tonight?" } });
+    answerReview(s.deps.runtime, s.chat.id, review.turnId, { kind: "send", edits: { [last]: "Any storms tonight?" } });
     await turn;
     expect(s.sent[0]!.messages.at(-1)!.content).toBe("Any storms tonight?");
     expect((await s.chats.lastRequest(s.chat.activeBranchId))!.texts.at(-1)).toBe("Any storms tonight?");
@@ -83,7 +84,7 @@ describe("the Prompt Inspector's pause", () => {
     const before = await s.reply();
     const turn = s.run("swipe", true);
     const review = await s.reviewed;
-    answerReview(s.chat.id, review.turnId, { kind: "cancel" });
+    answerReview(s.deps.runtime, s.chat.id, review.turnId, { kind: "cancel" });
     await turn;
     expect(s.sent).toHaveLength(0);
     expect(await s.chats.resumeIncomplete()).toHaveLength(0);
@@ -99,7 +100,7 @@ describe("the Prompt Inspector's pause", () => {
       const turn = s.run(kind, true);
       const review = await s.reviewed;
       expect(s.sent).toHaveLength(0);
-      answerReview(s.chat.id, review.turnId, { kind: "cancel" });
+      answerReview(s.deps.runtime, s.chat.id, review.turnId, { kind: "cancel" });
       await turn;
       expect(await s.chats.resumeIncomplete()).toHaveLength(0);
       expect((await s.chats.readMessages(s.chat.activeBranchId, { limit: 20 })).messages).toHaveLength(count);
@@ -110,7 +111,7 @@ describe("the Prompt Inspector's pause", () => {
     const s = await scene();
     const turn = s.run("swipe", true);
     const review = await s.reviewed;
-    expect(stopTurn(s.chat.id, review.turnId)).toBe(true);
+    expect(stopTurn(s.deps.runtime, s.chat.id, review.turnId)).toBe(true);
     await turn;
     expect(s.sent).toHaveLength(0);
     expect(await s.chats.resumeIncomplete()).toHaveLength(0);
@@ -127,10 +128,10 @@ describe("the Prompt Inspector's pause", () => {
     const s = await scene();
     const turn = s.run("swipe", true);
     const review = await s.reviewed;
-    expect(answerReview("someone-else", review.turnId, { kind: "send", edits: {} })).toBe(false);
-    expect(answerReview(s.chat.id, "no-such-turn", { kind: "cancel" })).toBe(false);
-    answerReview(s.chat.id, review.turnId, { kind: "cancel" });
+    expect(answerReview(s.deps.runtime, "someone-else", review.turnId, { kind: "send", edits: {} })).toBe(false);
+    expect(answerReview(s.deps.runtime, s.chat.id, "no-such-turn", { kind: "cancel" })).toBe(false);
+    answerReview(s.deps.runtime, s.chat.id, review.turnId, { kind: "cancel" });
     await turn;
-    expect(answerReview(s.chat.id, review.turnId, { kind: "cancel" })).toBe(false);
+    expect(answerReview(s.deps.runtime, s.chat.id, review.turnId, { kind: "cancel" })).toBe(false);
   });
 });

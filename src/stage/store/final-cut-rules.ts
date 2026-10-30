@@ -13,7 +13,7 @@ import { MAX_CONTEXT_MESSAGES, MAX_OUTPUT_TOKENS, MAX_TEMPERATURE, PASS_TYPES, T
 import { MAX_RERUNS, readRerun, type RerunEntry } from "../../core/final-cut/trace";
 import { isPlainObject } from "../../core/guards";
 import type { JsonObject } from "../contracts/chat-store";
-import { StudioConflictError } from "../../studio/atomic-file";
+import { StudioConflictError } from "../../studio/errors";
 import type { ChatFinalCut, ChatFinalCutPatch } from "../contracts/chat-final-cut-types";
 import { fail } from "./chat-rules";
 import { isWhole } from "./scalar-rules";

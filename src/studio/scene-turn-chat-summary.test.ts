@@ -3,6 +3,7 @@
  * already covered takes only what the summary reaches, the trace records what was hidden, and the Next send forecast is the same request. Fixtures follow scene-turn-review.test.ts.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
@@ -27,7 +28,7 @@ async function scene(opts: { asked?: boolean } = {}) {
   ]);
   const sent: ProviderRequest[] = [];
   const provider: Provider = { id: "fake", async send(request) { sent.push(request); return { content: "Colder.", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }),
     readPreset: async () => null, readLorebook: async () => null,

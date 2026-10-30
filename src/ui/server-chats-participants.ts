@@ -6,7 +6,7 @@
 import { str } from "../core/guards";
 import type { ChatStore, ParticipantChange } from "../stage/contracts/chat-store";
 import { applyParticipants, proposeParticipants, undoParticipantRun, type ParticipantDeps } from "../studio/scene-participants";
-import { connect } from "./server-chats-turn";
+import { connect } from "../kit/providers/scene-connect";
 import { err, json } from "./server-security";
 
 type Body = Record<string, unknown>;

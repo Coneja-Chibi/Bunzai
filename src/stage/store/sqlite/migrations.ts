@@ -35,6 +35,7 @@ import { MIGRATION_42_DIRECTOR } from "./migration-42-director";
 import { MIGRATION_43_SCENE_STATE } from "./migration-43-scene-state";
 import { MIGRATION_44_VERSION_WRITES } from "./migration-44-version-writes";
 import { MIGRATION_45_GLOBAL_OPS } from "./migration-45-global-ops";
+import { MIGRATION_46_DRAMATURG } from "./migration-46-dramaturg";
 
 export const MIGRATIONS: readonly Migration[] = [
   {
@@ -455,4 +456,5 @@ export const MIGRATIONS: readonly Migration[] = [
   MIGRATION_43_SCENE_STATE,
   MIGRATION_44_VERSION_WRITES,
   MIGRATION_45_GLOBAL_OPS,
+  MIGRATION_46_DRAMATURG,
 ];

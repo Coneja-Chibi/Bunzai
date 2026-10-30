@@ -3,6 +3,7 @@
  * error in the turn's macro report, the prompt still builds and the reply still goes out. The setting is `scenes.promptBudgetMs`; the clock is handed in.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { PROMPT_BUDGET_MS_DEFAULT } from "../core/assembly/tool-rounds";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
@@ -23,7 +24,7 @@ async function scene(description: string, deps: { promptBudgetMs?: () => Promise
   const sent: ProviderRequest[] = [];
   const provider: Provider = { id: "conn", async send(request, io) { sent.push(structuredClone(request)); io?.onEvent?.({ channel: "content", delta: "ok" }); return { content: "ok", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
   const events: TurnEvent[] = [];
-  const all = {
+  const all = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 200_000 }),
     readPreset: async () => null, readLorebook: async () => null, now: () => (now += 10), randomSeed: () => 7, ...deps,

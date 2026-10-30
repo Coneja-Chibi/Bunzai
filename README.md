@@ -117,6 +117,12 @@ bun run dev
 
 The Studio binds to loopback. Open the local address it prints.
 
+`bun run scripts/build-desktop.ts` builds the desktop app for the host: `dist/Bunzai.exe` on Windows,
+`dist/bunzai-linux-<arch>` on Linux, and `dist/bunzai-darwin-<arch>` on macOS.
+Linux needs WebKitGTK 6.0 / GTK4 for a native window. Linux desktop artifacts are not currently
+published by the release workflow; the downloadable Linux CLI still serves the browser UI.
+Native-window startup and close on Linux require platform testing before claiming a desktop release.
+
 ### Update
 
 Bunzai does not update itself. Use **Settings > About > Check for updates**, then replace your

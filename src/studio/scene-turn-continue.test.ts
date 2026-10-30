@@ -4,12 +4,13 @@
  * commit, and a crash. The fixtures are scene-turn.test.ts's own, as scene-turn.regressions.test.ts keeps.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { ProviderError, type Provider, type ProviderCompletion, type ProviderEvent } from "../stage/contracts/provider";
 import type { ChatStore } from "../stage/contracts/chat-store";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
 import { commitAnyway, resumeScene, runTurn, stopTurn, type Connected, type TurnEvent } from "./scene-turn";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError } from "./errors";
 
 const vera = {
   kind: "character",
@@ -52,7 +53,7 @@ async function scene(provider: Provider | null, opts: { connection?: boolean } =
     { role: "assistant", content: "Evening." },
     { role: "user", content: "{{setvar::asked::yes}}Any storms?" },
   ]))!;
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats,
     state,
     connect: async (): Promise<Connected | null> => (provider ? { provider, kind: "openrouter", context: 32_000 } : null),
@@ -128,7 +129,7 @@ describe("a continue (turn-loop rule 13)", () => {
     const s = await replied("The lamp swings,", scripted({ pieces: [" half a "], gate: new Promise((r) => (release = r)) }).provider);
     const running = s.turn("continue");
     await waitFor(s.events, "text");
-    stopTurn(s.chat.id, turnIdOf(s.events));
+    stopTurn(s.deps.runtime, s.chat.id, turnIdOf(s.events));
     await running;
     release();
     const after = await reply(s);
@@ -139,7 +140,7 @@ describe("a continue (turn-loop rule 13)", () => {
     const t = await replied("Calm.", scripted({ pieces: [], gate: new Promise((r) => (release2 = r)) }).provider);
     const running2 = t.turn("continue");
     await waitFor(t.events, "start");
-    stopTurn(t.chat.id, turnIdOf(t.events));
+    stopTurn(t.deps.runtime, t.chat.id, turnIdOf(t.events));
     await running2;
     release2();
     expect((await reply(t)).swipes[0]!.content).toBe("Calm.");
@@ -330,7 +331,7 @@ describe("a continue (turn-loop rule 13)", () => {
     await running;
     expect(s.events.at(-1)).toMatchObject({ type: "conflict", draft: " swings." });
     expect((await reply(s)).swipes[0]!.content).toBe("The lantern");
-    await commitAnyway(s.chats, s.chat.id, turnIdOf(s.events));
+    await commitAnyway(s.deps.runtime, s.chats, s.chat.id, turnIdOf(s.events));
     expect((await reply(s)).swipes[0]!.content).toBe("The lantern swings.");
   });
 
@@ -340,7 +341,7 @@ describe("a continue (turn-loop rule 13)", () => {
     const open = await s.chats.beginTurn(s.chat.activeBranchId, { kind: "continue", messageId: target.id });
     await s.chats.saveCheckpoint(open!.id, { content: " swings, then" });
     await s.chats.editSwipe(target.id, target.swipes[0]!.id, "The lantern");
-    expect(await resumeScene(s.chats, s.chat.id)).toBe(0);
+    expect(await resumeScene(s.deps.runtime, s.chats, s.chat.id)).toBe(0);
     expect((await reply(s)).swipes[0]!.content).toBe("The lantern");
     expect(await s.chats.resumeIncomplete()).toEqual([]);
   });
@@ -350,7 +351,7 @@ describe("a continue (turn-loop rule 13)", () => {
     const target = await reply(s);
     const open = await s.chats.beginTurn(s.chat.activeBranchId, { kind: "continue", messageId: target.id });
     await s.chats.saveCheckpoint(open!.id, { content: " swings, then" });
-    expect(await resumeScene(s.chats, s.chat.id)).toBe(1);
+    expect(await resumeScene(s.deps.runtime, s.chats, s.chat.id)).toBe(1);
     const after = await reply(s);
     expect([after.swipes[0]!.content, after.swipes[0]!.generation?.finishReason]).toEqual(["The lamp swings, then", "interrupted"]);
     expect(after.swipes).toHaveLength(1);

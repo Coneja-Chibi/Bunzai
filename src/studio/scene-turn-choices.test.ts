@@ -1,5 +1,6 @@
 /** The person's saved choice defaults on the turn loop: a scene that never answered a group takes the person's default for it; its own answer wins. */
 import { expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { PresetBody } from "../entities/preset/schema";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
@@ -26,7 +27,7 @@ async function sent(own: Record<string, unknown> | null, defaults: Record<string
   const seen: ProviderRequest[] = [];
   const provider: Provider = { id: "fake", async send(r) { seen.push(r); return { content: "ok", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
   const version = (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion!;
-  await runTurn({
+  await runTurn({ runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }),
     readPreset: async () => preset, readLorebook: async () => null,

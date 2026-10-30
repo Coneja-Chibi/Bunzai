@@ -72,7 +72,7 @@ function liveWindow(all: readonly HistoryMessage[], shown: readonly HistoryMessa
  * scene's own resolved connection; the Compendium's model, when chosen, is connected through `connect`.
  */
 export async function runRecall(
-  deps: { connect(connection: ChatConnection): Promise<Connected | null>; state: Pick<StateStore, "read"> },
+  deps: { connect(connection: ChatConnection, signal?: AbortSignal): Promise<Connected | null>; state: Pick<StateStore, "read"> },
   chat: Chat,
   loaded: LoadedTurn,
   scene: { connected: Connected; model: string },
@@ -97,7 +97,7 @@ export async function runRecall(
   const hit = cache.get(key);
   if (hit) return { ...hit, calls: 0, cached: true };
 
-  const target = c.model ? await deps.connect(c.model) : scene.connected;
+  const target = c.model ? await deps.connect(c.model, signal) : scene.connected;
   if (!target) return blank("skipped", "the Compendium's model is not available in Kit");
   const model = c.model?.model ?? scene.model;
   onStart?.();

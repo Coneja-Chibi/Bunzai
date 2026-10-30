@@ -10,9 +10,8 @@ export interface PackagedAssets {
   /** the house fonts (theme/fonts.ts), file name -> base64 woff2 */
   fontsB64: Record<string, string>;
   bootJs: string;
-  /** the beam-V icon, base64 ICO + PNG (favicon + web-manifest icon, so app windows wear our mark) */
-  faviconIcoB64: string;
-  iconPngB64: string;
+  /** Served icon filename to base64 bytes, baked from the shared icon inventory. */
+  iconsB64: Record<string, string>;
   /** app id -> browser bundle */
   apps: Record<string, string>;
   /** the dock manifest list, pre-collected */
@@ -35,4 +34,24 @@ export interface PackagedAssets {
   sandboxWorkerJs?: string;
   /** browser-bundled regex worker, served only by the sandbox authority */
   regexWorkerJs?: string;
+}
+
+/** One served-icon inventory shared by development, desktop packaging and the static browser studio. */
+export const ICON_FILES = {
+  "favicon.ico": ["vaude.ico", "image/x-icon"],
+  "icon-192.png": ["vaude-192.png", "image/png"],
+  "icon-256.png": ["vaude-256.png", "image/png"],
+  "icon-512.png": ["vaude-512.png", "image/png"],
+} as const;
+
+export const INSTALL_ICON_SIZES = [192, 512] as const;
+
+/** Desktop and static Browser Studio share the install descriptor; only the deployment-relative scope differs. */
+export function studioWebManifest(base: "/" | "./") {
+  return {
+    name: "Bunzai.", short_name: "Bunzai.", id: base, start_url: base, scope: base, display: "standalone",
+    icons: INSTALL_ICON_SIZES.map((size) => ({ src: `${base}icon-${size}.png`, sizes: `${size}x${size}`, type: "image/png", purpose: "any maskable" })),
+    background_color: "#111113", // hardcode-ok: manifest literal matching the generated install icon ground
+    theme_color: "#e11d48", // hardcode-ok: manifest literal matching the host accent
+  };
 }

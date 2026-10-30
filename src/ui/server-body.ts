@@ -2,19 +2,23 @@
  * The byte pump's server-side sinks (the pump itself is src/core/stream-bytes.ts): a file, a sealed
  * (AES-256-GCM) file, and a hash tee. A sink never reads the source; the pump hands it chunks, then
  * `finish()` on success or `abort()` on any early stop, which closes the handle. The caller owns the
- * file's directory and removes it on failure.
+ * file's directory. An exclusive sink removes only its own newly created file on failure; other
+ * sinks leave removal to their caller.
  */
 import { createCipheriv, createHash, randomBytes } from "node:crypto";
-import { open, type FileHandle } from "node:fs/promises";
+import { open, unlink, type FileHandle } from "node:fs/promises";
 import type { ByteSink } from "../core/stream-bytes";
 
 /** Owner-only: an in-flight upload holds whatever private cards, personas or pictures it carries. */
-export async function fileSink(path: string, mode = 0o600): Promise<ByteSink> {
-  const handle = await open(path, "w", mode);
+export async function fileSink(path: string, mode = 0o600, flags: "w" | "wx" = "w"): Promise<ByteSink> {
+  const handle = await open(path, flags, mode);
   return {
-    write: async (chunk) => { await handle.write(chunk); },
-    finish: () => handle.close(),
-    abort: () => handle.close().catch(() => undefined),
+    write: (chunk) => handle.writeFile(chunk),
+    finish: async () => { try { await handle.sync(); } finally { await handle.close(); } },
+    abort: async () => {
+      await handle.close().catch(() => undefined);
+      if (flags === "wx") await unlink(path).catch(() => undefined);
+    },
   };
 }
 
@@ -24,13 +28,14 @@ export async function sealedFileSink(path: string, key: Buffer, mode = 0o600): P
   try {
     const iv = randomBytes(12);
     const cipher = createCipheriv("aes-256-gcm", key, iv);
-    await handle.write(iv);
+    await handle.writeFile(iv);
     return {
-      write: async (chunk) => { await handle.write(cipher.update(chunk)); },
+      write: (chunk) => handle.writeFile(cipher.update(chunk)),
       finish: async () => {
         try {
-          await handle.write(cipher.final());
-          await handle.write(cipher.getAuthTag());
+          await handle.writeFile(cipher.final());
+          await handle.writeFile(cipher.getAuthTag());
+          await handle.sync();
         } finally { await handle.close(); }
       },
       abort: () => handle.close().catch(() => undefined),

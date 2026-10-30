@@ -6,9 +6,9 @@
  */
 import { canWrite, keepPairs, mirrorPairs, pairKey, reconcileRows, type PairState, type ReconcilePair, type ReconcileRow } from "../core/compendium";
 import type { CompendiumReceipt } from "../stage/contracts/chat-store";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError, StudioNotFoundError } from "./errors";
 import { sceneBooks, type CompendiumDeps } from "./compendium-deps";
-import { StudioNotFoundError } from "./errors";
+
 import { writeBook } from "./world-book-writer";
 
 const BUDGET = 48_000;

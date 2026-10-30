@@ -4,6 +4,7 @@
  * effect, and the last message is re-tagged only when it is not the person's.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { PresetBody } from "../entities/preset/schema";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
@@ -27,7 +28,7 @@ async function scene(library: PresetBody = quill(), answer?: (request: ProviderR
   await chats.appendMessages(branch, ALL.map((line) => { const [role, content] = line.split(":"); return { role: role as "user" | "assistant", content: content! }; }));
   const sent: ProviderRequest[] = [];
   const provider: Provider = { id: "fake", async send(request) { sent.push(request); const said = answer?.(request) ?? "Maybe."; return { ...(typeof said === "string" ? { content: said } : said), finish_reason: "stop", raw: {} } as ProviderCompletion; } };
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind, context: 32_000 }),
     readPreset: async () => library, readLorebook: async () => null, now: () => 2_000, randomSeed: () => 7,

@@ -49,7 +49,28 @@ const breakerList = (v: ParamValue): string[] | undefined => {
   }
 };
 
-/** llama.cpp and Ollama (RoleCall's adaptForLlamaCpp): grammar under its own name, a JSON schema wins over it, bias as id and bias pairs. */
+/**
+ * Ollama's native `/api/chat` (docs.ollama.com/api/chat and the Modelfile's PARAMETER list): the samplers under
+ * Ollama's names, which its request builder nests in `options`. A JSON schema, or a response format asking for
+ * JSON, goes as `format`, which the builder lifts to the top level.
+ */
+export const OLLAMA_PARAMS: ParamSupport = {
+  top_k: true, min_p: true, typical_p: true, seed: true, presence_penalty: true, frequency_penalty: true,
+  // Mirostat is not mapped: Ollama names it `mirostat`, which is the registry's import alias for mirostat_mode, and no parameter goes out under an alias.
+  repetition_penalty: "repeat_penalty",
+  stop: stopList("stop", Infinity),
+  json_schema: "format",
+  response_format: {
+    key: "format",
+    to: (v, all) => {
+      if (all.json_schema !== undefined || !isRecord(v)) return undefined;
+      const named = isRecord(v["json_schema"]) ? v["json_schema"]["schema"] : undefined;
+      return isRecord(named) ? named : v["type"] === "json_object" ? "json" : undefined;
+    },
+  },
+};
+
+/** llama.cpp and the other local servers on the OpenAI-compatible path (RoleCall's adaptForLlamaCpp): grammar under its own name, a JSON schema wins over it, bias as id and bias pairs. */
 export const LOCAL_PARAMS: ParamSupport = {
   ...OPEN_PARAMS,
   grammar_string: { key: "grammar", to: (v, all) => (all.json_schema === undefined ? v : undefined) },

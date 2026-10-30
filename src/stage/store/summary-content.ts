@@ -20,18 +20,20 @@ import type { PieceSummaryContent, SummaryInput } from "../contracts/content-sto
 export type { PieceSummaryContent, RegexShelfFacts } from "../contracts/content-store";
 
 /** Bump on any change to the shape below or the functions it calls: a stale stamp triggers D2's rebuild. */
-export const DERIVED_VERSION = "2";
+export const DERIVED_VERSION = "3";
 
 const MAX_DESCRIPTION = 400;
 const truncate = (s: string): string => (s.length > MAX_DESCRIPTION ? `${s.slice(0, MAX_DESCRIPTION)}…` : s);
 
 /** Every fact the Library and Scenes read from a live entity's body today, computed once at write time. */
-export function summaryContentOf(entity: ParsedCanonicalEntity): PieceSummaryContent {
+export function summaryContentOf(entity: ParsedCanonicalEntity, ownsBlob?: (sha: string) => boolean): PieceSummaryContent {
   // Only the listing fields the summary needs (id/kind/version/foreign already live on the row itself).
   const { name, importedAt, hasPortrait, accent, sourceFormat, sourceVariant, tags } = summaryOfPiece(
     entity.kind,
     entity.id,
     entity,
+    undefined,
+    ownsBlob,
   );
   const body: Rec = isRecord(entity.body) ? entity.body : {};
   const identity: Rec = isRecord(body.identity) ? body.identity : {};
@@ -56,6 +58,7 @@ export function summaryContentOf(entity: ParsedCanonicalEntity): PieceSummaryCon
 }
 
 /** The opaque, stamped summary every write hands the backend (spec "Sealed piece summaries"). */
-export function buildSummary(entity: ParsedCanonicalEntity): SummaryInput {
-  return { text: JSON.stringify(summaryContentOf(entity)), derivedVersion: DERIVED_VERSION };
+export function buildSummary(entity: ParsedCanonicalEntity, ownsBlob?: (sha: string) => boolean): SummaryInput & { content: PieceSummaryContent } {
+  const content = summaryContentOf(entity, ownsBlob);
+  return { text: JSON.stringify(content), derivedVersion: DERIVED_VERSION, content };
 }

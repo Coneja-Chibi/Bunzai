@@ -21,10 +21,15 @@
  *
  * THE REASON GOES UNDER ITS OPTION, not out in the right margin - at a real width the option and
  * its explanation ended up sixty columns apart, once per option.
+ *
+ * THE KEYBOARD WORKS, as it does in the terminal Kit (same ask-core): up and down (or Tab) move the
+ * pick and the focus together, a number 1-9 picks its row, Enter sends what the bar says. The panel takes focus when
+ * it appears unless you are already typing somewhere, so the first arrow press lands here.
  */
-import { useState, type JSX } from "react";
+import { useEffect, useRef, useState, type JSX, type KeyboardEvent } from "react";
+import { armedAnswer, askMessage, moveCursor, numberedRows, pickableRows, type AskState } from "../../kit/render/ask/ask-core";
 import { Button, ListRow } from "../components/button";
-import { armedAnswer, askMessage, numberedRows, type AskState } from "../../kit/render/ask/ask-core";
+import { isTypingTarget } from "../_shared/typing-target";
 import type { AskChoices } from "./kit-choice-core";
 
 /**
@@ -66,18 +71,57 @@ export function ChoiceList({
     note: "",
   });
 
+  const panel = useRef<HTMLDivElement>(null);
+  const picks = useRef<(HTMLButtonElement | null)[]>([]);
+  const live: AskState = { ...state, options: choices.options };
+  const count = pickableRows(choices.options).length;
+
+  // Take focus on arrival without interrupting an active editor or field.
+  useEffect(() => {
+    if (answered !== undefined) return;
+    if (!isTypingTarget(document.activeElement)) panel.current?.focus({ preventScroll: true });
+  }, [answered]);
+
   if (answered !== undefined) return <Answered question={choices.question} answer={answered} />;
 
-  const live: AskState = { ...state, options: choices.options };
   const armed = armedAnswer(live);
   const rows = numberedRows(choices.options);
   let pickIndex = -1;
 
+  const pick = (index: number): void => {
+    setState((prior) => ({ ...prior, cursor: index }));
+    picks.current[index]?.focus();
+  };
+  const send = (): void => {
+    const message = askMessage(live);
+    if (message !== null) onSend(message);
+  };
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>): void => {
+    // keyCode 229: Safari can end an IME composition with an Enter that no longer says isComposing.
+    if (e.altKey || e.ctrlKey || e.metaKey || e.nativeEvent.isComposing || e.keyCode === 229) return;
+    const typing = e.target instanceof HTMLInputElement;
+    // A digit pressed on the panel belongs to the panel, busy or not and in range or not: otherwise
+    // the shell's dock would read "2" as "open the second app" and walk away from the question.
+    if (!typing && /^[1-9]$/.test(e.key)) e.preventDefault();
+    if (busy) return;
+    if (e.key === "Enter" && !e.shiftKey) {
+      // Enter on an option sends that option (focus selects, see onFocus), never a click that would
+      // only re-select it; a held key sends once.
+      e.preventDefault();
+      if (!e.repeat) send();
+    } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      pick(moveCursor(live, e.key === "ArrowDown" ? 1 : -1));
+    } else if (!typing && /^[1-9]$/.test(e.key) && Number(e.key) <= count) {
+      pick(Number(e.key) - 1);
+    }
+  };
+
   return (
-    <div className="kit-ask">
+    <div className="kit-ask" ref={panel} tabIndex={-1} onKeyDown={onKeyDown}>
       <div className="kit-ask__head">
         <span>{"PICK ONE"}</span>
-        <span>{`${String(choices.options.length)} options`}</span>
+        <span>{`${String(choices.options.length)} options · ↑↓ or 1-${String(Math.min(count, 9))} · enter sends`}</span>
       </div>
       <p className="kit-ask__q">{choices.question}</p>
 
@@ -100,6 +144,8 @@ export function ChoiceList({
                 <span className="kit-ask__num">{`${String(entry.number ?? 0)}. `}</span>
                 <span className={kind === "option" ? "kit-ask__val" : "kit-ask__esc"}>{label}</span>
               </>}
+              ref={(el) => { picks.current[mine] = el; }}
+              onFocus={() => { setState((prior) => (prior.cursor === mine ? prior : { ...prior, cursor: mine })); }}
               disabled={busy}
               /**
                * CLICK SELECTS, IT DOES NOT SEND. The two visible steps are what make sending
@@ -117,6 +163,8 @@ export function ChoiceList({
                 type="text"
                 value={live.own}
                 placeholder="your answer"
+                // Picked by keyboard or click, the field is where the next keystroke belongs.
+                autoFocus
                 disabled={busy}
                 onChange={(e) => { setState((prior) => ({ ...prior, own: e.target.value })); }}
               />
@@ -153,10 +201,7 @@ export function ChoiceList({
           size="sm"
           variant="primary"
           disabled={busy || armed === null}
-          onClick={() => {
-            const message = askMessage(live);
-            if (message !== null) onSend(message);
-          }}
+          onClick={send}
         >
           {"Send"}
         </Button>

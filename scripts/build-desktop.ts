@@ -1,5 +1,5 @@
 /**
- * Build Bunzai.exe - real software from the same code the CLI runs.
+ * Build the native desktop app for this host: Bunzai.exe on Windows, bunzai-<os>-<arch> elsewhere.
  * 1. Bake the UI assets (index/tokens/boot + every discovered app bundle + manifests) into
  *    src/generated/packaged-assets.ts.
  * 2. Bake a STATIC format registry into src/generated/packaged-formats.ts (a compiled binary cannot
@@ -12,6 +12,7 @@ import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { docsAssetMime, parseDocsIndex, resolveDocPage } from "../src/ui/docs-corpus";
 import type { DocFigure, PackagedDocAsset } from "../src/ui/docs-types";
+import { ICON_FILES } from "../src/ui/assets";
 import { FONT_FILES } from "../src/ui/theme/fonts";
 import { bundleBrowser, PROD_REACT_DEFINE, VENDOR_SPECS, type BundleOptions } from "./ui-bundle";
 import { bakeFormatRegistry } from "./format-bake";
@@ -24,7 +25,7 @@ const genDir = join(root, "src", "generated");
 await mkdir(genDir, { recursive: true });
 
 // Release knobs: --cli-targets=bun-linux-x64,... compiles the CLI (same bake) per target;
-// --no-desktop skips the WebView2 exe on runners that cannot build it (everything but Windows).
+// --no-desktop skips the host's native desktop app; native window libraries are host-specific.
 const cliTargets = (process.argv.find((a) => a.startsWith("--cli-targets="))?.split("=")[1] ?? "")
   .split(",")
   .map((s) => s.trim())
@@ -150,8 +151,7 @@ const assets = {
   ),
   bootJs: await bundleBrowser(join(uiDir, "boot.ts"), undefined, PROD),
   vendor,
-  faviconIcoB64: Buffer.from(await Bun.file(join(root, "build", "vaude.ico")).arrayBuffer()).toString("base64"),
-  iconPngB64: Buffer.from(await Bun.file(join(root, "build", "vaude-256.png")).arrayBuffer()).toString("base64"),
+  iconsB64: Object.fromEntries(await Promise.all(Object.entries(ICON_FILES).map(async ([name, [file]]) => [name, Buffer.from(await Bun.file(join(root, "build", file)).arrayBuffer()).toString("base64")]))),
   apps,
   manifests,
   themePackages,
@@ -292,6 +292,7 @@ console.log(`baked static format registry (${formatIds.length} families: ${forma
 const NO_PROPRIETARY_SDK = ["--external", "@anthropic-ai/claude-agent-sdk"];
 
 await mkdir(join(root, "dist"), { recursive: true });
+const desktopDefaultOut = process.platform === "win32" ? "dist/Bunzai.exe" : `dist/bunzai-${process.platform}-${process.arch}`;
 try {
   if (!skipDesktop) {
     const compile = Bun.spawnSync(
@@ -307,14 +308,13 @@ try {
         join(root, "src", "stage", "crypto", "password-worker.ts"),
         join(root, "src", "stage", "store", "cold-read-worker.ts"),
         join(root, "src", "stage", "search", "search-worker.ts"),
-        "--outfile", join(root, desktopOutfile ?? "dist/Bunzai.exe"),
-        `--windows-icon=${join(root, "build", "vaude.ico")}`,
-        "--windows-hide-console",
+        "--outfile", join(root, desktopOutfile ?? desktopDefaultOut),
+        ...(process.platform === "win32" ? [`--windows-icon=${join(root, "build", "vaude.ico")}`, "--windows-hide-console"] : []),
       ],
       { cwd: root, stdout: "inherit", stderr: "inherit" },
     );
     if (compile.exitCode !== 0) throw new Error("compile failed");
-    console.log(`${desktopOutfile ?? "dist/Bunzai.exe"} ready`);
+    console.log(`${desktopOutfile ?? desktopDefaultOut} ready`);
   }
   for (const target of cliTargets) {
     const short = target.replace(/^bun-/, "");

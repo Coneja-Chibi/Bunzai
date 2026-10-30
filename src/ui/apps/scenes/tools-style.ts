@@ -71,4 +71,6 @@ export const TOOLS_STYLE = `
 .scn-sheet .box li::before{content:"\\25A0";color:var(--bk-scene-accent-text,var(--bk-role-brand-text))}
 .scn-sheet.gilt .box li::before{color:var(--stage-warn)}
 .scn-sheet .ft{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px;padding:16px 20px;border-top:2px solid var(--stage-black);background:color-mix(in srgb,var(--stage-card) 5%,var(--stage-panel))}
+/* Fold message actions visually on phones; focus and the tap toggle reveal the same controls. */
+@container (max-width:30rem){.scs .msg:not(.tap) .acts:not(.held):not(:focus-within){position:absolute;width:1px;height:1px;margin:0;padding:0;overflow:hidden;clip-path:inset(50%)}}
 `;

@@ -4,13 +4,14 @@
  * version of the last reply, and the refusals before a turn opens.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { ProviderError, type Provider, type ProviderCompletion, type ProviderEvent } from "../stage/contracts/provider";
 import type { ChatStore } from "../stage/contracts/chat-store";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
 import { emptyLoreEntry, emptyLorebookBody } from "../core/lore";
 import { commitAnyway, discardWaiting, NoConnectionError, resumeScene, runTurn, stopTurn, type Connected, type TurnEvent } from "./scene-turn";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError } from "./errors";
 import { varsOf } from "../core/scene-state/vars-bridge";
 
 const vera = {
@@ -54,7 +55,7 @@ async function scene(provider: Provider | null, opts: { connection?: boolean } =
     { role: "assistant", content: "Evening." },
     { role: "user", content: "{{setvar::asked::yes}}Any storms?" },
   ]))!;
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats,
     state,
     connect: async (): Promise<Connected | null> => (provider ? { provider, kind: "openrouter", context: 32_000 } : null),
@@ -148,7 +149,7 @@ describe("stop, failure, conflict", () => {
     const s = await scene(scripted({ pieces: ["Half a "], gate: new Promise((r) => (release = r)) }).provider);
     const running = s.turn();
     await waitFor(s.events, "text");
-    expect(stopTurn(s.chat.id, turnIdOf(s.events))).toBe(true);
+    expect(stopTurn(s.deps.runtime, s.chat.id, turnIdOf(s.events))).toBe(true);
     await running;
     release();
     const reply = await lastOf(s.chats, s.chat.activeBranchId);
@@ -161,7 +162,7 @@ describe("stop, failure, conflict", () => {
     const s = await scene(scripted({ pieces: [], gate: new Promise((r) => (release = r)) }).provider);
     const running = s.turn();
     await waitFor(s.events, "start");
-    stopTurn(s.chat.id, turnIdOf(s.events));
+    stopTurn(s.deps.runtime, s.chat.id, turnIdOf(s.events));
     await running;
     release();
     expect(await s.texts()).toEqual(["Evening.", "{{setvar::asked::yes}}Any storms?"]);
@@ -189,7 +190,7 @@ describe("stop, failure, conflict", () => {
     const conflict = s.events.at(-1) as Extract<TurnEvent, { type: "conflict" }>;
     expect(conflict).toMatchObject({ type: "conflict", draft: "Kept." });
     expect((await s.chats.resumeIncomplete())[0]!.content).toBe("Kept.");
-    await commitAnyway(s.chats, s.chat.id, conflict.turnId);
+    await commitAnyway(s.deps.runtime, s.chats, s.chat.id, conflict.turnId);
     expect((await s.texts()).slice(-2)).toEqual(["meanwhile", "Kept."]);
   });
 });
@@ -245,16 +246,16 @@ describe("fixes from review, 2026-09-28", () => {
     const eventsB: TurnEvent[] = [];
     const b = runTurn(s.deps, { chatId: s.chat.id, kind: "reply", expectedVersion: (await s.chats.readMessages(take!.id, { limit: 1 })).branchVersion! }, (e) => eventsB.push(e));
     await waitFor(eventsB, "text");
-    expect(await resumeScene(s.chats, s.chat.id)).toBe(0);
-    expect(stopTurn("another-scene", turnIdOf(eventsB))).toBe(false);
-    expect(stopTurn(s.chat.id, turnIdOf(eventsB))).toBe(true);
+    expect(await resumeScene(s.deps.runtime, s.chats, s.chat.id)).toBe(0);
+    expect(stopTurn(s.deps.runtime, "another-scene", turnIdOf(eventsB))).toBe(false);
+    expect(stopTurn(s.deps.runtime, s.chat.id, turnIdOf(eventsB))).toBe(true);
     await b;
     releaseB();
     releaseA();
     await a;
     expect(s.events.at(-1)?.type).toBe("done");
     expect(eventsB.at(-1)?.type).toBe("stopped");
-    expect(stopTurn(s.chat.id, turnA)).toBe(false);
+    expect(stopTurn(s.deps.runtime, s.chat.id, turnA)).toBe(false);
   });
 
   test("add it anyway and discard never touch a turn that is still streaming", async () => {
@@ -262,8 +263,8 @@ describe("fixes from review, 2026-09-28", () => {
     const s = await scene(scripted({ pieces: ["Live."], gate: new Promise((r) => (release = r)) }).provider);
     const running = s.turn();
     await waitFor(s.events, "text");
-    expect(await commitAnyway(s.chats, s.chat.id, turnIdOf(s.events))).toBeNull();
-    expect(await discardWaiting(s.chats, s.chat.id, turnIdOf(s.events))).toBe(false);
+    expect(await commitAnyway(s.deps.runtime, s.chats, s.chat.id, turnIdOf(s.events))).toBeNull();
+    expect(await discardWaiting(s.deps.runtime, s.chats, s.chat.id, turnIdOf(s.events))).toBe(false);
     release();
     await running;
     expect(s.events.at(-1)?.type).toBe("done");
@@ -276,7 +277,7 @@ describe("fixes from review, 2026-09-28", () => {
     await runTurn({ ...s.deps, chats: failing }, { chatId: s.chat.id, kind: "reply", expectedVersion: await s.version() }, (e) => events.push(e));
     expect(events.at(-1)).toMatchObject({ type: "failed", draft: "Whole reply." });
     expect((await s.chats.resumeIncomplete())[0]!.content).toBe("Whole reply.");
-    expect(await resumeScene(s.chats, s.chat.id)).toBe(1);
+    expect(await resumeScene(s.deps.runtime, s.chats, s.chat.id)).toBe(1);
     expect((await s.texts()).at(-1)).toBe("Whole reply.");
   });
 });
@@ -286,13 +287,13 @@ describe("a crash keeps what arrived", () => {
     const s = await scene(scripted({ pieces: [] }).provider);
     const open = await s.chats.beginTurn(s.chat.activeBranchId, { kind: "reply" });
     await s.chats.saveCheckpoint(open!.id, { content: "Cut off mid" });
-    expect(await resumeScene(s.chats, s.chat.id)).toBe(1);
+    expect(await resumeScene(s.deps.runtime, s.chats, s.chat.id)).toBe(1);
     const reply = await lastOf(s.chats, s.chat.activeBranchId);
     expect([reply.swipes[0]!.content, reply.swipes[0]!.generation?.finishReason]).toEqual(["Cut off mid", "interrupted"]);
 
     await s.chats.appendMessage(s.chat.activeBranchId, { role: "user", content: "and?" });
     await s.chats.beginTurn(s.chat.activeBranchId, { kind: "reply" });
-    expect(await resumeScene(s.chats, s.chat.id)).toBe(0);
+    expect(await resumeScene(s.deps.runtime, s.chats, s.chat.id)).toBe(0);
     expect(await s.chats.resumeIncomplete()).toEqual([]);
   });
 
@@ -301,7 +302,7 @@ describe("a crash keeps what arrived", () => {
     const open = await s.chats.beginTurn(s.chat.activeBranchId, { kind: "reply" });
     await s.chats.saveCheckpoint(open!.id, { content: "Late" });
     await s.chats.appendMessage(s.chat.activeBranchId, { role: "user", content: "later" });
-    expect(await resumeScene(s.chats, s.chat.id)).toBe(1);
+    expect(await resumeScene(s.deps.runtime, s.chats, s.chat.id)).toBe(1);
     expect((await s.texts()).slice(-2)).toEqual(["later", "Late"]);
   });
 });
@@ -329,7 +330,7 @@ describe("the turn kind reaches the lore engine (2e-d7 plan step 5)", () => {
     const chat = await chats.createChat({ title: "Night", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: veraWithBook } });
     await chats.setConnection(chat.id, { id: "conn", model: "vera-1" });
     await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }, { role: "user", content: "Any storms?" }]);
-    const deps = {
+    const deps = { runtime: createTurnRuntime(),
       chats,
       state,
       connect: async (): Promise<Connected | null> => ({ provider: scripted({ pieces: ["Maybe."] }).provider, kind: "openrouter", context: 32_000 }),
@@ -380,7 +381,7 @@ describe("the trace's verdicts are plain JSON, even with an undefined detail fie
     const chat = await chats.createChat({ title: "Night", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: veraWithBook } });
     await chats.setConnection(chat.id, { id: "conn", model: "vera-1" });
     await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }, { role: "user", content: "Any storms?" }]);
-    const deps = {
+    const deps = { runtime: createTurnRuntime(),
       chats,
       state,
       connect: async (): Promise<Connected | null> => ({ provider: scripted({ pieces: ["Maybe."] }).provider, kind: "openrouter", context: 32_000 }),

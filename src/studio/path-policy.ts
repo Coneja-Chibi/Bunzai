@@ -5,6 +5,7 @@
 import { relative, resolve, sep } from "node:path";
 import { StudioValidationError } from "./errors";
 import { KIND_IDS } from "../generated/kinds";
+import { sanitizeDownloadBase } from "../core/download-name";
 
 /** Closed set of on-disk entity folders: exactly the kinds in src/entities/<kind>/kind.ts, via the generated seam. */
 export const STUDIO_ENTITY_KINDS = KIND_IDS;
@@ -71,33 +72,51 @@ export function resolveStudioPath(root: string, kind: string, id?: string): stri
   return fileAbs;
 }
 
-/** Where converted, foreign-format artifacts land. Not an entity kind: nothing here is canonical. */
-export const STUDIO_EXPORTS_DIR = "exports";
-
 /** Extensions an export may carry. Closed set: a target adapter cannot invent a file type here. */
 const EXPORT_EXTENSIONS = new Set(["json", "png", "charx", "byaf", "lorebook", "zip"]);
 
+/** Where exports land, one fresh folder per export (the Press, the export dialog, Kit): see studio/exports.ts. */
+export const STUDIO_EXPORT_RUNS_DIR = "Export";
+
+/** What an export may write: the export set plus the Press's plain-text flavors. */
+const EXPORT_RUN_EXTENSIONS = new Set([...EXPORT_EXTENSIONS, "txt", "md"]);
+
 /**
- * Resolve one export artifact path under `<root>/exports`.
- *
- * CONTAINMENT IS STRUCTURAL, NOT VALIDATED. Callers pass an entity id and a bare extension, never a
- * path or a filename. The id goes through the same `assertSafeStudioId` as canonical storage (no
- * separators, no dots-dots, no controls, no reserved Windows names) and the extension must be one of
- * a closed set, so there is no caller-supplied path segment to escape with in the first place. A
- * model-callable export must never be handed a path; that would make it an arbitrary file write.
+ * Resolve a run folder, or a file in one, under `<root>/Export`. The folder and a file's base name must each
+ * be one plain segment that sanitizing would leave unchanged (no separators, dots-dots, controls, reserved
+ * Windows names, over 80 characters), and the extension must be in the closed lowercase run set, so nothing
+ * lands outside the run.
  */
-export function resolveStudioExportPath(root: string, id: string, extension: string): string {
-  const safeId = assertSafeStudioId(id);
-  const ext = extension.replace(/^\./, "").toLowerCase();
-  if (!EXPORT_EXTENSIONS.has(ext)) {
-    throw new StudioValidationError("unsupported export extension");
-  }
+export function resolveStudioExportRunPath(root: string, folder: string, name?: string): string {
+  const plain = (segment: string): string => {
+    if (!segment || segment !== sanitizeDownloadBase(segment, "")) throw new StudioValidationError("unsafe export name");
+    return segment;
+  };
   const rootAbs = resolve(root);
-  const dirAbs = resolve(rootAbs, STUDIO_EXPORTS_DIR);
-  assertContained(rootAbs, dirAbs);
-  const fileAbs = resolve(dirAbs, `${safeId}.${ext}`);
-  assertContained(rootAbs, fileAbs);
+  const runAbs = resolve(rootAbs, STUDIO_EXPORT_RUNS_DIR, plain(folder));
+  assertContained(rootAbs, runAbs);
+  if (name === undefined) return runAbs;
+  const dot = name.lastIndexOf(".");
+  plain(name.slice(0, Math.max(dot, 0)));
+  if (dot <= 0 || !EXPORT_RUN_EXTENSIONS.has(name.slice(dot + 1))) throw new StudioValidationError("unsupported export extension");
+  const fileAbs = resolve(runAbs, name);
+  assertContained(runAbs, fileAbs);
   return fileAbs;
+}
+
+/**
+ * The name a run gives a file the page asked for: the base sanitized (code points, 80 at most with the
+ * " (n)" a clash adds, no leading dots), the extension lowercased and required to be in the run set. The server mints it,
+ * so a page's own naming can never be refused for a detail; only a file type no export writes is.
+ */
+export function exportRunFileName(requested: string, attempt = 1): string {
+  const dot = requested.lastIndexOf(".");
+  const ext = dot > 0 ? requested.slice(dot + 1).toLowerCase() : "";
+  if (!EXPORT_RUN_EXTENSIONS.has(ext)) throw new StudioValidationError("unsupported export extension");
+  const suffix = attempt > 1 ? ` (${attempt})` : "";
+  // Leading dots go too: a dot file is hidden on Linux and macOS, and ".." reads as an escape.
+  const base = sanitizeDownloadBase(Array.from(requested.slice(0, dot).replace(/^[.\s]+/, "")).slice(0, 80 - suffix.length).join(""), "file");
+  return `${base}${suffix}.${ext}`;
 }
 
 function assertContained(rootAbs: string, candidateAbs: string): void {

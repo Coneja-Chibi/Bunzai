@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/security/remote-access",
   "sourcePath": "docs/reference/security/remote-access.md",
-  "sourceHash": "sha256:46c3091e60a1f10de2f2208758c262b68bafdb1eccdddc1df50f6e7a9828fab3",
-  "semanticSummaryHash": "sha256:31f4bdec118838f48da4343ad83b7573151e1ddff35a2129eb9d586011768cb5",
+  "sourceHash": "sha256:0920bf075535a09af739f7758fe368a843575bae8e4ad67907d5eeeb41b326dc",
+  "semanticSummaryHash": "sha256:f8ef41ee5eb68bb3e107dbb10d4b4353de68d79d99a72ab83d9ece0f2643b5a8",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:47:59.169Z"
+  "reviewer": "integration_review",
+  "notes": "Reviewed changed source and summaries against format adapters, shared export writer, host-only routes and UI delivery paths. Independently ran 38 format, stream and export-route tests; importer mapping retains dated co-developer provenance, external-host import and packaged behavior unverified.",
+  "reviewedAt": "2026-10-30T01:00:04.590Z"
 }

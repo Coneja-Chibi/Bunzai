@@ -97,4 +97,9 @@ describe("GateCard modality", () => {
     expect(html).toContain('role="alertdialog"');
     expect(html).toContain('aria-labelledby="gate-card__title"');
   });
+
+  test("it keeps the host's dark palette under a light theme, because it sits on Kit's own dark ground (the light one put a dark rose frame on it at 2.4:1)", () => {
+    const html = render({ id: "t:1:0", name: "studio_delete" });
+    expect(html).toMatch(/^<dialog [^>]*class="[^"]*host-protected[^"]*host-dark-ground/);
+  });
 });

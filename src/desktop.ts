@@ -20,6 +20,8 @@ import { reportBootFailure, reportWindowFailure } from "./desktop-boot-report";
 import { startDesktopWindow } from "./desktop-window-launch";
 import { claimDesktopPort, desktopPortOverride } from "./desktop-port";
 import { focusExisting } from "./desktop-focus";
+import { detachEnvironFromGtk } from "./desktop-env";
+import { webviewWorkerEnv } from "./desktop-webview-lib";
 
 const TITLE = "Bunzai.";
 
@@ -49,7 +51,7 @@ async function boot(): Promise<void> {
   });
   const { url: uiUrl, stop } = server;
   if (ours) void library.open();
-  else library.close();
+  else await library.close();
   if (await focusExisting(ours, TITLE, Number(new URL(uiUrl).port))) process.exit(0);
   console.log(`Bunzai. is up at ${uiUrl} (studio: ${studioDir})`);
 
@@ -61,13 +63,17 @@ async function boot(): Promise<void> {
   // A window that cannot open is NOT fatal: the studio is already serving, so the user gets told the
   // address and keeps their work. Exiting here would throw away a running studio over a missing
   // system runtime. (A failed native load inside the worker does reach this listener - proven.)
-  startDesktopWindow(() => new Worker("./desktop-window.ts"), uiUrl, TITLE, (e) => {
+  const windowEnv = await webviewWorkerEnv(); // Linux: the window's library no longer waits on TMPDIR
+  startDesktopWindow(() => new Worker("./desktop-window.ts", windowEnv ? { env: windowEnv } : undefined), uiUrl, TITLE, (e) => {
     reportWindowFailure(uiUrl, (e as ErrorEvent).message ?? e);
-  }, () => {
+  }, async () => {
     stop();
+    await library.close();
     process.exit(0);
   });
 }
+
+detachEnvironFromGtk(); // Linux: keeps libgtk-4's unsetenv from crashing Bun's Workers (desktop-env.ts)
 
 try {
   await boot();

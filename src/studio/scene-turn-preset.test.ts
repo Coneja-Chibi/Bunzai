@@ -5,6 +5,7 @@
  * before it opens.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { PresetBody, PresetPrompt } from "../entities/preset/schema";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
@@ -46,7 +47,7 @@ async function scene(library: Record<string, PresetBody>, model = "vera-1") {
       return { content: "Maybe.", finish_reason: "stop", raw: {} } as ProviderCompletion;
     },
   };
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats,
     state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }),

@@ -205,6 +205,14 @@ export function knowledgeHonestyLines(targetId: string, body: unknown): HonestyL
   if (targetId === "byaf") {
     return []; // byafHonestyLines already covers knowledgeRefs
   }
+  if (targetId === "janitor" || targetId === "saucepan") {
+    return [
+      {
+        kind: "drop",
+        text: `${books} do not travel inside the card: the importer ignores character_book. Export them with the same platform's lorebook format and import them in its lorebook editor.`,
+      },
+    ];
+  }
   if (targetId === "backyard" || targetId === "pygmalion" || targetId === "default-ccv3") {
     return [
       {
@@ -295,7 +303,7 @@ export function mediaPackHonestyLines(targetId: string, body: unknown): HonestyL
         kind: "drop",
         text: `This card has ${faces}. Agnai uses a part recipe, not a PNG pack; expression images will not travel as sprites.`,
       });
-    } else if (targetId === "default-ccv3" || targetId === "pygmalion" || targetId === "backyard") {
+    } else if (["default-ccv3", "pygmalion", "backyard", "janitor", "saucepan"].includes(targetId)) {
       lines.push({
         kind: "warn",
         text: `This card has ${faces}. This target is lean on media; the full pack may not travel.`,

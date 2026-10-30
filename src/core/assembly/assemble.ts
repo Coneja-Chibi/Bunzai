@@ -15,7 +15,6 @@ import type { MacroContext, MacroVariable } from "../macros";
 import type { GlobalWrite } from "../macros/types";
 import type { CharacterCardContext } from "../macros/handlers/character";
 import { appendAtDepth, buildConversation, defaultPrompts, DEFAULT_MAX_TOKENS, injectAtDepth, type Block } from "./conversation";
-import { stripReasoningTags } from "../reasoning-tags";
 import { minHistoryKeep, type DepthPlacement } from "./history-cut";
 import { applyLoreEffects, variableDiff, type LoreUndo } from "./lore-effects";
 import { placeLore } from "./lore-place";
@@ -25,7 +24,7 @@ import { cutSummarized, summaryText } from "./summary-cut";
 import { personaMacroBlock, presetPlan, PresetPlanError } from "./preset";
 import { HISTORY_MARKER, macroPass } from "./macro-pass";
 import { macroSink, variableChanges } from "./macro-report";
-import { stripToolCallLeaks, stripUnresolvedMacros } from "./sanitize";
+import { historyText, stripUnresolvedMacros } from "./sanitize";
 import { continuationPrefill } from "./continuation";
 import { DEFAULT_IMPERSONATION_PROMPT, impersonationText } from "../draft-prompts";
 import { cardView } from "./card";
@@ -61,10 +60,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   const toggles = effectiveToggles(choiceGroups, choiceSelections, input.promptToggles);
   const plan = input.preset ? presetPlan(input.preset, toggles) : defaultPrompts();
   /** A history message as the model and the history macros read it: tool-call leaks out, and an assistant reply's thinking out unless the scene keeps it. */
-  const cleaned = (m: HistoryMessage): string => {
-    const text = stripToolCallLeaks(m.content);
-    return input.keepThinking || m.role !== "assistant" ? text : stripReasoningTags(text, m.thinkingEnd === undefined ? input.reasoning : { ...(input.reasoning ?? { prefix: "", suffix: "", separator: "" }), recoveredEnd: m.thinkingEnd });
-  };
+  const cleaned = (m: HistoryMessage): string => historyText(m, input.reasoning, input.keepThinking);
   const [first, ...rest] = input.history;
   // Section 7: the greeting is the opening assistant message. RoleCall rebuilds it from the card by
   // its stored index; Bunzai stores the chosen greeting as that message, so it reads it back.

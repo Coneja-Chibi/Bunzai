@@ -20,6 +20,8 @@ here rotted once (it was missing three shipped adapters); it does not get a seco
 | Backyard / Faraday | [backyard.md](backyard.md) | legacy json and the `.byaf` archive |
 | Agnai | [agnai.md](agnai.md) | character, memory book |
 | NovelAI | [novelai.md](novelai.md) | `.lorebook` |
+| JanitorAI | [janitor.md](janitor.md) | export-only character PNG and ST world info for Scripts |
+| Saucepan | [saucepan.md](saucepan.md) | export-only companion PNG and ST world info for its importer |
 | Vaudeville native | [vaud-json.md](vaud-json.md) | the canonical wrapper |
 | Marinara Engine | [marinara.md](marinara.md) | native lorebook envelope, prompt preset, persona, regex; characters as CCv3 + extension fields |
 

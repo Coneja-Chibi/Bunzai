@@ -1,5 +1,6 @@
 /** A turn with the scene's generation parameters: the request carries only what is switched on, and the stored request says what was sent. */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { PresetBody } from "../entities/preset/schema";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
@@ -28,7 +29,7 @@ async function turnWith(samplers: Record<string, unknown>) {
       return { content: "Maybe.", finish_reason: "stop", raw: {} } as ProviderCompletion;
     },
   };
-  const deps = { chats, state: memoryStateStore(), connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }), readPreset: async () => preset, readLorebook: async () => null, now: () => 2_000, randomSeed: () => 7 };
+  const deps = { runtime: createTurnRuntime(), chats, state: memoryStateStore(), connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }), readPreset: async () => preset, readLorebook: async () => null, now: () => 2_000, randomSeed: () => 7 };
   const version = (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion!;
   await runTurn(deps, { chatId: chat.id, kind: "reply", expectedVersion: version }, () => undefined);
   const last = (await chats.readMessages(chat.activeBranchId, { limit: 10 })).messages.at(-1)!;

@@ -8,7 +8,7 @@ import type { ChatStore } from "../stage/contracts/chat-store";
 import { StudioNotFoundError, StudioValidationError } from "../studio/errors";
 import type { StudioStoreLike } from "../studio/contracts";
 import { backfill, saveSummaryText, summarizeNow, summaryState } from "../studio/scene-summary";
-import { connect } from "./server-chats-turn";
+import { connect } from "../kit/providers/scene-connect";
 import { err, json } from "./server-security";
 
 type Body = Record<string, unknown>;

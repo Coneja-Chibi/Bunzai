@@ -10,9 +10,9 @@ import { isRecord } from "../core/guards";
 import { TRACKER_MODULES, type TrackerModule } from "../stage/contracts/chat-tracker-types";
 import type { Chat, ChatStore } from "../stage/contracts/chat-store";
 import { SCENE_ACTION_TIERS } from "../kit/tools/safety/scene-tiers";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
 import { askJson, type Ask } from "./compendium-ask";
-import { StudioNotFoundError, StudioValidationError } from "./errors";
+
 import { names, type DraftDeps } from "./scene-draft";
 import { NoConnectionError } from "./scene-turn";
 

@@ -3,8 +3,8 @@
  * last messages, a bad answer gets one repair, and nothing is ever written to the scene. The answer is a proposal the panel shows for the person to accept.
  */
 import { describe, expect, test } from "bun:test";
-import { StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError, StudioValidationError } from "./errors";
+import { StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
+
 import { compendiumRig } from "./fake-compendium-rig";
 import { proposeTrackerItem } from "./scene-tracker-item";
 

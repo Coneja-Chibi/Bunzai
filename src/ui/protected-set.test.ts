@@ -20,6 +20,7 @@ const OWNERS: Record<ProtectedControlId, string[]> = {
   "participant-delete": ["src/ui/apps/scenes/cast/participant-row.tsx", "src/ui/apps/scenes/cast/cast-participants-tab.tsx"],
   "director-model": ["src/ui/apps/scenes/props/story-director/director-model.tsx"],
   "director-reset": ["src/ui/apps/scenes/props/story-director/director-panel.tsx"],
+  "dramaturg-model": ["src/ui/apps/scenes/props/dramaturg/dramaturg-settings.tsx"],
   "tracker-delete": ["bonds/bonds", "codex/codex", "corruption/corruption", "cycles/cycles", "events/events", "inventory/inventory", "knowledge/knowledge", "memories/memories", "party/party", "spellbook/spellbook"].map((p) => `src/ui/apps/scenes/props/trackers/${p}-panel.tsx`),
 };
 const text = (path: string): string => readFileSync(path, "utf8");

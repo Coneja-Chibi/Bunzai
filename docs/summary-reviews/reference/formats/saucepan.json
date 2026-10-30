@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/saucepan",
+  "sourcePath": "docs/reference/formats/saucepan.md",
+  "sourceHash": "sha256:22e33c33d4ee623c84cea997d0d90b2c70e65840b0d542fd8e61d94b6b1d9a48",
+  "semanticSummaryHash": "sha256:67cfa15c346ed9e45e520784b11f58dfde05465f6a72fe5ad9dd17e6bd9be487",
+  "verdict": "APPROVE",
+  "reviewer": "integration_review",
+  "notes": "Reviewed changed source and summaries against format adapters, shared export writer, host-only routes and UI delivery paths. Independently ran 38 format, stream and export-route tests; importer mapping retains dated co-developer provenance, external-host import and packaged behavior unverified.",
+  "reviewedAt": "2026-10-30T01:00:03.810Z"
+}

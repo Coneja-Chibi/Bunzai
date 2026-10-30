@@ -137,8 +137,8 @@ export function reportBootFailure(err: unknown, notify: Notifier = nativeNotifie
 }
 
 /**
- * The server is up but the native window did not open - overwhelmingly a missing WebView2 runtime, whose
- * loader failure arrives here as a worker error (proven: a failed dlopen in a worker fires the main
+ * The server is up but the native window did not open - overwhelmingly a missing WebView2 runtime on Windows
+ * or WebKitGTK on Linux, whose loader failure arrives here as a worker error (proven: a failed dlopen in a worker fires the main
  * thread's error listener and the process survives).
  *
  * NOT fatal, and it must not exit: the studio is already serving, so throwing the process away over a
@@ -155,12 +155,16 @@ export function reportWindowFailure(
   url: string,
   err: unknown,
   openUrl: (url: string) => void = openInBrowser,
+  platform: NodeJS.Platform = process.platform,
 ): void {
   console.error("Bunzai: the app window could not open:", describe(err));
   console.error(`Bunzai is still running, without its window. Opening it in your browser: ${url}`);
   console.error(
-    "To get the app window back, install Microsoft's WebView2 runtime: " +
-      "https://developer.microsoft.com/microsoft-edge/webview2/",
+    platform === "linux"
+      ? "To get the app window back, install WebKitGTK 6.0 (libwebkitgtk-6.0-4 on Debian and Ubuntu), then quit " +
+          "this Bunzai from Settings > About and start it again: closing a window opened onto it does not stop it."
+      : "To get the app window back, install Microsoft's WebView2 runtime: " +
+          "https://developer.microsoft.com/microsoft-edge/webview2/",
   );
   writeBootLog("window failure", err);
   openUrl(url);

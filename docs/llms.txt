@@ -16,6 +16,7 @@
 - [ADR-011: Exhaustive runtime schemas at canonical boundaries](docs/decisions/ADR-011-runtime-boundary-schemas.md): **Status:** accepted, 2026-07-26
 - [ADR-012: Macro evaluation is a closed-world interpreter, not a second script sandbox](docs/decisions/ADR-012-macro-evaluation-boundary.md): **Status:** accepted, 2026-08-23 (proposed 2026-07-26) **Context owners:** `src/core/preset/macros/`, `src/sandbox/`, a future `src/core/macros/` **Supersedes nothing. Constrains:** any implementation of the macro engine
 - [ADR-013: The scene's wings and tabs get slots in the one slot registry](docs/decisions/ADR-013-wing-slots.md): **Status:** proposed, 2026-10-12 (awaiting review) **Context owners:** `src/extensions/slot-registry.ts`, `src/ui/_shared/theme-slot.tsx`, `src/ui/apps/scenes/` **Supersedes nothing. Extends:** the slot list in the theme-package contract
+- [ADR-014: One reusable roleplay core for desktop and terminal hosts](docs/decisions/ADR-014-reusable-roleplay-core.md): **Status:** accepted direction by owner, 2026-10-29; consolidation implementation in progress. **Owners:** `src/rp-core.ts`, `src/studio/scene-turn.ts`, `src/stage/contracts/chat-store.ts`.
 
 ## Guide
 
@@ -81,6 +82,7 @@
 - [Add a content kind](docs/reference/extending/new-kind.md): How to add a new kind of piece (like presets or lorebooks): one folder under src/entities with its schema, decoder and kind.ts descriptor, then bun run kinds. Lists of kinds, labels, decks, decoders, storage folders, New actions, links, names and picture paths all read the generated seam. A completeness test names anything still missing, and a guard test fails on a new hand-written kind list.
 - [Agnai format](docs/reference/formats/agnai.md): Agnai (Agnaistic) is a browser/self-hosted AI roleplay app with its own native JSON character shape. It is not Tavern-lineage: instead of a flat description block, its persona is structured, a `kind` plus an
 - [Backyard format](docs/reference/formats/backyard.md): How the Backyard.ai (Faraday) adapter family detects, maps, and round-trips legacy flat-JSON cards and modern .byaf archives through the canonical model.
+- [JanitorAI format](docs/reference/formats/janitor.md): How the export-only JanitorAI adapter writes a chara-only CCv2 PNG whose top-level mirror fields match the field swap in Janitor's avatar importer, plus the ST world info lorebook export for Janitor Scripts.
 - [Lumiverse format](docs/reference/formats/lumiverse.md): How the Lumiverse adapter family maps ST-shaped character cards, regex scripts, personas, and presets through the canonical model.
 - [Marinara format](docs/reference/formats/marinara.md): How the Marinara-Engine adapters map regex scripts, personas, lorebooks, and presets through the canonical model.
 - [NovelAI format](docs/reference/formats/novelai.md): How the NovelAI lorebook adapter detects, maps, and round-trips native lorebook exports through the canonical model.
@@ -89,6 +91,7 @@
 - [RisuAI format](docs/reference/formats/risu.md): How the RisuAI adapter family detects, maps, and round-trips .charx character cards, a native lorebook export, and regex script sets through the canonical model.
 - [RoleCall to SillyTavern presets](docs/reference/formats/rolecall-to-sillytavern.md): What converts mechanically when a RoleCall preset becomes a SillyTavern preset, what Kit reports about the parts that do not, and the four patterns for finishing those by hand.
 - [RoleCall format](docs/reference/formats/rolecall.md): How the RoleCall adapter family maps character cards, lorebooks, personas, regex scripts, and presets through the canonical model.
+- [Saucepan format](docs/reference/formats/saucepan.md): How the export-only Saucepan adapter writes a chara-only CCv2 PNG for the Companion Importer, reports every field over Saucepan's limits, and exports lorebooks as ST world info for the Lorebook Importer.
 - [SillyTavern format](docs/reference/formats/sillytavern.md): How the SillyTavern adapter family detects, maps, and round-trips Character Card V1/V2/V3 cards and world info books through the canonical model.
 - [vaud-json format](docs/reference/formats/vaud-json.md): How the vaud-json adapter serializes the canonical character entity straight to plain JSON with no wire translation, and why it always wins detection on its own files.
 - [Glossary](docs/reference/glossary.md): Words that mean something particular in Bunzai, and the folder that owns each one. Read this before searching by name: several words here mean two different things, and a few folders are not what their names suggest. For where a specific fi
@@ -139,5 +142,5 @@
 - [Vision](docs/01-VISION.md): Simple for simple folk, an absolute unit for power users. Concretely, four people:
 - [Architecture](docs/02-ARCHITECTURE.md): Bunzai is a Bun and TypeScript application rooted in `src/`. The canonical engine is shared by three surfaces: the command-line interface, the loopback React Studio, and Kit's terminal interface. No surface owns a private format conversion
 - [Conventions](docs/03-CONVENTIONS.md): These are the repository's binding implementation rules. They describe current enforced practice, not an idealized future toolchain.
-- [Format support matrix](docs/FORMAT-SUPPORT.md): Auto-generated from live adapters (`bun run scripts/format-matrix.ts`). Canonical schema version: **1**. Generated: 2026-10-29.
+- [Format support matrix](docs/FORMAT-SUPPORT.md): Auto-generated from live adapters (`bun run scripts/format-matrix.ts`). Canonical schema version: **1**. Generated: 2026-10-30.
 - [Documentation](docs/README.md): Where every Bunzai document lives, from user guides and current references to accepted decisions, future specifications, and generated navigation.

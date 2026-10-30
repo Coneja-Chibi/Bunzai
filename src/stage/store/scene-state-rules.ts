@@ -6,7 +6,7 @@
 export { GLOBAL_SLOT } from "../../core/scene-state/globals";
 import { dropUnchanged, fold } from "../../core/scene-state/fold";
 import { isRecord } from "../../core/guards";
-import { StudioConflictError } from "../../studio/atomic-file";
+import { StudioConflictError } from "../../studio/errors";
 import { rebuild, type RebuildInput } from "../../core/scene-state/rebuild";
 import { deltaBytes } from "../../core/scene-state/size";
 import type { Delta, SceneState, SlotWriter } from "../../core/scene-state/types";

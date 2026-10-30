@@ -5,6 +5,7 @@
  */
 import type { Branch, ChatStore, CompendiumReceipt } from "../../contracts/chat-store";
 import { treeMethods } from "./chat-store-trees";
+import { dramaturgMethods } from "./chat-store-dramaturg";
 import { applySettle, checkReceiptInput, checkReceiptPage, checkSettle, receiptBody, requireReceiptSize } from "../receipt-rules";
 import { fail } from "../chat-rules";
 import type { ChatRecord } from "./chat-records";
@@ -16,7 +17,7 @@ export interface ReceiptDeps {
   newId: () => string;
 }
 
-type ReceiptMethods = Pick<ChatStore, "appendReceipt" | "settleReceipt" | "receipt" | "listReceipts" | "sweepReceipts" | "appendTree" | "currentTree" | "undoTree">;
+type ReceiptMethods = Pick<ChatStore, "appendReceipt" | "settleReceipt" | "receipt" | "listReceipts" | "sweepReceipts" | "appendTree" | "currentTree" | "undoTree" | "getDramaturg" | "setDramaturgSettings" | "appendDramaturg" | "clearDramaturg">;
 
 export function receiptMethods(d: ReceiptDeps): ReceiptMethods & { drop: (chatId: string) => void } {
   let all: CompendiumReceipt[] = [];
@@ -25,9 +26,11 @@ export function receiptMethods(d: ReceiptDeps): ReceiptMethods & { drop: (chatId
   const replace = (next: CompendiumReceipt) => void (all = all.map((r) => (r.id === next.id ? next : r)));
 
   const { drop: dropTrees, ...trees } = treeMethods(d);
+  const { drop: dropDramaturg, ...dramaturg } = dramaturgMethods(d);
   return {
     ...trees,
-    drop: (chatId) => { all = all.filter((r) => r.chatId !== chatId); dropTrees(chatId); },
+    ...dramaturg,
+    drop: (chatId) => { all = all.filter((r) => r.chatId !== chatId); dropTrees(chatId); dropDramaturg(chatId); },
 
     async appendReceipt(chatId, inputRaw) {
       const input = checkReceiptInput(inputRaw);

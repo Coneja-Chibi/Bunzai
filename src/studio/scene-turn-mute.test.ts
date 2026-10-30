@@ -4,6 +4,7 @@
  * the person's choice. Fixtures are scene-turn.test.ts's own.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { Provider, ProviderCompletion } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
@@ -25,7 +26,7 @@ async function scene(provider: Provider | null, opts: { connection?: boolean } =
     { role: "assistant", content: "Evening." },
     { role: "user", content: "{{setvar::asked::yes}}Any storms?" },
   ]))!;
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats,
     state,
     connect: async (): Promise<Connected | null> => (provider ? { provider, kind: "openrouter", context: 32_000 } : null),

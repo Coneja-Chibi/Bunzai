@@ -18,8 +18,8 @@ import { undoTrackerUpdate, type TrackerChats } from "./tracker-state";
 import type { TrackerModule } from "../stage/contracts/chat-tracker-types";
 import type { ChatConnection, ChatStore } from "../stage/contracts/chat-store";
 import type { Connected } from "./scene-turn";
-import { StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError, StudioValidationError } from "./errors";
+import { StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
+
 
 /** The tier the table gives panel edits (scene-tiers.ts); `editDirector` refuses to run unless it is write. */
 export const DIRECTOR_EDIT_TIER = SCENE_ACTION_TIERS["director.edit"];

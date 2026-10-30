@@ -10,9 +10,9 @@ import { diffModule, parseRefresh, refreshMessages, REFRESH_TEMPERATURE, type Mo
 import { MODULE_REFRESH_WINDOW, repairItem, type Line } from "../core/trackers/generate";
 import type { TrackerModule } from "../stage/contracts/chat-tracker-types";
 import type { ChatStore, Message } from "../stage/contracts/chat-store";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError, StudioNotFoundError, StudioValidationError } from "./errors";
 import { askJson, type Ask } from "./compendium-ask";
-import { StudioNotFoundError, StudioValidationError } from "./errors";
+
 import { names, type DraftDeps } from "./scene-draft";
 import { NoConnectionError } from "./scene-turn";
 import { draftOnly } from "./scene-tracker-item";

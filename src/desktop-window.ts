@@ -7,11 +7,13 @@
  * "Bunzai (Dev)" vs "Bunzai." matches the Start Menu tile the user clicked.
  */
 import { Webview, SizeHint } from "webview-bun";
+import { nameProcessForDesktop } from "./desktop-app-id";
 
 declare const self: Worker;
 
 self.onmessage = (event: MessageEvent<{ url: string; title?: string }>) => {
   const title = event.data.title?.trim() || "Bunzai.";
+  nameProcessForDesktop(); // Linux: the app_id the dock matches to bunzai.desktop
   const wv = new Webview(false, {
     width: 1280,
     height: 820,

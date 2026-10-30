@@ -15,25 +15,22 @@
  * or reordered.
  */
 import { toErrorMessage } from "../error-message";
+import { createSceneCore } from "./server-scene-composition";
+import { sceneRuntimeFor } from "./server-scene-runtime";
 import { isRecord, str } from "../core/guards";
 import type { ChatBackdrop, ChatConnection, ChatPreset, ChatStore } from "../stage/contracts/chat-store";
 import type { StateStore } from "../stage/contracts/state-store";
 import { listModelsFor } from "../kit/providers/adapters";
-import { knownContext } from "../kit/providers/known-context";
+import { connect } from "../kit/providers/scene-connect";
 import { spokes } from "../kit/providers/registry";
-import { sceneProvider, sceneRefusal, sceneTools } from "../kit/providers/scene";
+import { sceneRefusal } from "../kit/providers/scene";
 import { readVault } from "../kit/providers/vault";
-import { finalCutBanksOf } from "../studio/final-cut-library";
-import { commitAnyway, discardWaiting, runTurn, stopTurn, type Connected, type TurnEvent } from "../studio/scene-turn";
+import { commitAnyway, discardWaiting, stopTurn, type Connected, type TurnEvent } from "../studio/scene-turn";
 import type { ReadPreset } from "../studio/scene-turn-load";
-import { narratorTools } from "../studio/library-tools";
 import { answerReview, type ReviewDecision } from "../studio/scene-turn-review";
 import { answerRegex, regexAnswerOf } from "../studio/scene-turn-regex";
 import type { ReadLorebook } from "../studio/scene-lore";
 import type { SettingsStoreLike, StudioStoreLike } from "../studio/contracts";
-import { sceneReaders } from "./server-scene-readers";
-import { onTurnEvent } from "../studio/compendium-hooks";
-import { summarizeAfter } from "../studio/scene-summary";
 import type { CompendiumDeps } from "../studio/compendium-deps";
 import { BASE_SUPPORT } from "../stage/params/wire";
 import { err, json } from "./server-security";
@@ -103,19 +100,6 @@ function coalesceTurnEvents(send: (e: TurnEvent) => void): { push(e: TurnEvent):
   return { push, flush };
 }
 
-/** The scene's pick, resolved against Kit's saved connections: null when Kit no longer has it. */
-export async function connect(pick: ChatConnection): Promise<Connected | null> {
-  const saved = (await readVault()).providers.find((p) => p.id === pick.id);
-  if (!saved) return null;
-  const context = knownContext(pick.model) ?? (pick.model === saved.model ? saved.context : undefined);
-  return {
-    provider: await sceneProvider({ ...saved, model: pick.model }),
-    kind: saved.kind,
-    ...(context ? { context } : {}),
-    ...(sceneTools((await spokes()).get(saved.kind), pick.model) ? { tools: true } : {}),
-  };
-}
-
 /** The connections the AI wing lists: never a key, and each one a scene cannot use says why. */
 async function connections(): Promise<Response> {
   const [vault, catalog] = await Promise.all([readVault(), spokes()]);
@@ -171,16 +155,12 @@ async function stream(chats: ChatStore, state: StateStore, readPreset: ReadPrese
     buffered.push(e);
     controllerSend(e);
   });
-  const turn = runTurn(
-    { chats, state, connect, narratorTools: narratorTools(studio ? (kind, id) => studio.read(kind, id) : undefined), finalCutBanks: () => finalCutBanksOf(state), readPreset, readLorebook, readLibrary: studio ? (kind, id) => studio.read(kind, id) : undefined, ...sceneReaders(studio, settings), now: Date.now, randomSeed: () => Math.floor(Math.random() * 2 ** 31) },
+  const core = createSceneCore(chats, state, readPreset, readLorebook, studio, settings, compendium);
+  const turn = core.runTurn(
     { chatId: str(b["chatId"]), kind, expectedVersion, ...(fallback ? { fallback } : {}), ...(typeof b["guidance"] === "string" ? { guidance: b["guidance"] } : {}), ...(b["inspect"] === true ? { inspect: true } : {}) },
     (e) => {
       if (e.type === "start") { opened(); turnId = e.turnId; }
       coalescer.push(e);
-      // Filing is scheduled after the event is out and never holds the stream (04b D5); it can only add a receipt.
-      if (compendium) onTurnEvent(compendium, str(b["chatId"]), kind, e);
-      // The chat summary runs the same way, once the reply is in: when automatic summaries are on and one is due (scene-summary.ts).
-      if (e.type === "done") summarizeAfter({ chats, connect, readLibrary: studio ? (k, id) => studio.read(k, id) : undefined }, str(b["chatId"]), kind, e.message);
     },
   );
   // Refused before a checkpoint opened: answer it as an error, not an empty stream.
@@ -209,8 +189,8 @@ async function stream(chats: ChatStore, state: StateStore, readPreset: ReadPrese
     },
     cancel() {
       // A turn paused for review has no one left to answer it: it is cancelled, so nothing waits forever.
-      answerReview(str(b["chatId"]), turnId, { kind: "cancel" });
-      answerRegex(str(b["chatId"]), turnId, { kind: "cancel" });
+      answerReview(sceneRuntimeFor(chats), str(b["chatId"]), turnId, { kind: "cancel" });
+      answerRegex(sceneRuntimeFor(chats), str(b["chatId"]), turnId, { kind: "cancel" });
       // The page left; the turn does not stop with it. Still clear the pending flush timer: nothing
       // is listening for it to fire.
       done = true;
@@ -246,18 +226,18 @@ export async function handleTurnRoute(req: Request, url: URL, chats: ChatStore, 
   if (p === "/api/chats/turn") return stream(chats, state, readPreset, readLorebook, b, studio, compendium, settings);
   if (p === "/api/chats/review") {
     const decision = reviewDecision(b);
-    return decision ? json({ answered: answerReview(str(b["chatId"]), str(b["turnId"]), decision) }) : err('expected { chatId, turnId, kind: "send", edits?: { [index]: text } } or kind: "cancel"');
+    return decision ? json({ answered: answerReview(sceneRuntimeFor(chats), str(b["chatId"]), str(b["turnId"]), decision) }) : err('expected { chatId, turnId, kind: "send", edits?: { [index]: text } } or kind: "cancel"');
   }
   if (p === "/api/chats/regex-answer") {
     const answer = regexAnswerOf(b);
-    return answer ? json({ answered: answerRegex(str(b["chatId"]), str(b["turnId"]), answer) }) : err('expected { chatId, turnId, kind: "done", texts: { [index]: text } }, kind: "failed", error, or kind: "cancel"');
+    return answer ? json({ answered: answerRegex(sceneRuntimeFor(chats), str(b["chatId"]), str(b["turnId"]), answer) }) : err('expected { chatId, turnId, kind: "done", texts: { [index]: text } }, kind: "failed", error, or kind: "cancel"');
   }
-  if (p === "/api/chats/stop") return json({ stopped: stopTurn(str(b["chatId"]), str(b["turnId"])) });
+  if (p === "/api/chats/stop") return json({ stopped: stopTurn(sceneRuntimeFor(chats), str(b["chatId"]), str(b["turnId"])) });
   if (p === "/api/chats/discard") {
-    return (await discardWaiting(chats, str(b["chatId"]), str(b["turnId"]))) ? json({ discarded: true }) : err("that reply is no longer waiting", 404);
+    return (await discardWaiting(sceneRuntimeFor(chats), chats, str(b["chatId"]), str(b["turnId"]))) ? json({ discarded: true }) : err("that reply is no longer waiting", 404);
   }
   if (p === "/api/chats/add-anyway") {
-    const message = await commitAnyway(chats, str(b["chatId"]), str(b["turnId"]));
+    const message = await commitAnyway(sceneRuntimeFor(chats), chats, str(b["chatId"]), str(b["turnId"]));
     return message ? json(message) : err("that reply is no longer waiting", 404);
   }
   if (p === "/api/chats/preset") {

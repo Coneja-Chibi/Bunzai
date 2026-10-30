@@ -69,7 +69,7 @@ export function GateCard({
   const title = request.review?.title ?? request.peek?.title ?? request.name ?? "a change";
 
   return (
-    <ProtectedDialog variant="card" className="gate-card" role="alertdialog" labelledBy="gate-card__title" style={kitVars()}>
+    <ProtectedDialog variant="card" className="gate-card host-dark-ground" role="alertdialog" labelledBy="gate-card__title" style={kitVars()}>
       <p className="gate-card__kick">
         {/* The tool's real name. Somebody deciding about a write deserves to know what is writing. */}
         {request.name ? `${request.name} · ` : ""}

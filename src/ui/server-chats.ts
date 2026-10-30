@@ -7,6 +7,7 @@
  * library answers 423 and a stale version 409, like every Studio route.
  */
 import { bodyOf, isRecord, str } from "../core/guards";
+import { sceneRuntimeFor } from "./server-scene-runtime";
 import { countText } from "../core/tokens";
 import type { CharacterBody } from "../entities/character/schema";
 import { playedBody } from "../entities/character/variant";
@@ -61,6 +62,7 @@ import { handleVariableHistoryRoute } from "./server-chats-variable-history";
 import { searchSummaries } from "../studio/scene-summary-list";
 import { handleSummaryRoute } from "./server-chats-summary";
 import { handleDirectorRoute } from "./server-chats-director";
+import { handleDramaturgRoute } from "./server-chats-dramaturg";
 import { handleDraftRoute } from "./server-chats-draft";
 import { regexReaderOf, trackerReaderOf } from "./server-scene-readers";
 import { handleLibraryTrackersRoute } from "./server-chats-library-trackers";
@@ -330,7 +332,7 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
       if (p === "/api/chats/portrait") return portraitResponse(await frozenCharacter(chats, url.searchParams.get("id") ?? ""));
       if (p === "/api/chats/open") {
         const id = url.searchParams.get("id") ?? "";
-        await resumeScene(chats, id);
+        await resumeScene(sceneRuntimeFor(chats), chats, id);
         // A receipt left in flight with nothing running in this process (no pass in the scene lane, no Standardize run) is a crash's (rule 39); one being worked on now is left alone.
         if (!busy(id) && lockedBooks(id).length === 0) await chats.sweepReceipts(id);
         return scene(await openScene(chats, store, id));
@@ -408,6 +410,8 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
       if (director) return director;
       const linked = await handleLinkedRoute(req, url, chats);
       if (linked) return linked;
+      const dramaturg = await handleDramaturgRoute(req, url, chats, readPreset, readLorebook, null, store, settings);
+      if (dramaturg) return dramaturg;
       if (p === "/api/chats/tail") {
         const n = url.searchParams.has("n") ? Number(url.searchParams.get("n")) : 3;
         const tail = await sceneTail(chats, url.searchParams.get("id") ?? "", n, store);
@@ -438,6 +442,8 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
     if (summary) return summary;
     const director = await handleDirectorRoute(req, url, chats, Date.now, b);
     if (director) return director;
+    const dramaturg = await handleDramaturgRoute(req, url, chats, readPreset, readLorebook, b, store, settings);
+    if (dramaturg) return dramaturg;
     const forecast = await handleForecastRoute(req, p, chats, state, readPreset, readLorebook, b, store, settings);
     if (forecast) return forecast;
     const guides = await handleGuideRoute(req, p, chats, state, b);

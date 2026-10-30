@@ -12,13 +12,13 @@ export const PREF_ORDER = "library.order";
 export const PREF_VIEWS = "library.views";
 
 export const RC_STYLE = `
-/* --cw is the card width the art dial sets: RC's own 23.75rem (380px at default text size) at the
+/* --cw is the card width the art dial sets: 15.75rem (252px at default text size) at the
    dial's resting 8.5rem, down to 9rem at its smallest (a tile: art, a readable name, its controls), up to
-   the pane's width at its largest. Every step of the dial moves it; nothing parks at a clamp. */
+   57rem, capped at 85% of the pane. */
 /* the pane container: @container below resolves against THIS, so the room collapses by the pane
    it lives in (a narrow split on a wide monitor too), never by the window */
 .lib.rc{padding:0;gap:0;height:100%;min-height:0;background:var(--stage-well);container-type:inline-size;
-  --cw:min(calc(9rem + (var(--card-w,8.5rem) - 4rem) * 3.278),85cqi)}
+  --cw:min(calc(9rem + (var(--card-w,8.5rem) - 4rem) * 1.5),85cqi)}
 .lframe{display:flex;flex-direction:row;gap:1.25rem;flex:1;min-height:0;padding:.375rem 1.25rem 1rem 1rem}
 .lmain{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:.875rem;padding:.875rem .625rem 0 .75rem}
 

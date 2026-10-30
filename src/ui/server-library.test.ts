@@ -20,7 +20,7 @@ import { removeTempDir } from "../studio/test-temp-dir";
 const handles: LibraryHandle[] = [];
 const dirs: string[] = [];
 afterEach(async () => {
-  for (const h of handles.splice(0)) h.close();
+  for (const h of handles.splice(0)) await h.close();
   await Promise.all(dirs.splice(0).map(removeTempDir));
 });
 
@@ -183,7 +183,7 @@ test("mistakes get a plain answer, not a server error", async () => {
 test("remote access may resume the moment the library is unlocked, not on the next idle tick", async () => {
   const first = await rig();
   await withPassword(first);
-  first.library.close();
+  await first.library.close();
   const r = await rig({ dir: first.dir, vault: first.vault });
   expect(await (await r.get("/api/library/status")).json()).toMatchObject({ phase: "locked" });
   let resolved = false;

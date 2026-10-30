@@ -63,7 +63,7 @@ export interface EntitySummary {
 }
 
 /** The listing entry for a canonical piece. */
-export function summaryOfPiece(kind: string, id: string, entity: ParsedCanonicalEntity, version?: number): EntitySummary {
+export function summaryOfPiece(kind: string, id: string, entity: ParsedCanonicalEntity, version?: number, ownsBlob?: (sha: string) => boolean): EntitySummary {
   const stamp = studioStampOf(entity);
   const source = sourceOf(entity);
   const importedAt = stamp["importedAt"];
@@ -72,7 +72,7 @@ export function summaryOfPiece(kind: string, id: string, entity: ParsedCanonical
     kind,
     name: entityName(entity),
     ...(typeof importedAt === "string" ? { importedAt } : {}),
-    hasPortrait: hasPortrait(entity),
+    hasPortrait: hasPortrait(entity, ownsBlob),
     accent: pieceAccent(entity),
     sourceFormat: source.format,
     sourceVariant: source.variant,

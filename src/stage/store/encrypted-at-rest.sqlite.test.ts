@@ -73,6 +73,11 @@ const SECRET = {
   receiptValue: "Pewter heron with a cracked bell",
   receiptModel: "quince-filing-model",
   receiptReason: "Mulberry ledger stopped early",
+  dramaturgQuestion: "Why does the ferrywoman hoard brass keys",
+  dramaturgAnswer: "Because the drowned bell taught her thrift",
+  dramaturgRead: "read the saffron harbor messages",
+  dramaturgModel: "lavender-consultant-model",
+  dramaturgConnection: "conn-gooseberry-lantern",
 };
 
 // Card art (holistic 4.2's blob store, S4b): canonical base64 so it extracts as a shared blob rather
@@ -153,6 +158,9 @@ test("nothing written through the stores can be found in the database files", as
   await chats.setSummary(chat.activeBranchId, { text: SECRET.chatSummaryText, through: 1 });
   await chats.setDirectorSettings(chat.id, { instructions: SECRET.directorInstructions });
   await chats.putDirector(chat.id, committed!.id, { ...blankDirector(SECRET.directorNote) }, { expectedVersion: null });
+  await chats.setDramaturgSettings(chat.id, { model: { id: SECRET.dramaturgConnection, model: SECRET.dramaturgModel } });
+  const answer = { role: "assistant" as const, text: SECRET.dramaturgAnswer, reads: [{ tool: "read_scene_messages", summary: SECRET.dramaturgRead }], model: SECRET.dramaturgModel };
+  await chats.appendDramaturg(chat.id, [{ role: "user", text: SECRET.dramaturgQuestion }, answer], { expectedRevision: 0 });
   await chats.setCompendium(chat.id, { on: true, language: SECRET.compendiumLanguage, writeBook: SECRET.compendiumBook, books: { [SECRET.compendiumBook]: { access: "read_write" } }, recall: { guidance: SECRET.compendiumGuidance } });
   const receipt = await chats.appendReceipt(chat.id, {
     branchId: chat.activeBranchId, kind: "filing", status: "partly_filed", model: SECRET.receiptModel, reason: SECRET.receiptReason,
@@ -218,6 +226,7 @@ test("nothing written through the stores can be found in the database files", as
     expect((await st.summaryOf(chat.activeBranchId))?.text).toBe(SECRET.chatSummaryText);
     expect((await st.getChat(chat.id))?.director).toEqual({ instructions: SECRET.directorInstructions });
     expect((await st.getDirector(chat.id, committed!.id))?.state.notes[0]?.content).toBe(SECRET.directorNote);
+    expect(await st.getDramaturg(chat.id)).toMatchObject({ settings: { model: { id: SECRET.dramaturgConnection, model: SECRET.dramaturgModel } }, revision: 1, entries: [{ text: SECRET.dramaturgQuestion }, answer] });
     expect(await st.receipt(receipt!.id)).toMatchObject({ model: SECRET.receiptModel, reason: SECRET.receiptReason, writes: [{ bookId: SECRET.receiptBook, fields: { after: { tagline: SECRET.receiptValue } } }] });
 
     reopened.lock();
@@ -239,6 +248,7 @@ test("nothing written through the stores can be found in the database files", as
     expect((again.db.query("SELECT director_json FROM chats").get() as { director_json: string }).director_json.startsWith("e1:")).toBe(true);
     expect((again.db.query("SELECT cell FROM director_states").get() as { cell: string }).cell.startsWith("e1:")).toBe(true);
     expect((again.db.query("SELECT cell FROM compendium_receipts").get() as { cell: string }).cell.startsWith("e1:")).toBe(true);
+    expect((again.db.query("SELECT cell FROM dramaturg_threads").get() as { cell: string }).cell.startsWith("e1:")).toBe(true);
     const rawTitle = (again.db.query("SELECT title FROM chats").get() as { title: string }).title;
     expect(rawTitle.startsWith("e1:")).toBe(true);
     const rawSummary = (again.db.query("SELECT summary_cell FROM document_summaries").get() as { summary_cell: string }).summary_cell;

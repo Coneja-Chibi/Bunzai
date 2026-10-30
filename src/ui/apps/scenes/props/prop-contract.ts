@@ -44,6 +44,11 @@ export interface SceneProp {
    * floats it. It is also a pop-out kind, so the host draws it while the prop is on.
    */
   panel?: PopoutKind;
+  /**
+   * A wing of its own on the right rail while the prop is on (RoleCall's "their wing icons and deeper panels appear only when
+   * enabled"): the icon is the prop's, the label its name, and the wing opens `panel`. Needs `panel`; the gear still opens it too.
+   */
+  rail?: { blurb: string };
   /** Sub-feature switches drawn under the prop's tile while it is on (RoleCall's MODULE_SUB_FEATURES); the tile also shows one dot for each. */
   subs?: readonly SubFeature[];
   /** Where the prop sits in the wing: absent is a row under Built-In Props; "legacy" and "storyboard" are tiles in RoleCall's Legacy Trackers and Storyboards boxes. */

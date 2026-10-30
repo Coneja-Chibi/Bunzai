@@ -122,7 +122,7 @@ describe("when the round runs", () => {
     const run = stopped.turn();
     for (let i = 0; i < 500 && !stopped.events.some((e) => e.type === "start"); i++) await Promise.resolve();
     for (let i = 0; i < 500 && stopped.planner.length === 0; i++) await Promise.resolve();
-    stopTurn(stopped.chat.id, (stopped.events.find((e) => e.type === "start") as Extract<TurnEvent, { type: "start" }>).turnId);
+    stopTurn(stopped.deps.runtime, stopped.chat.id, (stopped.events.find((e) => e.type === "start") as Extract<TurnEvent, { type: "start" }>).turnId);
     await run;
     await stopped.settle();
     expect(stopped.tracker).toHaveLength(0);

@@ -14,14 +14,15 @@ import { StageWing, type StageProps } from "./scene-stage-wing";
 import { ThemeSlot } from "../../_shared/theme-slot";
 import { ContextSection, ContextWing, type ContextProps } from "./context/context-wing";
 import { FoldoutTabs } from "./scene-foldout";
-import { wingOf } from "./scene-wing-data";
+import { wingOf, propWings, propWingId } from "./scene-wing-data";
+import { PropWingBody, type PropWingHost } from "./scene-prop-wing";
 import { WingFrame } from "./scene-wing-frame";
 import type { WingResize } from "./wing-resize-edge";
 
 export { WINGS } from "./scene-wing-data";
 export { WingRails } from "./scene-wing-rail";
 
-export function WingPanel({ id, tab, bare, single, castPanel, booth, ai, aiGeneration, stage, prompting, world, props, finalCut, context, resize }: {
+export function WingPanel({ id, tab, bare, single, castPanel, booth, ai, aiGeneration, stage, prompting, world, props, finalCut, context, resize, propWing }: {
   id: string;
   /** The tab to open on (a Messenger program, messenger/programs.ts). */
   tab?: string;
@@ -34,13 +35,16 @@ export function WingPanel({ id, tab, bare, single, castPanel, booth, ai, aiGener
   finalCut?: { panel: JSX.Element };
   /** The wing's drag edge; a panel drawn without one (a test, a closed slot) has none. */
   resize?: WingResize;
+  propWing?: PropWingHost;
 }): JSX.Element | null {
-  const wing = wingOf(id);
+  const prop = propWing?.list.find((p) => propWingId(p.id) === id && p.panel && p.rail);
+  const wing = wingOf(id, prop ? propWings([prop], [prop.id]) : undefined);
   if (!wing) return null;
   const crumb = <div className="crumb">{wing.side === "l" ? "Scene" : "Tools"} <i>/</i> <b>{wing.label}</b></div>;
   const frame = (extra: string | undefined, body: ReactNode): JSX.Element => bare
     ? <div className={`wing-panel ${wing.side}${extra ? ` ${extra}` : ""}`} data-wing={wing.id}>{body}</div>
     : <WingFrame wing={wing} {...(extra ? { extra } : {})} {...(resize ? { resize } : {})}>{body}</WingFrame>;
+  if (prop && propWing) return frame("prop-wing", <PropWingBody prop={prop} state={propWing} />);
   if (id === "cast" && castPanel) return frame("cast-wing", <><ThemeSlot id="scene.wing.cast" />{castPanel}</>);
   if (id === "booth" && booth) return frame(undefined, <><ThemeSlot id="scene.wing.booth" /><nav className="fold">{crumb}</nav>{booth}</>);
   if (id === "prompting" && prompting) return frame(undefined, <><ThemeSlot id="scene.wing.prompting" />{prompting.panel}</>);

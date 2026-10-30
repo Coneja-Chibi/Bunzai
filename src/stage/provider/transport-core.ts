@@ -145,6 +145,8 @@ const TOOLS_REFUSED = [
 
 /** Whether this error is a server refusing the request's tools (an HTTP 400 that says so), the one place that decides it. */
 export const refusesTools = (error: unknown): boolean => error instanceof ProviderError && error.status === 400 && TOOLS_REFUSED.some((phrase) => error.message.toLowerCase().includes(phrase));
+/** A reply the backend sent that cannot be read as one: every native reader reports it the same way. */
+export const badReply = (message: string): ProviderError => new ProviderError(message, { category: "api_error", code: "backend_error", status: 502 });
 
 /** RoleCall's BYOK rule: 401 is a bad key; everything else is a backend error with its status. */
 export function classifyHttpFailure(status: number, bodyText: string, label: string): ProviderError {
@@ -169,6 +171,9 @@ export function classifyHttpFailure(status: number, bodyText: string, label: str
       }
     } else if (isRecord(parsed) && asText(parsed.message)) {
       detail = clip(asText(parsed.message), 500);
+    } else if (isRecord(parsed) && asText(parsed.error)) {
+      // Ollama's shape: the error is the message itself.
+      detail = clip(asText(parsed.error), 500);
     }
   } catch {
     // Not JSON: the clipped text stands.

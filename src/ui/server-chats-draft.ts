@@ -15,7 +15,7 @@ import { choiceDefaultsOf, promptBudgetOf } from "./server-scene-readers";
 import { runDraft, type DraftDeps, type DraftInput } from "../studio/scene-draft";
 import type { ReadPreset } from "../studio/scene-turn-load";
 import type { ReadLorebook } from "../studio/scene-lore";
-import { connect } from "./server-chats-turn";
+import { connect } from "../kit/providers/scene-connect";
 import { providerJson } from "./server-provider-json";
 
 type Body = Record<string, unknown>;

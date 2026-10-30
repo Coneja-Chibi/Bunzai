@@ -8,6 +8,7 @@
 import { sceneRules, type SceneSet } from "../core/regex/scene-pass";
 import type { RegexRule, RegexSetBody } from "../entities/regex/schema";
 import type { TurnEvent } from "./scene-turn";
+import type { TurnRuntime } from "./scene-turn-runtime";
 import { awaitRegex } from "./scene-turn-regex";
 
 /** The page could not apply the scene's regex to a pass's input. */
@@ -19,6 +20,7 @@ export class FinalCutRegexError extends Error {
 }
 
 export interface FinalCutRegexInput {
+  runtime: TurnRuntime;
   setIds: readonly string[] | undefined;
   readRegex: ((id: string) => Promise<RegexSetBody | null>) | undefined;
   turnId: string;
@@ -41,7 +43,7 @@ export async function finalCutRegexInput(input: FinalCutRegexInput): Promise<((t
   return async (text) => {
     if (text === "") return text;
     input.emit({ type: "regex", turnId: input.turnId, rules, items: [{ index: 0, role: "assistant", depth: 0, text }], macros: input.names, phase: "display" });
-    const answer = await awaitRegex(input.turnId, input.chatId, input.signal);
+    const answer = await awaitRegex(input.runtime, input.turnId, input.chatId, input.signal);
     if (answer.kind === "cancel") throw new FinalCutRegexError("Stopped before this scene's regex could run on the pass.");
     if (answer.kind === "failed") throw new FinalCutRegexError(`This scene's regex could not run. ${answer.error}`);
     const keys = Object.keys(answer.texts);

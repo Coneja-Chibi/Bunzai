@@ -10,7 +10,7 @@ import { isFontFile } from "./theme/fonts";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { watch as watchFs } from "node:fs";
-import type { PackagedAssets } from "./assets";
+import { ICON_FILES, studioWebManifest, type PackagedAssets } from "./assets";
 import { err, textResponse } from "./server-security";
 import { REACT_EXTERNALS, VENDOR_SPECS } from "./vendor/specs";
 
@@ -249,27 +249,17 @@ export async function handleAssetRoutes(
   if (p === "/tokens.css") {
     return packaged ? noStore(packaged.tokensCss, "text/css; charset=utf-8") : staticFile("./theme/tokens.css", "text/css; charset=utf-8");
   }
-  if (p === "/favicon.ico" || p === "/icon-256.png") {
-    const isIco = p === "/favicon.ico";
-    const type = isIco ? "image/x-icon" : "image/png";
-    if (packaged) {
-      const b64 = isIco ? packaged.faviconIcoB64 : packaged.iconPngB64;
-      return new Response(Buffer.from(b64, "base64"), { headers: { "content-type": type } });
-    }
-    const rel = isIco ? "../../build/vaude.ico" : "../../build/vaude-256.png";
-    return new Response(Bun.file(fileURLToPath(new URL(rel, import.meta.url))), { headers: { "content-type": type } });
+  const icon = Object.hasOwn(ICON_FILES, p.slice(1)) ? ICON_FILES[p.slice(1) as keyof typeof ICON_FILES] : undefined;
+  if (icon) {
+    const [file, type] = icon;
+    const encoded = packaged?.iconsB64[p.slice(1)];
+    if (packaged && encoded === undefined) return err("the packaged icon is missing", 404);
+    const body = packaged ? Buffer.from(encoded!, "base64") : Bun.file(fileURLToPath(new URL(`../../build/${file}`, import.meta.url)));
+    return new Response(body, { headers: { "content-type": type } });
   }
   if (p === "/app.webmanifest") {
     return noStore(
-      JSON.stringify({
-        name: "Bunzai.",
-        short_name: "Bunzai.",
-        icons: [{ src: "/icon-256.png", sizes: "256x256", type: "image/png" }],
-        display: "standalone",
-        // hardcode-ok: the web-manifest spec takes literal colors, CSS vars cannot reach it
-        background_color: "#faf8f3", // hardcode-ok (paper, tokens.css --paper)
-        theme_color: "#e11d48", // hardcode-ok (house rose, tokens.css --host-rc)
-      }),
+      JSON.stringify(studioWebManifest("/")),
       "application/manifest+json",
     );
   }

@@ -31,14 +31,14 @@ ${R} .agent-room__notice{padding:14px 28px;border-left:4px solid var(--premiere-
 /* transcript: full-width bands with a 4px spine */
 ${R} .agent-room__talk{gap:8px;padding:18px 0 12px;background:none}
 ${R} .agent-room__empty{padding:34px 20px;text-align:center;font-style:normal;color:var(--dim)}
-${R} .agent-room__line{--spine:var(--bk-role-select);--band:color-mix(in srgb,var(--stage-black) 42%,transparent);
+${R} .agent-room__line{--spine:var(--bk-role-select);--spine-text:var(--bk-role-select-text);--band:color-mix(in srgb,var(--stage-black) 42%,transparent);
   padding:12px 28px 12px 24px;border-left-width:4px;background:var(--band);transition:background .2s}
-${R} .agent-room__line--user{--spine:var(--accent);--band:var(--kit-lift);border-left-color:var(--spine)}
+${R} .agent-room__line--user{--spine:var(--accent);--spine-text:var(--bk-role-brand-text);--band:var(--kit-lift);border-left-color:var(--spine)}
 ${R} .agent-room__line--assistant{border-left-color:var(--spine)}
-${R} .agent-room__line--tool{padding-block:9px;--spine:var(--text-dim)}
+${R} .agent-room__line--tool{padding-block:9px;--spine:var(--text-dim);--spine-text:var(--text-dim)}
 ${R} .agent-room__line--kit{padding:8px 28px;border-left-width:0;background:none}
 ${R} .agent-room__line:not(.agent-room__line--kit):hover{background:color-mix(in srgb,var(--spine) 9%,var(--band))}
-${R} .agent-room__who{display:block;font:700 12px/1 var(--font-ui);letter-spacing:.16em;margin-bottom:8px;color:var(--spine)}
+${R} .agent-room__who{display:block;font:700 12px/1 var(--font-ui);letter-spacing:.16em;margin-bottom:8px;color:var(--spine-text)}
 ${R} .agent-room__said,${R} .agent-room__line--tool .agent-room__said{font:inherit;font-size:14px;color:var(--text)}
 ${R} .kit-md__head{font:700 15px/1.3 var(--font-fancy);letter-spacing:.02em;color:var(--text)}
 ${R} .kit-md__mark{color:var(--premiere-gold)}

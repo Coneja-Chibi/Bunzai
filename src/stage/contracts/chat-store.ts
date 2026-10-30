@@ -13,7 +13,7 @@ import type { ChatParticipants, ParticipantChange } from "./chat-participant-typ
 import type { ChatRegex, ChatRegexPatch } from "./chat-regex-types";
 import type { ChatFinalCut, ChatFinalCutPatch } from "./chat-final-cut-types";
 import type { ChatTrackerPatch, ChatTrackers, TrackerModule } from "./chat-tracker-types";
-import type { ChatSummary, SummarySettingsPatch, TakeSummary, TakeSummaryInput } from "./chat-summary-types";
+import type { ChatStoreSummaries, ChatSummary, SummarySettingsPatch, TakeSummary, TakeSummaryInput } from "./chat-summary-types";
 import type { Delta, SceneState } from "../../core/scene-state/types";
 import type { PartText } from "./content-store";
 import type { MessageAtPage, MessageDeltaGuard, SceneDeltaRange, MessagePage, MessageSwipePage, MessageTailPage, TranscriptSearchPage, TranscriptSearchQuery, TranscriptSwipeSelection } from "./chat-store-pages";
@@ -154,8 +154,9 @@ export * from "./chat-final-cut-types";
 export * from "./chat-tracker-types";
 export * from "./chat-summary-types";
 export * from "./director-types";
-import type { ChatStoreSummaries } from "./chat-summary-types";
+export * from "./dramaturg-types";
 import type { ChatStoreDirector, DirectorSettings } from "./director-types";
+import type { ChatStoreDramaturg } from "./dramaturg-types";
 
 export interface Branch {
   id: string;
@@ -217,7 +218,7 @@ export interface TurnCheckpoint {
  * throws StudioValidationError; a stale WriteGuard throws StudioConflictError. Absence is checked
  * before staleness, so a write to a message that is gone is null, not a conflict.
  */
-export interface ChatStore extends ChatStoreSummaries, ChatStoreDirector {
+export interface ChatStore extends ChatStoreSummaries, ChatStoreDirector, ChatStoreDramaturg {
   createChat(input: { title: string; cast: Cast; snapshot: CastSnapshot; history?: ChatHistory }): Promise<Chat>;
   getChat(id: string): Promise<Chat | null>;
   /** The chat's frozen cast; null when the chat is absent or deleted, like getChat. */

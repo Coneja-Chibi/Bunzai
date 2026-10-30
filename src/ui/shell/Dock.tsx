@@ -20,12 +20,16 @@ function DockTile({ app, chord, collapsed, pending, onNavigate }: { app: AppMani
 
 export function Dock({ onNavigate, pendingAppId }: { onNavigate?: () => void; pendingAppId?: string } = {}): JSX.Element {
   const manifests = useShellStore(state => state.manifests);
+  const activeAppId = useShellStore(state => state.activeAppId);
   const collapsed = useShellStore(state => state.dockSlim);
   const toggle = useShellStore(state => state.toggleDockSlim);
   const openOverlay = useShellStore(state => state.openOverlay);
   const lane = useRef<HTMLDivElement>(null);
   const nav = useRef<HTMLElement>(null);
   const restoreFocus = useRef(false);
+  useLayoutEffect(() => {
+    if (!collapsed) nav.current?.querySelector<HTMLElement>('[aria-current="page"]')?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+  }, [activeAppId, collapsed]);
   const toggleDock = (): void => { restoreFocus.current = true; toggle(); };
   useLayoutEffect(() => {
     if (!restoreFocus.current) return;

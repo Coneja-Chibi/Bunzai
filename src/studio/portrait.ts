@@ -101,9 +101,11 @@ function fromB64(b64: string, mime: string): PortraitBytes | null {
   }
 }
 
-/** True when the entity carries a displayable portrait (cheap check, no decoding): the same candidates `portraitBytes` can decode. */
-export function hasPortrait(entity: AnyEntity): boolean {
-  return findPortraitSource(entity) !== null;
+/** True for inline portrait bytes, or a media reference backed by the caller's explicit blob ownership. */
+export function hasPortrait(entity: AnyEntity, ownsBlob?: (sha: string) => boolean): boolean {
+  if (findPortraitSource(entity) !== null) return true;
+  const reference = ownsBlob ? portraitReference(entity) : null;
+  return reference !== null && "sha" in reference && ownsBlob?.(reference.sha) === true;
 }
 
 /** Decode the portrait bytes, or null when the entity carries none. */

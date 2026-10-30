@@ -15,6 +15,10 @@ const block = (opener: string): string => {
 const core = block(":root {");
 /** The alias list: ONE declaration list applied to the page AND the protected layer, so each resolves per element. */
 const shared = block(":root, .host-protected {");
+/** The host's dark palette for protected surfaces: the page root's, and every surface on a dark ground of its own. */
+const darkHost = block(":root, .host-dark-ground {");
+/** The host's light palette for protected surfaces, chosen by the host's own attribute (the painter writes it), never by a theme. */
+const lightHost = block(':root[data-host-scheme="light"] {');
 /** The host-only redeclaration of every property a theme can write. */
 const hostBlock = block("@layer protected {") + block("\n.host-protected {");
 const declared = (text: string, name: string): string | undefined => new RegExp(String.raw`(?:^|[\s;{])${name}\s*:\s*([^;]+);`).exec(text)?.[1]?.trim();
@@ -28,6 +32,14 @@ const FORMER_THEME_TOKENS = ("--accent --accent-deep --action-primary --action-p
   "--stage-link --stage-macro --stage-mute --stage-ok --stage-ok-bg --stage-panel --stage-paper --stage-rose-well --stage-row --stage-seam --stage-soft --stage-sunken " +
   "--stage-text-dim --stage-var --stage-warn --stage-warn-ink --stage-well --stage-white --stamp-bg --stamp-fg --status-bg --status-dim --status-fg --success --success-fg " +
   "--text --text-dim --text-faint --text-soft --tooth --warning --warning-fg").split(" ");
+
+/** A theme palette read through a lookup of each property the painter writes. */
+const paletteOf = (value: (name: string) => string): ThemePalette => ({
+  surface: Object.fromEntries(SURFACE_NAMES.map((n) => [n, value(surfaceProp(n))])) as ThemePalette["surface"],
+  line: Object.fromEntries(LINE_NAMES.map((n) => [n, value(LINE_PROPS[n])])) as ThemePalette["line"],
+  text: Object.fromEntries(TEXT_NAMES.map((n) => [n, value(textProp(n))])) as ThemePalette["text"],
+  roles: Object.fromEntries(ROLE_NAMES.map((r) => [r, Object.fromEntries(ROLE_PARTS.map((part) => [part, value(roleProp(r, part))]))])) as ThemePalette["roles"],
+});
 
 describe("tokens.css", () => {
   test("no theme palette block survives: the palette is the painter's --bk-* write set over a core fallback", () => {
@@ -49,14 +61,7 @@ describe("tokens.css", () => {
   });
 
   test("the core palette passes the contrast floors every theme must meet", () => {
-    const value = (name: string): string => declared(core, name)!;
-    const palette: ThemePalette = {
-      surface: Object.fromEntries(SURFACE_NAMES.map((n) => [n, value(surfaceProp(n))])) as ThemePalette["surface"],
-      line: Object.fromEntries(LINE_NAMES.map((n) => [n, value(LINE_PROPS[n])])) as ThemePalette["line"],
-      text: Object.fromEntries(TEXT_NAMES.map((n) => [n, value(textProp(n))])) as ThemePalette["text"],
-      roles: Object.fromEntries(ROLE_NAMES.map((r) => [r, Object.fromEntries(ROLE_PARTS.map((part) => [part, value(roleProp(r, part))]))])) as ThemePalette["roles"],
-    };
-    expect(paletteContrastFailures(palette)).toEqual([]);
+    expect(paletteContrastFailures(paletteOf((name) => declared(core, name)!))).toEqual([]);
   });
 
   test("the protected layer re-resolves the aliases against host values: it redeclares every property the painter writes, and every --bk-* the alias list reads", () => {
@@ -143,5 +148,28 @@ describe("scoped accents and the protected layer", () => {
 
   test("the theme painter's write set never names a scoped property", () => {
     for (const name of SCOPED_ACCENT_PROPERTY_NAMES) expect(THEME_PROPERTY_NAMES, name).not.toContain(name);
+  });
+});
+
+describe("the host palettes of the protected layer", () => {
+  const layer = (): string => block("@layer protected {");
+  /** what a protected surface shows for each painter property, resolved through the layer's var(--host-*) against one host palette */
+  const hostPalette = (values: string): ThemePalette => paletteOf((name) => {
+    const raw = declared(layer(), name)!.replace(/\s*!important$/, "");
+    const host = /^var\((--host-[a-z-]+)\)$/.exec(raw)?.[1];
+    return host ? declared(values, host)! : raw;
+  });
+
+  test("the dark and the light host palette both pass the contrast floors every theme must meet (a light theme showed its permission panels as dark islands)", () => {
+    expect(paletteContrastFailures(hostPalette(darkHost))).toEqual([]);
+    expect(paletteContrastFailures(hostPalette(lightHost))).toEqual([]);
+  });
+
+  test("the light palette redeclares every host value the protected layer reads, and native controls follow the host scheme, not a theme's", () => {
+    for (const [, name] of layer().matchAll(/var\((--host-[a-z-]+)\)/g)) expect(declared(lightHost, name!), name).toBeDefined();
+    expect(declared(darkHost, "--host-scheme")).toBe("dark");
+    expect(declared(core, "--host-ink"), "one dark host palette, not a second copy on the root").toBeUndefined();
+    expect(declared(lightHost, "--host-scheme")).toBe("light");
+    expect(declared(layer(), "color-scheme")).toBe("var(--host-scheme) !important");
   });
 });

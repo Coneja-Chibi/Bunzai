@@ -3,6 +3,7 @@
  * a field the repair adjusted can still be edited, a leader can be set again, an unreadable module's next change lands, and a write that lands between the read and the write still refuses.
  */
 import { afterEach, describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import type { Delta } from "../core/scene-state/types";
 import { trackerDataIn } from "../core/trackers";
 import { PARTY_GEN, readParty } from "../core/trackers/party";
@@ -12,7 +13,7 @@ import { memoryChatStore } from "../stage/store/chat-store";
 import { sqliteChatStore } from "../stage/store/sqlite-chat-store";
 import type { StageDatabase } from "../stage/store/sqlite/database";
 import { freshDatabase, testCipher } from "../stage/store/sqlite/test-support";
-import { StudioConflictError } from "./atomic-file";
+import { StudioConflictError } from "./errors";
 import { readTrackerStates, writeTrackerStates } from "./tracker-state";
 
 const open: StageDatabase[] = [];
@@ -23,16 +24,17 @@ const wrapped = (slot: string, name: string, value: JsonValue): Delta => ({ slot
 
 describe.each(STORES)("a write over a repaired state (%s)", (_n, make) => {
   async function rig() {
-    const chats = make();
+    const runtime = createTurnRuntime();
+  const chats = make();
     const chat = await chats.createChat({ title: "T", cast: { character: { id: "v", version: 1 } }, snapshot: { character: { kind: "character", id: "v", body: { identity: { name: "V" } } } } });
     const branch = chat.activeBranchId;
     const ids = (await chats.appendMessages(branch, Array.from({ length: 5 }, (_, i) => ({ role: i % 2 ? ("assistant" as const) : ("user" as const), content: "m" + i }))))!.map((m) => m.id);
     const states = async (c: ChatStore = chats) => (await readTrackerStates(c, (await c.getChat(chat.id))!, branch))!;
-    const write = async (writes: Parameters<typeof writeTrackerStates>[1]["writes"], c: ChatStore = chats) => {
+    const write = async (writes: Parameters<typeof writeTrackerStates>[2]["writes"], c: ChatStore = chats) => {
       const at = await states(c);
-      return writeTrackerStates(c, { chatId: chat.id, branchId: branch, messageId: at.tipId!, writes, expectedVersion: at.branchVersion }, () => 5_000);
+      return writeTrackerStates(runtime, c, { chatId: chat.id, branchId: branch, messageId: at.tipId!, writes, expectedVersion: at.branchVersion }, () => 5_000);
     };
-    return { chats, chat, branch, ids, states, write };
+    return { runtime, chats, chat, branch, ids, states, write };
   }
 
   test("the cut case: HP the repair brought inside can be set, lands, and reads inside the maximum", async () => {

@@ -287,9 +287,9 @@ describe("StudioStore containment", () => {
     const patched = await store.comparePatch("preset", "p-patch", entityRevision(before), { head });
     expect(patched.status).toBe("saved");
     if (patched.status !== "saved") throw new Error("expected saved");
-    // No stamp fields: a patch never reads the prior entity to carry them forward.
-    expect(patched.summary.importedAt).toBeUndefined();
-    expect(patched.summary.accent).toBeUndefined();
+    // The committed summary preserves the stamp without reopening the whole entity.
+    expect(patched.summary.importedAt).toBe(created.importedAt);
+    expect(patched.summary.accent).toBe(created.accent);
     expect(patched.summary.version).toBe((created.version ?? 1) + 1);
     const after = (await store.read("preset", "p-patch"))!;
     expect((after.body as { name: string }).name).toBe("P renamed");

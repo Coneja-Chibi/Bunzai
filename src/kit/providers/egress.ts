@@ -35,7 +35,7 @@ export function assertReady(
 
 /** The one host this config may reach: the spoke's fixed host, else the user's base URL host. */
 export function allowedHost(config: ProviderConfig, spoke: ProviderSpoke): string {
-  const url = spoke.host ? `https://${spoke.host}` : config.baseURL;
+  const url = spoke.host ? `https://${spoke.host}` : config.baseURL || spoke.defaultBaseURL;
   if (!url) {
     throw new EgressBlocked("a custom endpoint needs a base URL.");
   }

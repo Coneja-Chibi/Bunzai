@@ -13,16 +13,15 @@ import { promptDepths, sceneRules, type SceneSet } from "../core/regex/scene-pas
 import type { RegexRule, RegexSetBody } from "../entities/regex/schema";
 import { isRecord } from "../core/guards";
 import type { AssemblyResult } from "../core/assembly/types";
-import { turnGate } from "./scene-turn-gate";
+import type { TurnRuntime } from "./scene-turn-runtime";
 import type { TurnEvent } from "./scene-turn";
 
 /** The page's answer: the changed text of each message it was asked about, a failure it reports, or Cancel (Stop, or the page leaving). */
 export type RegexAnswer = { kind: "done"; texts: Readonly<Record<number, string>> } | { kind: "failed"; error: string } | { kind: "cancel" };
 
-const gate = turnGate<RegexAnswer>({ kind: "cancel" });
-export const answerRegex = (chatId: string, turnId: string, answer: RegexAnswer): boolean => gate.answer(chatId, turnId, answer);
+export const answerRegex = (runtime: TurnRuntime, chatId: string, turnId: string, answer: RegexAnswer): boolean => runtime.regex.answer(chatId, turnId, answer);
 /** Waits for the page's answer to a regex event this turn emitted. */
-export const awaitRegex = (turnId: string, chatId: string, signal: AbortSignal): Promise<RegexAnswer> => gate.wait(turnId, chatId, signal);
+export const awaitRegex = (runtime: TurnRuntime, turnId: string, chatId: string, signal: AbortSignal): Promise<RegexAnswer> => runtime.regex.wait(turnId, chatId, signal);
 
 /** The request message at `index` that the rules may rewrite, with its role and depth from the end of the conversation. */
 export interface RegexItem { index: number; role: "user" | "assistant"; depth: number; text: string }
@@ -30,6 +29,7 @@ export interface RegexItem { index: number; role: "user" | "assistant"; depth: n
 const CONVERSATION = new Set(["history", "current", "greeting"]);
 
 export interface PromptRegexInput {
+  runtime: TurnRuntime;
   /** The scene's switched-on regex set ids, in order (ChatStore rule 42). */
   setIds: readonly string[] | undefined;
   readRegex: ((id: string) => Promise<RegexSetBody | null>) | undefined;
@@ -67,7 +67,7 @@ export async function promptRegex(input: PromptRegexInput): Promise<PromptRegexO
   if (rules.length === 0 || items.length === 0) return { edits: {} };
   const macroRules = rules.some((r) => r.replace.includes("{{"));
   input.emit({ type: "regex", turnId: input.turnId, rules, items, macros: input.expansion.names });
-  const answer = await gate.wait(input.turnId, input.chatId, input.signal);
+  const answer = await input.runtime.regex.wait(input.turnId, input.chatId, input.signal);
   if (answer.kind === "cancel") return { stop: { type: "stopped", message: null } };
   if (answer.kind === "failed") return failed(`This scene's regex could not run, so nothing was sent. ${answer.error}`);
   const edits: Record<number, string> = {};

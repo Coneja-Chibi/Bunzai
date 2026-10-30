@@ -25,14 +25,14 @@ import { hashHex } from "../../core/sha256";
 import type { StudioDamageReason } from "../../studio/errors";
 import type { ContentSummary, DocumentBackend, DocumentRow, EntityKind, PartChange, PartText, SaveReason, VersionRow } from "../contracts/content-store";
 import { breather } from "./breather";
-import { entityName } from "../../studio/summary";
+import { summaryContentOf } from "./summary-content";
 
 /** Builds the public summary from the exact row and entity a store operation returns. */
-export function contentSummaryOf(row: DocumentRow, entity: ParsedCanonicalEntity): ContentSummary {
+export function contentSummaryOf(row: DocumentRow, entity: ParsedCanonicalEntity, content = summaryContentOf(entity)): ContentSummary {
   return {
+    ...content,
     id: row.id,
     kind: row.kind as EntityKind,
-    name: entityName(entity),
     revision: row.revision,
     version: row.version,
     writeId: row.writeId,

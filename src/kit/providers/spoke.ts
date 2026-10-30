@@ -12,6 +12,7 @@ import type { ModelInfo } from "./models";
 import type { ChatFn } from "./provider";
 import type { OpenAICompatibleSupport } from "../../stage/provider/openai-compatible-request";
 import type { ParamSupport } from "../../stage/params/wire";
+import type { Provider } from "../../stage/contracts/provider";
 
 /**
  * How a scene reaches this provider (item 9): scenes send through the
@@ -32,6 +33,19 @@ export interface SceneEndpoint {
    * the OpenAI-compatible spoke, as before.
    */
   native?: "anthropic";
+  /**
+   * Resolves one model description and native provider together, so budgeting and the request use the same traits.
+   * The fetch is guarded to the connection's one host; cancellation includes metadata discovery.
+   */
+  resolve?(config: ProviderConfig, fetch: FetchFunction, label: string, signal?: AbortSignal): Promise<{ provider: Provider; traits: ModelTraits }>;
+}
+
+/** One model's abilities as its server reports them; a field left out is not known. */
+export interface ModelTraits {
+  /** The tokens a request may use: the smaller of the connection's chosen window and the model's own. */
+  window?: number;
+  tools?: boolean;
+  thinks?: boolean;
 }
 
 /** A provider-specific choice the setup form renders as a chip row (RC's schema-driven fields),
@@ -56,6 +70,11 @@ export interface ProviderSpoke {
   defaultModel?: string;
   /** May run without a key (local / openai-compatible endpoints). */
   keyless?: boolean;
+  /**
+   * Where a keyless local server answers when the connection names no base URL (Ollama's `http://localhost:11434`).
+   * The egress gate then allows that one host. Its presence also marks a spoke that supplies `chat` as an HTTP one.
+   */
+  defaultBaseURL?: string;
   /**
    * Does this provider accept images in a user message?
    *
@@ -83,12 +102,13 @@ export interface ProviderSpoke {
    * something it cannot see. A spoke that sets this is asked for its chat and never for its model.
    *
    * A spoke with `chat` must say what it does about egress in its own file, because the ledger's
-   * usual source, our own fetch, is not in the path.
+   * usual source, our own fetch, is not in the path. `system` is Kit's system prompt (its tool protocol
+   * and the screen's ambient context), for a spoke whose transport carries one.
    */
-  chat?(config: ProviderConfig, signal?: AbortSignal): Promise<ChatFn>;
+  chat?(config: ProviderConfig, signal?: AbortSignal, system?: string): Promise<ChatFn>;
   /** Query the provider's live model list (through the guarded fetch). Omit when the provider has
    * no usable models endpoint; the setup form then falls back to manual model entry. */
-  listModels?(config: ProviderConfig, fetch: FetchFunction): Promise<ModelInfo[]>;
+  listModels?(config: ProviderConfig, fetch: FetchFunction, signal?: AbortSignal): Promise<ModelInfo[]>;
   /**
    * Where scenes send. Absent: scenes cannot use this provider yet, and the AI wing says so.
    *
@@ -99,3 +119,9 @@ export interface ProviderSpoke {
    */
   scene?: SceneEndpoint;
 }
+
+/** Whether a spoke makes HTTP requests: it builds an AI SDK model, or it answers at a default address. A spoke with only its own `chat` and no address (a CLI) makes none, so it gets no network. */
+export const speaksHttp = (spoke: ProviderSpoke): boolean => spoke.chat === undefined || spoke.defaultBaseURL !== undefined;
+
+/** Whether the setup form asks for a base URL: an HTTP spoke with no fixed host. Required only when there is no default address either. */
+export const asksBaseURL = (spoke: ProviderSpoke): boolean => spoke.host === undefined && speaksHttp(spoke);

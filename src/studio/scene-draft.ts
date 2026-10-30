@@ -28,8 +28,8 @@ import type { CharacterBody } from "../entities/character/schema";
 import type { PersonaBody } from "../entities/persona/schema";
 import { ProviderError, type ProviderOptions, type ProviderMessage } from "../stage/contracts/provider";
 import type { StateStore } from "../stage/contracts/state-store";
-import { StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError } from "./errors";
+import { StudioConflictError, StudioNotFoundError } from "./errors";
+
 import { listGuides, selectedGuides } from "./guides";
 import { NoConnectionError, type Connected, type TurnDeps } from "./scene-turn";
 import { loadCast, loadTurn, readGlobals, type TurnReader } from "./scene-turn-load";

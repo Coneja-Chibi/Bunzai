@@ -4,6 +4,7 @@
  * blocks came, a message no recap covers stays, and with the setting off the request is whole.
  */
 import { describe, expect, test } from "bun:test";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { emptyLoreEntry, emptyLorebookBody } from "../core/lore";
 import type { Provider, ProviderCompletion } from "../stage/contracts/provider";
 import type { ChatCompendiumPatch } from "../stage/contracts/chat-store";
@@ -25,7 +26,7 @@ async function scene(entries: ReturnType<typeof recap>[], compendium: ChatCompen
   await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }, ...lines]);
   const narrator: { role: string; content: string }[][] = [];
   const provider: Provider = { id: "conn", async send(request) { narrator.push(request.messages); return { content: "Colder.", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }),
     readPreset: async () => null, readLorebook: async (id: string) => (id === "b1" ? BOOK(entries) : null), now: () => (now += 10), randomSeed: () => 7,

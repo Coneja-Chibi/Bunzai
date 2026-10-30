@@ -4,6 +4,7 @@
  * commits without the variables it wrote.
  */
 import { Database } from "bun:sqlite";
+import { createTurnRuntime } from "./scene-turn-runtime";
 import { afterEach, expect, test } from "bun:test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -45,7 +46,7 @@ async function lockedTurn(holdMs: number) {
   const provider: Provider = { id: "fake", async send() { return { content: "It might.", finish_reason: "stop", raw: {} } as ProviderCompletion; } };
   let now = 1_000;
   let checkpointOpen = false;
-  const deps = {
+  const deps = { runtime: createTurnRuntime(),
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000 }),
     readPreset: async () => null, readLorebook: async () => null, randomSeed: () => 7,

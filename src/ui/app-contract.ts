@@ -135,6 +135,7 @@ export interface AppContext {
     cancelStaged(rows: readonly { token: string; key: string }[]): Promise<{ removed: number }>;
     /** `extension` picks the container when a format writes more than one (e.g. sillytavern json/png). */
     exportEntity(entity: unknown, targetId: string, extension?: string): Promise<ExportResult>;
+    saveExportFolder(label: string, files: Readonly<Record<string, Blob>>): Promise<{ dir: string; files: string[] }>; // into a new <studio>/Export/<stamp> <label>/ on the host; 403/501 where there is none
     /** A stored Sprite pack as a ZIP of its pictures, read from the library one picture at a time (never opened whole). The answer is the streaming Response: drain it with `drainToBlob`, never `arrayBuffer()`. */
     exportStoredPack(id: string): Promise<Response>;
     /** A keep-both copy made on the server by reference (a big pack never crosses the wire). */

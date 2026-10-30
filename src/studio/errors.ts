@@ -116,3 +116,25 @@ export class StudioLockedError extends Error {
 
 export const isLibraryLocked = (e: unknown): boolean =>
   hasErrorName(e, "LockedError");
+
+export class StudioWriteError extends Error {
+  readonly code = "studio_write" as const;
+  constructor(message = "could not write file", options?: { cause?: unknown }) {
+    super(message, options);
+    this.name = "StudioWriteError";
+  }
+}
+
+export class StudioConflictError extends Error {
+  readonly code = "studio_conflict" as const;
+  constructor(message = "file already exists") {
+    super(message);
+    this.name = "StudioConflictError";
+  }
+}
+
+export const isStudioWriteError = (error: unknown): error is StudioWriteError =>
+  error instanceof StudioWriteError || hasErrorName(error, "StudioWriteError");
+
+export const isStudioConflictError = (error: unknown): error is StudioConflictError =>
+  error instanceof StudioConflictError || hasErrorName(error, "StudioConflictError");

@@ -10,8 +10,8 @@ import { runFormulaReadOnly } from "../core/formula";
 import { countPrompt, countText, estimateFor } from "../core/tokens";
 import type { ProviderRole } from "../stage/contracts/provider";
 import type { StateStore } from "../stage/contracts/state-store";
-import { StudioConflictError } from "./atomic-file";
-import { StudioNotFoundError } from "./errors";
+import { StudioConflictError, StudioNotFoundError } from "./errors";
+
 import { NoConnectionError, type TurnDeps } from "./scene-turn";
 import { assembleRequest, overflowMessage, prepareRequest, shapeRequest } from "./scene-turn-build";
 import { sentTools, toolTurn } from "./scene-turn-tools";

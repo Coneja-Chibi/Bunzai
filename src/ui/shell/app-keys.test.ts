@@ -112,10 +112,16 @@ describe("the typing guard", () => {
 });
 
 describe("modifiers", () => {
-  test("a bare number is left alone", () => {
-    // Typing "1" into a surface that is not an input (a list with its own hotkeys, a canvas) must
-    // not move the user out of the room.
-    expect(appShortcut(press({ code: "Digit1", key: "1" }), ROSTER)).toBeNull();
+  test("a bare number opens its tile, since a browser tab keeps ctrl+digit for itself", () => {
+    // A surface with its own digit hotkeys prevents the default, and the listener skips such a key.
+    expect(appShortcut(press({ code: "Digit1", key: "1" }), ROSTER)).toEqual({ kind: "app", id: "workbench" });
+  });
+
+  test("the bare digit is the typed one: AZERTY's shifted 1 and the numpad open it, its unshifted & does not", () => {
+    expect(appShortcut(press({ code: "Digit1", key: "1", shiftKey: true }), ROSTER)).toEqual({ kind: "app", id: "workbench" });
+    expect(appShortcut(press({ code: "Numpad2", key: "2" }), ROSTER)).toEqual({ kind: "app", id: "library" });
+    expect(appShortcut(press({ code: "Digit1", key: "&" }), ROSTER)).toBeNull();
+    expect(appShortcut(press({ code: "Digit1", key: "!", shiftKey: true }), ROSTER)).toBeNull();
   });
 
   test("cmd is the accelerator too, and holding both is neither", () => {
@@ -175,10 +181,11 @@ describe("stepping along the dock", () => {
 
 describe("the hints on the tiles", () => {
   test("come from the same rows that fire, so they cannot drift", () => {
-    expect(chordFor("workbench", ROSTER, false)).toBe("ctrl+1");
-    expect(chordFor("agent", ROSTER, false)).toBe("ctrl+4");
+    // The bare digit is printed: it is the one that works in a browser tab and the desktop app alike.
+    expect(chordFor("workbench", ROSTER, false)).toBe("1");
+    expect(chordFor("agent", ROSTER, false)).toBe("4");
     expect(chordFor("settings", ROSTER, false)).toBe("ctrl+,");
-    expect(chordFor("workbench", ROSTER, true)).toBe("cmd+1");
+    expect(chordFor("settings", ROSTER, true)).toBe("cmd+,");
   });
 
   test("an app with no chord says so rather than inventing one", () => {

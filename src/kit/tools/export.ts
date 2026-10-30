@@ -2,19 +2,19 @@
  * Studio export: convert one stored piece to another platform's format and write the file.
  *
  * THE MODEL NEVER SUPPLIES A PATH. It names a piece and a target format; the filename is derived
- * from the piece id plus the adapter's own extension, and the file lands in `<studio>/exports`.
+ * from the piece id plus the adapter's own extension, and the file lands in its own folder,
+ * `<studio>/Export/<stamp> Kit <id>/`, like every other export.
  * That is what makes a model-callable file write safe: there is no path argument to redirect, so
- * containment is structural rather than a validation anyone can forget. `resolveStudioExportPath`
- * additionally runs the id through canonical storage's own safety check and restricts the extension
+ * containment is structural rather than a validation anyone can forget. `exportRunFileName` and
+ * `resolveStudioExportRunPath` additionally keep the name one plain segment and restrict the extension
  * to a closed set.
  *
  * Create-only. An export that silently replaced an earlier file could destroy something already
  * sent to someone, and unlike a canonical piece there is no revision history to recover it from.
  *
- * Binary carriers (PNG cards, .charx, .byaf) are refused rather than mangled: the StudioFs seam is
- * text-only today, and writing a corrupted card would be far worse than declining. Every preset,
- * lorebook, persona and regex adapter is text, so the refusal is narrow and it names the CLI, which
- * can already do the binary case.
+ * Binary carriers (the JanitorAI and Saucepan PNG cards, a Pygmalion card with art, .charx, .byaf)
+ * are written as the adapter's bytes, untouched: `StudioExports` writes them create-only straight to disk, beside
+ * the text it writes through the StudioFs seam.
  *
  * Shares `convertStoredPiece` with `studio_transfer`, so the preview and the write can never report
  * different losses.
@@ -42,8 +42,8 @@ const input = z.strictObject({
 const exportPiece: HarnessTool<z.infer<typeof input>> = {
   name: "studio_export",
   description:
-    "Convert a stored piece to another platform's format and write it into the studio's exports "
-    + "folder. Reports the exact file written plus everything the conversion cost: dropped fields "
+    "Convert a stored piece to another platform's format and write it into its own folder under the "
+    + "studio's Export folder. Reports the exact file written plus everything the conversion cost: dropped fields "
     + "and macros that will not resolve on the target engine.",
   exposure: "direct",
   effect: "apply",
@@ -75,24 +75,22 @@ const exportPiece: HarnessTool<z.infer<typeof input>> = {
         outcome: "failed",
       };
     }
-    if (outcome.text === null) {
+    const body = outcome.text ?? outcome.bytes;
+    if (body === null) {
       return {
-        summary: `export ${kind}/${id}: binary target`,
-        output:
-          `"${to}" emits a binary ${outcome.suggestedExtension} carrier, which Kit cannot write `
-          + "safely yet. Use the CLI for this one: bunzai convert <in> <out> --to "
-          + `${to}. Nothing was written.`,
+        summary: `export ${kind}/${id}: empty output`,
+        output: `"${to}" produced no file for this piece. Nothing was written.`,
         outcome: "failed",
       };
     }
 
     let receipt;
     try {
-      receipt = await exportStore.write(id, outcome.suggestedExtension, outcome.text);
+      receipt = await exportStore.write(id, outcome.suggestedExtension, body);
     } catch (error) {
       return {
         summary: `export ${kind}/${id}: write failed`,
-        output: `Could not write the export: ${(error as Error).message}. Nothing was written.`,
+        output: `Could not finish the export: ${(error as Error).message}. Check the Export folder before retrying.`,
         outcome: "failed",
       };
     }
@@ -100,8 +98,8 @@ const exportPiece: HarnessTool<z.infer<typeof input>> = {
       return {
         summary: `export ${kind}/${id}: already exists`,
         output:
-          `${receipt.relativePath} already exists and was NOT replaced. Rename or remove it first, `
-          + "or duplicate the piece under a new id and export that.",
+          `${receipt.relativePath} appeared while this export was writing and was NOT replaced. `
+          + "Run the export again: it lands in a fresh folder.",
         outcome: "stale",
       };
     }

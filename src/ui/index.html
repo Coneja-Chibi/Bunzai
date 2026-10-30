@@ -2,11 +2,11 @@
 <html lang="en" data-theme="core">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Bunzai.</title>
 <link rel="icon" href="/favicon.ico">
 <link rel="icon" type="image/png" sizes="256x256" href="/icon-256.png">
-<link rel="manifest" href="/app.webmanifest">
+<link rel="manifest" href="/app.webmanifest" crossorigin="use-credentials">
 <meta name="theme-color" content="#e11d48">
 <link rel="stylesheet" href="/tokens.css">
 <style>
@@ -20,8 +20,8 @@ html{font-size:100%}
 body{margin:0;height:100dvh;overflow:hidden;background:var(--canvas);color:var(--text);
   font-family:var(--font-body);font-size:var(--text-body)}
 :focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
-#shell{height:100dvh;display:grid;grid-template-columns:auto minmax(0,1fr);
-  grid-template-rows:auto minmax(0,1fr) auto;background:var(--canvas)}
+#shell{height:100dvh;container-type:inline-size;display:grid;grid-template-columns:auto minmax(0,1fr);
+  grid-template-rows:auto minmax(0,1fr) auto;background:var(--canvas);padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 
 /* focus mode: the shared editor-fullscreen (_shared/focus.ts) stamps this on <body>; the shell
    hides its own chrome so the active pane takes the window. Esc exits; never persisted. */

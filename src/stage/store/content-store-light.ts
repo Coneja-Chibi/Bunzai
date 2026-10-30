@@ -4,9 +4,9 @@ import { decodeAuthorizedBlobs, sentinelBlobRefs, type PartBlob } from "../../en
 import { normalizeAuthoredSentinelLiterals, parseUploadedRef } from "../../entities/piece-parts-blob";
 import { extOf, mimeFromDataUri, mimeFromExt } from "../../core/media/mime";
 import { parseCanonicalEntity } from "../../entities/runtime-schema";
-import { StudioConflictError } from "../../studio/atomic-file";
-import { StudioValidationError } from "../../studio/errors";
-import { isLibraryLocked, StudioReadError } from "../../studio/errors";
+import { StudioConflictError, StudioValidationError, isLibraryLocked, StudioReadError } from "../../studio/errors";
+
+
 import { portraitBytesFromCandidate, portraitReference } from "../../studio/portrait";
 import { hashHex } from "../../core/sha256";
 import { hasErrorName, isRecord as record } from "../../core/guards";
