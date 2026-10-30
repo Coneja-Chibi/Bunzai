@@ -1038,9 +1038,9 @@
       "docId": "reference/ui",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "integration_review",
-      "sourceHash": "sha256:4a65a85984430f99f27afe98ea225554fa0df213467fce00af80c457fc19bd63",
-      "semanticSummaryHash": "sha256:bd94ed56a44434162f3a2e1dd3a5dd2f4d9d23f69400934eda81fd49771e0868"
+      "reviewer": "node_placement_review",
+      "sourceHash": "sha256:f33e57a4239d5608d3d80f6387e0a34f5b789025140e796c196781916ee28ab7",
+      "semanticSummaryHash": "sha256:7468566617e192bbeef29e16e201197e6d41de0c512e942e102041b15a2c4f1c"
     },
     {
       "docId": "reference/updates",
