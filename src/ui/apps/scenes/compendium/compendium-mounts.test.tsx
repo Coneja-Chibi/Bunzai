@@ -56,12 +56,12 @@ const ctx = (): AppContext => ({
   setStatus: () => undefined, prefs: { get: () => undefined, set: () => undefined },
 }) as unknown as AppContext;
 
-async function mount(): Promise<void> {
+async function mount(context = ctx()): Promise<void> {
   const { createRoot } = await import("react-dom/client");
   rig.host = rig.dom.window.document.createElement("div");
   rig.dom.window.document.body.appendChild(rig.host);
   rig.root = createRoot(rig.host);
-  flushSync(() => rig.root.render(createElement(CompendiumWithFiling, { ctx: ctx(), chat: CHAT_W as never, books: [BOOK] })));
+  flushSync(() => rig.root.render(createElement(CompendiumWithFiling, { ctx: context, chat: CHAT_W as never, books: [BOOK] })));
   for (let i = 0; i < 3; i++) await settle(flushSync);
 }
 const tab = (label: string): HTMLElement => qa('[role="tab"]').find((t) => t.textContent === label)!;
@@ -207,18 +207,29 @@ describe("Activity (rc-world-comp-activity.png)", () => {
 
 describe("the views follow the library's change notification", () => {
   test("a write that lands (a filing, an Undo, a Reconcile) refreshes the Dashboard and Recent Writes without reopening, and nothing polls", async () => {
-    await mount();
+    const context = ctx();
+    const getBook = context.api.getLightEditableEntity;
+    let holdBook = false;
+    let releaseBook!: () => void;
+    const held = new Promise<void>((resolve) => { releaseBook = resolve; });
+    context.api.getLightEditableEntity = async (...args) => { if (holdBook) await held; return getBook(...args); };
+    await mount(context);
     expect(text()).toContain("No recent writes yet.");
     expect(text()).toContain("Updated -");
     expect(text()).not.toContain("Sela Brandt");
     entries = [...entries, typedEntry("e3", "Sela Brandt", "character", { name: "Sela Brandt" })];
     receipts = [filed];
+    holdBook = true;
     changed("lorebook:b1");
-    await waitFor(flushSync, () => text().includes("Updated just now"), "the refreshed Dashboard");
+    try {
+      await waitFor(flushSync, () => text().includes("Updated just now"), "the refreshed receipt timestamp");
+    } finally { releaseBook(); }
+    const cells = (): string => qa(".cp-cell").map((c) => c.textContent).join(" ");
+    await waitFor(flushSync, () => cells().includes("Entry Counts3Cast"), "the refreshed Dashboard's three cast entries");
     expect(text()).toContain("Mira Vance");
     expect(text()).not.toContain("No recent writes yet.");
     expect(text()).toContain("Updated just now");
-    expect(qa(".cp-cell").map((c) => c.textContent).join(" ")).toContain("3");
+    expect(cells()).toContain("3");
   });
 
   test("it listens to the scene's own book and nothing else", async () => {

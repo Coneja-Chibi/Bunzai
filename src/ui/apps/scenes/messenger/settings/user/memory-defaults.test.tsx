@@ -2,7 +2,7 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { createElement } from "react";
 import type { AppContext } from "../../../../../app-contract";
-import { teardownAllDoms, type InstalledDom } from "../../../../../_shared/test-dom";
+import { teardownAllDoms, waitFor, type InstalledDom } from "../../../../../_shared/test-dom";
 import { installSingleDom, mountSingle } from "../../../single-wing-rig";
 import { control, setValue, wait } from "../scene/fake-scene-rig";
 import { MemoryDefaultRows } from "./memory-defaults";
@@ -44,18 +44,20 @@ describe("summary defaults: the rows the Settings app page does not draw", () =>
   test("the prompt template is saved once it rests, a blank one clears it, and an over-long one is refused with nothing saved", async () => {
     const { ctx, store } = rig();
     const m = await mount(ctx);
-    const prompt = control<HTMLTextAreaElement>(m.host, "Prompt template");
-    setValue(prompt, "Recap {{messages}} briefly.");
-    await wait(550);
-    expect(store.get(KEY)).toEqual({ prompt: "Recap {{messages}} briefly." });
-    setValue(prompt, "   ");
-    await wait(550);
-    expect(store.get(KEY)).toBeNull();
-    setValue(prompt, "x".repeat(20_001));
-    await wait(550);
-    expect(store.get(KEY)).toBeNull();
-    expect(m.host.querySelector('[role="alert"]')?.textContent).toContain("prompt");
-    m.done();
+    try {
+      const prompt = control<HTMLTextAreaElement>(m.host, "Prompt template");
+      setValue(prompt, "Recap {{messages}} briefly.");
+      await wait(550);
+      expect(store.get(KEY)).toEqual({ prompt: "Recap {{messages}} briefly." });
+      setValue(prompt, "   ");
+      await wait(550);
+      expect(store.get(KEY)).toBeNull();
+      setValue(prompt, "x".repeat(20_001));
+      await wait(550);
+      await waitFor((await import("react-dom")).flushSync, () => m.host.querySelector('[role="alert"]'), "the refused prompt's validation alert");
+      expect(store.get(KEY)).toBeNull();
+      expect(m.host.querySelector('[role="alert"]')?.textContent).toContain("prompt");
+    } finally { m.done(); }
   });
 
   test("the summary model is a choice of connections that writes the model, and the empty choice clears it", async () => {
