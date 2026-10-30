@@ -43,7 +43,7 @@ const inRanges = (cp: number, ranges: readonly [number, number][]): boolean =>
 const hasSpaceless = (words: readonly string[]): boolean =>
   words.some((w) => [...w].some((ch) => inRanges(ch.codePointAt(0) ?? 0, SPACELESS_RANGES)));
 
-/** True when any source word contains a non-ASCII code point (the trigger to leave the  route). */
+/** True when any source word contains a non-ASCII code point (the trigger to leave the \b route). */
 const hasNonAscii = (words: readonly string[]): boolean =>
   words.some((w) => [...w].some((ch) => (ch.codePointAt(0) ?? 0) > 0x7f));
 

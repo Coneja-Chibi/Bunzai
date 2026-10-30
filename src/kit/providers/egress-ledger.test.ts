@@ -47,17 +47,18 @@ test("recordEgress caps the entry window but keeps totals cumulative", () => {
 });
 
 test("formatLedger: an empty ledger reads honestly", () => {
-  expect(formatLedger(EMPTY_LEDGER)).toContain("Nothing has left this machine yet");
+  expect(formatLedger(EMPTY_LEDGER)).toContain("No model usage recorded this session");
+  expect(formatLedger(EMPTY_LEDGER)).toContain("not a network activity log");
 });
 
 test("formatLedger: lists each send with provider and compact tokens", () => {
   let ledger = EMPTY_LEDGER;
   ledger = recordEgress(ledger, { at: 0, provider: "claude", input: 3100, output: 840 });
   const out = formatLedger(ledger);
-  expect(out).toContain("1 send ");
+  expect(out).toContain("1 recorded call ");
   expect(out).toContain("claude");
   expect(out).toContain("3.1k in / 840 out");
-  expect(out).toContain("Credentials authenticate only to your configured provider");
+  expect(out).toContain("Configured API keys are used for authentication");
   expect(out).not.toContain("Keys never travel");
 });
 

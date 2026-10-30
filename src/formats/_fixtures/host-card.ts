@@ -6,7 +6,7 @@ import type { CanonicalCharacter } from "../../entities/character/schema";
 import { characterAdapter as sillytavern } from "../sillytavern/index";
 import { asText } from "./as-text";
 
-const PNG = new Uint8Array(readFileSync("samples/sillytavern/characters/Seraphina.png"));
+const PNG = new Uint8Array(readFileSync("samples/sillytavern/characters/synthetic-character.png"));
 const portrait = `data:image/png;base64,${Buffer.from(PNG).toString("base64")}`;
 
 /** A card imported the way a real one is, with a PNG portrait unless told otherwise. */

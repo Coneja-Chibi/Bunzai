@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/formats/lumiverse",
   "sourcePath": "docs/reference/formats/lumiverse.md",
-  "sourceHash": "sha256:efa71ca1cdb8bb38d1030aea972766658820cc4d16ac2f366021df7112c12b6e",
+  "sourceHash": "sha256:4ffa73b05fcd3dcacec48c0eb09d8167313de2882943f42933ed5a99682df2a0",
   "summary": "Developer reference for four Lumiverse adapters: an ST CCv2/v3 character wire with Lumiverse extensions and an optional modules ZIP, a versioned regex export, an account Persona object, and a block-based preset wrapper that exports as a flat ST preset. There is no dedicated lorebook codec; embedded character_book uses the shared bundle layer. Detection, field mapping, bounded archive handling, dual escrow twins, module packing, character variants, regex and persona behavior, and the preset wrapper's import-only asymmetry are documented with their source files.",
   "topics": [
     "lumiverse CCv3 modules ZIP",
@@ -137,14 +137,15 @@
       "slug": "quirks",
       "title": "Quirks",
       "level": 2,
-      "sourceHash": "sha256:1008d6e0820dcf08b982fd78a9f8abf0cf6e1b986ae35294b0501d750fe48544",
-      "summary": "All ZIP inflate uses unzipBounded CARD_ARCHIVE_BOUNDS shared with Risu and BYAF: 96 MiB archive, 512 entries, 64 MiB per entry, 96 MiB aggregate. Regex codec converges account RegexScript export and reduced archive regex_scripts on one RegexRule with extras sealing account fields; placement maps to phases including memory; unmapped placements and substitution modes are not fabricated. Persona maps title, pronouns, knowledge refs, and image URL; its twin seals folder, default, narrator, and metadata. A from-scratch persona materializes required description, subjective, and objective string keys while optional possessive stays absent. alternate_character_name is a prompt override. Lumiverse preset import converts blocks to ST preset wire; export writes ST flat preset and does not reproduce the wrapper.",
+      "sourceHash": "sha256:976093fb6f5b8fc7f6123b63ad439f384efa7badc13e2a609d5b92fd411041c8",
+      "summary": "All ZIP inflate uses unzipBounded CARD_ARCHIVE_BOUNDS shared with Risu and BYAF: 96 MiB archive, 512 entries, 64 MiB per entry, 96 MiB aggregate. Regex codec converges account RegexScript export and reduced archive regex_scripts on one RegexRule with extras sealing account fields; placement maps to phases including memory; unmapped placements and substitution modes are not fabricated. Persona maps title, pronouns, knowledge refs, and image URL; its twin seals folder, default, narrator, and metadata. A from-scratch persona materializes required description, subjective, and objective string keys while optional possessive stays absent. alternate_character_name is a prompt override. Lumiverse preset import converts blocks to ST preset wire; export writes ST flat preset and does not reproduce the wrapper. The .lvbak importer accepts account, character, and preset regex scopes; scoped rows need a usable scope_id, while unknown or incomplete scopes fail per row without widening, leaving supported sibling rows importable.",
       "topics": [
         "CARD_ARCHIVE_BOUNDS",
         "two regex wire shapes",
         "persona pronoun triplet",
         "alternate_character_name",
-        "preset ST export non-goal"
+        "preset ST export non-goal",
+        "lvbak regex scope validation"
       ],
       "children": []
     },

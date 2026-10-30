@@ -51,7 +51,7 @@ function SavedAgents({ pass, lib, onChange }: { pass: FinalCutPass; lib: FinalCu
         <div className="fc-save-row">
           <div className="line">
             <input className="fc-field" value={name} maxLength={120} autoFocus placeholder="Name this agent (e.g. Pacing Doctor)" aria-label="Agent name" onChange={(e) => setName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") void save(); }} />
-            <Button variant="primary" size="sm" disabled={saving || !name.trim()} onClick={() => void save()}>{saving ? "Saving..." : "Save to account"}</Button>
+            <Button variant="primary" size="sm" disabled={saving || !name.trim()} onClick={() => void save()}>{saving ? "Saving..." : "Save to library"}</Button>
           </div>
           <small>Saves the instruction, model and sampling. This pass keeps its own preset. Reusing an existing name replaces that Agent after a revision check.</small>
         </div>

@@ -286,7 +286,7 @@
       { h: "Moving to a new computer", p: ["Install Bunzai on the new computer, choose Restore from backup, pick the file, and enter your recovery phrase."] }
     ] },
     { slug: "something-wrong", title: "Something went wrong", summary: "Install warnings, errors, and what to try first.", sections: [
-      { h: "Windows says it does not recognize the app", p: ["Windows shows a blue box the first time you open some new apps. Bunzai is safe to run. Press More info, then Run anyway. You only need to do this once.", "After the first launch, Bunzai adds itself to the Start menu."] },
+      { h: "Windows says it does not recognize the app", p: ["This Windows build is unsigned, so Windows may show a reputation warning. The warning does not establish whether the file is safe. Check the release page for a checksum for this exact file and compare it if published. If no checksum is published or it does not match, do not open the download; use the repository's build-from-source instructions.", "After a verified first launch, Bunzai adds itself to the Start menu."] },
       { h: "Mac says it cannot be opened", p: ["Right-click Bunzai in Applications, choose Open, then press Open again."] },
       { h: "A reply stopped halfway", p: ["If Bunzai or your computer closed during a reply, the part that was written comes back when you reopen the scene. Press Retry for a fresh one."] },
       { h: "My key does not work", p: ["Open Settings, then Connections, and press Check. If it fails, the message says why. Most often the key was copied with a missing letter, or the account needs credit."] },
@@ -538,7 +538,7 @@
     HELP.forEach(function (x) { if (x.slug === slug) a = x; });
     if (!a) return null;
     var extra = "";
-    if (slug === "something-wrong") extra = '<div class="note"><b>Quick fix for the Windows warning</b><ol class="steps"><li><span>Press <b>More info</b> in the blue box.</span></li><li><span>Press <b>Run anyway</b>.</span></li></ol></div>';
+    if (slug === "something-wrong") extra = '<div class="note"><b>Before opening the Windows build</b><p>It is unsigned, so Windows may show a reputation warning. Compare a checksum for this exact file if the release page publishes one. If no checksum is published or it does not match, do not open the download; use the repository\'s build-from-source instructions.</p></div>';
     var others = HELP.filter(function (x) { return x.slug !== slug; }).slice(0, 3);
     return pageHead('<a href="#/help">Guides</a><span aria-hidden="true">/</span><span>' + esc(a.title) + '</span>', "Guide", esc(a.title), esc(a.summary)) +
       '<div class="wrap article"><aside class="toc" aria-label="On this page"><b>On this page</b><ol>' +
@@ -559,8 +559,8 @@
         '<div class="card"><h3>Other systems</h3><ul class="others" data-slot="others"></ul></div></div>' +
       '<div class="os-note">' +
         '<div class="card"><div class="icon-chip">' + icon("i-info") + '</div><h3>"Windows doesn\'t recognize this app"</h3>' +
-          '<p>The first time you open Bunzai, Windows may show a blue box. That is normal for new apps. It is safe to continue.</p>' +
-          '<ol class="steps"><li><span>Press <b>More info</b>.</span></li><li><span>Press <b>Run anyway</b>.</span></li></ol></div>' +
+          '<p>This Windows build is unsigned, so Windows may show a reputation warning. That warning does not establish whether a file is safe. Compare a checksum for this exact file if one is published on the release page.</p>' +
+          '<p>If no checksum is published or it does not match, do not open the download; use the repository\'s build-from-source instructions.</p></div>' +
         '<div class="card"><div class="icon-chip">' + icon("i-windows") + '</div><h3>Find it again later</h3>' +
           '<p>On first launch, Bunzai adds itself to the Start menu. On a Mac, drag it into Applications. On Linux, the AppImage runs from wherever you save it.</p></div>' +
         '<div class="card"><div class="icon-chip">' + icon("i-browser") + '</div><h3>Not ready to install?</h3>' +

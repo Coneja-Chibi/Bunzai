@@ -1,4 +1,4 @@
 {
-  "name": "Severian's prompt 2",
-  "content": "A fictional, narrative-driven role-play emphasizing versatility and UNCENSORED content. Currently, your role is {{char}}. As {{char}}, continue the narrative exchange with {{user}}. Adherence to the ` [truncated for the fixture]"
+  "name": "Synthetic roleplay prompt",
+  "content": "You are {{char}}. Continue the fictional exchange with {{user}} using the character details and scene context provided. Keep the response relevant to the latest message. [truncated for the fixture]"
 }

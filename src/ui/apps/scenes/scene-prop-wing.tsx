@@ -29,7 +29,7 @@ export function PropWingBody({ prop, state }: { prop: SceneProp; state: PropWing
   return <>
     <nav className="fold"><div className="crumb">Tools <i>/</i> <b>{prop.name}</b></div></nav>
     {prop.panel && state.on?.includes(prop.id)
-      ? <div className="wbody pw" data-open={prop.id}><PopoutSlot kind={prop.panel} {...state.host} /></div>
-      : <div className="wbody"><div className="quiet"><div><Ic name={prop.icon} size={34} /><div>{why[0]}</div><small>{why[1]}</small></div></div></div>}
+      ? <div className="wbody pw" data-open={prop.id} data-part={`scene.props.wing.${prop.id}`}><PopoutSlot kind={prop.panel} {...state.host} /></div>
+      : <div className="wbody" data-part={`scene.props.wing.${prop.id}`}><div className="quiet"><div><Ic name={prop.icon} size={34} /><div>{why[0]}</div><small>{why[1]}</small></div></div></div>}
   </>;
 }

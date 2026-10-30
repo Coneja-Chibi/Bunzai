@@ -1,17 +1,3 @@
-﻿<div align="center">
-
-<img src="docs/media/hoplight-v.png" alt="" width="56">
-
-<sub>· A CONEJA-CHIBI PRODUCTION ·</sub>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/media/hoplight-wordmark-dark.png">
-  <img src="docs/media/hoplight-wordmark-light.png" alt="Bunzai" width="320">
-</picture>
-
-</div>
-
----
 # AGENTS.md
 
 Instructions for AI agents (and new humans) working in this repo. Read this whole file before

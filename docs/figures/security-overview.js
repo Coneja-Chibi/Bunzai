@@ -12,15 +12,15 @@
 export default {
   // Each untrusted input meets ITS OWN gate. Nothing traverses all layers in series:
   // a zip hits archive caps, a regex hits the ReDoS gate, field text hits DOMPurify,
-  // Lua hits the sandbox. Only Lua runs code, and only on an explicit Test Bench run.
+  // Lua and imported regex execute only through their supported sandbox actions.
   routes: {
     type: "matrix",
     fig: "fig 01",
     title: "each untrusted input, its own gate",
     caption:
       "bunzai does not funnel every input through one pipeline. Each kind of untrusted content meets " +
-      "the gate built for it. Import and conversion never execute a card's scripts; the only code " +
-      "that runs is Lua, sandboxed, and only when the user opens the Test Bench.",
+      "the gate built for it. Import and conversion keep scripts as data. Supported Lua and regex " +
+      "execution requires an explicit action and its corresponding sandbox gate.",
     cols: ["Entry gate", "Handling", "Runs code?"],
     rows: [
       {
@@ -33,7 +33,7 @@ export default {
       },
       {
         label: "Regex rule",
-        cells: ["validateRule pre-compile", "refused if bomb-shaped; timed match loop", { v: "no eval", hi: true }],
+        cells: ["validation and construction bounds", "worker for imported execution; native calls not preemptible", { v: "explicit invocation", hi: true }],
       },
       {
         label: "Field markup",
@@ -46,18 +46,17 @@ export default {
     ],
   },
 
-  // The honest status map. Third column is meaningful only for the origin-isolation row:
-  // the code-layer defenses are host independent, so "not applicable" is honest, not a dodge.
+  // Source-level evidence and the remaining host-specific checks are separate.
   status: {
     type: "matrix",
     fig: "fig 02",
     title: "defense layers and their honest status",
     caption:
-      "What each layer enforces, whether it has a code-layer suite, and whether it is proven in the " +
-      "packaged Windows host. Two rows are not fully green on purpose: distinct-origin isolation is " +
-      "proven only at the HTTP layer (packaged WebView2 probe BLOCKED, ADR-009), and the key vault is " +
-      "a draft spec with no implementation in the tree.",
-    cols: ["Enforced in", "Code-layer suite", "Packaged-host proof"],
+      "What each layer enforces, its code-layer evidence, and the remaining host-specific checks. " +
+      "Distinct-origin isolation is tested at the HTTP layer; packaged " +
+      "WebView2 verification remains unmeasured. Credential storage and diagnostic isolation have " +
+      "code-level tests; native keychain behavior requires recorded platform results.",
+    cols: ["Enforced in", "Code-layer suite", "Remaining host checks"],
     rows: [
       { label: "Parse, not execute", cells: ["core adapters + escrow", true, "not applicable"] },
       { label: "Archive caps", cells: ["core/archive.ts", true, "not applicable"] },
@@ -68,11 +67,11 @@ export default {
       { label: "Loopback token gate", cells: ["ui/server-security", true, "not applicable"] },
       {
         label: "Distinct-origin isolation",
-        cells: ["dual loopback listener", { v: "HTTP layer only", hi: true }, { lvl: 0, v: "BLOCKED" }],
+        cells: ["dual loopback listener", { v: "HTTP layer only", hi: true }, { lvl: 0, v: "packaged WebView isolation unmeasured" }],
       },
       {
         label: "BYOK key vault",
-        cells: [{ v: "spec only, M2", hi: true }, { lvl: 0, v: "not built" }, { lvl: 0, v: "not built" }],
+        cells: ["encrypted vault and OS backends", "unit / fake OS tools", { v: "native results required", hi: true }],
       },
     ],
   },

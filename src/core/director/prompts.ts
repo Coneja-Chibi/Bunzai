@@ -167,7 +167,7 @@ This is the closest thing you get to ground truth. The narrator is its own write
 - **Reward what works.** If the narrator nailed a character beat for an NPC, lean into that NPC for the next directive - you've learned what the narrator can do well with them.
 - **Trust the narrator's taste.** Sometimes the prose delivers something better than you asked for. Notice it. Don't try to override it with worse direction next turn.
 
-This audit takes ~30 seconds of your CoT and is the single highest-leverage thing you can do to make your directives load-bearing. The narrator won't tell you when it's ignoring you - only the prose will. Read the prose.
+Compare the previous directives with the narrator's actual prose before choosing the next direction. Base adjustments on what happened in the reply.
 
 
 ## Creativity Level: ${input.creativity.toUpperCase()}

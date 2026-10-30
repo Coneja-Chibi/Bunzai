@@ -61,7 +61,7 @@ function makeCardWithBook() {
 const asText = (c: unknown) => ({ text: JSON.stringify(c) });
 
 const SAMPLE_PORTRAIT = `data:image/png;base64,${Buffer.from(
-  await Bun.file(join(import.meta.dir, "../samples/sillytavern/characters/Seraphina.png")).arrayBuffer(),
+  await Bun.file(join(import.meta.dir, "../samples/sillytavern/characters/synthetic-character.png")).arrayBuffer(),
 ).toString("base64")}`;
 
 function minimalEntity(kind: FormatAdapter["kind"]): ParsedCanonicalEntity {

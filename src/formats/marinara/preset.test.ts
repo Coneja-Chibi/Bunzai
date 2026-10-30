@@ -1,10 +1,11 @@
 /**
  * Marinara prompt-preset codec tests. The load-bearing parts are (a) the escrow-of-raw byte-identical
- * round-trip on an unedited import, proving every Marinara-only field with no canonical home survives,
+ * round-trip to this committed fixture on an unedited import, proving every Marinara-only field with no canonical home survives,
  * and (b) the field-diff overlay, proving an edit rewrites only its own wire field and leaves the rest
- * of the raw envelope untouched. Fixture: the engine's own bundled export (Marinara-Engine@daf8c212,
- * packages/server/src/db/default-preset.json), reformatted to the codec's serializer output
- * (JSON.stringify(parsed, null, 2)); provenance in samples/marinara/presets/SOURCES.md.
+ * of the raw envelope untouched. Fixture: a constructed synthetic envelope using the shape and
+ * structural coverage of Marinara-Engine's bundled export (Marinara-Engine@daf8c212,
+ * packages/server/src/db/default-preset.json) as a scaffold. Its prose is newly written; provenance
+ * and transformation details are in samples/marinara/presets/SOURCES.md.
  */
 import { describe, expect, test } from "bun:test";
 import type { CanonicalPreset } from "../../entities/preset/schema";
@@ -44,7 +45,7 @@ describe("marinara preset toCanonical", () => {
   test("maps preset identity and block list", () => {
     expect(canon.kind).toBe("preset");
     expect(canon.body.name).toBe("Marinara's Universal Preset");
-    expect(canon.body.description).toContain("universal roleplay preset");
+    expect(canon.body.description).toContain("Synthetic test fixture");
     expect(canon.body.prompts).toHaveLength(11);
   });
 
@@ -75,7 +76,7 @@ describe("marinara preset toCanonical", () => {
   test("maps choice blocks to walkthrough choices", () => {
     expect(canon.body.choices).toHaveLength(7);
     const role = canon.body.choices?.find((c) => c.key === "role");
-    expect(role?.label).toBe("Choose what you want the model to be.");
+    expect(role?.label).toBe("Choose a writing role.");
     expect(role?.type).toBe("one");
     expect(role?.options).toHaveLength(3);
     expect(role?.separator).toBe(", ");
@@ -100,7 +101,7 @@ describe("marinara preset toCanonical", () => {
 });
 
 describe("marinara preset round-trip", () => {
-  test("unedited re-emit is byte-identical to the source", () => {
+  test("unedited re-emit is byte-identical to the committed fixture", () => {
     const canon = marinaraPreset.toCanonical(input);
     expect(marinaraPreset.fromCanonical(canon).text).toBe(fixtureText);
   });
@@ -120,7 +121,7 @@ describe("marinara preset round-trip", () => {
     expect(editedSection?.content).toBe("You are {{role}}, rewritten.");
     expect(editedSection?.enabled).toBe("true"); // still the wire's string form, untouched
 
-    // Every other section is byte-identical to the source.
+    // Every other section is byte-identical to the committed fixture.
     const untouched = out.data.sections.find((s) => s.identifier === "section_1772743996991");
     const untouchedOrig = original.data.sections.find((s) => s.identifier === "section_1772743996991");
     expect(untouched).toEqual(untouchedOrig);

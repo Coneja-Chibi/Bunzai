@@ -234,8 +234,9 @@ export interface LorebookEntry {
   loreBiasGroups?: LoreBiasGroup[];
   /**
    * Creator's manual display order in the editor list - a DISTINCT authored axis from `sortOrder`
-   * (placement in the assembled prompt). Real ST cards prove they diverge (Seraphina: sortOrder all 100,
-   * displayIndex 0-3), so it is NOT regenerable from sortOrder. null/undefined = follow sortOrder.
+   * (placement in the assembled prompt). The synthetic SillyTavern PNG fixture exercises 0-3 while
+   * sortOrder is uniform; that proves codec preservation, not a real-corpus observation. This is NOT
+   * regenerable from sortOrder. null/undefined = follow sortOrder.
    */
   displayIndex?: number | null;
 

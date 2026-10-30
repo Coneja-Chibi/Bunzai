@@ -31,12 +31,9 @@ describe("block_lookup", () => {
     const out = JSON.parse((await run({ action: "explain", pattern: "assembler" })).output) as {
       ordering?: { requires?: string[] };
       hazards?: unknown[];
-      seenIn: string;
     };
     expect(out.ordering?.requires).toContain("variable-init");
     expect(out.hazards?.length).toBeGreaterThan(0);
-    // Prevalence separates a near-universal convention from one author's idea.
-    expect(out.seenIn).toContain("of 13");
   });
 
   test("an unknown pattern lists the real ones instead of failing blankly", async () => {

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/lorebook",
   "sourcePath": "docs/reference/entities/lorebook.md",
-  "sourceHash": "sha256:7b10023c2f148fce23f3f2596ea4c0eac634684e68535ec864f3013969865081",
-  "semanticSummaryHash": "sha256:2db7662231aa196259501dce9624c09fb9a829d898a13db36d8449f2e80f7162",
+  "sourceHash": "sha256:31e281ae77bf92907805686066fb028c4019a4ad13d9aa47416b79776a9c89a8",
+  "semanticSummaryHash": "sha256:34feafd675a33982509dcf4cd124d72728d5e3f6847bea01398e8985888a8713",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:47:44.295Z"
+  "reviewer": "public-luna-06",
+  "notes": "Read the full current sidecar and changed Markdown sections against prior baseline. Both field-table and explanatory displayIndex claims identify the synthetic PNG fixture, state it demonstrates codec preservation rather than a real-corpus observation, and distinguish display order from sortOrder. Summary repeats the limitation accurately. Focused author check passed.",
+  "reviewedAt": "2026-10-30T19:32:18.771Z"
 }

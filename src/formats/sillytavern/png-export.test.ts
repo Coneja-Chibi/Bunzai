@@ -21,14 +21,14 @@ import { dataToBody } from "../_shared/tavern-fields";
 import { characterPngCard, pngCardRefusal } from "../_shared/card-png";
 
 /**
- * A REAL PNG, read from the samples we already ship.
+ * A valid PNG, read from the synthetic samples we already ship.
  *
  * The hand-written 1x1 byte array used elsewhere in this repo carries a bad IDAT CRC. That is
  * harmless in tests that never parse it and fatal here: the chunk reader validates CRCs, so
  * embedding into it throws before anything about the card is exercised. A carrier has to be a
  * carrier.
  */
-const PNG = new Uint8Array(readFileSync("samples/sillytavern/characters/Seraphina.png"));
+const PNG = new Uint8Array(readFileSync("samples/sillytavern/characters/synthetic-character.png"));
 
 const dataUrl = `data:image/png;base64,${Buffer.from(PNG).toString("base64")}`;
 

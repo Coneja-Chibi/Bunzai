@@ -1,8 +1,6 @@
 /**
- * Add and Refresh by the scene's model, the way every item tracker offers them (RoleCall's "Add Item" form: a name, "Guide the AI...", Generate; and each
- * expanded card's Refresh: "Guide the AI... (optional)", Generate). RoleCall applies the answer the moment it arrives and, on a bad one, files a made-up item
- * as if it had worked. Here the answer is a PROPOSAL: the item is drawn under the form, and nothing is kept until the person presses Accept. A failed or
- * unreadable answer is said in words and leaves the tracker as it was.
+ * Add and Refresh propose an item from the scene's model. The person reviews the proposal and presses
+ * Accept to keep it; a failed or unreadable answer leaves the tracker unchanged.
  */
 import { useEffect, useRef, useState, type JSX, type ReactNode } from "react";
 import type { TrackerModule } from "../../../../../../stage/contracts/chat-store";

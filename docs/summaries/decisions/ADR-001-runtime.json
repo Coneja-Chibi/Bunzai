@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "decisions/ADR-001-runtime",
   "sourcePath": "docs/decisions/ADR-001-runtime.md",
-  "sourceHash": "sha256:15c2e3188c6c0523fe2c8d312dfa690b0ef683b7e5dbdab9ed2509a7e09d4b9a",
+  "sourceHash": "sha256:0a4d2bbb8f1d561c2172f7a8d53c44f8816a05db53705a956cc39d7db340f465",
   "summary": "Accepted ADR choosing TypeScript everywhere with Bun as the toolchain for dev runtime, bun test, bundling, and bun build --compile single-file executables as primary distribution. Core packages core, formats, lore, presets, macros, regexkit, and assembly must not use Bun-only APIs and must stay runnable under Node for npm publish and embedding. apps, agent, and ai may use Bun APIs where they matter for spawn, file IO speed, and compile. Why: one-file no-install distribution is the top goal; TypeScript matches VAUDEVILLE extraction surface and zod dual use as validation and docs; Node-compat core keeps npm and embedding open and de-risks Bun stalls. Consequences: CI runs core package tests under both Bun and Node; a lint rule bans bun star imports inside packages except an allowlist of ai and agent. Status is accepted.",
   "topics": [
     "Bun TypeScript runtime",
@@ -35,14 +35,13 @@
       "slug": "why",
       "title": "Why",
       "level": 2,
-      "sourceHash": "sha256:f0197e4f93cbf2ccade44ae3aa97e2b1f61ab3c127f9a2d4ce7b65cc11e964cd",
-      "summary": "The top stated distribution goal is one file with no install pain as the anti-SillyTavern-setup answer; bun build --compile is the most direct path on all three OSes. TypeScript is chosen because the entire VAUDEVILLE extraction surface is TS and because zod schemas double as validation and documentation. Node-compatible core keeps the npm and embedding door open and de-risks Bun: if Bun stalls, only apps need porting.",
+      "sourceHash": "sha256:f4f877d0b6b6bc78c735ff21072e9d55cf83f6b5cd26a37c46f414e3365f688c",
+      "summary": "A single-file executable is the stated distribution goal, and bun build --compile is the direct path across the supported operating systems. TypeScript matches the VAUDEVILLE extraction surface, while zod schemas serve as validation and documentation. A Node-compatible core keeps npm publishing and embedding available and limits the impact if Bun stalls.",
       "topics": [
-        "one file no install",
-        "anti ST setup",
-        "zod validation docs",
-        "npm embedding door",
-        "de-risk Bun"
+        "single-file distribution goal",
+        "zod validation and docs",
+        "npm embedding",
+        "Bun portability"
       ],
       "children": [],
       "shortSource": true

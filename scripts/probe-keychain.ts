@@ -10,12 +10,15 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { randomUUID } from "node:crypto";
 import { keychainKeyBackend, spawnRunner, type KeyStoreTool } from "../src/kit/keystore/backends/keychain-key";
-import { linuxSecretTool } from "../src/kit/keystore/backends/linux-secret";
-import { macosKeychainTool } from "../src/kit/keystore/backends/macos-keychain";
+import { linuxSecretToolFor } from "../src/kit/keystore/backends/linux-secret";
+import { macosKeychainToolFor } from "../src/kit/keystore/backends/macos-keychain";
+import { keychainAddress } from "../src/kit/keystore/backends/keychain-address";
 import { toErrorMessage } from "../src/error-message";
 
-const tool: KeyStoreTool | null = process.platform === "darwin" ? macosKeychainTool : process.platform === "linux" ? linuxSecretTool : null;
+const address = keychainAddress(`bunzai-keychain-probe-${randomUUID()}`);
+const tool: KeyStoreTool | null = process.platform === "darwin" ? macosKeychainToolFor(address.service) : process.platform === "linux" ? linuxSecretToolFor(address.service) : null;
 if (!tool) {
   console.log(`probe-keychain: nothing to probe on ${process.platform}`);
   process.exit(0);
@@ -32,12 +35,21 @@ const check = async (name: string, fn: () => Promise<string>) => {
   }
 };
 
-/** Removes both items (the key and its marker), so the probe starts and ends with a clean store. */
+/** Removes only this invocation's isolated probe entries. */
 const forget = async () => {
-  for (const account of ["vault-key", "vault-key-made"]) {
-    if (process.platform === "darwin") await spawnRunner("security", ["delete-generic-password", "-s", "bunzai-kit", "-a", account]);
-    else await spawnRunner("secret-tool", ["clear", "service", "bunzai-kit", "account", account]);
+  const errors: string[] = [];
+  for (const account of Object.values(address.accounts)) {
+    try {
+      const result = process.platform === "darwin"
+        ? await spawnRunner("security", ["delete-generic-password", "-s", address.service, "-a", account])
+        : await spawnRunner("secret-tool", ["clear", "service", address.service, "account", account]);
+      const missing = process.platform === "darwin" ? result.code === 44 : result.code === 1 && result.stderr.trim() === "";
+      if (result.code !== 0 && !missing) throw new Error(`cleanup of ${account} exited ${result.code}: ${result.stderr.trim()}`);
+    } catch (error) {
+      errors.push(toErrorMessage(error));
+    }
   }
+  if (errors.length) throw new Error(errors.join("; "));
 };
 
 try {
@@ -47,7 +59,7 @@ try {
     if (value !== null) throw new Error(`expected no key, read ${value.length} characters`);
     return "no key";
   });
-  const first = keychainKeyBackend(`probe-${process.platform}`, "probe", tool, { home });
+  const first = keychainKeyBackend(address.service, "probe", tool, { home });
   await check("available on this machine", async () => {
     if (!(await first.available())) throw new Error("the backend says it is unavailable");
     return "yes";
@@ -60,14 +72,17 @@ try {
     return "one key";
   });
   await check("a second instance, like a second process, opens them", async () => {
-    const second = keychainKeyBackend(`probe-${process.platform}`, "probe", tool, { home });
+    const second = keychainKeyBackend(address.service, "probe", tool, { home });
     const opened = await Promise.all(sealed.map((s) => second.open(s, {})));
     if (opened.join(",") !== "one,two") throw new Error(`opened ${opened.join(",")}`);
     return "yes";
   });
 } finally {
-  await forget();
-  rmSync(home, { recursive: true, force: true });
+  try {
+    await check("remove this probe's keychain entries", async () => { await forget(); return "removed"; });
+  } finally {
+    rmSync(home, { recursive: true, force: true });
+  }
 }
 
 if (failures.length > 0) {

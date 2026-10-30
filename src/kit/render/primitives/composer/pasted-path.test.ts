@@ -38,13 +38,11 @@ describe("what it finds", () => {
 });
 
 describe("folders, which the first version wrongly refused", () => {
-  test("the exact path Chi pasted, which Kit told him was not shared", () => {
-    // He wrote a folder and asked Kit to copy everything in it. Requiring a file extension meant
-    // this minted no grant at all, so the friction the whole feature exists to remove was still
-    // there - because I had guessed at his intent instead of reading it.
-    const draft = String.raw`C:\Users\me\Downloads\SillyTavern\data\default-user\OpenAI Settings Can you copy everything in this folder into my preset folder please?`;
+  test("an unquoted Windows folder followed by a request", () => {
+    // Folder recognition does not require a file extension; an unquoted space ends this match.
+    const draft = String.raw`C:\Users\example\Imports\Cards\Provider Settings Please import the files in this folder.`;
     expect(only(draft)).toContain(
-      String.raw`C:\Users\me\Downloads\SillyTavern\data\default-user\OpenAI`,
+      String.raw`C:\Users\example\Imports\Cards\Provider`,
     );
   });
 

@@ -1,11 +1,7 @@
 /**
- * egress-ledger: the pure, append-only record of what left the machine. Kit sends only when you send;
- * each API call is one entry (which provider it reached, and the tokens it carried, input = the context,
- * output = the reply). The ledger is the receipts behind the "nothing leaves until you send" promise and
- * what /privacy reads back. Pure, total, and bounded: no I/O, no clock (the timestamp is stamped at the
- * impure edge and passed in), never throws, and the entry list is capped so a long session cannot grow
- * it without bound. The running totals are cumulative for the whole session (they are not recomputed from
- * the capped entry window), so they stay honest even after old entries roll off.
+ * Bounded model-usage accounting for /privacy. Usage frames provide provider names and token counts;
+ * connection checks, external tools, failed requests without usage, and other network traffic are
+ * outside this ledger. Timestamps come from callers; totals include entries evicted from the window.
  */
 import { compactCount } from "../_shared/compact-count";
 import { numOr } from "../../core/guards";
@@ -65,20 +61,20 @@ const clockOf = (at: number): string => {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 };
 
-/** Render the ledger as the /privacy readout: a plain, honest list of every send this session. Markdown,
+/** Render recorded model usage as the /privacy readout. Markdown,
  *  so the shell renders it as a normal reply. Pure but for local-time formatting of each stamp. */
 export const formatLedger = (ledger: EgressLedger): string => {
   if (ledger.sends === 0) {
-    return "**What has left this machine**\n\nNothing has left this machine yet. Kit sends only when you send.";
+    return "**Recorded model usage**\n\nNo model usage recorded this session. This is not a network activity log: connection checks and external tools can also make requests.";
   }
   const plural = ledger.sends === 1 ? "" : "s";
-  const head = `**What has left this machine**\n\n${ledger.sends} send${plural} · ${compact(ledger.totalInput)} in / ${compact(ledger.totalOutput)} out total\n`;
+  const head = `**Recorded model usage**\n\n${ledger.sends} recorded call${plural} · ${compact(ledger.totalInput)} in / ${compact(ledger.totalOutput)} out total\n`;
   const rows = ledger.entries.map(
     (e) => `- \`${clockOf(e.at)}\`  ${e.provider}  ${compact(e.input)} in / ${compact(e.output)} out`,
   );
   return [
     head,
     ...rows,
-    "\nCredentials authenticate only to your configured provider; they are not included in this context.",
+    "\nThis is not a network activity log. Configured API keys are used for authentication; avoid putting secrets in messages or tool arguments.",
   ].join("\n");
 };

@@ -722,6 +722,7 @@
 | `scene.props.row.<id>` | `div` | `src/ui/apps/scenes/props/prop-row.tsx` |
 | `scene.props.soon.<id>` | `div` | `src/ui/apps/scenes/props/prop-row.tsx` |
 | `scene.props.tile.<id>` | `div` | `src/ui/apps/scenes/props/prop-tile.tsx` |
+| `scene.props.wing.<id>` | `div` | `src/ui/apps/scenes/scene-prop-wing.tsx` |
 | `scene.reasoning` | `div` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
 | `scene.reasoning.body` | `div` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
 | `scene.reasoning.chevron` | `span` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |

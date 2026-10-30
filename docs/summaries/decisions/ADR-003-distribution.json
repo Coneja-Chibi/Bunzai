@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "decisions/ADR-003-distribution",
   "sourcePath": "docs/decisions/ADR-003-distribution.md",
-  "sourceHash": "sha256:d4450b0d40a1207819c77cc9602fadcc4904b608889d6b0457f887e6d06e0f06",
-  "summary": "Accepted ADR for distribution strategy. Primary v0.1 path is single-file executables per OS win x64, mac arm64 and x64, linux x64 built by bun build --compile and attached to GitHub Releases so users download one file and run with no Node, git, or install steps. Self-updater vaud upgrade checks Releases, downloads the new binary, verifies SHA-256 via a minisign-signed checksums file, and swaps atomically; later app face reuses the mechanism with UI; passive behavior is at most one non-blocking new-version notice per day and never auto-install without consent. Later signed desktop installers via Tauri bundler when apps/studio ships at M6, and package managers winget scoop brew when asked. npm publishes core packages for embedders and npx vaud works as secondary path not the documented default. Why: SillyTavern node plus git install is the top onboarding pain so download one file must be engineering truth; GitHub Releases provides free bandwidth where the audience already is. Consequences: release CI builds binary matrix checksums and signature on every tag; Windows SmartScreen will complain about unsigned exes until a code-signing cert is bought; binary size about 50-90MB from Bun runtime is accepted and documented.",
+  "sourceHash": "sha256:e1040bf14d0e457adaee8dd40cbfc6dc886167c39587a6db800edbb44f5ab672",
+  "summary": "Accepted distribution design decision. The intended v0.1 primary path is single-file executables per OS built by bun build --compile and attached to GitHub Releases; the ADR describes plans, not proof that release artifacts, signing, checksums, or updates have shipped. It also plans a self-updater with SHA-256 verification against a minisign-signed checksum file, atomic replacement, and passive notices only; later Tauri installers and package-manager options; and secondary npm packages and npx. Why: one executable simplifies setup without requiring separate Node or Git installs; GitHub Releases offers bandwidth and reaches the audience. Consequences describe a planned release matrix, checksum/signature publication, unsigned Windows SmartScreen warnings, provenance and integrity guidance, and accepted binary size.",
   "topics": [
     "single executable GitHub Releases",
     "vaud upgrade self-updater",
@@ -20,7 +20,7 @@
       "title": "Decision",
       "level": 2,
       "sourceHash": "sha256:9eb9ed718104b0d5d4e00886194b0993d54a11862babe98bfaff55aff8b87011",
-      "summary": "Primary v0.1 distribution is single-file executables for win x64, mac arm64 and x64, and linux x64 via bun build --compile on GitHub Releases with download-one-file run and no Node git or install steps. Self-updater vaud upgrade checks Releases, downloads, verifies SHA-256 from a minisign-signed checksums file, and swaps atomically; UI reuses later; at most one non-blocking new-version notice per day and never auto-install without consent. Later: signed Tauri installers when studio ships M6; winget scoop brew manifests when someone asks. npm core packages and npx vaud are secondary not the documented default.",
+      "summary": "The intended v0.1 primary distribution is a single-file executable for each listed OS and architecture, built with bun build --compile and attached to GitHub Releases. Planned vaud upgrade behavior checks a downloaded binary against SHA-256 values in a minisign-signed checksum file before atomic replacement; notices stay passive and installs require consent. Tauri installers and package managers are later options; npm packages and npx remain secondary. This is an accepted design, not evidence those artifacts or mechanisms have shipped.",
       "topics": [
         "single-file per OS",
         "GitHub Releases",
@@ -35,12 +35,11 @@
       "slug": "why",
       "title": "Why",
       "level": 2,
-      "sourceHash": "sha256:5c49a2b97ba4d045acc77a5befb7882fd53ad7f770aa19316a9e4480d0a6d2df",
-      "summary": "SillyTavern's node plus git install is the single most cited onboarding pain in this hobby. Download one file is the marketing headline so it must be the engineering truth. GitHub Releases offers free bandwidth and the audience already lives there.",
+      "sourceHash": "sha256:ca954eb87e8bbddf533e841da310b5848793e2937fdb61b1e8e9e87b98d17a6b",
+      "summary": "A single executable simplifies setup by avoiding separate Node and Git installation. The accepted plan uses bun build --compile to make that path practical across the named operating systems. GitHub Releases offers a distribution channel with bandwidth and reaches the intended audience; this decision does not claim that binaries have already shipped.",
       "topics": [
-        "anti ST install pain",
-        "download one file truth",
-        "GitHub Releases audience"
+        "single-executable setup",
+        "GitHub Releases distribution"
       ],
       "children": [],
       "shortSource": true
@@ -49,13 +48,13 @@
       "slug": "consequences",
       "title": "Consequences",
       "level": 2,
-      "sourceHash": "sha256:5fc454fb95c3b26ea5ac8580402e19c0dbfba1669b9745932b5c94dcb9763020",
-      "summary": "Release CI builds a matrix of binaries plus checksums plus signature on every tag. Windows SmartScreen will complain about unsigned exes; buy a code-signing cert when budget allows and document the More info Run anyway path until then as an M1 ticket. Binary size of roughly 50-90MB because Bun embeds its runtime is accepted and must be documented.",
+      "sourceHash": "sha256:e227b6ec11b5142a6af96f9f80e2312248ddb2d064b119a1c186ad3191753f13",
+      "summary": "The ADR plans a per-tag binary matrix with checksums and signatures; these are planned release requirements, not confirmation of published artifacts. Unsigned Windows executables may trigger SmartScreen. Distribution guidance should disclose signing status and show users how to check provenance and integrity, without presenting a blanket bypass as safe. The expected 50–90 MB size from the embedded Bun runtime is accepted and should be documented.",
       "topics": [
-        "release CI matrix",
-        "SmartScreen unsigned",
-        "code signing cert later",
-        "50-90MB binary size"
+        "planned release matrix",
+        "SmartScreen and unsigned builds",
+        "provenance and integrity checks",
+        "binary size"
       ],
       "children": [],
       "shortSource": true

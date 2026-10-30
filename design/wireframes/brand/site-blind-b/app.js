@@ -122,7 +122,7 @@
           "<div>" +
             '<p class="eyebrow">Free for Windows, Mac and Linux</p>' +
             '<h1 tabindex="-1">Your characters, <em>your stories</em>, your computer.</h1>' +
-            '<p class="lede">Bunzai is a free app for playing and making AI roleplay characters. Everything stays private and encrypted on your own machine.</p>' +
+            '<p class="lede">Bunzai is a free app for playing and making AI roleplay characters. Your library is stored locally and encrypted at rest; key protection depends on your setup, and some fallback configurations store a key file beside the library. AI requests send selected content to your chosen provider, and connected services receive the data needed for their features.</p>' +
             '<div class="hero-cta">' +
               '<a class="btn btn-big" href="#/download" data-dl-button>' + dlLabel() + "</a>" +
               '<a class="btn btn-ghost btn-big" href="#/try">Try it in your browser</a>' +
@@ -146,8 +146,8 @@
           "</div>" +
         "</div>" +
         '<div class="band"><div class="wrap facts">' +
-          "<div><strong>Stays on your computer</strong><span>No account. Your library never leaves your machine unless you send it.</span></div>" +
-          "<div><strong>Encrypted, always</strong><span>Characters, worlds, and chats are stored privately and encrypted.</span></div>" +
+          "<div><strong>Stored on your computer</strong><span>No Bunzai account. Your library is local; AI requests and connected services send the data their features need.</span></div>" +
+          "<div><strong>Encrypted at rest</strong><span>Key protection depends on setup; some fallback configurations store a key file beside the library.</span></div>" +
           "<div><strong>Comes and goes freely</strong><span>Bring cards from SillyTavern, RoleCall, Chub and more. Export to 11 other apps.</span></div>" +
         "</div></div>" +
         '<section class="section"><div class="wrap">' +
@@ -322,8 +322,7 @@
         '<div class="wrap" data-dl><p class="muted">Checking for the latest version...</p></div>' +
         '<div class="wrap section" style="padding-top:28px"><div class="grid grid-2">' +
           '<div class="ticket note"><h3>If Windows says it doesn\'t recognize this app</h3>' +
-            "<p>Windows shows a blue box for new apps it hasn't seen much yet. It's fine. To carry on:</p>" +
-            "<ol><li>Choose <strong>More info</strong>.</li><li>Choose <strong>Run anyway</strong>.</li></ol></div>" +
+            "<p>This Windows build is unsigned, so Windows may show a reputation warning. The warning does not establish whether a file is safe. Check the release page for a checksum for this exact file and compare it if one is published. If no checksum is available or it does not match, do not open the download; build from source instead.</p></div>" +
           '<div class="ticket note"><h3>After it opens</h3>' +
             "<p>On first launch, Bunzai adds itself to your Start menu, so you can find it again next time.</p>" +
             '<p>New here? Start with <a href="#/guides/first-scene">Your first scene</a>.</p></div>' +

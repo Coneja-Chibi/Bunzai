@@ -2,7 +2,7 @@
  * Generate and Refresh for one tracker item (RoleCall `app/api/chat/generate-tracker-item/route.ts`): one question to the scene's own model, built from the last ten
  * messages by core/trackers/generate.ts, answered as one JSON item, read once at this boundary with at most one repair (the Compendium's `askJson`, the same seam
  * Reconcile Recent Scene uses). It only PROPOSES: the scene is read through a reader that cannot write, so nothing here stores the item; the panel shows it and
- * the person accepts or discards it. An answer that stays unreadable is an error with a reason where RoleCall files a made-up default item as if it had worked.
+ * the person accepts or discards it. An answer that stays unreadable is returned as an error with a reason.
  */
 import { genSpecOf } from "../core/trackers";
 import { HISTORY_WINDOW, ITEM_MAX_TOKENS, ITEM_TEMPERATURE, itemMessages, parseItem, repairItem } from "../core/trackers/generate";

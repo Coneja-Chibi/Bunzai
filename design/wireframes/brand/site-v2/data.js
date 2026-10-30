@@ -35,7 +35,7 @@ window.SITE = {
   guides: {
     start: { title: "Your first scene", about: "Install Bunzai, bring in a character, connect an AI, and say hello.",
       sections: [
-        { h: "Install Bunzai", p: "Download the version for your computer and open it. The first time, it adds itself to your Start menu so you can find it again.", steps: ["Go to the Download page.", "Open the file you downloaded.", "If Windows warns you, choose More info, then Run anyway."] },
+        { h: "Install Bunzai", p: "Download the version for your computer. The Windows build is unsigned, so Windows may show a reputation warning; that warning does not establish whether a file is safe.", steps: ["Go to the Download page.", "Check whether the release page publishes a checksum for this exact file and compare it before opening.", "If no checksum is published or it does not match, do not open the download; use the repository's build-from-source instructions instead."] },
         { h: "Bring in a character", p: "Drag a character card onto the Library. PNG cards and JSON files both work.", tip: "No card yet? The Library can make a blank one for you to fill in." },
         { h: "Connect an AI", p: "Bunzai talks to the AI you choose, with your own key. Add one in Settings under Connections." },
         { h: "Say hello", p: "Open Scenes, pick your character, choose a greeting, and type your first line." } ] },

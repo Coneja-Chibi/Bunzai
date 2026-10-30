@@ -259,7 +259,7 @@
     const three = [
       { f: byId(f, "scenes"), t: "Play scenes", b: "Chat with your characters. Swipe for another reply, branch the story, stop a reply and keep what was written." },
       { f: byId(f, "workbench"), t: "Make things", b: "Build characters, lorebooks, and presets, and see exactly what your AI will be told." },
-      { f: byId(f, "library"), t: "Keep your library", b: "Bring cards from the apps you already use. Everything stays encrypted on your computer." },
+      { f: byId(f, "library"), t: "Keep your library", b: "Your library is stored locally and encrypted at rest. Key protection depends on your setup; some fallback configurations store a key file beside it. AI requests send selected content to your chosen provider." },
     ];
     return (
       '<section class="home-hero">' +
@@ -267,7 +267,7 @@
       '<p class="eyebrow">Free · Open source · Windows, Mac, Linux</p>' +
       '<h1 class="marquee marquee--xl" tabindex="-1">Your stories, kept at <em>home</em>.</h1>' +
       '<p class="serif serif--lg">Roleplay with AI characters, right on your own computer.</p>' +
-      '<p class="lede">Bring your character cards, add your own AI key, and play. Make new characters, worlds, and presets. Everything is stored privately and encrypted on your machine.</p>' +
+      '<p class="lede">Bring your character cards, connect an AI provider, and play. Make new characters, worlds, and presets. Your library is stored locally and encrypted at rest; key protection depends on your setup, and some fallback configurations store a key file beside it. AI requests send selected content to your chosen provider, and connected services receive the data needed for their features.</p>' +
       downloadButton("lg") +
       '<p class="alt-link"><a href="#/try">Or try the Studio in your browser, no install</a></p>' +
       "</div>" +
@@ -310,12 +310,12 @@
       '<div class="promise__copy">' +
       '<p class="eyebrow">House rules</p>' +
       '<h2 class="marquee marquee--md">Yours, <em>privately</em></h2>' +
-      '<p class="lede">Bunzai is an app on your computer, not a website you log into. There is no account to make.</p>' +
+      '<p class="lede">Bunzai is an app on your computer, not a website you log into. There is no Bunzai account to make. When you use an AI provider or connect an external service, selected content or account data is sent to that service.</p>' +
       "</div>" +
       '<div class="knockout" role="list">' +
       '<p role="listitem">+ Free, and the code is open for anyone to read.</p>' +
       '<p role="listitem">+ Your Library is stored on your computer.</p>' +
-      '<p role="listitem">+ It is encrypted there, too.</p>' +
+      '<p role="listitem">+ It is encrypted at rest. Key protection depends on your setup; some fallback configurations keep a key file beside the library.</p>' +
       '<p role="listitem">+ You use your own AI key.</p>' +
       '<p role="listitem">+ Export to 11 other apps whenever you like.</p>' +
       "</div>" +
@@ -738,8 +738,7 @@
       table +
       '<section class="notes-grid">' +
       '<div class="note" id="windows-warning"><p class="note__k">Windows</p><h3>"Windows protected your PC"</h3>' +
-      "<p>Bunzai is new and not signed yet, so Windows may say it does not recognize the app. That warning is about the app being new, not about anything wrong with it.</p>" +
-      "<p>Choose <b>More info</b>, then <b>Run anyway</b>. You only need to do this once.</p></div>" +
+      "<p>This Windows build is unsigned, so Windows may show a reputation warning. The warning does not establish whether a file is safe. Check the release page for a checksum for this exact file and compare it if one is published. If no checksum is available or it does not match, do not open the download; build from source instead.</p></div>" +
       '<div class="note"><p class="note__k">First launch</p><h3>It finds its own seat</h3>' +
       "<p>The first time you open Bunzai, it adds itself to your Start menu, so you can open it like any other app from then on.</p></div>" +
       '<div class="note"><p class="note__k">What you need</p><h3>Your own AI key</h3>' +

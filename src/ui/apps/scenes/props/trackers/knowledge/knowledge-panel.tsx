@@ -69,7 +69,7 @@ export function KnowledgePanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
   ] as const;
   return (
     <TrackerFrame label="Knowledge" title="Knowledge" icon="lucide:book-open" tone="color-mix(in srgb,var(--stage-link) 60%,var(--stage-ok))" tokens={tokensOf(knowledgeLines(k))} view={view} {...(popOut ? { popOut } : {})}
-      description="Tracks what you know and have discovered. The AI ensures you don't reference unknown information."
+      description="Tracks what you know and have discovered to help the AI follow your character's knowledge. Generated replies can still make mistakes."
       onClear={() => view.apply((d) => ({ ...readKnowledge(undefined), subs: d.subs }), "Cleared")}
       badge={c.wrong > 0 ? <span className="it-pill bad">{c.wrong} WRONG</span> : null}>
       <div className="it-search"><span><Ic name="lucide:search" size={16} /></span><input type="text" placeholder="Search knowledge..." aria-label="Search knowledge" value={query} onChange={(e) => setQuery(e.target.value)} /></div>

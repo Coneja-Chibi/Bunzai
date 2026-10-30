@@ -1,12 +1,9 @@
 /**
  * Generate and Refresh for one tracker item (RoleCall `app/api/chat/generate-tracker-item/route.ts`: `buildItemPrompt` 162-690, the system line at 1110): the
- * request the scene's model gets, and how its answer is read. The prompt text is RoleCall's word for word, per module in its own file (`GenSpec`). Pure:
- * studio/scene-tracker-item.ts sends it and asks for at most one repair; nothing here, and nothing that calls it, writes the scene. The answer is a PROPOSAL the
- * person accepts or discards (RoleCall applies it at once, and on a bad answer files a made-up default item as if it had worked: `getDefaultItem`, route.ts:670).
- *
- * Differences from RoleCall, each deliberate:
- *  - an answer that cannot be read is an error with a reason, never a default item;
- *  - the world theme is only named when the person chose one; RoleCall forces "fantasy" on a story that said nothing about it.
+ * request the scene's model gets, and how its answer is read. Prompt wording follows RoleCall's
+ * upstream implementation; `studio/scene-tracker-item.ts` sends it and allows at most one repair.
+ * This module does not write the scene: its answer is a proposal for the person to accept or discard.
+ * An unreadable answer is an error, and a world theme is included only when the person chose one.
  */
 import { extractObject } from "../compendium/filing-schema";
 import { isRecord } from "../guards";

@@ -1,22 +1,4 @@
-/**
- * "What kind of block is this, and how do I write one?" answered from the catalog.
- *
- * The same argument macro_lookup makes, applied one level up. A model asked to add a tracker produces
- * something that looks right and is architecturally wrong, because the shape depends on whether the
- * preset renders inline or assembles from variables and nothing in the file says which. Reasoned from
- * memory, that gets answered confidently and plausibly.
- *
- * The catalog is a survey of 22 community presets, so `prevalence` separates a near-universal
- * convention from one author's idea, and `hazards` carry the failures that survey actually found.
- * Every one of those renders as a complete, working preset, which is why they are worth handing to a
- * model rather than leaving it to notice.
- *
- * Four questions, which are the four somebody actually asks mid-build:
- *   explain   what is this kind of block for, how is it built, what goes wrong
- *   list      what kinds are there at all
- *   skeleton  give me a starting block I can edit
- *   check     is this arrangement of blocks coherent
- */
+/** Explain preset block patterns, provide starting blocks, and check structural ordering. */
 import { z } from "zod";
 import { ALL_PATTERNS, findPattern } from "../../core/preset/blocks/patterns";
 import { skeletonFor } from "../../core/preset/blocks/skeletons";
@@ -61,7 +43,6 @@ const explain = (id: string): { summary: string; output: string } => {
       macros: pattern.macros,
       ordering: pattern.ordering,
       hazards: pattern.hazards,
-      seenIn: `${pattern.prevalence} of 13 surveyed presets`,
       hasSkeleton: skeletonFor(pattern.id) !== null,
     }),
   };
@@ -88,7 +69,6 @@ const blockLookup: HarnessTool<z.infer<typeof input>> = {
           name: pattern.name,
           emits: pattern.emits,
           purpose: pattern.purpose,
-          seenIn: pattern.prevalence,
         }))),
       };
     }

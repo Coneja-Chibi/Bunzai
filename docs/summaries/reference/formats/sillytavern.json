@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/formats/sillytavern",
   "sourcePath": "docs/reference/formats/sillytavern.md",
-  "sourceHash": "sha256:e16db8e1d53ad19a696f401d17b01033a72bd45c63d08485c5f8e74c84a7027d",
-  "summary": "SillyTavern format documents how its adapters detect, map, and round-trip Character Card V1 V2 and V3 cards plus standalone world info through the canonical model. Character JSON is the default export and PNG is available on request; V3 PNGs carry full V3 JSON in ccv3 and a V2-shaped chara backfill. One folder exports character, lorebook, regex, and persona codecs. Detection distinguishes character and lorebook paths; field mapping uses shared Tavern fields and lore enums. The original twin and sourceMedia support same-format field fidelity through a three-state overlay; JSON formatting and regenerated PNG chunks are not byte-identical promises. V3-only fields stay in ccv3 and the PNG backfill's extensions.vaudeville.escrow.fields; standalone V2 JSON has no CCv3-only slots. Other quirks include dual PNG chunks, talkativeness tolerance, world links by name, displayIndex, and regex and persona codecs. The folder also exports preset and prompt-format codecs: the preset codec reads KoboldAI, TextGen and NovelAI sampler sets, system prompts and reasoning templates besides chat-completion presets, and the prompt-format codec reads instruct and context templates.",
+  "sourceHash": "sha256:d73e341b5cc681910aae991da0e72a3e702f9e81128c981bfa8085b2a675b84c",
+  "summary": "SillyTavern format documents how its adapters detect, map, and round-trip Character Card V1 V2 and V3 cards plus standalone world info through the canonical model. Character JSON is the default export and PNG is available on request; V3 PNGs carry full V3 JSON in ccv3 and a V2-shaped chara backfill. One folder exports character, lorebook, regex, and persona codecs. Detection distinguishes character and lorebook paths; field mapping uses shared Tavern fields and lore enums. The original twin and sourceMedia support same-format field fidelity through a three-state overlay; JSON formatting and regenerated PNG chunks are not byte-identical promises. V3-only fields stay in ccv3 and the PNG backfill's extensions.vaudeville.escrow.fields; standalone V2 JSON has no CCv3-only slots. Other quirks include dual PNG chunks, talkativeness tolerance, world links by name, displayIndex, and regex and persona codecs. The folder also exports preset and prompt-format codecs: the preset codec reads KoboldAI, TextGen and NovelAI sampler sets, system prompts and reasoning templates besides chat-completion presets, and the prompt-format codec reads instruct and context templates. Its PNG sample is a synthetic card fixture with retained structure, not a real-corpus sample.",
   "topics": [
     "sillytavern character 0.9",
     "sillytavern-lorebook native",
@@ -144,7 +144,7 @@
       "slug": "quirks",
       "title": "Quirks",
       "level": 2,
-      "sourceHash": "sha256:98d1119f6aa9ee2bd18e7bf96341e58d27722c2cdfc217cf9d1b7df978c02798",
+      "sourceHash": "sha256:97fc519ed4c0c072c63c22a429318af5ee4f4a50c374963ada8d8347eb245fa9",
       "summary": "Quirks pin ST edges. V3-only fields stay in the full V3 envelope, and a V3 PNG's chara backfill escrows them under extensions.vaudeville.escrow.fields while ccv3 keeps the full card; media upgrades a non-V3 twin to V3. A V3 card writes both ccv3 and chara chunks, and the reader prefers ccv3.   World is by name, and displayIndex is never fabricated from sortOrder. The regex codec scores 0.9 for a bare array and 0.85 for a card block; the persona codec scores 0.95, imports the default persona and seals the whole backup; same-named personas get the avatar stem in the shown name only, and connections ride sealed. The preset codec also reads KoboldAI, TextGen and NovelAI sampler sets, system prompts and reasoning templates onto samplers, stock-ordered blocks and a reasoning field, sealing what Bunzai never sends, and an unedited import exports back to its file. The prompt-format codec reads instruct and context templates as one piece; a wrapper with a sysprompt stays a preset.",
       "topics": [
         "V2 V3 field drops",
@@ -162,8 +162,8 @@
       "slug": "source-of-truth",
       "title": "Source of truth",
       "level": 2,
-      "sourceHash": "sha256:90393332c148bad310f0cc40584f2bb41d4d4bf2dd4bf7ce35809d45cbcb99f0",
-      "summary": "Source of truth maps concerns to files. Character adapter detect toCanonical fromCanonical is formats sillytavern index.ts. World info codec is lorebook.ts; regex and persona codecs are sibling regex.ts and persona.ts. Shared Tavern field map is tavern-fields.ts; lore int-enum decoders are lore-enums.ts; embedded character_book mapper is character-book.ts; CCv3 assets to media is assets.ts; PNG chunk read write is png.ts. Coverage declaration is coverage.ts. Canonical wrapper escrow original and id policy live in core canonical.ts. Samples under samples sillytavern include CCv2 and v3 JSON plus Seraphina.png.",
+      "sourceHash": "sha256:108286600d4b1f9efbcff84b2df6db3530ac9ef5abc8be998a46c5389ee01cb0",
+      "summary": "Source of truth maps concerns to files. Character adapter detect toCanonical fromCanonical is formats sillytavern index.ts. World info codec is lorebook.ts; regex and persona codecs are sibling regex.ts and persona.ts. Shared Tavern field map is tavern-fields.ts; lore int-enum decoders are lore-enums.ts; embedded character_book mapper is character-book.ts; CCv3 assets to media is assets.ts; PNG chunk read write is png.ts. Coverage declaration is coverage.ts. Canonical wrapper escrow original and id policy live in core canonical.ts. Samples under samples sillytavern include CCv2 and v3 JSON plus the synthetic-character.png structural fixture.",
       "topics": [
         "sillytavern index.ts",
         "lorebook regex persona",

@@ -117,7 +117,7 @@
 | `nonStoryActivatable?` | `boolean` | NovelAI | NovelAI: entry can activate outside story text (e.g. from a UI action) |
 | `contextConfig?` | `EntryContextConfig` | NovelAI | NovelAI authored per-entry assembly config (prefix/suffix/trim/budget dials) |
 | `loreBiasGroups?` | `LoreBiasGroup[]` | NovelAI | NovelAI phrase bias groups (loreBiasGroups on wire) |
-| `displayIndex?` | `number \| null` | ST | Creator's manual display order in the editor list - a DISTINCT authored axis from `sortOrder` (placement in the assembled prompt). Real ST cards prove they diverge (Seraphina: sortOrder all 100, displayIndex 0-3), so it is NOT regenerable from sortOrder. null/undefined = follow sortOrder. |
+| `displayIndex?` | `number \| null` | SillyTavern | Creator's manual display order in the editor list - a DISTINCT authored axis from `sortOrder` (placement in the assembled prompt). The synthetic SillyTavern PNG fixture exercises 0-3 while sortOrder is uniform; that proves codec preservation, not a real-corpus observation. This is NOT regenerable from sortOrder. null/undefined = follow sortOrder. |
 | `sideEffects` | `EntrySideEffects \| null` | - |  |
 | `boostIds?` | `string[]` | RoleCall | Cross-entry boosting (RoleCall's boostIds/boostAmount; no wire format carries them, so they are Bunzai-authored and RoleCall's own export drops them). When this entry fires, `boostAmount` (0 to 1, default none) is added to the chance of each entry of the SAME book named in `boostIds` that also matched this turn (engine/boosting.ts). Absent or empty means no boost. |
 | `boostAmount?` | `number` | - |  |

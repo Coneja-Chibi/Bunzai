@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:f33e57a4239d5608d3d80f6387e0a34f5b789025140e796c196781916ee28ab7",
-  "semanticSummaryHash": "sha256:7468566617e192bbeef29e16e201197e6d41de0c512e942e102041b15a2c4f1c",
+  "sourceHash": "sha256:5a13350e00101b0031040508e51a2d5c6e10d38f39d0024e8d2acfe6acca4713",
+  "semanticSummaryHash": "sha256:edf3e3dc57b041bcbec44d4d7f008ef0795ac5f466d33c9b2de08c9a904aa921",
   "verdict": "APPROVE",
-  "reviewer": "node_placement_review",
-  "notes": "Reviewed node placement visibility, actual-marker wires, editing semantics and unchanged parent summary against source.",
-  "reviewedAt": "2026-10-30T09:24:10.080Z"
+  "reviewer": "public-luna-06",
+  "notes": "Reviewed full sidecar and changed source section against previously reviewed approved baseline, not a fresh whole-page reread. Privacy ledger is scoped to recorded calls/usage and explicitly excludes connection checks, tools, and failures without usage; greeting identifies provider/context and connected-service request boundary.",
+  "reviewedAt": "2026-10-30T19:27:40.371Z"
 }

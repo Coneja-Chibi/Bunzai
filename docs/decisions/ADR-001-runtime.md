@@ -13,8 +13,7 @@ may use Bun APIs where they matter (spawn, file IO speed, compile).
 
 ## Why
 
-- The #1 stated distribution goal is "one file, no install pain" (the anti-ST-setup
-  answer). `bun build --compile` is the most direct path on all three OSes.
+- The distribution goal is a single executable without a separate runtime installation. `bun build --compile` is the most direct path on all three OSes.
 - TypeScript because the entire extraction surface from VAUDEVILLE is TS, and because
   zod schemas double as both validation and documentation.
 - Node-compat core keeps the npm/embedding door open and de-risks Bun (if Bun ever

@@ -5,10 +5,10 @@ import stWorldbook from "../sillytavern/lorebook";
 import type { LorebookEntry } from "../../entities/lorebook/schema";
 
 /**
- * The committed fixture is a verbatim 2-entry slice of a REAL NovelAI v3 export, reformatted only to
- * 4-space JSON (the codec's own output shape). Provenance: Mal.lorebook.json from
- * github.com/MagicShel/novel-ai (lore/firefly). Real bytes, fewer of them - the full v3/v4/v6 files are
- * live-verified via the CLI, not committed (size + third-party licensing in an AGPL repo).
+ * The committed fixture is a synthetic 2-entry NovelAI v3-shaped book. It was reconstructed from
+ * the field structure of a Mal.lorebook.json example in github.com/MagicShel/novel-ai (lore/firefly);
+ * names, prose, identifiers, and timestamps were replaced. See fixtures/SOURCES.md. Full v3/v4/v6
+ * files are live-verified via the CLI, not committed (size + third-party licensing in an AGPL repo).
  */
 const FIXTURE_PATH = new URL("./fixtures/nai-v3-mal.slice.lorebook.json", import.meta.url);
 const fixtureText = await Bun.file(FIXTURE_PATH).text();
@@ -25,19 +25,19 @@ test("novelai-lorebook maps native fields to the canonical entry", () => {
   const canon = novelaiLorebook.toCanonical({ text: fixtureText });
   const e0 = canon.body.entries[0]!;
 
-  expect(e0.title).toBe("Characer: Mal: About"); // displayName (typo preserved from the real export)
-  expect(e0.content).toBe("Malcolm \"Mal\" Reynolds/ Serenity owner/ captain/ scoundrel/ strong personal code");
+  expect(e0.title).toBe("Characer: Ranger: About"); // constructed title typo retained as parser input
+  expect(e0.content).toBe("Rhea Vale / forest ranger / mapmaker / patient observer");
   expect(e0.sortOrder).toBe(400); // contextConfig.budgetPriority IS placement -> sortOrder
   expect(e0.priority).toBe(100); // NAI is single-axis: no separate eviction priority -> default
   expect(e0.scanDepth).toBe(1000); // searchRange (chars) -> scanDepth
   expect(e0.constant).toBe(false); // forceActivation
   expect(e0.enabled).toBe(true);
 
-  // NAI keys carry inline `/regex/`: /Mal/ and /Reynolds/ parse as regex, "captain" stays literal.
+  // NAI keys carry inline `/regex/`: /Ranger/ and /Vale/ parse as regex, "mapmaker" stays literal.
   expect(e0.triggers.map((t) => [t.keyword, t.isRegex])).toEqual([
-    ["Mal", true],
-    ["Reynolds", true],
-    ["captain", false],
+    ["Ranger", true],
+    ["Vale", true],
+    ["mapmaker", false],
   ]);
   expect(e0.secondaryTriggers).toEqual([]); // NAI has no secondary-key axis
 
@@ -83,7 +83,7 @@ test("novelai-lorebook rewrites only the edited field, preserving raw residue", 
   expect(out.entries[0].displayName).toBe("Renamed"); // edited field re-encoded
   expect(out.entries[0].text).toBe(canon.body.entries[0]!.content); // untouched, from twin
   expect(out.entries[0].contextConfig.reservedTokens).toBe(50); // NAI-only richness preserved verbatim
-  expect(out.entries[0].category).toBe("cat-Mal"); // subcontext ref preserved
+  expect(out.entries[0].category).toBe("cat-ranger"); // subcontext ref preserved
   expect(out.entries[1]).toEqual(JSON.parse(fixtureText).entries[1]); // sibling entry byte-identical
   expect(out.categories).toEqual(JSON.parse(fixtureText).categories); // subcontext block preserved
 });
@@ -119,7 +119,7 @@ test("de-original read: contextConfig / keyRelative / nonStoryActivatable / cate
   const canon = novelaiLorebook.toCanonical({ text: fixtureText });
   const e0 = canon.body.entries[0]!;
   expect(e0.contextConfig).toEqual({
-    prefix: "[ Mal: ",
+    prefix: "[ Ranger: ",
     suffix: " ]\n",
     tokenBudget: 2048,
     reservedTokens: 50,
@@ -130,9 +130,9 @@ test("de-original read: contextConfig / keyRelative / nonStoryActivatable / cate
   });
   expect(e0.keyRelative).toBe(false);
   expect(e0.nonStoryActivatable).toBe(false);
-  expect(e0.categoryId).toBe("cat-Mal");
+  expect(e0.categoryId).toBe("cat-ranger");
   expect(canon.body.categories).toEqual([
-    { id: "cat-Mal", name: "Character: Mal", sortOrder: 0, enabled: true },
+    { id: "cat-ranger", name: "Character: Ranger", sortOrder: 0, enabled: true },
   ]);
 });
 
@@ -155,9 +155,9 @@ test("de-original edit: mutating contextConfig/toggles/category reaches the wire
 
 test("de-original edit: renaming a category reaches the wire, subcontext residue survives", () => {
   const canon = novelaiLorebook.toCanonical({ text: fixtureText });
-  canon.body.categories![0]!.name = "Malcolm";
+  canon.body.categories![0]!.name = "Rhea Vale";
   const out = JSON.parse(novelaiLorebook.fromCanonical(canon).text ?? "");
-  expect(out.categories[0].name).toBe("Malcolm");
+  expect(out.categories[0].name).toBe("Rhea Vale");
   const twinCat = JSON.parse(fixtureText).categories[0];
   const { name: _oldName, ...restTwin } = twinCat;
   const { name: _newName, ...restOut } = out.categories[0];

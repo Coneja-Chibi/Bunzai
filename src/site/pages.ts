@@ -87,7 +87,7 @@ function home(): Page {
 <div>
 <div class="act"><b>Act I</b> &middot; hello</div>
 <h1>A little theater for your <em>stories</em>.</h1>
-<p>Make characters, build their worlds, and play scenes with them using your own AI. Your library stays on your computer, encrypted. No account, no cloud.</p>
+<p>Make characters, build their worlds, and play scenes with an AI provider you choose. Your library is stored locally and encrypted at rest; key protection depends on your setup, and some fallback configurations store a key file beside the library. AI requests send selected content to your chosen provider, and connected services receive the data needed for their features. Bunzai has no account or telemetry service.</p>
 <div class="row"><a class="btn" href="download.html">Get Bunzai</a><a class="btn ghost" href="studio/">Try it in your browser</a></div>
 <p class="small" style="margin:18px 0 0">Free and open source &middot; Windows, Mac, Linux &middot; <span data-version>latest</span></p>
 </div>
@@ -110,7 +110,7 @@ ${reel()}
 <h2>Not sure yet? <em>Look around</em> right here.</h2>
 <p class="lede">The Studio runs in your browser too. Import a card, edit it, convert it, download it. Nothing is saved there, so download what you make before you close the tab.</p></div>
 <a class="btn" href="studio/">Open the Studio</a></div></section>`;
-  return { path: "index.html", html: frame({ title: "Bunzai: a little theater for your stories", description: "Make characters, build their worlds, and play scenes with them using your own AI. Free, open source, and private.", up: "", section: "home", body }) };
+  return { path: "index.html", html: frame({ title: "Bunzai: a little theater for your stories", description: "Make characters, build their worlds, and play scenes with an AI provider you choose. Free and open source, with locally stored library data.", up: "", section: "home", body }) };
 }
 
 function download(): Page {
@@ -122,14 +122,14 @@ function download(): Page {
 <p class="lede">Free and open source. Every download comes from the latest release on GitHub, <span data-version>latest</span>.</p>
 <div class="pair" style="margin-top:36px">
 <div>
-${os("windows", "Windows", `<li>Download <a class="more" href="${LATEST}Bunzai.exe">Bunzai.exe</a>.</li><li>Double-click it. That is the whole install.</li><li>Windows warns once because the app is new and unsigned: click <b>More info</b>, then <b>Run anyway</b>.</li>`, `<p class="note">App starts but no window? Install Microsoft's <a class="more" href="https://developer.microsoft.com/microsoft-edge/webview2/">WebView2 runtime</a> and open it again. Windows 11 already has it.</p>`)}
+${os("windows", "Windows", `<li>Download <a class="more" href="${LATEST}Bunzai.exe">Bunzai.exe</a>.</li><li>Before opening it, check the release page for verification details. If it publishes a checksum for this exact release file, compare the downloaded file with it. If no checksum is published, you can build from source using the steps below.</li><li>This build is unsigned, so Windows may show a reputation warning. The warning does not establish whether a file is safe. Continue only if you trust the source and have verified the download; otherwise cancel.</li>`, `<p class="note">App starts but no window? Install Microsoft's <a class="more" href="https://developer.microsoft.com/microsoft-edge/webview2/">WebView2 runtime</a> and open it again. Windows 11 already has it.</p>`)}
 ${os("mac", "Mac", `<li>Download the one for your Mac: <a class="more" href="${LATEST}bunzai-cli-darwin-arm64">Apple Silicon</a> or <a class="more" href="${LATEST}bunzai-cli-darwin-x64">Intel</a>.</li><li>In Terminal, make it runnable: <code>chmod +x bunzai-cli-darwin-arm64</code></li><li>Start it: <code>./bunzai-cli-darwin-arm64 ui</code></li><li>Open the address it prints in your browser.</li>`)}
 ${os("linux", "Linux", `<li>Download the one for your machine: <a class="more" href="${LATEST}bunzai-cli-linux-x64">Intel or AMD</a> or <a class="more" href="${LATEST}bunzai-cli-linux-arm64">ARM, like a Raspberry Pi</a>.</li><li>Make it runnable: <code>chmod +x bunzai-cli-linux-x64</code></li><li>Start it: <code>./bunzai-cli-linux-x64 ui</code></li><li>Open the address it prints in your browser.</li>`)}
 </div>
 <div>${ticket("")}
-<p class="note" style="--c:var(--mint)">Your pieces live in <code>Documents/Bunzai Studio</code> on your computer, encrypted. Opening Bunzai again while it is running just opens another window onto the same studio.</p>
+<p class="note" style="--c:var(--mint)">Your pieces are stored in <code>Documents/Bunzai Studio</code> on your computer and encrypted at rest. Key protection depends on your setup; some fallback configurations store a key file beside the library. AI requests send selected content to your chosen provider, and connected services receive the data needed for their features. Opening Bunzai again while it is running just opens another window onto the same studio.</p>
 <p class="note" style="--c:var(--lilac)"><b>Kit</b>, the optional terminal companion, is a separate download on the <a class="more" href="${REPO}/releases/latest">release page</a>. <a class="more" href="tour/kit.html">What is Kit?</a></p>
-<p class="note" style="--c:var(--sky)">Want to check your download? <a class="more" href="${LATEST}SHA256SUMS">SHA256SUMS</a> lists every file's fingerprint.</p>
+<p class="note" style="--c:var(--sky)">Want to check your download? Check the release page for a checksum published for that exact file and release. If no checksum is listed, build Bunzai from source using the instructions below.</p>
 </div></div>
 <section class="s tight" style="padding-top:56px"><h2>Or run it from source</h2>
 <p class="lede">You need <a class="more" href="https://bun.sh">Bun</a> 1.3 or newer.</p>

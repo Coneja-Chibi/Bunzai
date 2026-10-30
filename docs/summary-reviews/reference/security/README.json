@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/security/README",
   "sourcePath": "docs/reference/security/README.md",
-  "sourceHash": "sha256:2ff2ce2d0797b31f366384fed9c515c93f66fd35b4fd5d0521be7b65f0e3d1f3",
-  "semanticSummaryHash": "sha256:fd0decc38ac817063f13ea2c1de64e50a3d2ada44006da49a65be8829a85493a",
+  "sourceHash": "sha256:7ca2f8b2455a04832c012e59c2362ff18818347309fdbc5c0569abd5e4c6a1fe",
+  "semanticSummaryHash": "sha256:5e42ae24922ca614c1523b7f44a06bcb4ebb7e9d30befa08695ce9002aab0e08",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:47:58.206Z"
+  "reviewer": "public-luna-06",
+  "notes": "Re-reviewed the current overview, sidecar and regenerated figures, including the scoped guarded-HTTP provider boundary and separate CLI/subprocess network authority. Source/native/packaged evidence remains distinct; focused author check passes.",
+  "reviewedAt": "2026-10-30T19:25:46.357Z"
 }

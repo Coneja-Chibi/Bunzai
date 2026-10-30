@@ -24,7 +24,7 @@ describe("what it shows", () => {
     await r.mount(panel());
     expect(r.q(".eb").textContent).toBe("Knowledge module");
     expect(r.q(".trk").getAttribute("data-part")).toBe("props.tracker.knowledge");
-    expect(r.text()).toContain("Tracks what you know and have discovered. The AI ensures you don't reference unknown information.");
+    expect(r.text()).toContain("Tracks what you know and have discovered to help the AI follow your character's knowledge. Generated replies can still make mistakes.");
     expect(r.text()).toContain("No knowledge entries");
     expect(r.text()).toContain("Your knowledge base is empty");
     expect(r.qa(".st-tabs button").map((b) => b.textContent?.trim())).toEqual(["All0", "Certain0", "Uncertain0", "Secrets0"]);

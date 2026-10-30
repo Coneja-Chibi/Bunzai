@@ -237,7 +237,10 @@ retried; activating or removing a provider refreshes the shell's provider and mo
 a real provider proof-of-life, canonical studio enumeration, and the exact Bunzai/Bun build. One
 timeout or failure becomes its own warning/failure row without hiding the other completed results.
 `/decks` (also `/inventory`) prints the current canonical deck counts on demand. `/privacy` reports
-the session's provider sends and token counts on demand. Wide terminals show the animated NOW
+recorded model calls and token counts for the session. It is not a network activity log: connection
+checks, external tools, and failed calls without usage reports are outside it. Kit's greeting explains
+that conversation context goes to the selected provider and connected services can make requests.
+Wide terminals show the animated NOW
 PLAYING theatre marquee without a persistent telemetry strip;
 inventory stays out of persistent chrome. Narrow terminals use a purpose-drawn miniature rainbow
 `V KIT` lockup but retain the complete greeting and stage cues, wrapping the copy instead of

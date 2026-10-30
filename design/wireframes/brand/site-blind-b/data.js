@@ -201,7 +201,7 @@ BK.GUIDES = [
     title: "Something went wrong",
     summary: "Common hiccups and how to fix them.",
     sections: [
-      ["windows", "Windows doesn't recognize this app", ["Windows shows this for new apps it hasn't seen much yet. Choose More info, then Run anyway."]],
+      ["windows", "Windows doesn't recognize this app", ["This Windows build is unsigned, so Windows may show a reputation warning. The warning does not establish whether the file is safe. Check the release page for a checksum for this exact file and compare it if published. If no checksum is published or it does not match, do not open the download; use the repository's build-from-source instructions."]],
       ["no-reply", "No reply arrives", ["Check that your AI key is added and still has credit. Then try Retry on the scene."]],
       ["cut-off", "A reply was cut off", ["If the app closed while a reply was being written, open the scene again. The reply comes back where it stopped."]],
       ["deleted", "I deleted something by mistake", ["Look in the Trash. Things stay there for 3 days."]],

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/entities/lorebook",
   "sourcePath": "docs/reference/entities/lorebook.md",
-  "sourceHash": "sha256:7b10023c2f148fce23f3f2596ea4c0eac634684e68535ec864f3013969865081",
+  "sourceHash": "sha256:31e281ae77bf92907805686066fb028c4019a4ad13d9aa47416b79776a9c89a8",
   "summary": "Lorebook entity is the field-meaning authority for CanonicalLorebook as CanonicalEntity lorebook LorebookBody, the superset for world info character book and memory formats baselined on RoleCall entry type. schema.ts owns types; this page owns meanings and producers. How to read the field tables repeats generated Field Type Producers Meaning rules from docs-fields. Composition is book settings plus flat LorebookEntry list and optional categories. Book settings covers identity globals budget and LorebookCategory folders. Entries is the large flat roughly 48-field entry with concern groups for identity triggers injection ordering recursion scan filters CharacterFilter side effects ST-lineage toggles NovelAI extensions EntryContextConfig LoreBiasPhrase LoreBiasGroup and metadata. What rides escrow, not a field lists RoleCall in-memory-only fields and wire twins. See also links architecture character character-book RoleCall NovelAI and formats matrix.",
   "topics": [
     "LorebookBody entries",
@@ -80,7 +80,7 @@
       "slug": "entries",
       "title": "Entries",
       "level": 2,
-      "sourceHash": "sha256:8d261c566c72b028242d73ecaabff8461feec364b3cb169ffccd7148f457b54e",
+      "sourceHash": "sha256:d9f750d0e8e9275bdf5d283f88156ae95845c112b5ab5ea0927d949584fbb7a9",
       "summary": "A LorebookEntry is one triggerable chunk with stable id referenced by categoryId and escrow twin matching. The full flat field table is followed by concern groups not separate types. Identity and content covers title comment content enabled constant. Triggers and matching plus Trigger shape gate activation with selectiveLogic and null inherit globals. Injection and placement sets position depth role. Ordering timing and grouping separates sortOrder placement priority eviction displayIndex list sticky cooldown delay groups probability. Recursion and budget covers exclude prevent delayUntil ignoreBudget useMemo. Scan sources extend match targets. Filters and side effects plus CharacterFilter EntrySideEffect EntrySideEffects are declarative never executed. ST-lineage toggles first-class vectorized group scoring automationId displayIndex. NovelAI extensions include keyRelative contextConfig and lore bias groups with EntryContextConfig LoreBiasPhrase LoreBiasGroup. Metadata is the open bag.",
       "topics": [
         "LorebookEntry flat fields",
@@ -247,8 +247,8 @@
           "slug": "st-lineage-toggles",
           "title": "ST-lineage toggles",
           "level": 3,
-          "sourceHash": "sha256:41948404497cf549793e27dfb20f9d2248ccc54c2f19dfa08ca037289f553de4",
-          "summary": "vectorized groupOverride useGroupScoring automationId and displayIndex are authored SillyTavern-lineage fields first-classed under schema-is-editor even though only ST serializes them today. vectorized is the RAG setting not the vectors which stay escrow. groupOverride and useGroupScoring extend groupName groupWeight mutual exclusion. automationId binds Quick-Reply automation by id only automation set stays escrow. displayIndex is creator manual list order distinct from sortOrder; real cards diverge so it is never regenerated from sortOrder.",
+          "sourceHash": "sha256:b49f5a86ec0b45d8e80271441f1f3e516ce7abea3c3f9395fd859cfdb59c3423",
+          "summary": "vectorized groupOverride useGroupScoring automationId and displayIndex are authored SillyTavern-lineage fields first-classed under schema-is-editor even though only ST serializes them today. vectorized is the RAG setting not the vectors which stay escrow. groupOverride and useGroupScoring extend groupName groupWeight mutual exclusion. automationId binds Quick-Reply automation by id only automation set stays escrow. displayIndex is creator manual list order distinct from sortOrder; the synthetic PNG fixture exercises different values without a real-corpus claim, and displayIndex is never regenerated from sortOrder.",
           "topics": [
             "vectorized RAG toggle",
             "groupOverride scoring",

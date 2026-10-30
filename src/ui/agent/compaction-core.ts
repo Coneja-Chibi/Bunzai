@@ -1,21 +1,13 @@
 /**
  * Deciding when a conversation is too long, and what to do about it.
  *
- * WHAT THIS REPLACES. The window bounded a turn by counting MESSAGES - sixty of them - and by a
- * fixed character ceiling. Neither has anything to do with what a conversation costs: somebody on a
- * 272k model, ten percent used, was told "at most 60 messages" and could not go on. A message is not
- * a unit of anything. Tokens are, and the provider already tells us how many it has room for.
+ * The budget uses estimated conversation tokens and the provider's context window rather than a
+ * message count or fixed character ceiling.
  *
- * SO THE BUDGET COMES FROM THE MODEL. Every agent that does this well measures against the real
- * context window - Claude Code compacts near its limit, Codex against a per-model token limit that
- * cannot be set above 90%, OpenCode on `context_limit - output_limit` overflow. The number here is
- * the same idea: a fraction of what this model actually has.
+ * The conversation budget is a fraction of the model's context window.
  *
- * AND WHAT HAPPENS AT THE EDGE IS A SUMMARY, NOT A DELETION. Dropping the oldest messages loses the
- * decisions that made the recent ones make sense - the constraint you gave in message three is
- * exactly what the model needs when it acts in message forty. So the old turns are summarised into
- * one message and the newest are kept verbatim, which is the shape all four of those tools landed
- * on independently.
+ * Older turns are summarised and the newest turns are kept verbatim, preserving recent context while
+ * reducing the conversation's size.
  *
  * PURE. The summarising itself needs a model; deciding what to summarise does not, and this is the
  * part worth being able to test without one.
@@ -42,10 +34,8 @@ export const estimateTokens = (text: string): number => Math.ceil(text.length / 
 /**
  * How much of the window a conversation may fill before it is compacted.
  *
- * 0.75 rather than the 0.95 Claude Code uses, because this budget covers the CONVERSATION only -
- * the standing instruction, the screen brief, the tool schemas and the model's own reply all come
- * out of the same window and none of them are counted here. Codex reserves for output the same way.
- * Users of both report 95% firing too late to be useful.
+ * This budget covers the conversation only. Instructions, briefs, tool schemas, and the model's
+ * reply also use the context window but are not included in this estimate.
  */
 export const CONTEXT_SHARE = 0.75;
 
@@ -70,10 +60,8 @@ export interface CompactionSplit {
 /**
  * Split a conversation into what may be summarised and what must survive untouched.
  *
- * THE NEWEST END IS SACRED, and a fixed share of the budget is reserved for it - Codex keeps about
- * 20k tokens of recent messages beside its summary for the same reason. A summary is lossy by
- * definition, and the turns somebody is actually in the middle of are the ones where losing a
- * detail shows up immediately.
+ * A fixed share of the budget is reserved for recent messages because summaries are lossy and details
+ * from the active exchange may be needed immediately.
  *
  * THE LAST MESSAGE IS NEVER FOLDED. It is the question being asked.
  */

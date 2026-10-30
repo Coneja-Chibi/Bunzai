@@ -151,7 +151,7 @@ it are this page's own organization, not separate TypeScript shapes.
 | `nonStoryActivatable?` | `boolean` | NovelAI | NovelAI: entry can activate outside story text (e.g. from a UI action) |
 | `contextConfig?` | `EntryContextConfig` | NovelAI | NovelAI authored per-entry assembly config (prefix/suffix/trim/budget dials) |
 | `loreBiasGroups?` | `LoreBiasGroup[]` | NovelAI | NovelAI phrase bias groups (loreBiasGroups on wire) |
-| `displayIndex?` | `number \| null` | ST | Creator's manual display order in the editor list - a DISTINCT authored axis from `sortOrder` (placement in the assembled prompt). Real ST cards prove they diverge (Seraphina: sortOrder all 100, displayIndex 0-3), so it is NOT regenerable from sortOrder. null/undefined = follow sortOrder. |
+| `displayIndex?` | `number \| null` | ST | Creator's manual display order in the editor list - a DISTINCT authored axis from `sortOrder` (placement in the assembled prompt). The synthetic SillyTavern PNG fixture exercises distinct values (0-3 while `sortOrder` is uniform); this demonstrates codec preservation, not a real-corpus observation. It is NOT regenerable from `sortOrder`. null/undefined = follow sortOrder. |
 | `sideEffects` | `EntrySideEffects \| null` | - |  |
 | `boostIds` | `string[]` (optional) | - | ids of entries in the same book whose chance this entry raises when it fires |
 | `boostAmount` | `number` (optional) | - | 0 to 1, added to each boosted entry's chance (capped at 1) |
@@ -268,9 +268,9 @@ authored field in escrow). `vectorized` is the RAG toggle, the setting rather th
 themselves, which stay in escrow. `groupOverride` / `useGroupScoring` extend the `groupName` /
 `groupWeight` mutual-exclusion axis. `automationId` binds the entry to a Quick-Reply automation by id
 only; the automation itself stays in escrow. `displayIndex` is the creator's manual list order in the ST
-editor, a distinct authored axis from `sortOrder`: real cards prove they diverge (one card sorts every
-entry `100` on `sortOrder` but `0` through `3` on `displayIndex`), so it is never regenerated from
-`sortOrder`.
+editor, a distinct authored axis from `sortOrder`. The synthetic SillyTavern PNG fixture exercises a
+uniform `sortOrder` with `displayIndex` values `0` through `3`; this demonstrates codec preservation,
+not a real-corpus observation. It is never regenerated from `sortOrder`.
 
 ### NovelAI extensions
 

@@ -67,7 +67,7 @@ export function UserBanksCard({ lib }: { lib: FinalCutLibrary }): JSX.Element {
       {draft && !draft.id && (
         <div className="fc-create">
           <Form draft={draft} set={setDraft} />
-          <div className="acts"><Button variant="primary" size="sm" disabled={saving} onClick={() => void save()}>{saving ? "Saving..." : "Save to account"}</Button><Button variant="quiet" size="sm" onClick={() => setDraft(null)}>Cancel</Button></div>
+          <div className="acts"><Button variant="primary" size="sm" disabled={saving} onClick={() => void save()}>{saving ? "Saving..." : "Save to library"}</Button><Button variant="quiet" size="sm" onClick={() => setDraft(null)}>Cancel</Button></div>
         </div>
       )}
       {lib.banks.length > 0 && (

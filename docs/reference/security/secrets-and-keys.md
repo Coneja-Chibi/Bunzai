@@ -34,7 +34,7 @@ builds with `--kit`, publishing `bunzai-kit-*` binaries beside `Bunzai.exe` and 
 Saved providers live at `~/.bunzai/kit-vault.json`, or under `BUNZAI_HOME` when that override is set
 (`src/kit/providers/config.ts`). The current implementation does **not** split public metadata from
 secret material. It encrypts the whole `Vault` document: every saved `ProviderConfig`, including its API
-key, base URL, extra headers, options, and label, plus the active provider id. The file on disk contains
+key, base URL, extra headers, options, and label, plus the active provider id and optional Spotify link. The file on disk contains
 only a versioned `{ v, backend, payload }` envelope. A round-trip test proves that neither the API key nor
 the provider name appears in that file as plaintext (`src/kit/providers/vault.ts`;
 `src/kit/providers/vault.test.ts`).
@@ -82,9 +82,14 @@ always uses the backend id recorded in that blob; it never tries a different bac
    the real tools, record every command, and cover two first-time seals at once, a lock held by
    another process, a stale lock, a lock taken from its holder, a store answering "no key" after one
    was made, a locked store, and a locked store that a write unlocks
-   (`src/kit/keystore/keychain-backends.test.ts`). `scripts/probe-keychain.ts`, run by CI's keychain
-   job on macOS and Linux, checks them against the real tools; CI runs on Mainstage, so that proof
-   exists once this work is merged there.
+   (`src/kit/keystore/keychain-backends.test.ts`). `scripts/probe-keychain.ts` is configured in CI's
+   macOS/Linux keychain job to check the real tools. Each invocation uses a fresh
+   `bunzai-keychain-probe-*` service for reads, writes, locks, and cleanup; it never uses the
+   application's `bunzai-kit` entries. Cleanup attempts both owned entries, reports unexpected
+   failure, and removes its temporary home even when cleanup fails. Child-process regressions run
+   the actual script against fake OS tools and preserve planted application credentials
+   (`scripts/probe-keychain.test.ts`). These tests do not establish a successful native CI run;
+   that requires recorded results on the corresponding platform.
 4. **Local key file.** The universal fallback, selected wherever no OS-native backend can run. Kit
    generates a 256-bit key on first use and stores it at `~/.bunzai/kit.identity` as a versioned
    104-byte blob with an HMAC integrity check, owner-only mode `0600` where the filesystem supports it.
@@ -118,7 +123,7 @@ the vault at all (`src/kit/providers/config.ts`; `src/kit/providers/vault.ts`).
 
 ### Provider egress boundary
 
-Every provider spoke receives the same guarded fetch. A built-in spoke fixes its provider host; a custom
+HTTP-backed provider spokes use the guarded fetch. A built-in HTTP spoke fixes its provider host; a custom
 or local spoke derives one host from the configured base URL. Before the network, Kit rejects an unknown
 provider, a missing required key, or a request whose URL host differs from that one allowed host
 (`src/kit/providers/egress.ts`; `src/kit/providers/adapters.ts`). Model discovery uses the
@@ -136,8 +141,15 @@ These checks do not establish a model's quality, memory requirements or packaged
 A provider credential necessarily travels to that configured endpoint as request authentication. It is
 not added to the model conversation, tool observation, session transcript, canonical entity, or export.
 The model does receive the conversation and any studio or documentation observations Kit reads to answer
-the user's request. `/privacy` records the provider and token counts for each send, not the request body
-or credential (`src/kit/providers/egress-ledger.ts`).
+the user's request. `/privacy` records model usage reported to Kit, including provider and token counts,
+not request bodies or credentials. It is not a network activity log: connection checks, external tools,
+and requests without usage reports are outside it (`src/kit/providers/egress-ledger.ts`).
+
+The redirect rules below apply to requests made through Bunzai's guarded HTTP provider path. The
+Claude subscription provider delegates to the external Claude Code CLI, which communicates with
+Anthropic itself; Bunzai's HTTP guard cannot inspect or constrain those requests. Its usage counts
+come from the CLI's reports (`src/kit/providers/spokes/claude-sub.ts`). Connected MCP subprocesses
+also have their own process and network authority; model-usage accounting is not a record of their traffic.
 
 Custom request headers are JSON only. Header text from a scene, or carried in by an imported preset, may not set a header the host owns:
 `Authorization`, `Proxy-Authorization`, `X-Api-Key`, `Api-Key`, `X-Goog-Api-Key`, `Anthropic-Version`, `Host`, `Content-Type`,
@@ -207,11 +219,16 @@ volume was briefly unreadable would cause exactly the loss this is meant to avoi
 vault, including tampered ciphertext under a healthy key or a vault from another Windows profile, still
 throws and is left untouched on disk.
 
-One weaker edge remains: `readSealed` currently treats an unreadable file, malformed outer JSON, or an
-object that is not a sealed envelope as if no vault existed. Only a well-shaped envelope that fails to
-decrypt reaches the loud failure path (`src/kit/providers/vault.ts`). Until the read
-boundary distinguishes "missing" from "present but unreadable," users should not be told that every form
-of vault corruption is surfaced.
+Only `ENOENT` reads as an absent vault. Other filesystem errors, malformed outer JSON, and invalid
+sealed envelopes reject the read. Malformed decrypted provider lists, Spotify fields, active ids,
+and unknown plaintext fields are refused instead of being filtered out. A later save crosses the
+same read boundary and cannot replace that failed read with an empty successful vault
+(`src/kit/providers/vault.ts`; `src/kit/providers/vault-recovery.test.ts`).
+
+The decrypted cache and cross-process write-conflict behavior are unchanged by these checks. They
+do not establish protection against a different process changing an already cached vault. Legacy
+saved recovery notices are accepted as strings; the current notice is derived from this process's
+recovery state.
 
 ## The loopback server (shipping)
 

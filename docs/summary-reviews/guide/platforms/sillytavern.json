@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/platforms/sillytavern",
   "sourcePath": "docs/guide/platforms/sillytavern.md",
-  "sourceHash": "sha256:95415fbb02f50f2424a1ee88b300d447a7ae4956253c7380fbb8e83528091727",
-  "semanticSummaryHash": "sha256:ebf63f508b52ad266b4e72fc6fca5d7dd4562b8f9acbe9f99550e7a343205590",
+  "sourceHash": "sha256:89a048f0d68e1ce65de26427b36eda668751679b05a8b9b63ecbf42699971b55",
+  "semanticSummaryHash": "sha256:549124a57e84ac4bcbec717b8d26fe525c48a62a09fa1732191f8f8b321ecba0",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:47:39.999Z"
+  "reviewer": "public-luna-06",
+  "notes": "Independently read page and sidecar. Field mapping, preservation limits, and output-format caveats align; no generic byte-identical promise.",
+  "reviewedAt": "2026-10-30T19:27:39.982Z"
 }

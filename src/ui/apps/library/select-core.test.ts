@@ -1,9 +1,7 @@
 /**
  * The shelf's selection model: click, range, modifier, box.
  *
- * The tests that earn their place are the ones about NOT LOSING A BATCH. Somebody staging thirty
- * presets out of a hundred and forty-seven has spent real attention on it, and every gesture here
- * is one mis-specified line away from throwing that away in a single click.
+ * These tests verify selection gestures preserve the set of items already selected.
  */
 import { describe, expect, test } from "bun:test";
 import {

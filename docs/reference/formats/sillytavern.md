@@ -261,9 +261,10 @@ unknown fields attached when entries are reordered (`lorebook.test.ts`).
 - World link is by name. `extensions.world` is the name of a separate worldbook, not an embedded book, so
   it maps to the scalar `worldName`, not `knowledgeRefs` (`tavern-fields.ts:111,142`). An embedded book is
   `data.character_book` and is handled by the bundle layer.
-- `displayIndex` is a distinct axis. In a real card `order` can be uniform (100) while `displayIndex` runs
-  `0..3`, so bunzai never fabricates `displayIndex` from `sortOrder` on a cross-format write; a book that
-  authored none omits it (`lorebook.ts:189,215-217`).
+- `displayIndex` is a distinct axis from `sortOrder`; the synthetic PNG fixture exercises uniform
+  `order` with `displayIndex` running `0..3`. This verifies codec preservation, not a real-corpus
+  observation. Bunzai never fabricates `displayIndex` on a cross-format write; a book that authored none
+  omits it (`lorebook.ts:189,215-217`).
 - Regex codec (`sillytavern-regex`). Reads the bare `RegexScriptData[]` array (Marinara's Essentials packs)
   or a card's `extensions.regex_scripts`, scoring `0.9` for the file and `0.85` for the card block; a full
   character card still wins detection at `0.9`, so cards keep importing as characters (`regex.ts:273-277`,
@@ -314,4 +315,4 @@ unknown fields attached when entries are reordered (`lorebook.test.ts`).
 | PNG chunk read/write | `src/formats/_shared/png.ts` |
 | Coverage declaration | `src/formats/sillytavern/coverage.ts` |
 | Canonical wrapper, escrow (`original`), id policy | `src/core/canonical.ts` |
-| Samples | `samples/sillytavern/` (CCv2/v3 JSON + Seraphina.png) |
+| Samples | `samples/sillytavern/` (CCv2/v3 JSON + synthetic PNG character fixture) |

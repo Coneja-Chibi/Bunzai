@@ -1,7 +1,7 @@
 /**
  * SillyTavern sampler sets (KoboldAI / TextGen / NovelAI) and system prompts through the one
- * sillytavern-preset adapter. Fixtures are verbatim copies of files from a real ST data folder
- * (samples/sillytavern/templates/, two long prompts truncated). The sampler sets land on the preset's
+ * sillytavern-preset adapter. Format settings follow ST's real data shape; prompt fixtures are
+ * synthetic and their longer source prompts were replaced. The sampler sets land on the preset's
  * samplers, a system prompt lands as the preset's main block, and every other key stays sealed in
  * the raw twin so a round trip loses nothing.
  */
@@ -106,7 +106,7 @@ describe("system prompts", () => {
     ]);
     const main = e.body.prompts[0]!;
     expect(main).toMatchObject({ name: "Main Prompt", role: "system", systemPrompt: true, enabled: true, marker: false, placement: "relative" });
-    expect(main.content).toStartWith("You are an expert actor");
+    expect(main.content).toStartWith("You are an expert narrator");
     const history = e.body.prompts.find((p) => p.id === "chatHistory");
     expect(history).toMatchObject({ marker: true, markerSlot: "chatHistory", content: "" });
     expect(shapeOf(e)).toBe("sysprompt");
@@ -119,7 +119,7 @@ describe("system prompts", () => {
       history: [{ id: "g", role: "assistant", content: "Evening." }], current: { id: "u", role: "user", content: "Hi" }, now: 0, randomSeed: 1,
     });
     const sent = out.messages.map((m) => m.content).join("\n");
-    expect(sent).toContain("You are an expert actor");
+    expect(sent).toContain("You are an expert narrator");
     expect(sent).toContain("Keeps the light.");
   });
 
@@ -145,7 +145,7 @@ describe("system prompts", () => {
   test("a TextGen file that bundles instruct, context and a system prompt keeps the prompt and seals the rest", () => {
     const e = read("textgen-chatml-with-prompt.json");
     expect(e.body.name).toBe("textgen-chatml-with-prompt");
-    expect(e.body.prompts[0]!.content).toStartWith("A fictional, narrative-driven role-play");
+    expect(e.body.prompts[0]!.content).toStartWith("You are {{char}}.");
     expect(e.body.samplers).toBeUndefined();
     const raw = e.original?.sillytavern?.raw as Record<string, Record<string, unknown>>;
     expect(raw.instruct?.["input_sequence"]).toBe("<|im_start|>user");

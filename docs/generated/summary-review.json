@@ -30,9 +30,9 @@
       "docId": "decisions/ADR-001-runtime",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "independent-reviewer-1",
-      "sourceHash": "sha256:15c2e3188c6c0523fe2c8d312dfa690b0ef683b7e5dbdab9ed2509a7e09d4b9a",
-      "semanticSummaryHash": "sha256:794b1cb8a57620f17f2cbe85e59d685b9321e008c0cdab1bafd03ad15370986f"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:0a4d2bbb8f1d561c2172f7a8d53c44f8816a05db53705a956cc39d7db340f465",
+      "semanticSummaryHash": "sha256:d3fcf35164546fb6eaf1a9e663132a3ffd40199ad6c840fc7f8e8a2a98e81b89"
     },
     {
       "docId": "decisions/ADR-002-license",
@@ -46,9 +46,9 @@
       "docId": "decisions/ADR-003-distribution",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "independent-reviewer-1",
-      "sourceHash": "sha256:d4450b0d40a1207819c77cc9602fadcc4904b608889d6b0457f887e6d06e0f06",
-      "semanticSummaryHash": "sha256:435248a3263ba29773711c0c03fcf555ebfb735a5c90c0064c7bc15cc3082738"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:e1040bf14d0e457adaee8dd40cbfc6dc886167c39587a6db800edbb44f5ab672",
+      "semanticSummaryHash": "sha256:c92698fe9c57e1d65a8d7bd389cab6e5fba2603d0b05020bf508cd8b0a5fa187"
     },
     {
       "docId": "decisions/ADR-005-canonical-model",
@@ -134,9 +134,9 @@
       "docId": "FORMAT-SUPPORT",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "node_placement_review",
-      "sourceHash": "sha256:8bc9029dfc68d4582cc04308b3f00593b7913d4bd2085eadb90c06f064197fb6",
-      "semanticSummaryHash": "sha256:2935d21c5a7df4929b1b74f66f0399e3f4c50a1209bb3912bc9110717c4cc04e"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:2010fe3be45e99c7054fe74bbc57041ae17bcb832510d7d8b9b137b6e328d90f",
+      "semanticSummaryHash": "sha256:ac5325ea16d1759c50e9b2e06cbf1a2b12be2a14b27aa5d024828da819ce608f"
     },
     {
       "docId": "guide/converting",
@@ -230,9 +230,9 @@
       "docId": "guide/platforms/chub",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:5ff537d6f84943a59cc86af077753d2483fdbd0aee7436c6cb843d499c60a91b",
-      "semanticSummaryHash": "sha256:8e4aca4503ce4221e141b2b1fe71ec12a60bac7b2f02ff30c975e8741273b2a4"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:dbf2862302b0d9c3bcf736b6d49a18a378b448c68879a6a08cfb16f547a318ba",
+      "semanticSummaryHash": "sha256:48e173b6c707979b75e505fdc2f26bb841abf7fff843ffb7a7cf80a4edad9fb2"
     },
     {
       "docId": "guide/platforms/lumiverse",
@@ -270,9 +270,9 @@
       "docId": "guide/platforms/README",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:ce145ea7c548e0a75f9cd28fe447bbafee6321ff69cee9a1b8fa7963d427602e",
-      "semanticSummaryHash": "sha256:7ec8585711ea14f14a401440511c5b694c9aad3dc1e42c7bd0d1139a2dde4d32"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:082bb56301c16458f38b39dcc5b2bad3164c7f10364b7f30992adee6dd98d47b",
+      "semanticSummaryHash": "sha256:d6f879c78e67982099f54586690dd82228fa7eaf678230bdd8fa7325aaabc2e1"
     },
     {
       "docId": "guide/platforms/risu",
@@ -286,17 +286,17 @@
       "docId": "guide/platforms/rolecall",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:5602084638a97dd5508bc9f273c08bb10e8f066c3446d01e77c4de5e4c9d0541",
-      "semanticSummaryHash": "sha256:be9d72ee5b583cc60fd3039149d254517166465fe94bc9ba37f353e95b7278ea"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:ead7ff3f9567e87509fb0b5d5502158e876cb87a35ef7b14c3a53eaa6d7c44e8",
+      "semanticSummaryHash": "sha256:14d8ec2edef7aace442536c808701c3bb6cba06fedcdc02ba30f80f174fe3ed9"
     },
     {
       "docId": "guide/platforms/sillytavern",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:95415fbb02f50f2424a1ee88b300d447a7ae4956253c7380fbb8e83528091727",
-      "semanticSummaryHash": "sha256:ebf63f508b52ad266b4e72fc6fca5d7dd4562b8f9acbe9f99550e7a343205590"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:89a048f0d68e1ce65de26427b36eda668751679b05a8b9b63ecbf42699971b55",
+      "semanticSummaryHash": "sha256:549124a57e84ac4bcbec717b8d26fe525c48a62a09fa1732191f8f8b321ecba0"
     },
     {
       "docId": "guide/README",
@@ -414,9 +414,9 @@
       "docId": "reference/concepts/persona-editor",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:235b2a040e17a31ab1c50118396c3a016ce6d615b94901feb11da285b4cb756e",
-      "semanticSummaryHash": "sha256:2ccc59e52b9af273954432aa400ee80e5d44eb0a7f506667aff90cae079110b5"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:5ede4a8c12096953fd395a884e20793e1698c75ae1f318cc71a2760d469bdc39",
+      "semanticSummaryHash": "sha256:a65d98f1d092153a8967d1f85eae28d6ac4d337903d173ed264aef7bb7fb4b22"
     },
     {
       "docId": "reference/concepts/regex-editor",
@@ -494,9 +494,9 @@
       "docId": "reference/entities/lorebook",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:7b10023c2f148fce23f3f2596ea4c0eac634684e68535ec864f3013969865081",
-      "semanticSummaryHash": "sha256:2db7662231aa196259501dce9624c09fb9a829d898a13db36d8449f2e80f7162"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:31e281ae77bf92907805686066fb028c4019a4ad13d9aa47416b79776a9c89a8",
+      "semanticSummaryHash": "sha256:34feafd675a33982509dcf4cd124d72728d5e3f6847bea01398e8985888a8713"
     },
     {
       "docId": "reference/entities/pack",
@@ -646,9 +646,9 @@
       "docId": "reference/formats/lumiverse",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:efa71ca1cdb8bb38d1030aea972766658820cc4d16ac2f366021df7112c12b6e",
-      "semanticSummaryHash": "sha256:b0f24e2d0f10acf06c3024e4f5ac9f87b7774da6fb9ec0683b06636057548312"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:4ffa73b05fcd3dcacec48c0eb09d8167313de2882943f42933ed5a99682df2a0",
+      "semanticSummaryHash": "sha256:f02dba9e801ba0f44e549f2afaa606f9998d22c8b3003280be58ba06146a011f"
     },
     {
       "docId": "reference/formats/marinara",
@@ -718,9 +718,9 @@
       "docId": "reference/formats/sillytavern",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:e16db8e1d53ad19a696f401d17b01033a72bd45c63d08485c5f8e74c84a7027d",
-      "semanticSummaryHash": "sha256:dc990e9cc1efa5873210b65da6f2dc1d07ff6f5528bc45741d2959d375f18a0a"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:d73e341b5cc681910aae991da0e72a3e702f9e81128c981bfa8085b2a675b84c",
+      "semanticSummaryHash": "sha256:314f97caaceab47d81689e5b8829865a0e2d691f23fc116262cb90c1f7b35898"
     },
     {
       "docId": "reference/formats/vaud-json",
@@ -990,9 +990,9 @@
       "docId": "reference/security/README",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:2ff2ce2d0797b31f366384fed9c515c93f66fd35b4fd5d0521be7b65f0e3d1f3",
-      "semanticSummaryHash": "sha256:fd0decc38ac817063f13ea2c1de64e50a3d2ada44006da49a65be8829a85493a"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:7ca2f8b2455a04832c012e59c2362ff18818347309fdbc5c0569abd5e4c6a1fe",
+      "semanticSummaryHash": "sha256:5e42ae24922ca614c1523b7f44a06bcb4ebb7e9d30befa08695ce9002aab0e08"
     },
     {
       "docId": "reference/security/regex-safety",
@@ -1030,9 +1030,9 @@
       "docId": "reference/security/secrets-and-keys",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "integration_review",
-      "sourceHash": "sha256:f2afef9437a87d3ebd5b9644647ece47b263f9e7c36a44498987ce3d502de46a",
-      "semanticSummaryHash": "sha256:259c21dae48038cfe42df28c3a36127693fbdc448ee16e9d882cac7916c01158"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:f7acd56bb4d12b7f248dd91e6e6b09a4857b748a3855df28ca3aafa160592620",
+      "semanticSummaryHash": "sha256:2d23eee9cd393b377a890b3854fcd6b35ee8b39454d33c678458fb22b085922e"
     },
     {
       "docId": "reference/security/untrusted-content",
@@ -1054,9 +1054,9 @@
       "docId": "reference/ui",
       "status": "APPROVED",
       "verdict": "APPROVE",
-      "reviewer": "node_placement_review",
-      "sourceHash": "sha256:f33e57a4239d5608d3d80f6387e0a34f5b789025140e796c196781916ee28ab7",
-      "semanticSummaryHash": "sha256:7468566617e192bbeef29e16e201197e6d41de0c512e942e102041b15a2c4f1c"
+      "reviewer": "public-luna-06",
+      "sourceHash": "sha256:5a13350e00101b0031040508e51a2d5c6e10d38f39d0024e8d2acfe6acca4713",
+      "semanticSummaryHash": "sha256:edf3e3dc57b041bcbec44d4d7f008ef0795ac5f466d33c9b2de08c9a904aa921"
     },
     {
       "docId": "reference/updates",

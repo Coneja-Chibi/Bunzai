@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "FORMAT-SUPPORT",
   "sourcePath": "docs/FORMAT-SUPPORT.md",
-  "sourceHash": "sha256:8bc9029dfc68d4582cc04308b3f00593b7913d4bd2085eadb90c06f064197fb6",
-  "semanticSummaryHash": "sha256:2935d21c5a7df4929b1b74f66f0399e3f4c50a1209bb3912bc9110717c4cc04e",
+  "sourceHash": "sha256:2010fe3be45e99c7054fe74bbc57041ae17bcb832510d7d8b9b137b6e328d90f",
+  "semanticSummaryHash": "sha256:ac5325ea16d1759c50e9b2e06cbf1a2b12be2a14b27aa5d024828da819ce608f",
   "verdict": "APPROVE",
-  "reviewer": "node_placement_review",
-  "notes": "Reviewed new Promptbook and Agent matrix rows and summaries against native workflow adapters and canonical decoding; reference IDs remain external.",
-  "reviewedAt": "2026-10-30T13:04:40.967Z"
+  "reviewer": "public-luna-06",
+  "notes": "Independently read the generated matrix and full summary sidecar, and checked scripts/format-matrix.ts plus matrix:check. The recommendation is limited to targets accepting CCv3; unsupported thin-host claims removed; generic conversion-loss guidance is accurate. Synthetic sample filename exists and replaces the former named fixture reference.",
+  "reviewedAt": "2026-10-30T19:29:31.031Z"
 }

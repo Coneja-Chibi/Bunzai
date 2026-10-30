@@ -223,6 +223,9 @@ into another app's file (`architecture.md`, "Escrow: lossless round-trips, conta
 
 ## Quirks
 
+- The `.lvbak` archive importer accepts regex scopes `account`, `character`, and `preset`.
+  Character and preset scopes require a usable `scope_id`. Unknown or incomplete scopes are
+  reported as failed rows, never widened to account scope; supported sibling rows still import.
 - Zip decompression bounds. Every Lumiverse ZIP inflate, detection and conversion both, runs through
   `unzipBounded` with `CARD_ARCHIVE_BOUNDS`, the same bound Risu and Backyard's `.byaf` use: 96 MiB
   archive cap, 512 entries max, 64 MiB per entry, 96 MiB aggregate inflated (`archive.ts:29-36`,

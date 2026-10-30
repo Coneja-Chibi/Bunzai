@@ -246,7 +246,7 @@ const disableRule = (ruleId: string) => (body: RegexSetBody): RegexSetBody => ({
 });
 
 const duplicateKey = (r: RegexRule): string =>
-  [r.find, parseFlagTokens(r.flags).jsFlags, r.replace, [...r.phases].sort().join(",")].join(" ");
+  [r.find, parseFlagTokens(r.flags).jsFlags, r.replace, [...r.phases].sort().join(",")].join("\u0000");
 
 /** Inspect a set. Flat list in check-priority order; disabled rules are left in peace. */
 export function inspectSet(body: RegexSetBody, opts: InspectOptions = {}): RegexFinding[] {

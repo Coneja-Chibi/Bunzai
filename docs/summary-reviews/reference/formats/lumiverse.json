@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/formats/lumiverse",
   "sourcePath": "docs/reference/formats/lumiverse.md",
-  "sourceHash": "sha256:efa71ca1cdb8bb38d1030aea972766658820cc4d16ac2f366021df7112c12b6e",
-  "semanticSummaryHash": "sha256:b0f24e2d0f10acf06c3024e4f5ac9f87b7774da6fb9ec0683b06636057548312",
+  "sourceHash": "sha256:4ffa73b05fcd3dcacec48c0eb09d8167313de2882943f42933ed5a99682df2a0",
+  "semanticSummaryHash": "sha256:f02dba9e801ba0f44e549f2afaa606f9998d22c8b3003280be58ba06146a011f",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:47:47.379Z"
+  "reviewer": "public-luna-06",
+  "notes": "Independently read full page and sidecar in bounded UTF-8 chunks; checked archive regex scope importer and codec owners. Plain JSON field-lossless vs ZIP data-lossless (not path/byte-identical) is accurately distinguished; unsupported/incomplete scoped rows fail rather than widening, siblings continue.",
+  "reviewedAt": "2026-10-30T19:27:39.853Z"
 }

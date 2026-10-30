@@ -13,7 +13,7 @@ bun run bunzai convert in.png out.json --to sillytavern
 bun run bunzai validate path/to/card.json
 ```
 
-Default portable character shape for thin hosts (C.AI Tools dumps, Crushon import, etc.):
+Portable character format for targets that accept Character Card v3:
 **SillyTavern / CCv3** (`sillytavern` adapter).
 
 ## Characters (11)
@@ -151,13 +151,13 @@ Default portable character shape for thin hosts (C.AI Tools dumps, Crushon impor
 - Detection is content-sniff, not only extension. Prefer `bunzai label` when unsure.
 - Same-format round-trips aim for lossless where fixtures prove it (see adapter tests + samples/).
 - Cross-format convert keeps what the target can express; use export honesty in the studio UI for drop notes.
-- Dropped/skipped host-native bags (Character.AI, Crushon): use Default CCv3 via `sillytavern`.
+- Target-specific fields may be omitted during cross-format conversion; review the export report.
 
 ## Samples
 
 | Folder | Purpose |
 | --- | --- |
-| `samples/sillytavern/` | CCv2/v3 + Seraphina.png |
+| `samples/sillytavern/` | CCv2/v3 + synthetic-character.png |
 | `samples/rolecall/` | RC character + lorebook |
 | `samples/risu/` | .charx + card json |
 | `samples/agnai/` | native Agnai |

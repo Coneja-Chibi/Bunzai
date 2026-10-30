@@ -341,13 +341,12 @@
           "text": "Why",
           "slug": "why",
           "level": 2,
-          "summary": "The top stated distribution goal is one file with no install pain as the anti-SillyTavern-setup answer; bun build --compile is the most direct path on all three OSes. TypeScript is chosen because the entire VAUDEVILLE extraction surface is TS and because zod schemas double as validation and documentation. Node-compatible core keeps the npm and embedding door open and de-risks Bun: if Bun stalls, only apps need porting.",
+          "summary": "A single-file executable is the stated distribution goal, and bun build --compile is the direct path across the supported operating systems. TypeScript matches the VAUDEVILLE extraction surface, while zod schemas serve as validation and documentation. A Node-compatible core keeps npm publishing and embedding available and limits the impact if Bun stalls.",
           "topics": [
-            "one file no install",
-            "anti ST setup",
-            "zod validation docs",
-            "npm embedding door",
-            "de-risk Bun"
+            "single-file distribution goal",
+            "zod validation and docs",
+            "npm embedding",
+            "Bun portability"
           ],
           "children": []
         },
@@ -456,10 +455,10 @@
       "path": "docs/decisions/ADR-003-distribution.md",
       "title": "ADR-003: Distribution - single executable + self-updater; installer later",
       "audience": "dev",
-      "summary": "**Status:** accepted",
+      "summary": "**Status:** accepted design decision. Release mechanisms below describe the intended distribution model; they are not evidence that signing, updating, installers, or npm publication have shipped.",
       "tags": [],
       "related": [],
-      "semanticSummary": "Accepted ADR for distribution strategy. Primary v0.1 path is single-file executables per OS win x64, mac arm64 and x64, linux x64 built by bun build --compile and attached to GitHub Releases so users download one file and run with no Node, git, or install steps. Self-updater vaud upgrade checks Releases, downloads the new binary, verifies SHA-256 via a minisign-signed checksums file, and swaps atomically; later app face reuses the mechanism with UI; passive behavior is at most one non-blocking new-version notice per day and never auto-install without consent. Later signed desktop installers via Tauri bundler when apps/studio ships at M6, and package managers winget scoop brew when asked. npm publishes core packages for embedders and npx vaud works as secondary path not the documented default. Why: SillyTavern node plus git install is the top onboarding pain so download one file must be engineering truth; GitHub Releases provides free bandwidth where the audience already is. Consequences: release CI builds binary matrix checksums and signature on every tag; Windows SmartScreen will complain about unsigned exes until a code-signing cert is bought; binary size about 50-90MB from Bun runtime is accepted and documented.",
+      "semanticSummary": "Accepted distribution design decision. The intended v0.1 primary path is single-file executables per OS built by bun build --compile and attached to GitHub Releases; the ADR describes plans, not proof that release artifacts, signing, checksums, or updates have shipped. It also plans a self-updater with SHA-256 verification against a minisign-signed checksum file, atomic replacement, and passive notices only; later Tauri installers and package-manager options; and secondary npm packages and npx. Why: one executable simplifies setup without requiring separate Node or Git installs; GitHub Releases offers bandwidth and reaches the audience. Consequences describe a planned release matrix, checksum/signature publication, unsigned Windows SmartScreen warnings, provenance and integrity guidance, and accepted binary size.",
       "topics": [
         "single executable GitHub Releases",
         "vaud upgrade self-updater",
@@ -475,7 +474,7 @@
           "text": "Decision",
           "slug": "decision",
           "level": 2,
-          "summary": "Primary v0.1 distribution is single-file executables for win x64, mac arm64 and x64, and linux x64 via bun build --compile on GitHub Releases with download-one-file run and no Node git or install steps. Self-updater vaud upgrade checks Releases, downloads, verifies SHA-256 from a minisign-signed checksums file, and swaps atomically; UI reuses later; at most one non-blocking new-version notice per day and never auto-install without consent. Later: signed Tauri installers when studio ships M6; winget scoop brew manifests when someone asks. npm core packages and npx vaud are secondary not the documented default.",
+          "summary": "The intended v0.1 primary distribution is a single-file executable for each listed OS and architecture, built with bun build --compile and attached to GitHub Releases. Planned vaud upgrade behavior checks a downloaded binary against SHA-256 values in a minisign-signed checksum file before atomic replacement; notices stay passive and installs require consent. Tauri installers and package managers are later options; npm packages and npx remain secondary. This is an accepted design, not evidence those artifacts or mechanisms have shipped.",
           "topics": [
             "single-file per OS",
             "GitHub Releases",
@@ -490,11 +489,10 @@
           "text": "Why",
           "slug": "why",
           "level": 2,
-          "summary": "SillyTavern's node plus git install is the single most cited onboarding pain in this hobby. Download one file is the marketing headline so it must be the engineering truth. GitHub Releases offers free bandwidth and the audience already lives there.",
+          "summary": "A single executable simplifies setup by avoiding separate Node and Git installation. The accepted plan uses bun build --compile to make that path practical across the named operating systems. GitHub Releases offers a distribution channel with bandwidth and reaches the intended audience; this decision does not claim that binaries have already shipped.",
           "topics": [
-            "anti ST install pain",
-            "download one file truth",
-            "GitHub Releases audience"
+            "single-executable setup",
+            "GitHub Releases distribution"
           ],
           "children": []
         },
@@ -502,12 +500,12 @@
           "text": "Consequences",
           "slug": "consequences",
           "level": 2,
-          "summary": "Release CI builds a matrix of binaries plus checksums plus signature on every tag. Windows SmartScreen will complain about unsigned exes; buy a code-signing cert when budget allows and document the More info Run anyway path until then as an M1 ticket. Binary size of roughly 50-90MB because Bun embeds its runtime is accepted and must be documented.",
+          "summary": "The ADR plans a per-tag binary matrix with checksums and signatures; these are planned release requirements, not confirmation of published artifacts. Unsigned Windows executables may trigger SmartScreen. Distribution guidance should disclose signing status and show users how to check provenance and integrity, without presenting a blanket bypass as safe. The expected 50–90 MB size from the embedded Bun runtime is accepted and should be documented.",
           "topics": [
-            "release CI matrix",
-            "SmartScreen unsigned",
-            "code signing cert later",
-            "50-90MB binary size"
+            "planned release matrix",
+            "SmartScreen and unsigned builds",
+            "provenance and integrity checks",
+            "binary size"
           ],
           "children": []
         }
@@ -1311,7 +1309,7 @@
       "summary": "Auto-generated from live adapters (`bun run scripts/format-matrix.ts`). Canonical schema version: **1**. Generated: 2026-10-30.",
       "tags": [],
       "related": [],
-      "semanticSummary": "Auto-generated format support matrix from the live adapter registry, grouped by canonical content kind, in the kind hub's order and names, with adapter id, output extensions, and human label. It documents CLI listing, inspection, conversion, and validation, with SillyTavern CCv3 as the default portable character shape for thin hosts. The current registry has eleven character, nine lorebook, four persona, one pack, four preset, one Script Sheet, five regex-set, one quick-reply and one prompt-format adapter. The pack adapter, image-pack, writes a zip of pictures and sounds. Tools (kind tool), dice (kind dice), formulas (kind formula), trackers (kind tracker), skills (kind skill) and drawings (kind htmldoc) have no import or export format yet, and their sections say so. Notes explain content-sniff detection, fixture-proven same-format round trips, honest cross-format loss reporting, and sample locations. Because the page is generated, counts and rows change only with the registry. Native Bunzai Promptbook and Agent adapters now read and write canonical JSON; these preserve reference IDs rather than embedding linked pieces.",
+      "semanticSummary": "Auto-generated format support matrix from the live adapter registry, grouped by canonical content kind, in the kind hub's order and names, with adapter id, output extensions, and human label. It documents CLI listing, inspection, conversion, and validation, with SillyTavern CCv3 as a portable format for targets that accept Character Card v3. The current registry has eleven character, nine lorebook, four persona, one pack, four preset, one Script Sheet, five regex-set, one quick-reply and one prompt-format adapter. The pack adapter, image-pack, writes a zip of pictures and sounds. Tools (kind tool), dice (kind dice), formulas (kind formula), trackers (kind tracker), skills (kind skill) and drawings (kind htmldoc) have no import or export format yet, and their sections say so. Notes explain content-sniff detection, fixture-proven same-format round trips, honest cross-format loss reporting, and sample locations. Because the page is generated, counts and rows change only with the registry. Native Bunzai Promptbook and Agent adapters now read and write canonical JSON; these preserve reference IDs rather than embedding linked pieces.",
       "topics": [
         "format support matrix",
         "live adapter registry",
@@ -1330,14 +1328,14 @@
           "text": "How to use",
           "slug": "how-to-use",
           "level": 2,
-          "summary": "Documents the primary CLI entry points for format work: bun run bunzai formats to list adapters, bunzai inspect on a card path, bunzai convert with --to for a target such as sillytavern, and bunzai validate on card JSON. The default portable character shape for thin hosts including C.AI Tools dumps and Crushon import is SillyTavern CCv3 through the sillytavern adapter.",
+          "summary": "Documents the primary CLI entry points for format work: bun run bunzai formats to list adapters, bunzai inspect on a card path, bunzai convert with --to for a target such as sillytavern, and bunzai validate on card JSON. For targets accepting Character Card v3, the portable character format is SillyTavern CCv3 through the sillytavern adapter.",
           "topics": [
             "bunzai formats",
             "bunzai inspect",
             "bunzai convert --to",
             "bunzai validate",
             "default sillytavern CCv3",
-            "thin host portable shape"
+            "Character Card v3 portable shape"
           ],
           "children": []
         },
@@ -1562,13 +1560,13 @@
           "text": "Notes",
           "slug": "notes",
           "level": 2,
-          "summary": "Detection is content-sniff, not only extension; prefer bunzai label when unsure. Same-format round-trips aim for lossless where fixtures prove it, see adapter tests and samples/. Cross-format convert keeps what the target can express; use export honesty in the studio UI for drop notes. Dropped or skipped host-native bags such as Character.AI and Crushon should use Default CCv3 via the sillytavern adapter.",
+          "summary": "Detection is content-sniff, not only extension; prefer bunzai label when unsure. Same-format round-trips aim for lossless where fixtures prove it, see adapter tests and samples/. Cross-format convert keeps what the target can express; use export honesty in the studio UI for drop notes. Target-specific fields may be omitted during cross-format conversion; review the export report.",
           "topics": [
             "content sniff detection",
             "bunzai label",
             "lossless same-format round trip",
             "cross-format export honesty",
-            "Default CCv3 Character.AI Crushon"
+            "target-specific export omissions"
           ],
           "children": []
         },
@@ -1576,7 +1574,7 @@
           "text": "Samples",
           "slug": "samples",
           "level": 2,
-          "summary": "Lists sample fixture folders under samples/. sillytavern holds CCv2/v3 and Seraphina.png. rolecall has RC character plus lorebook. risu has .charx and card json. agnai, backyard .byaf, pygmalion classic flat, lumiverse ST plus Lumi extensions, chub ST plus extensions.chub, marinara lorebook envelope plus prompt preset, and novelai lorebook complete the corpus map.",
+          "summary": "Lists sample fixture folders under samples/. sillytavern holds CCv2/v3 and synthetic-character.png. rolecall has RC character plus lorebook. risu has .charx and card json. agnai, backyard .byaf, pygmalion classic flat, lumiverse ST plus Lumi extensions, chub ST plus extensions.chub, marinara lorebook envelope plus prompt preset, and novelai lorebook complete the corpus map.",
           "topics": [
             "samples sillytavern",
             "samples rolecall risu",
@@ -2726,12 +2724,12 @@
         "guide/importing",
         "reference/formats/sillytavern"
       ],
-      "semanticSummary": "Chub also called CharacterHub hosts SillyTavern-shaped Character Card v2/v3 files with an extensions.chub block for site extras. What Bunzai reads: character .png or .json recognized as SillyTavern shape plus chub extras, and lorebooks as bare character_book entry arrays standalone or embedded; origin labeled Chub when extras give it away. What comes across cleanly keeps the original and lifts core fields embedded worldbook expressions when present Chub extras background CSS bound preset related lorebook links plus id path Stages references escrowed not yet editable. What changes when you convert to another app: same-app Chub or SillyTavern round-trip keeps everything; cross-app drops Chub private extras; standalone Chub lorebook has no write-back twin and always exports as plain SillyTavern worldbook. Editing on the Workbench shows Chub-tagged cards CSS Workshop sealed preview and Write for Chub narrows lorebook placement. Exporting back out writes CCv3 JSON with chub bag; lorebooks not a Chub target. Common questions cover exact return JSON not PNG portrait extras worldbook and no byte-identical lorebook download.",
+      "semanticSummary": "This guide covers Chub character cards and lorebooks, which Bunzai reads through their SillyTavern-shaped character-card fields and the `extensions.chub` block. Cards arrive as PNG or JSON. Lorebooks may be embedded or downloaded as a standalone `character_book` entry array. Bunzai retains parsed source data in escrow while exposing supported character fields and Chub extras for editing. A same-format card export preserves original field values and applies edits, but JSON formatting or the output container may change. Conversion to another app omits Chub-specific fields that have no target equivalent. Standalone Chub lorebooks are edited as ordinary lorebook entities and exported through a supported lorebook format; their download wrapper is not preserved as a Chub-specific output. The Workbench shows Chub-tagged fields, previews custom CSS in a sealed Chub-style surface, and narrows lorebook editing to Chub's supported field shape. The Press writes character cards as CCv3 JSON with the Chub extension when present; Chub is not a lorebook output target. Common questions cover card output, portrait retention, preserved Chub fields, and standalone lorebook exports.",
       "topics": [
         "Chub ST-shaped cards",
         "extensions.chub bag",
         "lorebook character_book",
-        "same-app keep extras",
+        "same-format field values",
         "standalone no twin",
         "CSS Workshop preview",
         "Press CCv3 JSON"
@@ -2755,7 +2753,7 @@
           "text": "What comes across cleanly",
           "slug": "what-comes-across-cleanly",
           "level": 2,
-          "summary": "Importing loses nothing. Bunzai keeps a complete original then lifts name description personality scenario greetings examples system post-history creator notes tags embedded worldbook expression images when present and Chub extras chat background custom CSS bound preset related lorebook links. Card picture becomes the piece portrait. Chub extras show as their own Workbench cards with a Chub tag. A few more bits ride along not yet editable: Chub id full path and Stages scenario-builder references; Bunzai keeps them on the twin for round trip. Standalone lorebook entries keywords and placement come across editable like any lorebook.",
+          "summary": "Bunzai retains parsed source card data in escrow and exposes supported fields for editing: character identity and description, greetings, examples, prompts, creator details, tags, embedded worldbook, and expression images when present. Chub extras include chat background, custom CSS, bound preset, and related-lorebook links; the Workbench shows supported extras as Chub-tagged cards. Chub id, full path, and Stages references remain in source data even though they are not editable fields. The card image is retained as the portrait. A standalone lorebook exposes entries, keywords, and placement for editing. Retaining parsed fields does not mean the exported file has identical bytes or formatting.",
           "topics": [
             "core fields worldbook",
             "Chub extras editable",
@@ -2769,11 +2767,11 @@
           "text": "What changes when you convert to another app",
           "slug": "what-changes-when-you-convert-to-another-app",
           "level": 2,
-          "summary": "Character same-app round-trip keeps everything down to the byte because Bunzai kept the original and only rewrote changed fields. Converting to a different app drops Chub private extras on purpose: chat background custom CSS bound preset related-lorebook links Chub id path Stages. Core character and embedded worldbook come across as far as the target holds; expressions if the target has extra art slots. SillyTavern gets the identical result as Chub since they share file shape. Another app means genuinely different targets like Agnai Backyard RoleCall Risu Pygmalion. Standalone lorebook wrinkle: no back to Chub option and no twin because Chub never gave downloads a write-back wire format only borrowed character_book shape so Bunzai always writes plain SillyTavern worldbook or another lore format; entries keywords placement survive not the original wrapper.",
+          "summary": "A same-format card export preserves original field values and applies edits; JSON formatting or the output container may change. Conversion to another app omits Chub-specific fields without a target equivalent, including chat background, custom CSS, bound preset, related-lorebook links, Chub id, path, and Stages references. Shared character fields, embedded worldbooks, and expression images cross over only as far as the target supports them. A Chub card uses the SillyTavern-shaped card structure, so it can be exported as the corresponding SillyTavern card. A standalone lorebook has no Chub output target: Bunzai writes it using a supported lorebook format, such as a SillyTavern worldbook, and does not preserve the original download wrapper. Entries, keywords, and placement remain represented in the lorebook data.",
           "topics": [
-            "byte same-app keep",
+            "same-format field values",
             "Chub extras drop",
-            "ST identical shape",
+            "ST shared card shape",
             "standalone no twin",
             "write ST worldbook"
           ],
@@ -2809,9 +2807,9 @@
           "text": "Common questions",
           "slug": "common-questions",
           "level": 2,
-          "summary": "Will the card come back exactly as it was? Yes when exported to Chub or SillyTavern since both read the same shape. Imported .png returns as .json which both apps load like a picture. Character picture is kept as portrait and the original import file is held. Background and custom CSS stay with Chub extras and are not copied into another app. Embedded worldbook is pulled for solo edit and put back on export to worldbook-capable apps. Standalone Chub lorebook download never returns byte-identical; no save-back format so entries keywords placement write as plain SillyTavern worldbook.",
+          "summary": "Does the card return exactly as it was? A same-format export preserves its original field values with edits applied, but formatting or container may differ. Imported PNG cards export as JSON, which Chub and SillyTavern can read. Bunzai retains the art as the portrait and stores source data in escrow. Chub background and custom CSS remain Chub fields and are not copied into unrelated formats. An embedded worldbook can be edited separately and re-embedded for a target that supports it. Standalone Chub lorebooks export through a supported lorebook format, such as a SillyTavern worldbook; the original download wrapper is not preserved.",
           "topics": [
-            "Chub ST exact return",
+            "Chub field values preserved",
             "JSON not PNG",
             "extras stay private",
             "worldbook put-back",
@@ -3295,7 +3293,7 @@
         "guide/exporting",
         "reference/formats/README"
       ],
-      "semanticSummary": "Platforms is the index map of every platform Bunzai reads and writes today: ten platforms each with a same-shaped guide page covering what Bunzai reads, same-app round trip keep, cross-app drops, Workbench look, and common questions. The platforms table lists Agnai characters and lorebooks; Backyard characters; Chub characters and lorebooks; Lumiverse characters personas regex; Marinara personas regex; NovelAI lorebooks only; Pygmalion characters; RisuAI characters lorebooks regex; RoleCall and SillyTavern characters lorebooks personas regex. Handles means decks those files land on; blank kinds mean the platform never shipped that shape. Backyard covers flat JSON and .byaf on one page; Marinara character cards are SillyTavern-shaped so they go through SillyTavern while Marinara's page covers regex and personas only. If your platform isn't listed, Character.AI and Crushon hand SillyTavern-shaped JSON so import via that path; default shape if unsure. Exhaustive live list via bun run bunzai formats or the format reference from the adapter registry. Common questions cover why handle counts differ, convert losses spelled per page, and try import by shape not name.",
+      "semanticSummary": "The Platforms index maps ten source-platform guides to the Bunzai adapter kinds covered on each page. It explains what every guide covers: accepted file shapes, fields represented in Bunzai, same-format field preservation, changes during cross-format conversion, Workbench editing, and common questions. The table lists Agnai characters and lorebooks; Backyard characters; Chub characters and lorebooks; Lumiverse characters, personas, and regex sets; Marinara personas and regex sets; NovelAI lorebooks; Pygmalion characters; RisuAI characters, lorebooks, and regex sets; RoleCall and SillyTavern characters, lorebooks, personas, and regex sets. The Handles column is limited to this guide's coverage and does not claim to inventory upstream platform features. Backyard's flat JSON and .byaf shapes share one page; Marinara character cards use the SillyTavern-shaped path. For unlisted apps, inspect the export; Character Card v2 or v3 JSON is covered by the SillyTavern guide, while other shapes may need another adapter. The generated format reference lists current adapters. Conversion differences are described per page.",
       "topics": [
         "ten platforms index",
         "handles by deck kind",
@@ -3310,11 +3308,11 @@
           "text": "The platforms",
           "slug": "the-platforms",
           "level": 2,
-          "summary": "The table maps each platform to what it handles and its guide page. Agnai characters and lorebooks; Backyard characters; Chub characters and lorebooks; Lumiverse characters personas and regex sets; Marinara personas and regex sets; NovelAI lorebooks; Pygmalion characters; RisuAI characters lorebooks and regex sets; RoleCall and SillyTavern characters lorebooks personas and regex sets. Handles lists decks a platform own files land on among Characters Lorebooks Personas Regex sets. A blank kind means that platform never shipped a file of that shape, not that Bunzai is missing something. Two notes: Backyard reads older flat JSON and modern .byaf archive both on its one page; Marinara character cards are SillyTavern-shaped underneath so they come and go through the SillyTavern page while Marinara covers only regex scripts and personas.",
+          "summary": "The table maps each platform guide to the Bunzai deck kinds it covers: Agnai characters and lorebooks; Backyard characters; Chub characters and lorebooks; Lumiverse characters, personas, and regex sets; Marinara personas and regex sets; NovelAI lorebooks; Pygmalion characters; RisuAI characters, lorebooks, and regex sets; RoleCall and SillyTavern characters, lorebooks, personas, and regex sets. Handles describes this guide's adapter coverage only; an omitted kind says nothing about the upstream platform's capabilities. Backyard's older flat JSON and modern .byaf character shapes share one page. Marinara character cards use the SillyTavern-shaped path, while Marinara's page covers its persona and regex formats.",
           "topics": [
             "platform handles table",
             "ten apps decks",
-            "blank kind not missing",
+            "guide coverage only",
             "Backyard flat and byaf",
             "Marinara regex personas"
           ],
@@ -3324,10 +3322,10 @@
           "text": "If your platform isn't listed",
           "slug": "if-your-platform-isnt-listed",
           "level": 2,
-          "summary": "A handful of apps never shipped a portable file worth its own page. Character.AI export tools and Crushon both hand plain SillyTavern-shaped JSON, so drop the file in and Bunzai reads it through the SillyTavern page the same as a real SillyTavern card. That is also the default shape to reach for if you are not sure what your app produces: most thin hosts copy it. For the exhaustive generated list of every adapter Bunzai has today, run bun run bunzai formats or read the format reference, the technical version of this page. It is built straight from the live adapter registry so it never drifts from what the app can actually do.",
+          "summary": "Bunzai detects supported files by their contents. If an app exports Character Card v2 or v3 JSON, the SillyTavern guide describes that supported shape. Other exports may need another adapter or may be unsupported, so inspect the file before selecting a target. For the exhaustive generated list of current Bunzai adapters, run bun run bunzai formats or read the format reference. That reference is built from the live adapter registry.",
           "topics": [
-            "Character.AI Crushon ST",
-            "default SillyTavern shape",
+            "inspect unlisted exports",
+            "CCv2 CCv3 SillyTavern guide",
             "bunzai formats CLI",
             "format reference registry"
           ],
@@ -3337,12 +3335,12 @@
           "text": "Common questions",
           "slug": "common-questions",
           "level": 2,
-          "summary": "Why do some platforms handle fewer kinds than others? Because the platform itself does; Bunzai adapters mirror what each app actually exports, so a platform with no lorebook feature never gets a Lorebooks column. Will I lose anything moving between two platforms? Sometimes, always spelled out: each platform page has a what changes when you convert table with exact fields that stay and drop, and the converting guide covers the general rule. My app is not SillyTavern Chub or anything above? Try importing anyway; Bunzai recognizes a file by its shape not its name, and most roleplay apps without their own page still export a SillyTavern-shaped card underneath.",
+          "summary": "Why do some platforms list fewer kinds? The table describes only the adapters covered by these guides; it is not an inventory of upstream features. Will a conversion lose anything? Sometimes. Each platform page names the fields that remain or drop, and the converting guide explains the general rule. If an app is not listed, inspect its export or try importing it: Bunzai recognizes supported file shapes rather than relying on app names and reports files it cannot read.",
           "topics": [
-            "fewer kinds mirror app",
+            "guide coverage not upstream inventory",
             "convert losses per page",
             "import by shape",
-            "ST-shaped thin hosts"
+            "supported shapes only"
           ],
           "children": []
         }
@@ -3482,7 +3480,7 @@
         "guide/importing",
         "reference/formats/rolecall"
       ],
-      "semanticSummary": "User guide for RoleCall, Vaudeville's own roleplay client, covering character cards and lorebooks in Bunzai. RoleCall cards carry more than a plain sheet: casting card identity details, presentation layer colors background spoilers, and sprite pack ride with usual fields. What Bunzai reads: character cards as PNG with embedded text or plain JSON holding CCv2 or CCv3 plus RoleCall extras, and lorebooks as RoleCall JSON. Drop on Library for a plain-words receipt; character vs persona is told by inside-file marks not filename. What comes across cleanly: full original kept, editable fields include name tagline description casting details personality scenario greetings examples prompts creator notes tags rating genre fandom presentation depth injections sprites and embedded lorebook. What changes when you convert to another app: same-app RoleCall round-trip keeps everything including private casting and presentation; cross-app drops RoleCall-only layers on purpose never blind-copies them. Editing on the Workbench rewrites the whole card so untouched parts stay. Exporting back out stages through the Press as RoleCall JSON; linked lorebook rides along; other targets apply the drop story. Common questions cover exact return JSON not PNG portrait retention casting stay-private and embedded lorebook pull-edit-put-back.",
+      "semanticSummary": "This guide covers importing RoleCall character cards and lorebooks, editing them in Bunzai, and exporting to RoleCall or another format. RoleCall cards add casting details, presentation settings, and sprites to the shared character fields. Bunzai reads character cards as PNG with embedded text or as JSON, and reads RoleCall lorebooks as JSON. The Library receipt reports what it recognized; card type detection uses file contents rather than the filename. The guide lists the fields available for editing and explains that parsed source data is retained as escrow. A same-format export preserves original field values and applies edits, while JSON formatting or the output container may change. Cross-format conversion carries shared character fields and drops RoleCall-specific extras when the target has no matching fields. Workbench saves preserve untouched field values semantically. The Press exports staged pieces to one chosen target, and linked lorebooks can travel with supported character cards. Common questions cover JSON output, portrait retention, RoleCall-only presentation data, and embedded lorebook editing and export.",
       "topics": [
         "RoleCall character lorebook",
         "PNG JSON card import",
@@ -3512,7 +3510,7 @@
           "text": "What comes across cleanly",
           "slug": "what-comes-across-cleanly",
           "level": 2,
-          "summary": "Importing loses nothing. Bunzai keeps a complete copy of the original card, then lifts editable parts into fields you see directly: name tagline description; casting card full name title age pronouns; personality and scenario; first message and titled alternate greetings; example messages; system prompt and post-history instructions; creator creator notes source link and public creator note; tags content rating as all hours late night or after dark genre and fandom; presentation signature and gradient colors named palette curated background field order and spoiler settings; depth-position prompt injections; sprite expression pack; embedded lorebook with entries keywords and placement if present. Card picture is kept and shown as the piece portrait. After import everything that was in the card is still there: listed fields ready to edit and the rest held safely in the background.",
+          "summary": "Bunzai retains the parsed source card data in escrow and exposes supported fields for editing: name, tagline, description, casting-card identity, personality, scenario, greetings, examples, prompts, creator details, tags, rating, genre, fandom, presentation settings, depth injections, sprites, and any embedded lorebook. The card image is retained as the portrait. The original data provides the basis for same-format export; changed canonical fields are applied when exporting. This describes parsed field data, not byte-for-byte retention of the source file, and the output may use different JSON formatting or a different container.",
           "topics": [
             "original card complete",
             "casting card fields",
@@ -3527,9 +3525,9 @@
           "text": "What changes when you convert to another app",
           "slug": "what-changes-when-you-convert-to-another-app",
           "level": 2,
-          "summary": "Same-app round-trip keeps everything: import RoleCall, edit, export to RoleCall returns everything down to the byte because Bunzai kept the original and only rewrote changed fields. Converting to a different app drops RoleCall private extras: casting card full name title age pronouns, presentation colors palette background field order spoilers, content rating genre fandom, and internal ids with no shared home. Core character name description personality scenario greetings examples system prompt post-history notes tags come across as far as the other app can hold them. Depth injections sprites and linked lorebook come across only if the target has places for them. Another app means SillyTavern Agnai Backyard Risu Pygmalion and similar. The drop is deliberate: Bunzai never blind-copies RoleCall private casting and presentation into another app file. Where the other app has fewer slots whatever it cannot hold is dropped on its side not yours.",
+          "summary": "A same-format RoleCall export preserves the source card's field values and applies edits, but the JSON formatting or output container can change. During conversion to a different app, RoleCall-specific fields with no shared target home are dropped: casting-card details, presentation settings, rating, genre, fandom, and internal ids. Core character fields cross over as far as the target format supports them. Depth injections, sprites, and a linked lorebook are included only when the target provides a corresponding field or feature. The conversion keeps source-specific data in escrow rather than blindly copying it into another app's file. Where the target has fewer fields, the conversion report describes what it cannot represent.",
           "topics": [
-            "same-app byte keep",
+            "same-format field values",
             "cross-app shared only",
             "casting presentation drop",
             "never blind-copy private",
@@ -3541,7 +3539,7 @@
           "text": "Editing on the Workbench",
           "slug": "editing-on-the-workbench",
           "level": 2,
-          "summary": "Send a piece from the Library to the Workbench and it opens as a tab. There you can edit name description personality scenario first message and example messages. When you save Bunzai writes the whole card back so the parts you did not touch stay exactly as they were including casting presentation and escrowed original layers.",
+          "summary": "Open a Library piece in a Workbench tab to edit its name, description, personality, scenario, first message, and examples. Saving writes the RoleCall card with edits applied; untouched source field values remain semantically preserved, though serialized formatting may change in the output file.",
           "topics": [
             "Workbench tab edit",
             "whole card save",
@@ -3553,7 +3551,7 @@
           "text": "Exporting back out",
           "slug": "exporting-back-out",
           "level": 2,
-          "summary": "When a piece is ready to leave stage it for the Press: right-click Stage for the Press or drop from the Press rail. The Press works only staged pieces and each run exports to one target format you pick. Bunzai writes RoleCall cards as JSON; RoleCall reads JSON the same as PNG so import is fine. Linked lorebook rides with the character automatically. You can also ask for plain txt or md when you only want to read the text. Choosing a different app as target applies the convert drop story: shared character only RoleCall private layers left behind.",
+          "summary": "Stage a piece for the Press by choosing Stage for the Press or dropping it from the Press rail. Each run exports staged pieces to one selected target format. RoleCall character cards are written as JSON, which RoleCall can import alongside PNG cards. A linked lorebook rides with the character when supported. Plain text or Markdown output is also available for reading. Choosing another app as the target applies the conversion rules: shared character fields cross over as supported, while RoleCall-only fields without a target equivalent remain in the original piece rather than being copied into the other format.",
           "topics": [
             "Press stage one target",
             "RoleCall JSON write",
@@ -3567,9 +3565,9 @@
           "text": "Common questions",
           "slug": "common-questions",
           "level": 2,
-          "summary": "Will the card come back exactly as it was? Yes when exported back to RoleCall: same app in same app out nothing lost. Imported PNG returns as JSON; RoleCall reads JSON like a picture so it loads fine you just get a file not an image. Character picture comes along: Bunzai keeps card art as piece portrait and holds the original imported file. Casting card and presentation colors stay with the RoleCall card and are not copied into another app file because Bunzai does not move one app private layer into another. Lorebook inside the card is still there: Bunzai pulls the embedded lorebook for solo edit and puts it back when exporting to an app that supports lorebooks.",
+          "summary": "Does the card return exactly as it was? A RoleCall export preserves the original field values alongside edits, but JSON formatting or the output container may differ. Imported PNG cards export as JSON, which RoleCall can read. Bunzai retains the card art as the portrait and keeps source data in escrow. Casting-card and presentation fields stay with the RoleCall format and are not copied into unrelated app formats. An embedded lorebook can be edited separately and re-embedded when exporting to a format that supports it.",
           "topics": [
-            "exact RoleCall return",
+            "RoleCall field values preserved",
             "JSON not PNG write",
             "portrait original kept",
             "casting stay private",
@@ -3597,11 +3595,11 @@
         "guide/importing",
         "reference/formats/sillytavern"
       ],
-      "semanticSummary": "User guide for SillyTavern, the local AI roleplay app where most character cards worldbooks and personas live, covering bring-in edit and send-out in Bunzai. What Bunzai reads: character cards as PNG with text inside the image or plain JSON both the same content, and worldbooks as JSON World Info. Drop on Library for a plain-words receipt; recognition looks inside the file not the name. What comes across cleanly: complete original kept, editable name description personality scenario greetings examples prompts creator notes tags talkativeness linked world name and embedded worldbook with portrait. What changes when you convert to another app: same-app SillyTavern round-trip keeps everything byte-level; cross-app keeps shared character and conditional worldbook talkativeness while dropping extension settings Chub Marinara Lumiverse add-ons regex scripts internal ids layout and embedding vectors on purpose never blind-copy. Editing on the Workbench opens a tab and whole-card save leaves untouched parts alone. Exporting back out stages through the Press as SillyTavern JSON with embedded worldbook riding along; other targets apply the drop story. Common questions cover exact return JSON not PNG portrait retention regex stay-private and embedded worldbook pull-edit-put-back.",
+      "semanticSummary": "This guide covers importing SillyTavern character cards and worldbooks, editing their supported fields in Bunzai, and exporting them to SillyTavern or another format. Character cards arrive as PNG with embedded text or as JSON; worldbooks arrive as JSON. The Library receipt reports recognized content, and card detection uses the file contents rather than its name. Bunzai retains parsed source data in escrow while exposing character fields, linked-world settings, and embedded worldbooks for editing. A same-format export preserves original field values and applies edits, but JSON formatting or the output container may change. Cross-format conversion carries shared character fields as supported and omits SillyTavern-specific settings and scripts that have no equivalent in the target. The Workbench applies edits while retaining untouched source values semantically. The Press writes SillyTavern cards as JSON and can re-embed a linked worldbook. Common questions explain JSON output, retained portrait art, format-specific regex data, and separate editing of embedded worldbooks.",
       "topics": [
         "SillyTavern card worldbook",
         "PNG JSON World Info",
-        "same-app round-trip keep",
+        "same-format field values",
         "cross-app private drop",
         "regex scripts stay",
         "Workbench whole-card save",
@@ -3626,7 +3624,7 @@
           "text": "What comes across cleanly",
           "slug": "what-comes-across-cleanly",
           "level": 2,
-          "summary": "Importing loses nothing. Bunzai keeps a complete copy of the original card, then lifts editable parts into fields you see directly: name and description; personality and scenario; first message and alternate greetings; example messages; system prompt and post-history instructions; creator name creator notes and tags; talkativeness and the linked world name; an embedded worldbook with its entries keywords and placement. The card picture is kept and shown as the piece portrait. After import everything that was in the card is still there: listed fields ready to edit and the rest held safely in the background including SillyTavern private extras that are not surfaced as first-class fields.",
+          "summary": "Bunzai retains parsed source card data in escrow and exposes supported fields for editing: name, description, personality, scenario, greetings, examples, prompts, creator details, tags, talkativeness, linked-world name, and any embedded worldbook. The card image is retained as the portrait. Source fields not represented as editable canonical fields remain in the original data for same-format export. This is field-level preservation, not a promise to retain source-file bytes; JSON formatting and output container can change.",
           "topics": [
             "original card complete",
             "core character fields",
@@ -3640,9 +3638,9 @@
           "text": "What changes when you convert to another app",
           "slug": "what-changes-when-you-convert-to-another-app",
           "level": 2,
-          "summary": "Same-app round-trip keeps everything: import SillyTavern, edit, export to SillyTavern returns everything down to the byte because Bunzai kept the original and only rewrote changed fields. Converting to a different app drops SillyTavern private extras: extension settings and app add-ons like Chub Marinara or Lumiverse, regex find-and-replace scripts, internal ids saved layout and embedding vectors. Core character name description personality scenario greetings examples system prompt notes tags come across as far as the other app can hold them. Embedded worldbook and talkativeness linked world name come across only if the target has matching places. Another app means Agnai Backyard RoleCall Risu Pygmalion and similar. The drop is deliberate: Bunzai never blind-copies one app private settings or scripts into another app file. Your regex stays where it was written which is where it actually works. Where the other app has fewer slots whatever it cannot hold is dropped on its side not yours.",
+          "summary": "A same-format SillyTavern export preserves original field values and applies edits, but JSON formatting or the output container may change. Conversion to another app omits SillyTavern-specific data with no target equivalent, including extension settings, add-on fields, regex scripts, internal ids, saved layout, and embedding vectors. Shared character fields cross over as far as the target format supports them. An embedded worldbook, talkativeness, or linked-world name crosses over only when the target supports the relevant feature. The source-specific data remains in escrow rather than being blindly copied into another app's file; the export receipt reports unsupported fields.",
           "topics": [
-            "same-app byte keep",
+            "same-format field values",
             "cross-app shared only",
             "regex scripts drop",
             "extensions add-ons drop",
@@ -3655,7 +3653,7 @@
           "text": "Editing on the Workbench",
           "slug": "editing-on-the-workbench",
           "level": 2,
-          "summary": "Send a piece from the Library to the Workbench and it opens as a tab. There you can edit name description personality scenario first message and example messages. When you save Bunzai writes the whole card back so the parts you did not touch stay exactly as they were including worldbook escrow and SillyTavern-private layers.",
+          "summary": "Open a Library piece in a Workbench tab to edit its name, description, personality, scenario, first message, and examples. Saving writes the card with edits applied; untouched source field values remain semantically preserved, though serialized formatting may change in the output file.",
           "topics": [
             "Workbench tab edit",
             "whole card save",
@@ -3667,7 +3665,7 @@
           "text": "Exporting back out",
           "slug": "exporting-back-out",
           "level": 2,
-          "summary": "When a piece is ready to leave stage it for the Press: right-click Stage for the Press or drop from the Press rail. The Press works only staged pieces and each run exports to one target format you pick. Bunzai writes SillyTavern cards as JSON; SillyTavern loads JSON the same as PNG so import is fine. Embedded worldbook rides with the character automatically. You can also ask for plain txt or md when you only want to read the text. Choosing a different app as target applies the convert drop story: shared character only SillyTavern private settings and regex left behind.",
+          "summary": "Stage a piece for the Press by choosing Stage for the Press or dropping it from the Press rail. Each run exports staged pieces to one selected target. SillyTavern cards are written as JSON, which SillyTavern can load alongside PNG cards. An embedded or linked worldbook can ride with a character when supported. Plain text or Markdown output is available for reading. Choosing another app applies the conversion rules: supported shared character fields cross over, while SillyTavern-specific settings and scripts without a target equivalent are not written into the other format.",
           "topics": [
             "Press stage one target",
             "SillyTavern JSON write",
@@ -3681,9 +3679,9 @@
           "text": "Common questions",
           "slug": "common-questions",
           "level": 2,
-          "summary": "Will the card come back exactly as it was? Yes when exported back to SillyTavern: same app in same app out nothing lost. Imported PNG returns as JSON; SillyTavern reads JSON like a picture so it loads fine you just get a file not an image. Character picture comes along: Bunzai keeps card art as piece portrait and holds the original imported file. Regex scripts stay with the SillyTavern card and are not copied into another app file because Bunzai does not move one app scripts into another. Worldbook inside the card is still there: Bunzai pulls the embedded worldbook for solo edit and puts it back when exporting to an app that supports worldbooks.",
+          "summary": "Does the card return exactly as it was? A SillyTavern export preserves original field values alongside edits, but JSON formatting or the output container may differ. Imported PNG cards export as JSON, which SillyTavern can read. Bunzai retains the card art as the portrait and keeps source data in escrow. SillyTavern regex scripts are not copied into another app's file. An embedded worldbook can be pulled out for editing and re-embedded when exporting to a format that supports worldbooks.",
           "topics": [
-            "exact SillyTavern return",
+            "SillyTavern field values preserved",
             "JSON not PNG write",
             "portrait original kept",
             "regex stay private",
@@ -5397,7 +5395,7 @@
       "summary": "The {{user}} sheet, wearing the CHARACTER editor's chassis on purpose (the kinship ruling, 2026-07-12): the same `.bento` three-column grid, `BentoCard` tiles, and `.lcard`/`.portrait` face plate from `editor-styles`. Source: `src/ui/apps/w",
       "tags": [],
       "related": [],
-      "semanticSummary": "Persona editor is the Workbench {{user}} sheet that reuses the character editor chassis on purpose: same bento three-column grid, BentoCard tiles, and portrait face plate from editor-styles under src/ui/apps/workbench/persona. Left holds PortraitCard writing media.portrait as data-URI without character variant strip, plus KnowledgeRail for knowledgeRefs. Middle holds Identity with tagline pronouns BRIEF honesty line, section tiles Appearance Body Personality Quirks History, and flat Identity Text for section-less personas. Right holds shared SwatchRow and PaletteControl colors, Prompt Injection stops per Write-for via injectionsForProfile, LIVE PREVIEW from real core/persona/inject.ts, and default-persona star. Compiler test landmine: brief never injects and content never becomes the card blurb. Reuse law on this surface requires components catalog first before any new control. The shelf covers Library persona cards brief lines and Default badge. The wires cover rcpersona ST backup Lumiverse Marinara and Agnai limits without inventing extra formats.",
+      "semanticSummary": "Persona editor is the Workbench {{user}} sheet that reuses the character editor chassis: the three-column grid, BentoCard tiles, and portrait face plate. PortraitCard writes the persona portrait and KnowledgeRail manages knowledgeRefs. Identity contains the tagline, pronouns, brief, section tiles, and flat Identity Text. The right column has shared color controls, prompt-injection stops selected by the Write-for profile, a preview from core/persona/inject.ts, and the default-persona star. The compiler contract keeps brief out of injected content and prevents content from becoming the card blurb. The page records the component-catalog reuse rule and describes the Library persona shelf. Its Wires section covers rcpersona, RoleCall's V2 persona export, SillyTavern persona backups, Lumiverse, Marinara, and the absence of a standalone Agnai persona file wire. For SillyTavern backups, Bunzai imports the default persona and retains the other personas' field values for export; this is semantic value preservation, not byte-identical output.",
       "topics": [
         "persona editor chassis",
         "character bento reuse",
@@ -5438,10 +5436,10 @@
           "text": "The wires",
           "slug": "the-wires",
           "level": 2,
-          "summary": "Supported persona wires include rcpersona with RoleCall V2 side-channel export, SillyTavern personas backup that imports the default persona and seals the entire backup so others re-emit byte-true, Lumiverse account objects with pronoun triplet as data, and Marinara persona where theming and stat bars ride sealed. Codec headers document detection firewalls. Agnai persona has no real standalone file wire and is served by the structured-persona component on character cards.",
+          "summary": "Supported persona wires include rcpersona and RoleCall's V2 side-channel export; SillyTavern persona backups; Lumiverse account objects with pronoun triplet data; and Marinara personas whose theming and stat bars remain in escrow. For a SillyTavern backup, Bunzai imports the default persona and retains the other personas' field values for export; serialized output is not promised to be byte-identical. Codec headers document detection firewalls. Agnai has no standalone persona file wire and uses the structured-persona component on character cards.",
           "topics": [
             "rcpersona RoleCall",
-            "ST personas backup seal",
+            "ST backup field values survive",
             "Lumiverse pronouns",
             "Marinara sealed theming",
             "Agnai no standalone wire"
@@ -6676,7 +6674,7 @@
               "text": "ST-lineage toggles",
               "slug": "st-lineage-toggles",
               "level": 3,
-              "summary": "vectorized groupOverride useGroupScoring automationId and displayIndex are authored SillyTavern-lineage fields first-classed under schema-is-editor even though only ST serializes them today. vectorized is the RAG setting not the vectors which stay escrow. groupOverride and useGroupScoring extend groupName groupWeight mutual exclusion. automationId binds Quick-Reply automation by id only automation set stays escrow. displayIndex is creator manual list order distinct from sortOrder; real cards diverge so it is never regenerated from sortOrder.",
+              "summary": "vectorized groupOverride useGroupScoring automationId and displayIndex are authored SillyTavern-lineage fields first-classed under schema-is-editor even though only ST serializes them today. vectorized is the RAG setting not the vectors which stay escrow. groupOverride and useGroupScoring extend groupName groupWeight mutual exclusion. automationId binds Quick-Reply automation by id only automation set stays escrow. displayIndex is creator manual list order distinct from sortOrder; the synthetic PNG fixture exercises different values without a real-corpus claim, and displayIndex is never regenerated from sortOrder.",
               "topics": [
                 "vectorized RAG toggle",
                 "groupOverride scoring",
@@ -9088,13 +9086,14 @@
           "text": "Quirks",
           "slug": "quirks",
           "level": 2,
-          "summary": "All ZIP inflate uses unzipBounded CARD_ARCHIVE_BOUNDS shared with Risu and BYAF: 96 MiB archive, 512 entries, 64 MiB per entry, 96 MiB aggregate. Regex codec converges account RegexScript export and reduced archive regex_scripts on one RegexRule with extras sealing account fields; placement maps to phases including memory; unmapped placements and substitution modes are not fabricated. Persona maps title, pronouns, knowledge refs, and image URL; its twin seals folder, default, narrator, and metadata. A from-scratch persona materializes required description, subjective, and objective string keys while optional possessive stays absent. alternate_character_name is a prompt override. Lumiverse preset import converts blocks to ST preset wire; export writes ST flat preset and does not reproduce the wrapper.",
+          "summary": "All ZIP inflate uses unzipBounded CARD_ARCHIVE_BOUNDS shared with Risu and BYAF: 96 MiB archive, 512 entries, 64 MiB per entry, 96 MiB aggregate. Regex codec converges account RegexScript export and reduced archive regex_scripts on one RegexRule with extras sealing account fields; placement maps to phases including memory; unmapped placements and substitution modes are not fabricated. Persona maps title, pronouns, knowledge refs, and image URL; its twin seals folder, default, narrator, and metadata. A from-scratch persona materializes required description, subjective, and objective string keys while optional possessive stays absent. alternate_character_name is a prompt override. Lumiverse preset import converts blocks to ST preset wire; export writes ST flat preset and does not reproduce the wrapper. The .lvbak importer accepts account, character, and preset regex scopes; scoped rows need a usable scope_id, while unknown or incomplete scopes fail per row without widening, leaving supported sibling rows importable.",
           "topics": [
             "CARD_ARCHIVE_BOUNDS",
             "two regex wire shapes",
             "persona pronoun triplet",
             "alternate_character_name",
-            "preset ST export non-goal"
+            "preset ST export non-goal",
+            "lvbak regex scope validation"
           ],
           "children": []
         },
@@ -10277,7 +10276,7 @@
         "reference/entities/character",
         "guide/platforms/sillytavern"
       ],
-      "semanticSummary": "SillyTavern format documents how its adapters detect, map, and round-trip Character Card V1 V2 and V3 cards plus standalone world info through the canonical model. Character JSON is the default export and PNG is available on request; V3 PNGs carry full V3 JSON in ccv3 and a V2-shaped chara backfill. One folder exports character, lorebook, regex, and persona codecs. Detection distinguishes character and lorebook paths; field mapping uses shared Tavern fields and lore enums. The original twin and sourceMedia support same-format field fidelity through a three-state overlay; JSON formatting and regenerated PNG chunks are not byte-identical promises. V3-only fields stay in ccv3 and the PNG backfill's extensions.vaudeville.escrow.fields; standalone V2 JSON has no CCv3-only slots. Other quirks include dual PNG chunks, talkativeness tolerance, world links by name, displayIndex, and regex and persona codecs. The folder also exports preset and prompt-format codecs: the preset codec reads KoboldAI, TextGen and NovelAI sampler sets, system prompts and reasoning templates besides chat-completion presets, and the prompt-format codec reads instruct and context templates.",
+      "semanticSummary": "SillyTavern format documents how its adapters detect, map, and round-trip Character Card V1 V2 and V3 cards plus standalone world info through the canonical model. Character JSON is the default export and PNG is available on request; V3 PNGs carry full V3 JSON in ccv3 and a V2-shaped chara backfill. One folder exports character, lorebook, regex, and persona codecs. Detection distinguishes character and lorebook paths; field mapping uses shared Tavern fields and lore enums. The original twin and sourceMedia support same-format field fidelity through a three-state overlay; JSON formatting and regenerated PNG chunks are not byte-identical promises. V3-only fields stay in ccv3 and the PNG backfill's extensions.vaudeville.escrow.fields; standalone V2 JSON has no CCv3-only slots. Other quirks include dual PNG chunks, talkativeness tolerance, world links by name, displayIndex, and regex and persona codecs. The folder also exports preset and prompt-format codecs: the preset codec reads KoboldAI, TextGen and NovelAI sampler sets, system prompts and reasoning templates besides chat-completion presets, and the prompt-format codec reads instruct and context templates. Its PNG sample is a synthetic card fixture with retained structure, not a real-corpus sample.",
       "topics": [
         "sillytavern character 0.9",
         "sillytavern-lorebook native",
@@ -10427,7 +10426,7 @@
           "text": "Source of truth",
           "slug": "source-of-truth",
           "level": 2,
-          "summary": "Source of truth maps concerns to files. Character adapter detect toCanonical fromCanonical is formats sillytavern index.ts. World info codec is lorebook.ts; regex and persona codecs are sibling regex.ts and persona.ts. Shared Tavern field map is tavern-fields.ts; lore int-enum decoders are lore-enums.ts; embedded character_book mapper is character-book.ts; CCv3 assets to media is assets.ts; PNG chunk read write is png.ts. Coverage declaration is coverage.ts. Canonical wrapper escrow original and id policy live in core canonical.ts. Samples under samples sillytavern include CCv2 and v3 JSON plus Seraphina.png.",
+          "summary": "Source of truth maps concerns to files. Character adapter detect toCanonical fromCanonical is formats sillytavern index.ts. World info codec is lorebook.ts; regex and persona codecs are sibling regex.ts and persona.ts. Shared Tavern field map is tavern-fields.ts; lore int-enum decoders are lore-enums.ts; embedded character_book mapper is character-book.ts; CCv3 assets to media is assets.ts; PNG chunk read write is png.ts. Coverage declaration is coverage.ts. Canonical wrapper escrow original and id policy live in core canonical.ts. Samples under samples sillytavern include CCv2 and v3 JSON plus the synthetic-character.png structural fixture.",
           "topics": [
             "sillytavern index.ts",
             "lorebook regex persona",
@@ -14846,7 +14845,7 @@
       "path": "docs/reference/security/README.md",
       "title": "Security threat model and defense layers",
       "audience": "dev",
-      "summary": "The assets bunzai protects, the untrusted inputs it faces, and each defense layer with its honest tested or scaffolded status.",
+      "summary": "Bunzai's trust boundaries, their authoritative implementation references, and the limits of current verification.",
       "tags": [
         "security",
         "threat-model",
@@ -14857,201 +14856,44 @@
         "loopback"
       ],
       "related": [],
-      "semanticSummary": "Developer threat model for a local content forge that protects provider credentials, remote join secrets and approvals, filesystem state, trusted UI authority, and machine availability from hostile files and explicitly approved remote clients. The layers document canonical parse-not-execute conversion with semantic Round-Trip guarantees, bounded archives, pre-compile ReDoS rejection plus runtime budgets, sanitized rendering and CSP, capability-starved Lua with worker termination and value-only messages, a three-asset sandbox origin whose packaged proof is blocked, the primary loopback API plus separately gated remote listeners, and Kit's encrypted BYOK vault. Honest gaps include packaged-host sandbox measurement, malformed-vault recovery, the absent non-Windows passphrase flow, and provider redirects that are not revalidated after the initial host check. Each layer names its enforcement and test boundary so scaffolded behavior is not presented as packaged proof.",
+      "semanticSummary": "Bunzai protects the local library, provider credentials, API authority and machine resources across separate trust boundaries. Imported scripts remain data until explicitly invoked through supported execution gates. The overview links each detailed boundary to its authoritative reference rather than repeating changing numeric limits. Archives have selection and decompression checks; regex has conservative validation, construction bounds and isolated imported execution; markup and Lua have separate rendering and capability controls. Local API authority is distinct from opt-in remote access. Provider requests send selected conversation and observations to the configured host, with redirect checks on guarded HTTP paths; external CLIs and connected processes have separate network authority. Damaged vault reads reject instead of becoming empty state, and the keychain diagnostic uses a private invocation namespace. Source tests, native platform evidence and packaged-host evidence are distinguished. Packaged WebView2 isolation, native regex preemption, weaker local key-file protection, missing passphrase UI and unchanged vault cache/concurrency behavior remain explicit limits.",
       "topics": [
-        "local content threat model",
-        "canonical parse not execute",
-        "bounded archives and regex",
-        "sanitized rendering CSP",
-        "Lua worker budgets",
-        "sandbox origin proof blocked",
-        "loopback API authority",
-        "shipping Kit vault",
-        "provider egress boundary",
-        "explicit security nonclaims"
+        "trust boundaries",
+        "explicit script invocation",
+        "authoritative security references",
+        "provider request scope",
+        "damaged vault preservation",
+        "isolated keychain diagnostic",
+        "packaged evidence limits"
       ],
       "anchors": [
         {
-          "text": "Threat model",
-          "slug": "threat-model",
+          "text": "Trust boundaries",
+          "slug": "trust-boundaries",
           "level": 2,
-          "summary": "Protected assets are provider credentials and connection secrets, remote join secrets and device approvals, host-only controls, the local filesystem and user-owned studio folder, the trusted UI origin and per-launch bearer, and machine availability. The adversary includes untrusted imported content and, when Remote access is explicitly enabled, approved remote clients and the remote listener. The primary server remains a loopback forge. Trust ends at every file and request, so input is parsed once, capabilities are absent unless deliberately supplied, and gates fail closed. Named soft edges at this boundary are unmeasured packaged-host origin separation plus Kit vault recovery and non-Windows setup; provider redirect limits remain documented with the provider egress layer.",
+          "summary": "Untrusted files, archives, markup, Lua, regex, model responses and remote requests meet different gates. Import and conversion do not execute imported scripts; enabling an imported regex set is an invocation rather than an import effect. The primary Studio listener is loopback, while remote access is an explicit separate authority. Provider-backed turns send selected conversation and observations to the chosen provider. The boundary table directs readers to the owners for canonical conversion and semantic fidelity, archive checks and residuals, conservative regex validation and native-call limits, sanitized rendering, capability-restricted Lua, local Host/Origin/bearer checks, remote join/device controls, encrypted credential storage and per-hop provider egress. This is a navigation overview, not an independently maintained set of detailed limits or a claim that every boundary is proven in a packaged host.",
           "topics": [
-            "credentials filesystem bearer",
-            "untrusted imported content",
-            "local loopback assumption",
-            "file and request boundaries",
-            "capability denial",
-            "packaged origin soft edge",
-            "vault recovery setup gaps"
+            "untrusted content",
+            "loopback versus remote",
+            "provider-bound observations",
+            "canonical security owners",
+            "semantic fidelity",
+            "execution gates"
           ],
           "children": []
         },
         {
-          "text": "The layers",
-          "slug": "the-layers",
+          "text": "Evidence and remaining limits",
+          "slug": "evidence-and-remaining-limits",
           "level": 2,
-          "summary": "The layers combine structural prevention with bounded execution and explicitly scoped evidence. 1. Parse, not execute keeps private payloads opaque and conversion canonical. 2. Decompression caps on archives bound selection and inflation. 3. ReDoS-guarded regex rejects dangerous AST shapes before native execution. 4. Sanitized rendering applies DOMPurify, pure policy, and CSP. 5. The Lua sandbox and its resource budgets remove host capabilities, cap state, and kill workers. 6. Distinct-origin sandbox isolation adds a second HTTP-tested listener whose packaged proof remains blocked. 7. The token-gated primary local server and separately enabled remote listeners protect API authority with request gates, join secrets, device approval, and host-only controls. The tunnel also carries the only path that turns a download into an executable, host-only and verified against a committed SHA-256 before the bytes reach disk. 8. The BYOK provider vault encrypts configurations while documenting passphrase, redirect, and recovery limits.",
+          "summary": "Code-level tests do not establish real OS-keychain or packaged WebView behavior. The second sandbox origin has HTTP-layer tests but its packaged storage and credentialed API separation remain unmeasured; same-origin fallback is degraded. Native synchronous regex calls cannot be interrupted mid-match, so static refusal and construction bounds reduce risk without proving a deadline. The local identity-file fallback is weaker than OS key storage and there is no settings-driven passphrase unlock. Missing vaults read empty, while other read/envelope/plaintext failures refuse later saves; the narrow damaged-identity recovery preserves originals and reports the incident. Cache lifecycle and cross-process write-conflict safety are unchanged. The keychain probe uses a fresh service and cleans only its own entries, with isolated regressions for credential preservation and failed cleanup. Native-platform proof still requires recorded platform results.",
           "topics": [
-            "parse and escrow",
-            "archive inflation budgets",
-            "regex structural rejection",
-            "render sanitizer policy",
-            "Lua capabilities quotas",
-            "sandbox second origin",
-            "loopback request gates",
-            "Kit vault and egress"
-          ],
-          "children": [
-            {
-              "text": "1. Parse, not execute",
-              "slug": "1-parse-not-execute",
-              "level": 3,
-              "summary": "Every format enters and leaves through the canonical superset rather than converting directly to another platform. Source-specific scripts, extension blocks, and layout remain opaque escrow data. Cross-format exports carry only canonical content, preventing one application's executable payload from being copied into another, while typed adapter contracts prevent cross-kind writers. The engine and server do not evaluate imported scripts; the user-invoked Lua Test Bench is the sole execution exception. Same-format Round-Trip requires semantic preservation unless a format specification explicitly declares and fixtures prove a byte-level tier.",
-              "topics": [
-                "hub and spoke conversion",
-                "opaque source escrow",
-                "contained cross-format loss",
-                "typed kind boundary",
-                "Test Bench exception"
-              ],
-              "children": []
-            },
-            {
-              "text": "2. Decompression caps on archives",
-              "slug": "2-decompression-caps-on-archives",
-              "level": 3,
-              "summary": "unzipBounded handles untrusted charx, byaf, Lumiverse, and sprite archives with checks before and after inflation. It limits total entries, selected compressed and declared sizes, per-entry output, and aggregate output; missing originalSize remains bounded by compressed size and actual post-inflate length. Card containers allow 96 MiB archives, 512 entries, 64 MiB per selected entry, and 96 MiB selected total, while pack zips on import allow 64 MiB in all, 256 entries and 10 MiB per picture, a temporary limit until pack import streams. Violations throw ArchiveLimitError and required entries are never silently omitted.",
-              "topics": [
-                "unzipBounded",
-                "pre and post inflate checks",
-                "card archive ceilings",
-                "pack archive ceilings",
-                "ArchiveLimitError",
-                "required entry integrity"
-              ],
-              "children": []
-            },
-            {
-              "text": "3. ReDoS-guarded regex",
-              "slug": "3-redos-guarded-regex",
-              "level": 3,
-              "summary": "Because one synchronous native RegExp call cannot be interrupted, validateRule is the primary defense: it rejects excessive complexity and dangerous structures such as nested unbounded quantifiers, star-overlapping alternation, and quantified backreferences before compilation. Runtime execution adds per-rule and set budgets plus a 1,000-match ceiling, but its timeout observes only between native calls and cannot rescue a pathological match already running. The editor's structural ReDoS lens is advisory rather than authoritative. Validation, application, and AST warning behavior have separate suites.",
-              "topics": [
-                "pre-compile validateRule",
-                "dangerous regex AST",
-                "complexity hard cap",
-                "match and time budgets",
-                "native call not interruptible",
-                "warning lens not gate"
-              ],
-              "children": []
-            },
-            {
-              "text": "4. Sanitized rendering",
-              "slug": "4-sanitized-rendering",
-              "level": 3,
-              "summary": "Stored markup passes through marked and then DOMPurify as the final transformation before innerHTML. Active, form, embedding, style, media-fetching, and script tags are forbidden; data attributes and surviving fetch attributes are removed, and links receive scheme, target, and rel hardening. A DOM-free policy independently enforces a 200k input limit, http/https/mailto links, constrained inline-style properties, and rejection of url, var, import, and expression indirection. Sealed previews and portrait responses add restrictive CSP, sandbox, and nosniff headers. Pure policy and DOM rendering tests cover separate halves.",
-              "topics": [
-                "marked then DOMPurify",
-                "active tags forbidden",
-                "link scheme hardening",
-                "inline style allowlist",
-                "sealed preview CSP",
-                "portrait sandbox nosniff"
-              ],
-              "children": []
-            },
-            {
-              "text": "5. The Lua sandbox and its resource budgets",
-              "slug": "5-the-lua-sandbox-and-its-resource-budgets",
-              "level": 3,
-              "summary": "Lua executes only when the user invokes the Risu Test Bench. Wasmoon opens a deliberately small pure-library set, excludes io, os, debug, and package, then removes loaders and host-reaching globals. Typed ceilings cover wall time, heap, source, wire data, and host state; release maxima include five seconds, 64 MiB heap, and 2 MiB source and state budgets, and callers cannot raise them. Each run occurs in a Worker that is terminated at deadline. Its versioned value-only protocol accepts plain data, rejects functions, exotic prototypes, forbidden keys, and secret-shaped fields, and never receives the API bearer.",
-              "topics": [
-                "opt-in Lua execution",
-                "capability by absence",
-                "resource ceiling clamps",
-                "worker termination",
-                "value-only protocol",
-                "bearer excluded"
-              ],
-              "children": []
-            },
-            {
-              "text": "6. Distinct-origin sandbox isolation (packaged-host proof BLOCKED)",
-              "slug": "6-distinct-origin-sandbox-isolation-packaged-host-proof-blocked",
-              "level": 3,
-              "summary": "ADR-009 places sandbox assets on a second ephemeral loopback listener that serves only the Lua worker, regex worker, and glue.wasm, with no API, index, studio paths, or session token. This adds an origin boundary beyond a killable same-origin Worker. Bun tests prove the HTTP allowlist, CORS, protocol rejection, and token absence, but do not measure how packaged WebView2 treats the two authorities, storage, crossOriginIsolated, or credentialed API access. Plan 017 therefore remains blocked for full proof. Bind failure falls back to a degraded same-origin worker and must not be called isolated.",
-              "topics": [
-                "second loopback listener",
-                "asset allowlist only",
-                "Bun HTTP proof",
-                "WebView2 unmeasured",
-                "Plan 017 blocked",
-                "degraded fallback"
-              ],
-              "children": []
-            },
-            {
-              "text": "7. Token-gated local server and opt-in remote access",
-              "slug": "7-token-gated-local-server-and-opt-in-remote-access",
-              "level": 3,
-              "summary": "The primary Studio listener binds 127.0.0.1 and creates a random per-launch bearer. API requests receive Host validation against DNS rebinding; mutations require an allowed Origin and constant-time token comparison, while GET and HEAD pass only for Sec-Fetch-Site same-origin or none (cross-site and same-site refused) because browser subresource reads cannot attach the bearer. Missing mutation Origin fails closed. Streaming readers cap inspect bodies at 64 MiB and JSON at 32 MiB with 413 on overflow. Remote tunnel and LAN modes are separate, explicitly enabled boundaries with join secrets, device approval, and host-only control routes documented in the remote-access threat model.",
-              "topics": [
-                "127.0.0.1 listener",
-                "per-launch bearer",
-                "Host DNS-rebinding check",
-                "Origin token mutation gate",
-                "Sec-Fetch-Site reads",
-                "streaming body caps",
-                "safe external links"
-              ],
-              "children": []
-            },
-            {
-              "text": "8. BYOK provider vault (shipping in Kit)",
-              "slug": "8-byok-provider-vault-shipping-in-kit",
-              "level": 3,
-              "summary": "Kit encrypts the complete provider configuration list, credentials included, into one vault file and holds plaintext only after opening it in process. Saves seal a private temporary file and atomically replace the previous document. Windows uses DPAPI. A portable passphrase backend exists and sealed blobs retain backend identity, but current settings do not collect or supply the passphrase, leaving non-Windows first-run setup incomplete. Provider egress normalizes the endpoint and validates the initial request host, but runtime redirects are not revalidated. Credentials stay out of messages, tools, content, exports, transcripts, and privacy receipts. Malformed outer-file recovery is also incomplete, and Kit remains source-preview only.",
-              "topics": [
-                "whole provider vault encryption",
-                "atomic sealed replacement",
-                "recorded backend opening",
-                "DPAPI passphrase backends",
-                "configured endpoint egress",
-                "credentials excluded",
-                "malformed file recovery gap",
-                "source-preview distribution"
-              ],
-              "children": []
-            }
-          ]
-        },
-        {
-          "text": "Status at a glance",
-          "slug": "status-at-a-glance",
-          "level": 2,
-          "summary": "The generated status figure condenses the preceding defense layers into a scan of what is enforced, what has automated code-layer evidence, what remains scaffolded, and what is blocked on packaged-host measurement. It is a navigation aid rather than a substitute for each layer's caveats and source references.",
-          "topics": [
-            "generated status figure",
-            "enforced versus scaffolded",
-            "packaged proof visibility",
-            "layer caveats remain authoritative"
-          ],
-          "children": []
-        },
-        {
-          "text": "What this document does not claim",
-          "slug": "what-this-document-does-not-claim",
-          "level": 2,
-          "summary": "The document does not call the Lua environment fully isolated because its second-origin behavior is proven at the Bun HTTP layer, not inside packaged WebView2. It does not claim exploitation is impossible; controls reduce blast radius as defense in depth. Regex time budgets cannot interrupt one catastrophic native call, so structural rejection remains essential. Kit's vault lacks complete malformed-envelope recovery and a settings-driven portable passphrase flow, the release workflow ships Kit binaries with those gaps open, and provider redirects are not revalidated after the initial host check. A same-origin sandbox fallback is explicitly degraded and receives no isolation claim.",
-          "topics": [
-            "not fully sandboxed",
-            "no exploit impossibility",
-            "regex timeout limitation",
-            "vault recovery incomplete",
-            "Kit release binaries",
-            "same-origin fallback degraded"
+            "source versus native evidence",
+            "unmeasured WebView isolation",
+            "nonpreemptible native regex",
+            "weaker key-file fallback",
+            "vault cache scope",
+            "diagnostic failure evidence"
           ],
           "children": []
         }
@@ -15622,7 +15464,7 @@
         "reference/concepts/safe-rendering",
         "reference/cli"
       ],
-      "semanticSummary": "Kit is a BYOP preview with source and release-binary entries. The vault seals complete provider configurations and active identity. Backend priority is Windows CurrentUser DPAPI, macOS Keychain, Linux Secret Service, then a weaker local identity-file key; the master-passphrase backend remains registered but unavailable for automatic selection. Opening uses the recorded backend. Keychain behavior has mocked tests and a real-tool CI probe; this page does not establish packaged platform guarantees. Environment providers remain unpersisted. Writes verify their seal and rename a temporary file, with mode 0600 at creation and file sync before rename; directory sync is absent. Structurally damaged identity files and their unopenable vaults are preserved with notices before replacement; other decrypt failures remain errors. There is no export, recovery-key, migration or rotation UI, and malformed outer vault envelopes still read as empty. Provider readiness, configured-host checks and manual redirect validation constrain discovery and generation. Native Ollama adds bounded metadata, cancellation and connection-owned context. Credentials authenticate requests outside model messages; privacy records token counts. Studio binds loopback, checks API Host, refuses cross-site reads, requires Origin and bearer for writes and caps bodies. Ungated index HTML contains the bearer, so confidentiality relies on loopback reachability. The separate sandbox listener withholds it and allowlists worker assets. Bun HTTP evidence does not measure packaged WebView separation, and same-origin fallback is degraded.",
+      "semanticSummary": "Kit seals complete provider configurations and optional Spotify credentials, using the backend recorded in each envelope. Sealing prefers available OS storage, then the weaker local identity-file fallback; the passphrase backend has no automatic settings unlock. Writes verify the seal and atomically rename an owner-only temporary file. Only a missing vault reads empty: read errors, malformed envelopes and malformed decrypted data refuse reads and subsequent saves. Narrow damaged-identity recovery preserves original files and reports the incident; cache and concurrent-write behavior are unchanged. The native keychain diagnostic uses a fresh probe-only namespace and reports cleanup failure, with isolated fake-tool regressions distinct from native platform proof. Guarded HTTP provider paths enforce configured-host redirect checks; external CLIs and MCP processes have separate network authority; model requests transmit selected conversation and observations, while the privacy ledger records usage rather than request contents. Studio Host, Origin, bearer and body gates protect the local API, while ungated token-bearing HTML relies on loopback reachability. Sandbox HTTP evidence does not establish packaged WebView isolation.",
       "topics": [
         "Kit source preview distribution",
         "encrypted provider vault",
@@ -15642,7 +15484,7 @@
           "text": "Kit provider vault (shipping source preview)",
           "slug": "kit-provider-vault-shipping-source-preview",
           "level": 2,
-          "summary": "Current Kit BYOP boundary, not the obsolete packages/ai design. Offline import edit inspect validate convert and deterministic analysis need no key. Provider-backed turns use a discovered built-in or OpenAI-compatible endpoint; unknown providers and keyed providers without keys fail before request. Kit runs from a source checkout with bun run kit. The private package exposes that entry, but the release workflow also ships bunzai-kit binaries. The implemented vault, its OS keychain backends on Windows, macOS, and Linux with the local key file fallback that keeps any other machine encrypted rather than blocked, host-locked egress, and explicit recovery gaps are shipping source-preview behavior.",
+          "summary": "Kit is a source preview with configured release-binary builds. The vault seals whole provider configurations, active selection and optional Spotify link. Backend-tagged opening prevents fallback to a different lock after decryption fails. Available Windows, macOS and Linux OS storage precedes the weaker identity-file fallback; passphrase setup is not exposed in settings. Saves verify a seal before private atomic replacement. Only ENOENT represents an absent vault; damaged envelopes, unreadable files and malformed decrypted rows refuse later saves instead of losing data. The narrowly defined damaged-identity recovery preserves both originals and reports the incident. Diagnostic keychain operations use their own invocation service and isolated fake-tool tests, which do not establish native-platform results. Provider egress, Spotify, recovery, cache and packaged-host limits are documented separately below.",
           "topics": [
             "BYOP no hosted proxy",
             "bun run kit source preview",
@@ -15655,7 +15497,7 @@
               "text": "What the vault seals",
               "slug": "what-the-vault-seals",
               "level": 3,
-              "summary": "Saved providers live in ~/.bunzai/kit-vault.json or BUNZAI_HOME. Current code does not split public metadata from secret state: it encrypts the complete Vault object, including every ProviderConfig API key base URL headers options and label plus activeId. Disk holds only version backend and opaque payload; round-trip coverage proves neither key nor provider name appears in plaintext. The decrypted vault is cached in process memory. Writes seal a temporary sibling, create the temporary file exclusively with mode 0600, sync its contents, then rename over the vault, protecting the prior file from a partial write; the containing directory is not fsynced.",
+              "summary": "The vault file stores a versioned backend-tagged ciphertext envelope under the configured Bunzai home. It encrypts the complete provider document, including keys, base URLs, extra headers, options, labels, active provider selection and optional Spotify link. Tests show provider names and keys are absent from the on-disk plaintext envelope. The decrypted document is cached in process memory after a successful open. Writes create an exclusive owner-only temporary sibling, verify that the chosen backend can reopen the new seal, sync file contents and rename it over the old vault. The containing directory is not fsynced. These operations protect replacement from a partial file write but do not establish cross-process revision-conflict handling for an already cached vault.",
               "topics": [
                 "kit-vault.json sealed blob",
                 "whole provider config encrypted",
@@ -15669,7 +15511,7 @@
               "text": "Backends and present platform boundary",
               "slug": "backends-and-present-platform-boundary",
               "level": 3,
-              "summary": "The registry prefers Windows DPAPI, the macOS Keychain, and Linux Secret Service, then the local key file, then the master passphrase. Opening follows the blob's recorded backend tag and never silently falls back. DPAPI pipes plaintext through hidden PowerShell over stdin, binding recovery to one Windows user. The keychain backends keep one key in the OS store, written over stdin; making it is locked, never replaces a key, and treats a silent store as locked. They are proven against faked tools, with a real-tool CI probe. The local key file is the weaker, labeled fallback: an HMAC-checked 256-bit key beside the vault, re-read per operation. Passphrase reports unavailable and is never auto-selected.",
+              "summary": "Opening follows the recorded backend. Sealing prefers DPAPI, macOS Keychain, Linux Secret Service, then the weaker identity-file fallback; passphrase selection is not automatic. Keychain creation uses a cross-process lock, marker and fresh reads to avoid replacement. Values travel over stdin. Fake-tool tests cover locking and first seals. The native diagnostic uses a fresh service for both instances, locks and cleanup, reports failures and removes its temporary home. Child regressions preserve planted application credentials; native success requires recorded platform results. Holding both local identity file and vault permits decryption. Provider environment variables remain unpersisted alternatives.",
               "topics": [
                 "DPAPI CurrentUser Windows",
                 "local key file universal fallback",
@@ -15685,7 +15527,7 @@
               "text": "Provider egress boundary",
               "slug": "provider-egress-boundary",
               "level": 3,
-              "summary": "Provider readiness and the configured-host guard apply to model discovery and sends. Every redirect hop retains the same host, prohibits HTTPS downgrade and obeys the five-hop cap. Credentials authenticate requests but stay outside conversations, tool observations and exports; privacy records token counts. Native Ollama metadata has 2 MiB, 512-model, four-worker and eight-second discovery bounds. One uncached resolution owns capabilities and context. Scene body overrides cannot replace num_ctx; malformed replies and unoffered Kit tools fail closed. These boundaries do not prove model quality, memory needs or packaged behavior.",
+              "summary": "Guarded HTTP model discovery and sends enforce configured-host checks; external Claude CLI and MCP network traffic bypass this HTTP guard. Every redirect hop retains the same host, prohibits HTTPS downgrade and obeys the five-hop cap. Credentials authenticate requests but stay outside conversations, tool observations and exports; privacy records reported usage, not all network traffic. Native Ollama metadata has 2 MiB, 512-model, four-worker and eight-second discovery bounds. One uncached resolution owns capabilities and context. Scene body overrides cannot replace num_ctx; malformed replies and unoffered Kit tools fail closed. These boundaries do not prove model quality, memory needs or packaged behavior.",
               "topics": [
                 "guarded provider fetch",
                 "one initial allowed host",
@@ -15715,7 +15557,7 @@
               "text": "Recovery limitations",
               "slug": "recovery-limitations",
               "level": 3,
-              "summary": "Valid sealed envelopes fail loudly on an unknown backend, DPAPI failure, wrong passphrase, or GCM authentication failure, and DPAPI binds the blob to the Windows user. There is no vault export, recovery key, backend migration, or credential rotation flow. One documented exception: a structurally invalid local key file already holds an unrecoverable key, so failing closed protects nothing while trapping the user. Kit sets the damaged file and the unopenable vault aside under dated names, writes a fresh key, and returns an empty vault with a notice naming both paths; neither is deleted. I/O failures may succeed on retry and are surfaced, not treated as damage. Tampered ciphertext under a healthy key still throws untouched.",
+              "summary": "Unknown backends, wrong credentials and authentication failures throw. The sole recovery exception is an identity key structurally damaged and replaced during this open: key and unopenable vault are preserved, with an explanatory notice. Other failures remain untouched. Only ENOENT means absence; other file, envelope and plaintext-shape errors refuse later saves instead of becoming empty data. Legacy notice strings are accepted, but the current notice is process-derived. There is no export, rotation, backend-migration or recovery-key UI. Decrypted caching and cross-process write-conflict behavior are unchanged; parsing protection is not a concurrency guarantee.",
               "topics": [
                 "exact backend failure",
                 "DPAPI profile binding",
@@ -15723,7 +15565,7 @@
                 "structural damage recovers not blocks",
                 "damaged and unopenable files preserved",
                 "IO failure is not damage",
-                "malformed outer vault treated empty"
+                "malformed vault reads refused"
               ],
               "children": []
             }
@@ -16071,7 +15913,7 @@
           "text": "Kit terminal shell",
           "slug": "kit-terminal-shell",
           "level": 2,
-          "summary": "Kit is a terminal shell: multiline composer, paste cards, a bounded follow-up queue, draft-preserving history and search, interruptible streaming, and a palette that completes command arguments. Right-click pastes text, Alt+V attaches an image when the provider can read it, otherwise shows it on screen without sending it, and a path written into a message becomes reachable for that file alone, drawn as a link. Native scrolling, foldable replies, copy feedback and a stage watcher keep terminal behavior coherent. Atomic sessions support resume, rewind, fork and export; model settings, doctor, inventory and privacy are command surfaces. /rail keeps a preset's block list beside the conversation: ctrl+B moves the keyboard there, ctrl+shift+arrows resize it, ctrl+shift+D switches density, and < and > thumb through the studio's presets. What is on the rail rides in each turn's ambient context, and Enter stages accumulated edits as one ordinary draft at the same Gate. The tool loop performs bounded reads and replaces model save prose with a revision-checked REVIEW CHANGE gate; a conversion gets REVIEW CROSSING. Held calls wait at the Gate; applies serialize.",
+          "summary": "Kit is a terminal shell with a multiline composer, paste cards, bounded follow-up queue, draft-preserving history and search, interruptible streaming, and argument-completing palette. Right-click pastes text; Alt+V attaches readable images or displays them without sending; paths in messages link only to those files. Native scrolling, foldable replies, copy feedback and stage watching support terminal use. Sessions resume, rewind, fork and export; model settings, doctor, inventory and privacy are commands. /rail keeps a preset block list beside conversation: ctrl+B focuses it, ctrl+shift+arrows resize, ctrl+shift+D changes density, and < or > pages presets. Rail content enters ambient context; Enter stages edits as one draft at the same Gate. Bounded tool reads replace model save prose with revision-checked REVIEW CHANGE; conversion uses REVIEW CROSSING. Held calls wait at the Gate and applies serialize. /privacy reports recorded model calls and token counts, not all network activity; the greeting discloses transmission to the selected provider and connected services.",
           "topics": [
             "composer queue and search",
             "slash palette mentions",

@@ -1,6 +1,6 @@
 /**
  * Settings section: About - the app-level page. The running build's version and the manual update
- * check (the ONLY network call the app ever makes, button-press only), where the studio folder
+ * check (requested by the person), where the studio folder
  * lives on disk, and the project links (through the leaving gate, like every external door).
  */
 import { useEffect, useRef, useState } from "react";

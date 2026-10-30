@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/concepts/persona-editor",
   "sourcePath": "docs/reference/concepts/persona-editor.md",
-  "sourceHash": "sha256:235b2a040e17a31ab1c50118396c3a016ce6d615b94901feb11da285b4cb756e",
-  "semanticSummaryHash": "sha256:2ccc59e52b9af273954432aa400ee80e5d44eb0a7f506667aff90cae079110b5",
+  "sourceHash": "sha256:5ede4a8c12096953fd395a884e20793e1698c75ae1f318cc71a2760d469bdc39",
+  "semanticSummaryHash": "sha256:a65d98f1d092153a8967d1f85eae28d6ac4d337903d173ed264aef7bb7fb4b22",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
-  "reviewedAt": "2026-10-25T01:23:12.369Z"
+  "reviewer": "public-luna-06",
+  "notes": "Independently read page and sidecar. Persona editor behavior and ST backup field-value retention are accurately described without byte-identity claims.",
+  "reviewedAt": "2026-10-30T19:27:40.115Z"
 }

@@ -7,8 +7,7 @@
  * somebody's prompt, which is exactly the defect found in a hand-built preset that all of our own
  * checks passed.
  *
- * So this tool asks the engine. It is the one capability no other preset editor has, because nobody
- * else runs the target.
+ * So this tool asks the local target engine and reports unresolved macros.
  *
  * IT TOUCHES NO STUDIO STATE, which is why it needs no gate: it reads one preset, spawns an adapter
  * that drives an engine already installed here, and reports. Nothing the user authored is written.

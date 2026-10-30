@@ -1,12 +1,8 @@
 /**
  * One parse per file, no matter how many adapters ask.
  *
- * Detection offers each file to all twenty-eight registered adapters, and every one of them used to
- * parse it for itself. On a real studio that was 4158ms of Kit's 4935ms startup: parsing its
- * sixty-nine megabytes ONCE costs 149ms, and 28 x 149 is very nearly the whole wait.
- *
- * This pins the sharing at the seam rather than the timing, because a stopwatch assertion fails on a
- * loaded machine and passes on a fast one regardless of whether the work is still duplicated.
+ * Detection can offer the same file to several adapters. These tests pin shared parsing at the
+ * AdapterInput seam, without relying on machine-dependent timing.
  */
 import { describe, expect, test } from "bun:test";
 import encode from "png-chunks-encode";
@@ -99,7 +95,7 @@ describe("Phase 1c: the bytes-to-text decode is shared too, not just the JSON.pa
   test("readJsonAny/readJsonObject decode a bytes-only input once, however many times they are called", () => {
     // Every non-PNG-aware adapter's detect() and toCanonical() take exactly this shape: call
     // readJsonAny or readJsonObject on whatever bytes they are handed. Measured on a real
-    // 11.3 MB Miki.png: 22 such calls before this fix, 1 after (B10). One AdapterInput, one decode,
+    // Multiple adapters share the same decoded input through AdapterInput.
     // no matter how many callers ask.
     const bytes = new TextEncoder().encode(JSON.stringify({ tag: "card" }));
     const input = { bytes, filename: "card.png" }; // bytes-only: no .text, like a real PNG import
@@ -117,9 +113,7 @@ describe("Phase 1c: the bytes-to-text decode is shared too, not just the JSON.pa
 
   test("a real registry.detect sweep over one PNG card decodes its bytes at most once", async () => {
     // The actual production shape: every registered adapter's detect() runs against the same
-    // AdapterInput (registry.ts detect()). Most of the 29 adapters are not PNG-aware and go through
-    // readJsonAny/readJsonObject; before this fix each paid its own TextDecoder.decode (22 calls
-    // measured on a real 11.3 MB Miki.png - see the sibling test above).
+    // AdapterInput (registry.ts detect()). Adapters that read JSON share the same decoded input.
     await loadFormats();
     const png = cardPng(JSON.stringify({ spec: "chara_card_v2", data: { name: "Ada" } }));
     const input = toAdapterInput(png, "card.png");

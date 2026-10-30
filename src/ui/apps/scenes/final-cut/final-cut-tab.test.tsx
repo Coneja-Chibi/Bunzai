@@ -270,7 +270,7 @@ describe("Custom Banks and Saved Agents", () => {
     input(flushSync, label(form, "Label").querySelector("input")!, "onChange", { value: "Melodrama tells" });
     input(flushSync, label(form, "Pattern").querySelector("textarea")!, "onChange", { value: "Overwrought stock beats." });
     input(flushSync, form.querySelector('input[aria-label="Example 1"]')!, "onChange", { value: "a single tear traced her cheek" });
-    click(flushSync, [...rig.host.querySelectorAll<HTMLElement>(".fc-create .acts button")].find((b) => b.textContent === "Save to account")!);
+    click(flushSync, [...rig.host.querySelectorAll<HTMLElement>(".fc-create .acts button")].find((b) => b.textContent === "Save to library")!);
     await settle(flushSync);
     expect(saved[0]).toMatchObject({ label: "Melodrama tells", kind: "phrase", scope: "always", pattern: "Overwrought stock beats.", examples: ["a single tear traced her cheek"] });
     expect(text()).toContain("1 of 1 firing in your anti-slop pipeline.");
@@ -294,7 +294,7 @@ describe("Custom Banks and Saved Agents", () => {
     input(flushSync, label(card("Your Department"), "Agent instruction").querySelector("textarea")!, "onChange", { value: "Tighten pacing." });
     click(flushSync, [...card("Your Department").querySelectorAll<HTMLElement>(".fc-saved header button")].find((b) => b.textContent === "+ Save current")!);
     input(flushSync, card("Your Department").querySelector('input[aria-label="Agent name"]')!, "onChange", { value: "Pacing Doctor" });
-    click(flushSync, [...card("Your Department").querySelectorAll<HTMLElement>(".fc-save-row button")].find((b) => b.textContent === "Save to account")!);
+    click(flushSync, [...card("Your Department").querySelectorAll<HTMLElement>(".fc-save-row button")].find((b) => b.textContent === "Save to library")!);
     await settle(flushSync);
     expect(saved[0]).toMatchObject({ name: "Pacing Doctor", instructions: "Tighten pacing.", contextMessages: 3 });
     expect(text()).toContain("1 Library Agents · load instructions and model onto this pass.");

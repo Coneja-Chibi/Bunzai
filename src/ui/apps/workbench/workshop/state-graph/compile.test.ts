@@ -5,7 +5,6 @@ import { test, expect } from "bun:test";
 import {
   compileGraph,
   decompileTriggers,
-  looksLikeGraphTrigger,
   mergeCompiledTriggers,
   seedStateVar,
 } from "./compile";
@@ -67,8 +66,7 @@ test("mergeCompiledTriggers keeps non-graph rules", () => {
   };
   const graph = compileGraph(sample());
   const next = mergeCompiledTriggers([keep, ...graph], compileGraph(blankGraph()));
-  expect(next.some((t) => t.label === "other")).toBe(true);
-  expect(next.every((t) => t.label === "other" || !looksLikeGraphTrigger(t) || true)).toBe(true);
+  expect(next).toEqual([keep]);
 });
 
 test("seedStateVar adds state once", () => {

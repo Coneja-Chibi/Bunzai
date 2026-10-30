@@ -7,11 +7,7 @@
  * from memory that gets answered confidently and plausibly. So the engine supplies the facts and the
  * model does the judging.
  *
- * WHERE THIS CAME FROM. A survey of 22 community SillyTavern presets, which yielded 270 block
- * observations across 24 categories. The `prevalence` field records how many of the 13 presets that
- * produced usable inventories carried each pattern, so a reader can tell a near-universal convention
- * from one author's idea. Nothing here reproduces anyone's prompt text; these are structural
- * descriptions and neutral skeletons written from scratch.
+ * The catalog describes block structure and ordering without reproducing preset prompt text.
  */
 import { BEHAVIOUR_PATTERNS } from "./patterns-behaviour";
 
@@ -59,8 +55,6 @@ export interface BlockPattern {
   readonly macros: readonly string[];
   readonly ordering?: OrderingRule;
   readonly hazards?: readonly BlockHazard[];
-  /** Of the 13 surveyed presets that produced a usable inventory. */
-  readonly prevalence: number;
 }
 
 /**
@@ -83,7 +77,6 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
       + " decides whether card data frames the rules or the rules frame the card.",
     emits: "nothing",
     macros: [],
-    prevalence: 13,
     hazards: [{
       failure: "Moving a marker silently changes whether the model reads the card before or after the rules.",
       silent: "The block is empty either way, so a diff of its content shows nothing changed.",
@@ -97,10 +90,9 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
       + " enabled option cannot leak into this build.",
     mechanics:
       "One enabled block at or near index 0: a run of setvar assignments to empty, each chased with"
-      + " trim so the block emits nothing. Surveyed presets carry between three dozen and two hundred.",
+      + " trim so the block emits nothing.",
     emits: "nothing",
     macros: ["{{setvar::name::}}", "{{trim}}"],
-    prevalence: 5,
     ordering: {
       before: ["option-exclusive", "option-additive", "assembler", "tracker"],
       because:
@@ -123,7 +115,6 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
       + " group is usually announced by a divider whose name warns that only one may be enabled.",
     emits: "nothing",
     macros: ["{{setvar::name::value}}", "{{trim}}"],
-    prevalence: 10,
     ordering: {
       after: ["variable-init"],
       before: ["assembler"],
@@ -135,8 +126,8 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
         + " first-enabled-wins where members guard on an unset flag, last-write-wins where they all"
         + " write the same variable.",
       silent:
-        "Both produce a complete, plausible prompt. No surveyed preset declares which rule it follows,"
-        + " so a reader's intuition transfers exactly backwards between the two families.",
+        "Both produce a complete, plausible prompt. Without an explicit exclusivity rule,"
+        + " the reader may assume the wrong selection behavior.",
     }],
   },
   {
@@ -150,7 +141,6 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
       + " reads. Which of the two decides whether ordering among siblings matters.",
     emits: "conditional",
     macros: ["{{setvar::name::value}}", "{{trim}}"],
-    prevalence: 11,
     ordering: {
       after: ["variable-init"],
       because: "When it writes state rather than text, the reset must have run first.",
@@ -166,10 +156,9 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
     mechanics:
       "A manifest of getvar calls interleaved with headings. Because the initializer blanked"
       + " everything, unselected slots collapse to nothing and the headings stay stable whatever the"
-      + " configuration. Surveyed assemblers carry between a dozen and 126 reads.",
+      + " configuration.",
     emits: "text",
     macros: ["{{getvar::name}}"],
-    prevalence: 4,
     ordering: {
       after: ["option-exclusive", "option-additive"],
       requires: ["variable-init"],
@@ -178,8 +167,8 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
     hazards: [{
       failure: "A module ordered after the assembler is enabled and never read.",
       silent:
-        "The preset renders completely and the module simply is not in it. Exactly one surveyed"
-        + " preset detects this; four other mechanisms carry the same hazard with no detection.",
+        "The preset can render without the module,"
+        + " so successful expansion alone does not establish that every enabled module was used.",
     }],
   },
   {
@@ -194,7 +183,6 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
       + " behind the rule stack.",
     emits: "text",
     macros: ["{{getvar::name}}", "{{setvar::name::value}}"],
-    prevalence: 8,
   },
   {
     id: "reasoning-scaffold",
@@ -207,7 +195,6 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
       + " presets it is the load-bearing compliance mechanism rather than a quality aid.",
     emits: "text",
     macros: [],
-    prevalence: 9,
   },
   {
     id: "anti-slop",
@@ -218,7 +205,6 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
     mechanics: "A list of prohibitions, usually late in the stack so it is close to the generation.",
     emits: "text",
     macros: [],
-    prevalence: 10,
   },
   {
     id: "continuity-bounds",
@@ -231,7 +217,6 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
       + " is why it survives into otherwise minimal presets.",
     emits: "text",
     macros: [],
-    prevalence: 7,
   },
   {
     id: "output-dials",
@@ -242,7 +227,6 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
     mechanics: "Usually an exclusive group per dial, written to variables and rendered by the assembler.",
     emits: "conditional",
     macros: ["{{setvar::name::value}}"],
-    prevalence: 8,
     hazards: [{
       failure: "Length drift over a long session is the most visible failure across the corpus.",
       silent: "Each individual reply looks reasonable; only the trend is wrong.",
@@ -257,7 +241,6 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
     mechanics: "A compact restatement of the same variables the assembler read, placed after chat history.",
     emits: "text",
     macros: ["{{getvar::name}}"],
-    prevalence: 4,
     ordering: {
       after: ["assembler"],
       requires: ["assembler"],
@@ -275,7 +258,6 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
       + " deliberate suppression device, not an unfinished block.",
     emits: "nothing",
     macros: ["{{trim}}"],
-    prevalence: 6,
     hazards: [{
       failure:
         "Whether card-supplied instructions win or lose against the preset is decided by an empty"
@@ -287,14 +269,13 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
     id: "divider",
     name: "Section divider",
     purpose:
-      "Group a long toggle list into named regions so a human can navigate it. Surveyed lists run from"
-      + " 29 to 316 entries.",
+      "Group a long toggle list into named regions"
+      + " so it is easier to navigate.",
     mechanics:
       "An empty or comment-only block whose name carries the label. Contributes nothing to the model"
       + " in most implementations, which is why it is safe to leave permanently enabled.",
     emits: "nothing",
     macros: ["{{// comment}}", "{{trim}}"],
-    prevalence: 10,
   },
   {
     id: "self-validation",
@@ -307,13 +288,12 @@ export const BLOCK_PATTERNS: readonly BlockPattern[] = [
       + " fails. Requires every checked block to have written its marker first.",
     emits: "conditional",
     macros: ["{{getvar::name}}"],
-    prevalence: 1,
     ordering: {
       after: ["variable-init", "option-exclusive", "option-additive", "assembler"],
       because: "It can only report on state that has already been written.",
     },
     hazards: [{
-      failure: "One author in thirteen built this. The rest ship a program with no compile step.",
+      failure: "Without validation, a preset can expand successfully despite configuration errors.",
       silent: "Every defect it would catch renders as a complete and plausible preset.",
     }],
   },

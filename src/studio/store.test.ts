@@ -333,11 +333,8 @@ describe("StudioStore containment", () => {
 
 describe("files the folder import cannot bring in are reported, not skipped", () => {
   /**
-   * A real studio held 147 preset files and Kit listed three. 122 had names an id cannot carry - a
-   * space, an apostrophe, an emoji - and every one was `continue`d with no record at all, so the
-   * count read as "this folder has three presets" rather than "three of one hundred and forty-seven".
-   * The id guard is right and stays; being unable to ADDRESS a file is simply not the same fact as
-   * the file not being there.
+   * A filename that cannot form a canonical id still needs an inventory entry so the person can
+   * identify the file and understand why it was not imported.
    */
   test("a filename that cannot be an id is reported as unusable-filename", async () => {
     const dir = await tempDir("kit-unlisted-");

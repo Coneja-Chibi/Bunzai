@@ -4,8 +4,9 @@
  * never imported), and a broken placement column drops only that row before grouping ever runs.
  */
 import { describe, expect, test } from "bun:test";
-import { buildBadRowsLvbak, buildCrossLinksLvbak, buildMinimalLvbak } from "../_fixtures/lumiverse-archive/build-lvbak";
-import { CHARACTER_ID, DANGLING_ID, PRESET_ID, REGEX_ID } from "../_fixtures/lumiverse-archive/rows";
+import { assembleLvbak, lvbakManifest, buildBadRowsLvbak, buildCrossLinksLvbak, buildMinimalLvbak } from "../_fixtures/lumiverse-archive/build-lvbak";
+import { CHARACTER_ID, DANGLING_ID, PRESET_ID, REGEX_ID, regexScriptRow } from "../_fixtures/lumiverse-archive/rows";
+import { importLumiverseArchive } from "./import";
 import { createBinaries, indexImages } from "./binaries";
 import { importCharacters, indexCharacterGallery } from "./characters";
 import { createIdMint, createLinkMap } from "./links";
@@ -18,6 +19,27 @@ import { zipEntrySource } from "./zip-source";
 
 const V1_CEILING = ndjsonLineCeiling(1);
 const noFailures = () => expect.unreachable();
+
+test("archive import refuses unknown or incomplete regex scopes without widening them", async () => {
+  const invalid = [
+    { scope: "pack", scope_id: "pack-1" }, { scope: "future" }, { scope: null },
+    { scope: undefined }, { scope: "" }, { scope: 42 },
+    { scope: "character", scope_id: null }, { scope: "preset", scope_id: "" },
+  ];
+  const bytes = assembleLvbak({
+    manifest: lvbakManifest(),
+    tables: { regex_scripts: [regexScriptRow(), ...invalid.map((scope, i) => regexScriptRow({ ...scope, id: `invalid-${i}` }))] },
+  });
+  const { entities, report } = await importLumiverseArchive(zipEntrySource(bytes));
+  expect(entities).toHaveLength(1);
+  const entity = entities[0]!;
+  if (entity.kind !== "regex") throw new Error("expected regex set");
+  expect(entity.body.rules.map((r) => r.id)).toEqual([REGEX_ID]);
+  expect(report.failed.map((f) => [f.table, f.rowId])).toEqual(invalid.map((_, i) => ["regex_scripts", `invalid-${i}`]));
+  expect(report.failed.every((f) => f.reason.includes("scope"))).toBe(true);
+  const rows: TableRow[] = invalid.map((row, i) => ({ line: i + 1, row, inner: { values: {}, failures: [] } }));
+  for (const row of rows) expect(() => groupRegexRows([row])).toThrow("scope");
+});
 
 /** Populate links the way a real orchestrator would, running characters and presets first. */
 async function populateLinks(bytes: Uint8Array) {

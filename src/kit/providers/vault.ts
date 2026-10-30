@@ -11,6 +11,7 @@ import { open, seal } from "../keystore/keystore";
 import { identityStatus } from "../keystore/backends/identity-file";
 import type { Sealed, Unlock } from "../keystore/types";
 import { writeAtomicReplace } from "../../studio/atomic-file";
+import { isRecord } from "../../core/guards";
 
 /** The person's Spotify link: their own app's Client ID (not a secret) and the sign-in's refresh token (a secret). */
 export interface SpotifyLink { clientId?: string; refreshToken?: string }
@@ -29,6 +30,7 @@ export interface Vault {
 }
 
 const EMPTY: Vault = { providers: [], activeId: null };
+const DAMAGED_VAULT = "vault: saved credentials are damaged or unreadable; restore or repair the existing file before saving";
 
 // In-memory cache of the decrypted vault, keyed by path so a changed BUNZAI_HOME (tests, portable
 // installs) invalidates it. This keeps the key unlocked once per process rather than spawning the
@@ -174,9 +176,11 @@ async function readSealed(): Promise<Sealed | null> {
   try {
     const raw = await readFile(vaultPath(), "utf8");
     const parsed = JSON.parse(raw) as unknown;
-    return isSealed(parsed) ? parsed : null;
-  } catch {
-    return null; // no vault yet, or unreadable: treat as empty
+    if (!isSealed(parsed)) throw new Error(DAMAGED_VAULT);
+    return parsed;
+  } catch (error) {
+    if (isRecord(error) && error.code === "ENOENT") return null;
+    throw new Error(DAMAGED_VAULT, { cause: error });
   }
 }
 
@@ -209,15 +213,21 @@ function isSealed(value: unknown): value is Sealed {
 }
 
 function toVault(value: unknown): Vault {
-  if (typeof value !== "object" || value === null) return EMPTY;
-  const record = value as Record<string, unknown>;
-  const providers = Array.isArray(record["providers"]) ? record["providers"].filter(isProviderConfig) : [];
+  if (!isRecord(value) || !Array.isArray(value.providers) || !value.providers.every(isProviderConfig)) throw new Error(DAMAGED_VAULT);
+  const providers = value.providers;
+  const record = value;
+  if (record.activeId !== undefined && record.activeId !== null && typeof record.activeId !== "string") throw new Error(DAMAGED_VAULT);
+  if (record.notice !== undefined && typeof record.notice !== "string") throw new Error(DAMAGED_VAULT);
+  if (!Object.keys(record).every((key) => ["providers", "activeId", "spotify", "notice"].includes(key))) throw new Error(DAMAGED_VAULT);
   const activeId = typeof record["activeId"] === "string" ? record["activeId"] : null;
   const raw = record["spotify"];
-  const link = typeof raw === "object" && raw !== null ? (raw as Record<string, unknown>) : {};
+  if (raw !== undefined && (!isRecord(raw) || !Object.keys(raw).every((key) => ["clientId", "refreshToken"].includes(key))
+    || (raw.clientId !== undefined && typeof raw.clientId !== "string") || (raw.refreshToken !== undefined && typeof raw.refreshToken !== "string"))) throw new Error(DAMAGED_VAULT);
+  const link = isRecord(raw) ? raw : {};
   const spotify: SpotifyLink = {
     ...(typeof link["clientId"] === "string" && link["clientId"] ? { clientId: link["clientId"] } : {}),
     ...(typeof link["refreshToken"] === "string" && link["refreshToken"] ? { refreshToken: link["refreshToken"] } : {}),
   };
+  // Legacy saved notices are accepted; the current notice comes from this process's recovery state.
   return { providers, activeId, ...(spotify.clientId || spotify.refreshToken ? { spotify } : {}) };
 }

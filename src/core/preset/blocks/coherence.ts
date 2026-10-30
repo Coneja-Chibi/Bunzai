@@ -6,10 +6,6 @@
  * perfectly, and is ordered after the thing that was supposed to read it. The macros resolve; the
  * module simply is not in the prompt. Nothing in the output looks wrong.
  *
- * The survey of 22 community presets found exactly one author who had built a check for this class of
- * defect by hand, against four other mechanisms carrying the same hazard with no detection at all. So
- * these rules are not theoretical tidiness: they are the failures that corpus actually contains.
- *
  * PURE AND ADVISORY. No engine, no process, no filesystem. Every finding names the blocks involved, so
  * a reader can disagree with it. This reports; it never rewrites.
  */
@@ -128,7 +124,7 @@ function reportOrdering(
  *
  * Reported without asserting which wins, because that genuinely depends on the preset's family:
  * first-enabled-wins where members guard on an unset flag, last-write-wins where they all write the
- * same variable. No surveyed preset declares which it is, so guessing here would be worse than
+ * same variable. The catalog does not encode the active rule, so guessing here would be worse than
  * naming the ambiguity.
  */
 function checkExclusive(live: readonly ClassifiedBlock[]): CoherenceFinding[] {

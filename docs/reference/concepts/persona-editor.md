@@ -42,7 +42,7 @@ facts from the meta loader, the gilt Default badge.
 ## The wires
 
 rcpersona (+ RC's V2-side-channel export), the SillyTavern personas BACKUP (imports the
-default persona, seals the ENTIRE backup so the others re-emit byte-true), the Lumiverse structured-pronoun
+default persona, seals the ENTIRE backup so the other personas' field values survive export), the Lumiverse structured-pronoun
 account object (the pronoun triplet as data), and the Marinara persona (theming/stat bars ride
 sealed). See the codec headers for detection firewalls; the Agnai persona shape has no real
 standalone file wire and is served by the structured-persona component on character cards.

@@ -2,11 +2,11 @@
   "generated": "2026-10-30",
   "targetChars": 90000,
   "totalPages": 133,
-  "totalSourceChars": 1638463,
+  "totalSourceChars": 1629903,
   "batches": [
     {
       "id": "batch-001",
-      "sourceChars": 89477,
+      "sourceChars": 89591,
       "pages": [
         {
           "docId": "01-VISION",
@@ -37,7 +37,7 @@
           "sourcePath": "docs/decisions/ADR-001-runtime.md",
           "sidecarPath": "docs/summaries/decisions/ADR-001-runtime.json",
           "sectionCount": 3,
-          "sourceChars": 1184,
+          "sourceChars": 1177,
           "status": "APPROVED"
         },
         {
@@ -53,7 +53,7 @@
           "sourcePath": "docs/decisions/ADR-003-distribution.md",
           "sidecarPath": "docs/summaries/decisions/ADR-003-distribution.json",
           "sectionCount": 3,
-          "sourceChars": 1627,
+          "sourceChars": 1757,
           "status": "APPROVED"
         },
         {
@@ -141,7 +141,7 @@
           "sourcePath": "docs/FORMAT-SUPPORT.md",
           "sidecarPath": "docs/summaries/FORMAT-SUPPORT.json",
           "sectionCount": 20,
-          "sourceChars": 6663,
+          "sourceChars": 6654,
           "status": "APPROVED"
         },
         {
@@ -188,7 +188,7 @@
     },
     {
       "id": "batch-002",
-      "sourceChars": 85903,
+      "sourceChars": 85728,
       "pages": [
         {
           "docId": "guide/importing",
@@ -243,7 +243,7 @@
           "sourcePath": "docs/guide/platforms/chub.md",
           "sidecarPath": "docs/summaries/guide/platforms/chub.json",
           "sectionCount": 6,
-          "sourceChars": 8970,
+          "sourceChars": 8990,
           "status": "APPROVED"
         },
         {
@@ -283,14 +283,14 @@
           "sourcePath": "docs/guide/platforms/README.md",
           "sidecarPath": "docs/summaries/guide/platforms/README.json",
           "sectionCount": 3,
-          "sourceChars": 3770,
+          "sourceChars": 3575,
           "status": "APPROVED"
         }
       ]
     },
     {
       "id": "batch-003",
-      "sourceChars": 56061,
+      "sourceChars": 56163,
       "pages": [
         {
           "docId": "guide/platforms/risu",
@@ -305,7 +305,7 @@
           "sourcePath": "docs/guide/platforms/rolecall.md",
           "sidecarPath": "docs/summaries/guide/platforms/rolecall.json",
           "sectionCount": 6,
-          "sourceChars": 6431,
+          "sourceChars": 6485,
           "status": "APPROVED"
         },
         {
@@ -313,7 +313,7 @@
           "sourcePath": "docs/guide/platforms/sillytavern.md",
           "sidecarPath": "docs/summaries/guide/platforms/sillytavern.json",
           "sectionCount": 6,
-          "sourceChars": 5619,
+          "sourceChars": 5667,
           "status": "APPROVED"
         },
         {
@@ -404,7 +404,7 @@
     },
     {
       "id": "batch-006",
-      "sourceChars": 86549,
+      "sourceChars": 86568,
       "pages": [
         {
           "docId": "reference/concepts/bundles",
@@ -451,7 +451,7 @@
           "sourcePath": "docs/reference/concepts/persona-editor.md",
           "sidecarPath": "docs/summaries/reference/concepts/persona-editor.json",
           "sectionCount": 3,
-          "sourceChars": 3048,
+          "sourceChars": 3067,
           "status": "APPROVED"
         },
         {
@@ -506,7 +506,7 @@
     },
     {
       "id": "batch-007",
-      "sourceChars": 89718,
+      "sourceChars": 89864,
       "pages": [
         {
           "docId": "reference/entities/dice",
@@ -537,7 +537,7 @@
           "sourcePath": "docs/reference/entities/lorebook.md",
           "sidecarPath": "docs/summaries/reference/entities/lorebook.json",
           "sectionCount": 24,
-          "sourceChars": 21652,
+          "sourceChars": 21798,
           "status": "APPROVED"
         },
         {
@@ -700,14 +700,14 @@
     },
     {
       "id": "batch-010",
-      "sourceChars": 70157,
+      "sourceChars": 70436,
       "pages": [
         {
           "docId": "reference/formats/lumiverse",
           "sourcePath": "docs/reference/formats/lumiverse.md",
           "sidecarPath": "docs/summaries/reference/formats/lumiverse.json",
           "sectionCount": 10,
-          "sourceChars": 19273,
+          "sourceChars": 19552,
           "status": "APPROVED"
         },
         {
@@ -746,7 +746,7 @@
     },
     {
       "id": "batch-011",
-      "sourceChars": 85653,
+      "sourceChars": 85745,
       "pages": [
         {
           "docId": "reference/formats/risu",
@@ -785,7 +785,7 @@
           "sourcePath": "docs/reference/formats/sillytavern.md",
           "sidecarPath": "docs/summaries/reference/formats/sillytavern.json",
           "sectionCount": 10,
-          "sourceChars": 23126,
+          "sourceChars": 23218,
           "status": "APPROVED"
         }
       ]
@@ -1058,7 +1058,7 @@
     },
     {
       "id": "batch-015",
-      "sourceChars": 88704,
+      "sourceChars": 77841,
       "pages": [
         {
           "docId": "reference/scene-state",
@@ -1080,8 +1080,8 @@
           "docId": "reference/security/README",
           "sourcePath": "docs/reference/security/README.md",
           "sidecarPath": "docs/summaries/reference/security/README.json",
-          "sectionCount": 12,
-          "sourceChars": 16259,
+          "sectionCount": 2,
+          "sourceChars": 5396,
           "status": "APPROVED"
         },
         {
@@ -1104,7 +1104,7 @@
     },
     {
       "id": "batch-016",
-      "sourceChars": 82033,
+      "sourceChars": 83515,
       "pages": [
         {
           "docId": "reference/security/safe-rendering",
@@ -1127,7 +1127,7 @@
           "sourcePath": "docs/reference/security/secrets-and-keys.md",
           "sidecarPath": "docs/summaries/reference/security/secrets-and-keys.json",
           "sectionCount": 13,
-          "sourceChars": 25015,
+          "sourceChars": 26497,
           "status": "APPROVED"
         },
         {
@@ -1150,14 +1150,14 @@
     },
     {
       "id": "batch-017",
-      "sourceChars": 287853,
+      "sourceChars": 288097,
       "pages": [
         {
           "docId": "reference/ui",
           "sourcePath": "docs/reference/ui.md",
           "sidecarPath": "docs/summaries/reference/ui.json",
           "sectionCount": 34,
-          "sourceChars": 287853,
+          "sourceChars": 288097,
           "status": "APPROVED"
         }
       ]

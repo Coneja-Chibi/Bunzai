@@ -173,23 +173,22 @@ test("detects and round-trips a bare V1 flat card, staying flat on the way out",
   expect(JSON.parse(adapter.fromCanonical(c).text ?? "")).toEqual(v1card);
 });
 
-// Real corpus: the official SillyTavern default card (samples/sillytavern/characters/Seraphina.png). Proves the
-// de-original against a genuine export, not a hand-built fixture. See samples/sillytavern/SOURCES.md.
-const seraphinaPng = new Uint8Array(
-  readFileSync(join(import.meta.dir, "../../../samples/sillytavern/characters/Seraphina.png")),
+// Synthetic PNG card with the extensions coverage documented in samples/sillytavern/SOURCES.md.
+const syntheticPng = new Uint8Array(
+  readFileSync(join(import.meta.dir, "../../../samples/sillytavern/characters/synthetic-character.png")),
 );
 
-test("real Seraphina.png: authored extensions de-original to first-class slots", () => {
-  const c = adapter.toCanonical({ bytes: seraphinaPng });
+test("synthetic PNG card: authored extensions de-original to first-class slots", () => {
+  const c = adapter.toCanonical({ bytes: syntheticPng });
   expect(c.body.settings?.talkativeness).toBe(0.5);
-  expect(c.body.worldName).toBe("Eldoria");
-  // Seraphina's depth_prompt.prompt is "" (a default ST writes even when unset) -> no injection authored;
+  expect(c.body.worldName).toBe("Northwood");
+  // The empty depth_prompt is a default ST writes even when unset -> no injection authored;
   // the depth/role config stays on the original twin. This case proves world/talkativeness, NOT depth_prompt.
   expect(c.body.prompts.depthInjections).toBeUndefined();
 });
 
-test("real Seraphina.png: unedited round-trip leaves the extensions bag byte-identical", () => {
-  const c = adapter.toCanonical({ bytes: seraphinaPng });
+test("synthetic PNG card: unedited round-trip leaves the extensions bag byte-identical", () => {
+  const c = adapter.toCanonical({ bytes: syntheticPng });
   const raw = c.original?.sillytavern?.raw as { data?: { extensions?: unknown }; extensions?: unknown };
   const origExt = raw.data?.extensions ?? raw.extensions;
   const back = JSON.parse(adapter.fromCanonical(c).text ?? "");

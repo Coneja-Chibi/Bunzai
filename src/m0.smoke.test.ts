@@ -56,10 +56,10 @@ test("M0: V2 PNG chara chunk open + name survives", () => {
   expect(ent.body.settings?.talkativeness).toBe(0.5);
 });
 
-test("M0: real Seraphina.png extensions bag unedited round-trip", () => {
-  const path = join(import.meta.dir, "../samples/sillytavern/characters/Seraphina.png");
+test("M0: synthetic PNG extensions bag unedited round-trip", () => {
+  const path = join(import.meta.dir, "../samples/sillytavern/characters/synthetic-character.png");
   const bytes = new Uint8Array(readFileSync(path));
-  const ent = st.toCanonical({ bytes, filename: "Seraphina.png" });
+  const ent = st.toCanonical({ bytes, filename: "synthetic-character.png" });
   expect(ent.body.identity.name.length).toBeGreaterThan(0);
   const raw = ent.original?.sillytavern?.raw as { data?: { extensions?: unknown } };
   const before = raw?.data?.extensions;

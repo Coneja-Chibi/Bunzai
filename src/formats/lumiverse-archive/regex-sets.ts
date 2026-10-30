@@ -80,22 +80,23 @@ export interface RegexRowGroup {
   rows: TableRow[];
 }
 
-/**
- * Bucket rows by scope, preserving first-seen order across groups. Only `scope === "character"` or
- * `"preset"` with a real string `scope_id` produce a scoped bucket; everything else (`"account"`, no
- * scope at all, or any other/unrecognized value, such as a pack scope this archive never maps) falls
- * into the single account-wide bucket rather than being dropped. No evidence in any fixture or spec
- * text names a fourth scope value, so this is a conservative default, not a confirmed mapping.
- */
+/** Refuse scopes we cannot preserve rather than widening them to the whole account. */
+function regexScope(row: Record<string, unknown>): Pick<RegexRowGroup, "scope" | "scopeId"> {
+  if (row.scope === "account") return { scope: "account", scopeId: null };
+  const scopeId = asId(row.scope_id);
+  if ((row.scope === "character" || row.scope === "preset") && scopeId) {
+    return { scope: row.scope, scopeId };
+  }
+  throw new Error("Unsupported regex scope or missing scope_id; row was not imported.");
+}
+
+/** Bucket supported scopes in first-seen order; unsupported or incomplete scopes are errors. */
 export function groupRegexRows(rows: readonly TableRow[]): RegexRowGroup[] {
   const buckets = new Map<string, RegexRowGroup>();
   const order: string[] = [];
 
   for (const read of rows) {
-    const row = read.row;
-    const scopeId = asId(row.scope_id) || null;
-    const scope: RegexScope =
-      row.scope === "character" && scopeId ? "character" : row.scope === "preset" && scopeId ? "preset" : "account";
+    const { scope, scopeId } = regexScope(read.row);
     const key = scope === "account" ? "account" : `${scope}:${scopeId}`;
 
     let bucket = buckets.get(key);
@@ -149,6 +150,12 @@ export async function importRegexSets(
     const gating = gatingFailure(read, "regex_scripts", GATING_COLUMNS);
     if (gating) {
       recordFailure(report, gating);
+      continue;
+    }
+    try {
+      regexScope(read.row);
+    } catch (error) {
+      recordFailure(report, codecRowFailure("regex_scripts", read.row, error));
       continue;
     }
     valid.push(read);

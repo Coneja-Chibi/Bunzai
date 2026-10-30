@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "guide/platforms/chub",
   "sourcePath": "docs/guide/platforms/chub.md",
-  "sourceHash": "sha256:5ff537d6f84943a59cc86af077753d2483fdbd0aee7436c6cb843d499c60a91b",
-  "semanticSummaryHash": "sha256:8e4aca4503ce4221e141b2b1fe71ec12a60bac7b2f02ff30c975e8741273b2a4",
+  "sourceHash": "sha256:dbf2862302b0d9c3bcf736b6d49a18a378b448c68879a6a08cfb16f547a318ba",
+  "semanticSummaryHash": "sha256:48e173b6c707979b75e505fdc2f26bb841abf7fff843ffb7a7cf80a4edad9fb2",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:47:37.373Z"
+  "reviewer": "public-luna-06",
+  "notes": "Independently read page and sidecar. Chub card/lorebook scopes and same-format field-value caveats align; no unsupported export generalization.",
+  "reviewedAt": "2026-10-30T19:27:40.241Z"
 }

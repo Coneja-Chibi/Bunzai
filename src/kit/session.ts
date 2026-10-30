@@ -158,10 +158,8 @@ export interface Session {
 }
 
 /**
- * How many model turns one request may take. Twelve capped ambition, not runaway: on a studio whose
- * median preset is 440KB, reading two pieces and staging a draft spent most of them before any
- * thinking happened. Runaway is held by loop-core's tool-call and elapsed budgets plus no-progress
- * detection; this only decides how much a turn is ALLOWED to attempt.
+ * Maximum model and tool iterations for one request. Tool-call and elapsed-time budgets, plus
+ * no-progress detection, are enforced separately in loop-core.
  */
 const MAX_STEPS = 64;
 

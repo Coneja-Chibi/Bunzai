@@ -46,7 +46,7 @@ const libraryTour: Tour = {
     {
       id: "done",
       title: "That is the Library",
-      body: "Nothing here can break. Need this again? The ? in the corner replays it any time.",
+      body: "Choose a piece to get started. The ? in the corner replays this tour any time.",
     },
   ],
 };

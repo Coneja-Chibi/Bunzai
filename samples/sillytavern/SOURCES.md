@@ -1,28 +1,35 @@
 # SillyTavern samples
 
-## Seraphina.png
-- Source: https://raw.githubusercontent.com/SillyTavern/SillyTavern/release/default/content/default_Seraphina.png
-- Downloaded: 2026-07-04
-- Why: the official SillyTavern default character - a REAL PNG card that exercises the escrowed surface.
-  Card `extensions` populate `talkativeness` ("0.5"), `fav`, `world` ("Eldoria"), and `depth_prompt`
-  ({prompt, depth:4, role:"system"}). Embedded `character_book` has 4 entries whose per-entry
-  `extensions` populate the full ST-extended set incl. `vectorized`, `group_override`,
-  `use_group_scoring`, `automation_id`, `display_index`. Reads through vaud's real PNG path.
-- Proves live (de-escrow slice): `toCanonical` now lands `talkativeness` -> `settings.talkativeness` (0.5)
-  and `world` -> `worldName` ("Eldoria") as first-class editable slots instead of escrow, and an unedited
-  round-trip leaves the `extensions` bag byte-identical. NOTE: Seraphina's `depth_prompt.prompt` is `""`
-  (ST's default-when-unset), so it correctly maps to NO injection - this card proves talkativeness/world,
-  NOT the `depth_prompt` fix. The depth_prompt de-escrow + edit is proven by the in-suite v2 fixture, which
-  carries a populated `depth_prompt`.
+## `characters/synthetic-character.png`
 
-## v3-full.json (synthetic)
+- **Source of structure:** SillyTavern's official default card at
+  `https://raw.githubusercontent.com/SillyTavern/SillyTavern/release/default/content/default_Seraphina.png`.
+  The upstream README credits the Seraphina character and lorebook to `@OtisAlejandro`.
+- **Transformation:** The previous sample's portrait and free prose were removed. This replacement
+  uses a valid 1x1 synthetic PNG carrier and newly written character/lorebook text. The V2 card
+  structure, mirrored card metadata, `chara`/`ccv3` text chunks, `extensions` shape, and four-entry
+  embedded `character_book` layout are retained for codec tests. This is a constructed fixture, not
+  the original image/card, and its synthetic content is not attributed to the upstream creator.
+- **Coverage:** Top-level and V2 `data` fields, `talkativeness`, `world`, empty `depth_prompt` with
+  its depth/role defaults, unedited extension escrow, and the four entry extension fields
+  `vectorized`, `group_override`, `use_group_scoring`, `automation_id`, and `display_index`.
+  The entries keep a uniform `insertion_order` while `display_index` runs 0-3, so the two axes remain
+  independently testable.
+- **Rights context:** Attribution is retained for the source of the structural scaffold. The
+  upstream source materials reviewed did not give the artwork an asset-specific redistribution
+  license; the unverified portrait and original prose are absent from this working-tree fixture.
+  Historical repository versions may still contain the former sample.
+
+## `characters/v3-full.json` (synthetic)
+
 - Hand-authored, invented content (`example.invalid` URLs). Synthetic: yes.
-- A clean CCv3 card with an embedded 2-entry character_book (one `@@depth`/`@@role` decorator entry, one selective entry with secondary keys),
-  `creator_notes_multilingual`, three assets, and empty `extensions: {}`. A minimal CCv3 shape check, not a de-escrow sample.
+- A clean CCv3 card with an embedded 2-entry character book (one decorator entry, one selective
+  entry with secondary keys), multilingual creator notes, three assets, and empty `extensions: {}`.
 
-## lorebooks/ (synthetic)
+## `lorebooks/` (synthetic)
+
 - Hand-authored, invented content. Synthetic: yes.
-- `test-world.json` - classic ST World Info (object `entries` map): constants, a disabled entry, secondary keys, positions 0-3,
-  probability, case-sensitive and whole-word matching.
-- `test-scenario.json` - newer ST World Info fields: `group`/`groupOverride`, `sticky`/`cooldown`/`delay`, `role`,
-  `vectorized`, `delayUntilRecursion`, `automationId`, position 4 (depth).
+- `test-world.json` covers classic ST World Info: constants, a disabled entry, secondary keys,
+  positions 0-3, probability, case-sensitive and whole-word matching.
+- `test-scenario.json` covers newer fields: `group`/`groupOverride`, `sticky`/`cooldown`/`delay`,
+  `role`, `vectorized`, `delayUntilRecursion`, `automationId`, and depth position 4.

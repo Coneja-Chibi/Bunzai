@@ -26,7 +26,7 @@ To bring one in, drag the file onto the Library and drop it anywhere in the room
 
 ## What comes across cleanly
 
-Importing loses nothing. Bunzai keeps a complete copy of the original card, then lifts the parts you actually work with into fields you can see and edit directly:
+Bunzai keeps the original card data alongside the fields you can edit directly:
 
 - Name, description, personality, and scenario
 - First message and any alternate greetings
@@ -45,7 +45,7 @@ A standalone lorebook downloaded from Chub is a plainer case: its entries, keywo
 
 This is the honest part, and it is simple once you see the rule, with one wrinkle Chub adds.
 
-A character card's same-app round-trip keeps everything. Import a Chub card, edit it, and export it back to Chub, and you get everything back, down to the byte, because Bunzai kept the original card and only re-wrote the fields you changed.
+A same-format export preserves the original card's field values and applies your edits. It does not promise an identical file: JSON formatting and the output container can change. Check the export receipt for unsupported fields when choosing a different format.
 
 Converting to a different app is where things drop. Only the shared character crosses over. Chub's private extras, the bits that only mean something on the site, are left behind on purpose.
 
@@ -83,7 +83,7 @@ Chub is not a target for a lorebook piece; there is no Chub lorebook format for 
 
 ## Common questions
 
-- **Will my card come back exactly as it was?** Yes, if you export it back to Chub or SillyTavern; both read the same file shape, so nothing is lost.
+- **Will my card come back exactly as it was?** Exporting to Chub preserves the original field values alongside your edits. The output file can use different formatting or a different container, so it need not have identical bytes.
 - **I imported a `.png`. Do I get a `.png` back?** Bunzai writes cards as `.json`. Chub and SillyTavern both read a `.json` card the same as a picture, so it loads fine, you just get a file instead of an image.
 - **Does my character's picture come with it?** Bunzai keeps the card art and shows it as the piece's portrait, and it holds onto the original file you imported.
 - **What about the background image and custom CSS?** They stay with the card's Chub extras and are not copied into another app's file, because Bunzai does not move one site's private extras into another.

@@ -8,9 +8,7 @@
  * than correctness. The coherence checker learns nothing from this file, and that is the honest
  * distinction between the two halves of the catalog.
  *
- * Same discipline as the structural half: these are structural descriptions written from a survey of
- * 22 community presets, not anyone's prompt text, and the skeletons are original and deliberately
- * plain.
+ * Entries describe behavior and policy patterns without reproducing preset prompt text.
  */
 import type { BlockPattern } from "./patterns";
 
@@ -27,9 +25,8 @@ export const BEHAVIOUR_PATTERNS: readonly BlockPattern[] = [
       + " identity, distinct from any played character, is a common second shape.",
     emits: "text",
     macros: ["{{char}}", "{{user}}"],
-    prevalence: 10,
     hazards: [{
-      failure: "The contract says one thing and a later block quietly contradicts it.",
+      failure: "The contract says one thing and a later block contradicts it.",
       silent: "Both blocks render, and the model resolves the conflict however it likes.",
     }],
   },
@@ -44,7 +41,6 @@ export const BEHAVIOUR_PATTERNS: readonly BlockPattern[] = [
       + " conventions rather than sentence texture.",
     emits: "conditional",
     macros: ["{{setvar::name::value}}", "{{trim}}"],
-    prevalence: 9,
   },
   {
     id: "content-gate",
@@ -58,7 +54,6 @@ export const BEHAVIOUR_PATTERNS: readonly BlockPattern[] = [
       + " changes behaviour in several places at once.",
     emits: "conditional",
     macros: ["{{setvar::name::value}}", "{{trim}}"],
-    prevalence: 10,
     hazards: [{
       failure: "A tier that sets a flag other blocks read couples two settings that look independent.",
       silent: "Changing the tier changes behaviour somewhere the user was not looking.",
@@ -68,16 +63,15 @@ export const BEHAVIOUR_PATTERNS: readonly BlockPattern[] = [
     id: "compliance-shaping",
     name: "Compliance shaping",
     purpose:
-      "Argue the model into proceeding, as distinct from declaring a ceiling. Present in a minority of"
-      + " the surveyed presets and effectively always shipped disabled.",
+      "Argue the model into proceeding, as distinct from declaring"
+      + " the story's content limits.",
     mechanics:
       "Distinguished from a content ceiling by mechanism rather than topic: it addresses the model's"
-      + " willingness rather than the story's limits, and the surveyed implementations lean on role"
+      + " willingness rather than the story's limits, and may use role"
       + " and placement to do it. Catalogued here because someone importing a stranger's preset should"
       + " be able to find out whether it contains one; Bunzai ships no starting block for it.",
     emits: "text",
     macros: [],
-    prevalence: 6,
     hazards: [{
       failure: "It is the block class most likely to be present in an imported preset without the importer noticing.",
       silent: "It is normally disabled on arrival, so it does not show up in a rendered prompt until enabled.",
@@ -95,7 +89,6 @@ export const BEHAVIOUR_PATTERNS: readonly BlockPattern[] = [
       + " are trigger-scoped: they describe when the styling applies, not just what it looks like.",
     emits: "text",
     macros: ["{{setvar::name::value}}", "{{getvar::name}}", "{{char}}"],
-    prevalence: 9,
   },
   {
     id: "memory-handoff",
@@ -110,7 +103,6 @@ export const BEHAVIOUR_PATTERNS: readonly BlockPattern[] = [
       + " result actually fits somewhere else.",
     emits: "conditional",
     macros: ["{{user}}", "{{char}}", "{{getvar::name}}", "{{trim}}"],
-    prevalence: 5,
   },
   {
     id: "variety",
@@ -123,7 +115,6 @@ export const BEHAVIOUR_PATTERNS: readonly BlockPattern[] = [
       + " less reliable.",
     emits: "text",
     macros: ["{{roll:1d6}}", "{{setvar::name::value}}"],
-    prevalence: 4,
     hazards: [{
       failure: "The engine-side form resolves at build time, so the same value cannot be referred to later.",
       silent: "A later block reading it gets a different number, not an error.",
@@ -142,7 +133,6 @@ export const BEHAVIOUR_PATTERNS: readonly BlockPattern[] = [
       + " editing it. Always shipped disabled.",
     emits: "text",
     macros: ["{{char}}", "{{user}}"],
-    prevalence: 4,
     hazards: [{
       failure: "It contradicts the persona frame on purpose, so enabling it with the wrong frame produces incoherent instructions.",
       silent: "Both blocks render and the model picks one.",
@@ -161,6 +151,5 @@ export const BEHAVIOUR_PATTERNS: readonly BlockPattern[] = [
       + " also the most promising thing to read when classifying somebody else's preset.",
     emits: "nothing",
     macros: ["{{// comment}}", "{{trim}}"],
-    prevalence: 7,
   },
 ];

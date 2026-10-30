@@ -28,7 +28,7 @@ function groupOf(c: PresetChoice): ChoiceGroup | null {
   if (c.type === "one") return typeof c.default === "string" && ids.has(c.default) ? { ...base, type: "select_one", options, default: c.default, prompts: [] } : null;
   const min = typeof c.min === "number" && Number.isInteger(c.min) && c.min > 0 ? Math.min(c.min, options.length) : undefined;
   const fallback = strArray(c.default).filter((id) => ids.has(id));
-  // A default that breaks its own minimum can never resolve; the group is refused rather than shipped fighting the person.
+  // A default that breaks its minimum cannot resolve, so the group is rejected.
   if (min !== undefined && fallback.length < min) return null;
   return { ...base, type: "select_many", options, default: fallback, prompts: [], ...(min !== undefined ? { min } : {}) };
 }

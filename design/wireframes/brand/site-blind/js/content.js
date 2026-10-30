@@ -119,7 +119,7 @@ BUNZAI.guides = [
         body: [
           "Download Bunzai for your computer from the <a href=\"#/download\">Download page</a>. It works on Windows, Mac, and Linux, and it is free.",
           "Open the file you downloaded. On Windows, the first time you open it, Bunzai adds itself to your Start menu so you can find it again later.",
-          "Windows may show a blue box that says it does not recognize the app. That is normal for new apps. <a href=\"#/help/something-wrong/windows-warning\">Here is what to do.</a>",
+          "This Windows build is unsigned, so Windows may show a reputation warning. Check the release page for a checksum for this exact file; if none is published or it does not match, do not open the download and use the repository's build-from-source instructions.",
         ],
       },
       {
@@ -354,8 +354,8 @@ BUNZAI.guides = [
         id: "windows-warning",
         h: "Windows says it does not recognize the app",
         body: [
-          "New apps that are not yet signed show a blue box that says Windows protected your PC. Bunzai is free and open source, and you can read every line of it on GitHub.",
-          "To open it anyway, choose <b>More info</b>, then <b>Run anyway</b>. You only need to do this once.",
+          "This Windows build is unsigned, so Windows may show a reputation warning. The warning does not establish whether the file is safe. Check the release page for a checksum for this exact file and compare it if published.",
+          "If no checksum is published or it does not match, do not open the download; use the repository's build-from-source instructions instead.",
         ],
       },
       {

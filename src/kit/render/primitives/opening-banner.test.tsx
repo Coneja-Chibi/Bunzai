@@ -15,7 +15,7 @@ test("large opening banner renders every friendly stage cue", async () => {
       expect(frame).toContain(String.fromCodePoint(codePoint));
     }
     expect(frame).toContain("Hey, welcome in.");
-    expect(frame).toContain("Two promises:");
+    expect(frame).toContain("Kit sends conversation");
   } finally {
     await renderer.renderer.destroy();
   }
@@ -55,7 +55,7 @@ test("compact terminals keep the complete greeting under a small rainbow mark", 
     expect(frame).toContain("Hey, welcome in.");
     expect(frame).toContain("Everything you've made");
     expect(frame).toContain("Try saying:");
-    expect(frame).toContain("Two promises:");
+    expect(frame).toContain("Kit sends conversation");
     expect(frame).toContain("Ready?");
     expect(frame).toContain("Go make something you love.");
   } finally {

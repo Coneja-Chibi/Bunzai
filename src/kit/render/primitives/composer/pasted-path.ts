@@ -1,16 +1,10 @@
 /**
- * A file path somebody typed or pasted, recognised in what they wrote.
+ * Recognises file paths typed or pasted into the composer's draft.
  *
- * WHY THIS IS A BOUNDARY AND NOT A CONVENIENCE. Kit's folder grants exist so the MODEL cannot wander
- * the disk: it reads inside folders a person pointed it at, and nowhere else. That is the right rule
- * for a model and the wrong one for a person, and the difference showed up the first time somebody
- * handed Kit a path and was told to run a sharing command first - correctly reading it as an
- * arbitrary step, because they had just said which file they meant.
+ * This boundary distinguishes paths in the person's draft from paths assembled by the model.
  *
- * A path the PERSON wrote is consent, exactly as picking a file in a dialog is. A path the MODEL
- * assembled is not. So this only ever runs over the composer's own draft, and what it mints is a
- * grant for ONE FILE - never the folder around it, which would turn "look at this card" into handing
- * over a Downloads directory.
+ * A path written by the person can request access to that one file; a path assembled by the model
+ * cannot. This only examines the composer's draft and returns file candidates, never folder grants.
  *
  * Pure and total: text in, candidates out. It touches no filesystem, so it cannot be the thing that
  * decides a path exists - the caller stats it, and a path that is not a real file simply never
@@ -41,13 +35,10 @@ const KNOWN = new Set([
 ]);
 
 /**
- * How many segments a bare path needs before it counts as one somebody meant.
+ * Minimum segments required to recognize a bare folder path.
  *
- * A FOLDER has no extension, so the file rule cannot vet it and something else has to. This is that
- * something, and it is deliberately weak: `C:\Users` or `/home` is a root somebody is gesturing at,
- * while `C:\Users\me\Downloads\SillyTavern\data\default-user\OpenAI Settings` is a place they went
- * and got. The real guard is not this count - it is that the caller STATS the path, so nothing that
- * does not exist ever becomes a grant, and it says out loud what it opened.
+ * Folders have no extension, so this depth check excludes drive roots. The caller still stats each
+ * candidate and reports what it opened; this count alone never grants access.
  */
 const MIN_FOLDER_SEGMENTS = 3;
 
@@ -60,10 +51,10 @@ export interface PastedPath {
   /**
    * Longer readings of the same path, longest first, for an UNQUOTED path that may contain spaces.
    *
-   * `C:\...\default-user\OpenAI Settings` typed without quotes is genuinely ambiguous: the path may
+    * A path with spaces typed without quotes is ambiguous: it may
    * end at "OpenAI", or the next word may be part of it. Nothing in the text can settle that - but
    * the FILESYSTEM can. The caller stats these longest-first and takes the first that exists, which
-   * is how a real folder resolves without the person having to quote it.
+    * is how a folder path resolves without requiring quotes.
    *
    * Bounded to a few words: a path is allowed to contain spaces, not to swallow the sentence.
    */
@@ -97,12 +88,8 @@ function longerReadings(draft: string, path: string, end: number): string[] {
 /**
  * Every path in a draft, in the order they appear, de-duplicated.
  *
- * FILES AND FOLDERS BOTH, and getting that wrong was a real miss. The first version required a known
- * extension and excluded bare folders on the reasoning that "a person who writes a bare folder is
- * describing, not handing over". A real report disproved it: someone pasted
- * `...\default-user\OpenAI Settings` and asked Kit to copy everything in it, and Kit answered that
- * the folder was not shared - the exact friction this was built to remove, still there, because I
- * had guessed at intent instead of reading it.
+ * Recognizes files by extension and folders by depth. This allows a person to identify either kind
+ * of path in the draft.
  *
  * So a file needs a known extension (an extension is what makes a file recognisable as one), and a
  * folder needs enough segments not to be a gesture at a drive root. Neither test is the real guard:
@@ -120,7 +107,7 @@ export function pastedPaths(draft: string): PastedPath[] {
       const raw = match[1];
       if (raw === undefined || match.index === undefined) continue;
       const path = raw.trim().replace(/[.,;:!?)\]]+$/, "");
-      // A hidden last segment (.ssh, .config) is configuration, never something somebody hands over. It has
+      // Hidden final segments (.ssh, .config) have no recognized extension. They have
       // no extension to recognise, so without this check it would pass as a folder.
       if (/(?:^|[\\/])\.[^\\/.]*$/.test(path)) continue;
       const ext = extensionOf(path);

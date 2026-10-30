@@ -313,37 +313,37 @@ test("an edited lorebook entry re-embeds the change while raw-only residue survi
   expect(back.data.character_book.entries[0].extensions.vectorized).toBe(true); // untouched residue
 });
 
-// -- Real-corpus de-original: the official Seraphina.png embedded 4-entry book carries the ST-extended
+// -- Synthetic PNG de-original: the embedded 4-entry book carries the ST-extended
 // per-entry fields (vectorized, group_override, use_group_scoring, automation_id, display_index) that
 // were original-only residue. Prove they now reach first-class canonical slots AND survive an edit to the
 // wire. Twin PRESENT (extract the book so its original twin exists), else a dropped edit hides behind it. --
 
-const seraphinaPng = new Uint8Array(
-  readFileSync(join(import.meta.dir, "../../../samples/sillytavern/characters/Seraphina.png")),
+const syntheticPng = new Uint8Array(
+  readFileSync(join(import.meta.dir, "../../../samples/sillytavern/characters/synthetic-character.png")),
 );
 
-/** Extract Seraphina's character + its embedded book (with the book's original twin) for de-original tests. */
-function seraphina(): { character: CanonicalCharacter; lb: CanonicalLorebook } {
-  const character = stCharacter.toCanonical({ bytes: seraphinaPng });
+/** Extract the synthetic character + embedded book (with its original twin) for de-original tests. */
+function syntheticCharacter(): { character: CanonicalCharacter; lb: CanonicalLorebook } {
+  const character = stCharacter.toCanonical({ bytes: syntheticPng });
   const lb = extractCharacterBook(character.original?.sillytavern?.raw)!;
   return { character, lb };
 }
 
-test("real Seraphina book: ST-extended entry fields de-original to first-class canonical slots", () => {
-  const { lb } = seraphina();
+test("synthetic PNG book: ST-extended fields de-original to first-class canonical slots", () => {
+  const { lb } = syntheticCharacter();
   const e0 = lb.body.entries[0]!;
-  // present-and-read (Seraphina authored these at their defaults; the point is they are now VISIBLE)
+  // present-and-read at their source defaults; the point is that they are now VISIBLE
   expect(e0.vectorized).toBe(false);
   expect(e0.groupOverride).toBe(false);
   expect(e0.useGroupScoring).toBe(false);
   expect(e0.automationId).toBe("");
-  // display_index is the field Seraphina proves is a DISTINCT authored axis: 0..3 while sortOrder is uniform
+  // display_index is a DISTINCT authored axis: 0..3 while sortOrder is uniform
   expect(lb.body.entries.map((e) => e.displayIndex)).toEqual([0, 1, 2, 3]);
   expect(new Set(lb.body.entries.map((e) => e.sortOrder)).size).toBe(1); // all equal -> not regenerable from it
 });
 
-test("real Seraphina book: editing a de-kept field reaches the wire (twin present, not dropped)", () => {
-  const { character, lb } = seraphina();
+test("synthetic PNG book: editing a de-kept field reaches the wire (twin present, not dropped)", () => {
+  const { character, lb } = syntheticCharacter();
   lb.body.entries[0]!.vectorized = true; // twin holds false
   lb.body.entries[0]!.groupOverride = true; // twin holds false
   lb.body.entries[0]!.displayIndex = 99; // twin holds 0
@@ -354,8 +354,8 @@ test("real Seraphina book: editing a de-kept field reaches the wire (twin presen
   expect(ext.display_index).toBe(99);
 });
 
-test("real Seraphina book: an unedited re-embed leaves the character_book byte-identical", () => {
-  const { character, lb } = seraphina();
+test("synthetic PNG book: an unedited re-embed leaves the character_book byte-identical", () => {
+  const { character, lb } = syntheticCharacter();
   const rawBook = (character.original?.sillytavern?.raw as { data: { character_book: unknown } }).data.character_book;
   const back = JSON.parse(stCharacter.fromCanonical(character, { lorebooks: [lb] }).text ?? "");
   // de-keeping the fields must NOT perturb the twin when nothing was edited

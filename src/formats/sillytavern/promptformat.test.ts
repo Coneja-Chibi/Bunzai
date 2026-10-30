@@ -1,6 +1,6 @@
 /**
- * SillyTavern instruct and context templates as one prompt-format piece. Fixtures are verbatim files
- * from a real ST data folder (samples/sillytavern/templates/). A single-half piece writes back the
+ * SillyTavern instruct and context templates as one prompt-format piece. Fixtures preserve the
+ * structural settings from the ST data folder (samples/sillytavern/templates/). A single-half piece writes back the
  * file it came from; both halves write ST's master-import wrapper, and that wrapper routes back here
  * through the registry rather than to the preset codec.
  */

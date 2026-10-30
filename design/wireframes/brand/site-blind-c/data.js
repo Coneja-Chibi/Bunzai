@@ -197,7 +197,7 @@ window.BUNZAI_DATA = {
       title: "Something went wrong",
       blurb: "Common hiccups and how to get past them.",
       sections: [
-        { id: "windows-warning", h: "Windows says it doesn't recognize the app", p: ["Bunzai is new, so Windows may show a blue box saying it protected your PC. Click More info, then Run anyway. You only need to do this once."] },
+        { id: "windows-warning", h: "Windows says it doesn't recognize the app", p: ["This Windows build is unsigned, so Windows may show a reputation warning. The warning does not establish whether the file is safe. Check the release page for a checksum for this exact file and compare it if published. If no checksum is published or it does not match, do not open the download; use the repository's build-from-source instructions."] },
         { id: "no-reply", h: "The character doesn't reply", p: ["Check that your AI key is added in Settings and that your provider account has credit. The error message in the scene says which one it is."] },
         { id: "import-failed", h: "A card won't import", p: ["Some files are damaged or use a format Bunzai doesn't know yet. The import report says what went wrong. The rest of your files still come in."] },
         { id: "lost-something", h: "I deleted something by mistake", p: ["Look in the Trash. Deleted things stay there for 3 days and can be restored in one click."] }

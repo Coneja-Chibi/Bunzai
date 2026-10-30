@@ -6,21 +6,11 @@
  * with no edit here. The schemas come from the tools' own zod definitions. Adding a capability to Kit
  * adds it to every coding client that has this registered.
  *
- * TWO POSTURES, AND THE DIFFERENCE IS WHO HOLDS THE GATE.
- *
- * Registered by a person with their own client (`claude mcp add`, or the equivalent in Cursor, Zed,
- * Codex), the client asks before it runs a tool. That prompt is the gate, it belongs to the person
- * sitting there, and it is the reason the full belt is safe to offer: nothing runs that they did not
- * agree to. This is the default.
- *
- * Spawned by Kit for the Claude subscription provider, it is started with `--permission-mode
- * bypassPermissions`, because two gates asking about one call is worse than one. That turns the
- * client's prompt OFF, and Kit's own gate cannot reach across a process boundary, so that path has no
- * gate at all and must run read-only. It passes `--read-only` for exactly that reason.
- *
- * Getting this backwards in either direction is bad in a different way: read-only everywhere makes
- * the server useless for the coding work it exists to support, and writes everywhere means the
- * provider path can delete somebody's library with nobody asked.
+ * Registered clients control tool approval through their own settings, including auto-approval.
+ * This server does not supply an interactive confirmation gate. The default offers write tools;
+ * use --read-only when the client should receive only read capabilities. Kit's subscription-provider
+ * subprocess uses that read-only posture because Kit's in-process approval gate cannot authorize
+ * writes in another process. Provider SDK permission settings are owned by claude-cli.ts.
  *
  * stdout carries protocol frames and nothing else. Diagnostics go to stderr, because one stray line
  * on stdout is a malformed frame and the client drops the session.
@@ -56,7 +46,7 @@ export async function runMcpServer(options: McpRunOptions = {}): Promise<void> {
     options.readOnly
       ? `serving ${tools.length} read-only tools from ${bridge.studioDir}`
       : `serving ${tools.length} tools from ${bridge.studioDir};`
-        + " your client asks before each one runs",
+        + " tool approvals depend on your MCP client settings; use --read-only to disable writes",
   );
   if (library?.state === "locked") log("the library is locked: every tool will say so until it is unlocked in Bunzai");
   await serve({ tools: toolSpecs(tools), dispatch: makeDispatch(tools, { bridge }), log });

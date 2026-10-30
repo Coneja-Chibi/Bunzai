@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/concepts/persona-editor",
   "sourcePath": "docs/reference/concepts/persona-editor.md",
-  "sourceHash": "sha256:235b2a040e17a31ab1c50118396c3a016ce6d615b94901feb11da285b4cb756e",
-  "summary": "Persona editor is the Workbench {{user}} sheet that reuses the character editor chassis on purpose: same bento three-column grid, BentoCard tiles, and portrait face plate from editor-styles under src/ui/apps/workbench/persona. Left holds PortraitCard writing media.portrait as data-URI without character variant strip, plus KnowledgeRail for knowledgeRefs. Middle holds Identity with tagline pronouns BRIEF honesty line, section tiles Appearance Body Personality Quirks History, and flat Identity Text for section-less personas. Right holds shared SwatchRow and PaletteControl colors, Prompt Injection stops per Write-for via injectionsForProfile, LIVE PREVIEW from real core/persona/inject.ts, and default-persona star. Compiler test landmine: brief never injects and content never becomes the card blurb. Reuse law on this surface requires components catalog first before any new control. The shelf covers Library persona cards brief lines and Default badge. The wires cover rcpersona ST backup Lumiverse Marinara and Agnai limits without inventing extra formats.",
+  "sourceHash": "sha256:5ede4a8c12096953fd395a884e20793e1698c75ae1f318cc71a2760d469bdc39",
+  "summary": "Persona editor is the Workbench {{user}} sheet that reuses the character editor chassis: the three-column grid, BentoCard tiles, and portrait face plate. PortraitCard writes the persona portrait and KnowledgeRail manages knowledgeRefs. Identity contains the tagline, pronouns, brief, section tiles, and flat Identity Text. The right column has shared color controls, prompt-injection stops selected by the Write-for profile, a preview from core/persona/inject.ts, and the default-persona star. The compiler contract keeps brief out of injected content and prevents content from becoming the card blurb. The page records the component-catalog reuse rule and describes the Library persona shelf. Its Wires section covers rcpersona, RoleCall's V2 persona export, SillyTavern persona backups, Lumiverse, Marinara, and the absence of a standalone Agnai persona file wire. For SillyTavern backups, Bunzai imports the default persona and retains the other personas' field values for export; this is semantic value preservation, not byte-identical output.",
   "topics": [
     "persona editor chassis",
     "character bento reuse",
@@ -48,11 +48,11 @@
       "slug": "the-wires",
       "title": "The wires",
       "level": 2,
-      "sourceHash": "sha256:7e5e377dd3596769d7d1c9fdb502ce1841c9dd7a271e0825cd9a1b58c7606e3e",
-      "summary": "Supported persona wires include rcpersona with RoleCall V2 side-channel export, SillyTavern personas backup that imports the default persona and seals the entire backup so others re-emit byte-true, Lumiverse account objects with pronoun triplet as data, and Marinara persona where theming and stat bars ride sealed. Codec headers document detection firewalls. Agnai persona has no real standalone file wire and is served by the structured-persona component on character cards.",
+      "sourceHash": "sha256:28f9d1c221fccdc65d6343c78fde977dbd70bf4ab2d352edd62bdf0dde2935e8",
+      "summary": "Supported persona wires include rcpersona and RoleCall's V2 side-channel export; SillyTavern persona backups; Lumiverse account objects with pronoun triplet data; and Marinara personas whose theming and stat bars remain in escrow. For a SillyTavern backup, Bunzai imports the default persona and retains the other personas' field values for export; serialized output is not promised to be byte-identical. Codec headers document detection firewalls. Agnai has no standalone persona file wire and uses the structured-persona component on character cards.",
       "topics": [
         "rcpersona RoleCall",
-        "ST personas backup seal",
+        "ST backup field values survive",
         "Lumiverse pronouns",
         "Marinara sealed theming",
         "Agnai no standalone wire"

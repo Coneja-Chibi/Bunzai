@@ -64,7 +64,7 @@ const workbenchTour: Tour = {
     {
       id: "done",
       title: "That is the whole tour",
-      body: "Poke around, nothing here can break. Need it again? The ? in the corner replays this any time.",
+      body: "Try the editor with a new card. The ? in the corner replays this tour any time.",
     },
   ],
 };

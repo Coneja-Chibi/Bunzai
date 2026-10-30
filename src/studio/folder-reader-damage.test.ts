@@ -1,10 +1,7 @@
 /**
  * What the folder import SAYS about a file it will not bring in (folder-reader.ts).
  *
- * A real studio put 145 files behind this notice and the message on 123 of them was the word
- * `undefined`; the rest said the files did not match a data version, which was not true either.
- * These tests are about the sentence, because the sentence is the entire product here - the file is
- * on disk and unchanged, and the only thing Bunzai actually delivers is an accurate reason.
+ * These tests verify that rejected files receive accurate reasons and actionable guidance.
  */
 import { describe, expect, test } from "bun:test";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -43,11 +40,8 @@ describe("the reason a file is not listed", () => {
 
   test("A BADLY NAMED FILE THAT IS NOT OURS IS NOT TOLD TO RENAME ITSELF", async () => {
     /**
-     * The distinction this file exists for. Both files have names an id cannot hold, so both used to
-     * report identically - and the advice attached to that reason is "rename it", which is real for
-     * the case above and a wild goose chase for this one. Renaming this file changes nothing: no
-     * format here recognises a numeric-keyed map, which is the shape four of the leftovers in a real
-     * studio actually had.
+     * Filename validity and content validity are separate checks. A validly named file can still
+     * have content that no supported format recognizes, so renaming cannot resolve that case.
      */
     await withTempDir("bunzai-damage-", async (dir) => {
       await studioWith(dir, {
@@ -61,8 +55,7 @@ describe("the reason a file is not listed", () => {
   });
 
   test("a file that is not JSON at all is still reported, never skipped", async () => {
-    // Reported rather than dropped: the inventory that silently skipped these is why a folder of
-    // 147 presets listed three and said nothing about the other 144.
+    // Malformed JSON is reported in the inventory rather than silently skipped.
     await withTempDir("bunzai-damage-", async (dir) => {
       await studioWith(dir, { "broken.json": "{ not json" });
       const { damaged } = await readStudioFolder(dir);

@@ -9,8 +9,8 @@
  *    entity: array phase, id, enabled, sortOrder, extras.
  *
  * Field map per design/REGEX-FORMATS.md "RisuAI" section: `in/out/type/flag/ableFlag/disabled`.
- * `disabled` is read tolerantly (reflex 13): only literal `true` counts as off; a malformed value
- * observed live (`"disabled":""`) is treated as enabled, never thrown on.
+ * `disabled` is read tolerantly: only literal `true` counts as off; the synthetic fixture covers
+ * the malformed empty-string case without claiming it is a current upstream export.
  *
  * R1 residual - omitted `type` default: RisuAI source (`_reference/RisuAI/src/ts/process/
  * scripts.ts`) declares `customscript.type: string` (REQUIRED, no default) and dispatches with
@@ -23,8 +23,7 @@
  * value is `editrequest`; the current RisuAI source's `ScriptMode` union is
  * `editinput|editoutput|editprocess|editdisplay` (`editprocess` = "modifies the text before
  * sending the HTTP request" per `mcp/risuaccess/client.ts`) and has NO `editrequest` member. Both
- * spellings were observed live on real `.risum` modules in this survey's own fixtures - reality
- * disagrees with the doc on the CURRENT name, not the phase. Both map to canonical phase
+ * spellings are exercised as synthetic compatibility inputs, not a live upstream corpus. Both map to canonical phase
  * "request"; the twin-overlay write path preserves whichever spelling was on the wire for an
  * unedited rule, and writes the current source-confirmed `editprocess` only for a freshly-set
  * "request" phase (never fabricates the deprecated `editrequest` spelling).

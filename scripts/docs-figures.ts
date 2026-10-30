@@ -31,7 +31,8 @@ const esc = (s: unknown): string =>
 
 /** Greedy word-wrap to a character budget; returns at most `maxLines` lines, last one ellipsised. */
 function wrap(s: string, chars: number, maxLines = 3): string[] {
-  const words = String(s ?? "").split(/\s+/).filter(Boolean);
+  const words = String(s ?? "").split(/\s+/).filter(Boolean)
+    .flatMap((word) => Number.isFinite(maxLines) ? [word] : word.match(new RegExp(`.{1,${chars}}`, "gu")) ?? []);
   const lines: string[] = [];
   let cur = "";
   for (const w of words) {
@@ -44,7 +45,7 @@ function wrap(s: string, chars: number, maxLines = 3): string[] {
   const rest = words.slice(lines.join(" ").split(/\s+/).filter(Boolean).length).join(" ");
   cur = lines.length === maxLines - 1 ? rest : cur;
   if (cur) {
-    if (cur.length > chars) cur = cur.slice(0, chars - 1) + "…";
+    if (Number.isFinite(maxLines) && cur.length > chars) cur = cur.slice(0, chars - 1) + "…";
     lines.push(cur);
   }
   return lines.length ? lines : [""];
@@ -61,10 +62,12 @@ const CSS =
   `.l{font-size:12.5px;font-weight:650}.s{font-size:11px;fill:${MUTE}}.c{font-size:11px;fill:${MUTE}}` +
   `.th{font-size:11px;font-weight:700;fill:${MUTE};letter-spacing:.04em}`;
 
+type MatrixCell = string | number | boolean | { v: string | number | boolean; hi?: boolean; lvl?: number };
+
 interface Spec {
   type: string; fig?: string; title?: string; caption?: string;
   steps?: Array<{ label: string; sub?: string; value?: number; color?: string }>;
-  cols?: string[]; rows?: Array<{ label: string; cells: string[] }>;
+  cols?: string[]; rows?: Array<{ label: string; cells: MatrixCell[] }>;
   root?: TreeNode;
 }
 interface TreeNode { label: string; kind?: string; sum?: string; children?: TreeNode[] }
@@ -120,25 +123,32 @@ function renderFunnel(s: Spec): { w: number; h: number; svg: string } {
   return { w, h, svg: frame(w, h, s.fig ?? "", s.title ?? "", body) };
 }
 
-function renderMatrix(s: Spec): { w: number; h: number; svg: string } {
+export function renderMatrix(s: Spec): { w: number; h: number; svg: string } {
   const cols = s.cols ?? [], rows = s.rows ?? [];
-  const labW = 170, cellW = 150, rowH = 34, top = 52, padX = 20;
+  const labW = 200, cellW = 180, top = 52, padX = 20, lh = 16;
   const w = padX * 2 + labW + cols.length * cellW;
-  const h = top + (rows.length + 1) * rowH + 12;
-  let body = `<rect x="${padX}" y="${top}" width="${labW + cols.length * cellW}" height="${(rows.length + 1) * rowH}" rx="6" fill="${CARD}" stroke="${HAIR}"/>`;
-  // header
-  cols.forEach((c, j) => { body += txt(padX + labW + j * cellW + 10, top + 22, c, "th"); });
-  // rows
-  rows.forEach((r, i) => {
-    const y = top + (i + 1) * rowH;
+  const cellText = (cell: MatrixCell): string => {
+    const value = typeof cell === "object" ? cell.v : cell;
+    return typeof value === "boolean" ? value ? "Yes" : "No" : String(value);
+  };
+  const headers = cols.map((c) => wrap(c, 22, Infinity));
+  const headerH = Math.max(1, ...headers.map((c) => c.length)) * lh + 20;
+  const content = rows.map((r) => [wrap(r.label, 24, Infinity), ...r.cells.map((c) => wrap(cellText(c), 22, Infinity))]);
+  const heights = content.map((cells) => Math.max(...cells.map((c) => c.length)) * lh + 20);
+  const tableH = headerH + heights.reduce((sum, height) => sum + height, 0);
+  const h = top + tableH + 12;
+  let body = `<style>.mc{font-size:12px}.mh{font-size:12px;font-weight:700}</style><rect x="${padX}" y="${top}" width="${labW + cols.length * cellW}" height="${tableH}" rx="6" fill="${CARD}" stroke="${HAIR}"/>`;
+  headers.forEach((c, j) => { body += lines(padX + labW + j * cellW + 10, top + 22, c, "mh", lh); });
+  let y = top + headerH;
+  content.forEach((cells, i) => {
     body += `<line x1="${padX}" y1="${y}" x2="${padX + labW + cols.length * cellW}" y2="${y}" stroke="${HAIR}"/>`;
-    body += lines(padX + 10, y + 21, wrap(r.label, 22, 2), "l", 13);
-    (r.cells ?? []).forEach((cell, j) => {
-      body += lines(padX + labW + j * cellW + 10, y + 21, wrap(cell, 20, 2), "s", 13);
+    body += lines(padX + 10, y + 22, cells[0]!, "l", lh);
+    cells.slice(1).forEach((cell, j) => {
+      body += lines(padX + labW + j * cellW + 10, y + 22, cell, "mc", lh);
     });
+    y += heights[i]!;
   });
-  // vertical rule after label column
-  body += `<line x1="${padX + labW}" y1="${top}" x2="${padX + labW}" y2="${top + (rows.length + 1) * rowH}" stroke="${HAIR}"/>`;
+  body += `<line x1="${padX + labW}" y1="${top}" x2="${padX + labW}" y2="${top + tableH}" stroke="${HAIR}"/>`;
   return { w, h, svg: frame(w, h, s.fig ?? "", s.title ?? "", body) };
 }
 
@@ -183,44 +193,48 @@ function collectSpecs(obj: unknown, out: Array<[string, Spec]>): void {
 
 interface ManifestEntry { file: string; figid: string; type: string; title: string; caption: string; svg: string; w: number; h: number }
 
-const files = readdirSync(FIG_DIR).filter((f) => f.endsWith(".js")).sort();
-const svgs: Array<[string, string]> = [];
-const manifest: ManifestEntry[] = [];
+async function main(): Promise<void> {
+  const files = readdirSync(FIG_DIR).filter((f) => f.endsWith(".js")).sort();
+  const svgs: Array<[string, string]> = [];
+  const manifest: ManifestEntry[] = [];
 
-for (const f of files) {
-  const mod = (await import(pathToFileURL(join(FIG_DIR, f)).href)) as Record<string, unknown>;
-  const raw = (mod.default ?? mod.figures ?? mod) as unknown;
-  const specs: Array<[string, Spec]> = [];
-  collectSpecs(raw, specs);
-  const base = basename(f, ".js");
-  for (const [figid, spec] of specs) {
-    const r = RENDER[spec.type]!(spec);
-    const name = `${base}__${figid}.svg`;
-    svgs.push([name, r.svg + "\n"]);
-    manifest.push({
-      file: f, figid, type: spec.type, title: spec.title ?? "", caption: spec.caption ?? "",
-      svg: `docs/generated/figures/${name}`, w: r.w, h: r.h,
-    });
+  for (const f of files) {
+    const mod = (await import(pathToFileURL(join(FIG_DIR, f)).href)) as Record<string, unknown>;
+    const raw = (mod.default ?? mod.figures ?? mod) as unknown;
+    const specs: Array<[string, Spec]> = [];
+    collectSpecs(raw, specs);
+    const base = basename(f, ".js");
+    for (const [figid, spec] of specs) {
+      const r = RENDER[spec.type]!(spec);
+      const name = `${base}__${figid}.svg`;
+      svgs.push([name, r.svg + "\n"]);
+      manifest.push({
+        file: f, figid, type: spec.type, title: spec.title ?? "", caption: spec.caption ?? "",
+        svg: `docs/generated/figures/${name}`, w: r.w, h: r.h,
+      });
+    }
+  }
+
+  const manifestJson = JSON.stringify(manifest, null, 2) + "\n";
+
+  if (checkOnly) {
+    let stale = false;
+    const cmp = (path: string, body: string): void => {
+      let existing = "";
+      try { existing = readFileSync(path, "utf8"); } catch { console.error(`docs-figures:check: missing ${relative(ROOT, path)}`); stale = true; return; }
+      if (existing !== body) { console.error(`docs-figures:check: ${relative(ROOT, path)} is stale`); stale = true; }
+    };
+    cmp(MANIFEST, manifestJson);
+    for (const [name, svg] of svgs) cmp(join(OUT_DIR, name), svg);
+    if (stale) { console.error("docs-figures:check: run `bun run scripts/docs-figures.ts` and commit."); process.exit(1); }
+    console.log(`docs-figures:check: ${svgs.length} figures current`);
+  } else {
+    mkdirSync(OUT_DIR, { recursive: true });
+    for (const [name, svg] of svgs) writeFileSync(join(OUT_DIR, name), svg, "utf8");
+    writeFileSync(MANIFEST, manifestJson, "utf8");
+    const byType = manifest.reduce<Record<string, number>>((a, m) => ((a[m.type] = (a[m.type] ?? 0) + 1), a), {});
+    console.log(`wrote ${svgs.length} figure SVGs + figures.json (${Object.entries(byType).map(([k, v]) => `${v} ${k}`).join(", ")})`);
   }
 }
 
-const manifestJson = JSON.stringify(manifest, null, 2) + "\n";
-
-if (checkOnly) {
-  let stale = false;
-  const cmp = (path: string, body: string): void => {
-    let existing = "";
-    try { existing = readFileSync(path, "utf8"); } catch { console.error(`docs-figures:check: missing ${relative(ROOT, path)}`); stale = true; return; }
-    if (existing !== body) { console.error(`docs-figures:check: ${relative(ROOT, path)} is stale`); stale = true; }
-  };
-  cmp(MANIFEST, manifestJson);
-  for (const [name, svg] of svgs) cmp(join(OUT_DIR, name), svg);
-  if (stale) { console.error("docs-figures:check: run `bun run scripts/docs-figures.ts` and commit."); process.exit(1); }
-  console.log(`docs-figures:check: ${svgs.length} figures current`);
-} else {
-  mkdirSync(OUT_DIR, { recursive: true });
-  for (const [name, svg] of svgs) writeFileSync(join(OUT_DIR, name), svg, "utf8");
-  writeFileSync(MANIFEST, manifestJson, "utf8");
-  const byType = manifest.reduce<Record<string, number>>((a, m) => ((a[m.type] = (a[m.type] ?? 0) + 1), a), {});
-  console.log(`wrote ${svgs.length} figure SVGs + figures.json (${Object.entries(byType).map(([k, v]) => `${v} ${k}`).join(", ")})`);
-}
+if (import.meta.main) await main();

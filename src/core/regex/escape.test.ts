@@ -13,7 +13,7 @@ describe("escapeRegex", () => {
     expect(escapeRegex("a.b*c")).toBe("a\\.b\\*c");
     expect(escapeRegex("plain words")).toBe("plain words");
     expect(escapeRegex("[x](y){z}|w?+^$\\")).toBe("\\[x\\]\\(y\\)\\{z\\}\\|w\\?\\+\\^\\$\\\\");
-    for (const value of ["plain", ".*[]\\$", "😀."]) expect(escapedRegexLength(value)).toBe(escapeRegex(value).length);
+    for (const value of ["plain", ".*[]\\$", "\u{1f600}."]) expect(escapedRegexLength(value)).toBe(escapeRegex(value).length);
   });
 });
 

@@ -26,8 +26,8 @@
     "title": "two codecs, one folder",
     "caption": "The Agnai folder default-exports two adapters (src/formats/agnai/index.ts:363): the character reader and its native memory-book lorebook codec. Both are specific, self-identifying JSON shapes, so neither needs to yield to a more generic reader the way SillyTavern yields to RoleCall.",
     "svg": "docs/generated/figures/agnai__codecs.svg",
-    "w": 810,
-    "h": 166
+    "w": 960,
+    "h": 204
   },
   {
     "file": "archives.js",
@@ -46,8 +46,8 @@
     "title": "enforced where, proven where",
     "caption": "Decompression bounds are enforced and unit-tested at the shared core, then wired identically into both .charx and .byaf. Path-traversal safety is real for exactly one write path: a BYAF greeting id resolving to a re-packed scenario file. The other two places an untrusted entry name can reach a re-exported archive, a BYAF image row and a Risu asset filename, carry no traversal check and no test.",
     "svg": "docs/generated/figures/archives__assurance.svg",
-    "w": 510,
-    "h": 404
+    "w": 600,
+    "h": 600
   },
   {
     "file": "backyard-guide.js",
@@ -66,8 +66,8 @@
     "title": "two codecs, one folder",
     "caption": "The Backyard folder default-exports two adapters (src/formats/backyard/index.ts). Neither is a Tavern superset, and neither shares a wire shape with the other: one is a flat JSON object, the other a ZIP archive.",
     "svg": "docs/generated/figures/backyard__codecs.svg",
-    "w": 810,
-    "h": 166
+    "w": 960,
+    "h": 188
   },
   {
     "file": "backyard.js",
@@ -166,8 +166,8 @@
     "title": "one draft, three views",
     "caption": "Grid and Steps read the same draft; Bento and Playbill are two layouts inside Grid. Switching between them never changes a field's value, only how much of the card you see at once, and Save writes the same draft no matter which one is on screen.",
     "svg": "docs/generated/figures/editing__views.svg",
-    "w": 510,
-    "h": 200
+    "w": 600,
+    "h": 256
   },
   {
     "file": "escrow-and-roundtrip.js",
@@ -196,8 +196,8 @@
     "title": "one card, nine apps",
     "caption": "What each app's adapter actually reads and writes today. A blank cell isn't a bug, that app never had that piece to begin with, RisuAI has no persona file, Marinara only ever shipped regex and personas. Chub cards are the SillyTavern row: Chub has no wire shape of its own, it rides SillyTavern's Character Card v2/v3 with one extra block along for the ride. Bunzai's own native JSON isn't in this table, it's the local storage format every kind is already saved as, not a convert destination.",
     "svg": "docs/generated/figures/faq__support.svg",
-    "w": 810,
-    "h": 404
+    "w": 960,
+    "h": 424
   },
   {
     "file": "getting-started.js",
@@ -226,8 +226,8 @@
     "title": "one browse room, five views",
     "caption": "Grid, Show, and List read the same deck the same way everywhere. Shelf and Sets add deck-specific handles, an on/off switch and merge for Lorebooks, rule counts and a slow-rule flag for Regex sets, that a plain portrait card never carries.",
     "svg": "docs/generated/figures/library__views.svg",
-    "w": 510,
-    "h": 268
+    "w": 600,
+    "h": 536
   },
   {
     "file": "lorebook.js",
@@ -266,8 +266,8 @@
     "title": "three codecs, one folder",
     "caption": "The Lumiverse folder default-exports three adapters (src/formats/lumiverse/index.ts:265). The character adapter reads PNG, JSON, or the modules ZIP and writes .json or .charx; the other two are single-shape codecs.",
     "svg": "docs/generated/figures/lumiverse__codecs.svg",
-    "w": 810,
-    "h": 200
+    "w": 960,
+    "h": 256
   },
   {
     "file": "lumiverse.js",
@@ -296,8 +296,8 @@
     "title": "two codecs, one folder",
     "caption": "The Marinara folder default-exports two adapters (index.ts:98): marinara-regex reads a bare MarinaraRegexScript API dump array, marinara-persona reads a Marinara persona object. Both score 0.95, which is what lets marinara-regex outbid SillyTavern's 0.9 bid on the same findRegex/replaceString wire shape; see Detection.",
     "svg": "docs/generated/figures/marinara__codecs.svg",
-    "w": 810,
-    "h": 166
+    "w": 960,
+    "h": 172
   },
   {
     "file": "marinara.js",
@@ -366,8 +366,8 @@
     "title": "ten platforms, four kinds of piece",
     "caption": "Every column is a deck in the Library. \"No\" means that platform never shipped a file of that shape, not that Bunzai is missing an adapter. Marinara's character cards are SillyTavern-shaped underneath, so they read \"No\" here and go through the SillyTavern page instead.",
     "svg": "docs/generated/figures/platforms-readme__coverage.svg",
-    "w": 810,
-    "h": 438
+    "w": 960,
+    "h": 460
   },
   {
     "file": "preset.js",
@@ -436,8 +436,8 @@
     "title": "three codecs, one folder",
     "caption": "The Risu folder default-exports three adapters (src/formats/risu/index.ts:191). Each detects its own wire shape and maps to its own entity kind; risu-regex has two file homes with two different scores.",
     "svg": "docs/generated/figures/risu-format__codecs.svg",
-    "w": 810,
-    "h": 200
+    "w": 960,
+    "h": 256
   },
   {
     "file": "risu-format.js",
@@ -476,8 +476,8 @@
     "title": "four codecs, one folder",
     "caption": "The RoleCall folder default-exports four adapters (src/formats/rolecall/index.ts:405). Character and persona share the exact same CCv2/V3 wire shape; the literal extensions.rolecall.type === \"persona\" discriminator is what keeps them from tying at 1.0 on the same card (index.ts:344-356, persona.ts:48-62).",
     "svg": "docs/generated/figures/rolecall__codecs.svg",
-    "w": 810,
-    "h": 234
+    "w": 960,
+    "h": 292
   },
   {
     "file": "rolecall.js",
@@ -496,8 +496,8 @@
     "title": "two surfaces, enforced where, proven where",
     "caption": "Prose fields and the card backdrop preview run different DOMPurify configs because they sit behind different boundaries: prose fields have only the ambient app CSP, the backdrop preview adds a sandboxed srcdoc iframe with its own scoped CSP. Every row is verified at the string or jsdom level; none is verified against a live browser or the packaged WebView2 host.",
     "svg": "docs/generated/figures/safe-rendering__boundaries.svg",
-    "w": 510,
-    "h": 234
+    "w": 600,
+    "h": 548
   },
   {
     "file": "script-sandbox.js",
@@ -516,38 +516,38 @@
     "title": "enforced where, proven where",
     "caption": "The honest posture: the resource, protocol, token-absence, and handler-allowlist layers are enforced and unit-tested. Distinct-origin isolation is implemented and tested at the Bun HTTP/handler layer only. The packaged WebView2 host is not yet measured, so Plan 017 is BLOCKED and full isolation is not claimed.",
     "svg": "docs/generated/figures/script-sandbox__assurance.svg",
-    "w": 510,
-    "h": 404
+    "w": 600,
+    "h": 584
   },
   {
     "file": "secrets-and-keys.js",
     "figid": "defenses",
     "type": "matrix",
     "title": "each layer, and where it is proven",
-    "caption": "The loopback server layers are shipping code with automated Bun tests. The two highlighted rows are the honest gaps: the key vault is a draft M2 spec with no code yet, and packaged WebView2 origin isolation is unmeasured (Plan 017 BLOCKED). Nothing here is claimed fully isolated.",
+    "caption": "The loopback server and encrypted vault have automated source-level tests. Native keychain behavior needs recorded platform results. Packaged WebView2 origin isolation remains unmeasured; HTTP-layer evidence does not establish packaged isolation.",
     "svg": "docs/generated/figures/secrets-and-keys__defenses.svg",
-    "w": 510,
-    "h": 370
+    "w": 600,
+    "h": 696
   },
   {
     "file": "security-overview.js",
     "figid": "routes",
     "type": "matrix",
     "title": "each untrusted input, its own gate",
-    "caption": "bunzai does not funnel every input through one pipeline. Each kind of untrusted content meets the gate built for it. Import and conversion never execute a card's scripts; the only code that runs is Lua, sandboxed, and only when the user opens the Test Bench.",
+    "caption": "bunzai does not funnel every input through one pipeline. Each kind of untrusted content meets the gate built for it. Import and conversion keep scripts as data. Supported Lua and regex execution requires an explicit action and its corresponding sandbox gate.",
     "svg": "docs/generated/figures/security-overview__routes.svg",
-    "w": 660,
-    "h": 268
+    "w": 780,
+    "h": 376
   },
   {
     "file": "security-overview.js",
     "figid": "status",
     "type": "matrix",
     "title": "defense layers and their honest status",
-    "caption": "What each layer enforces, whether it has a code-layer suite, and whether it is proven in the packaged Windows host. Two rows are not fully green on purpose: distinct-origin isolation is proven only at the HTTP layer (packaged WebView2 probe BLOCKED, ADR-009), and the key vault is a draft spec with no implementation in the tree.",
+    "caption": "What each layer enforces, its code-layer evidence, and the remaining host-specific checks. Distinct-origin isolation is tested at the HTTP layer; packaged WebView2 verification remains unmeasured. Credential storage and diagnostic isolation have code-level tests; native keychain behavior requires recorded platform results.",
     "svg": "docs/generated/figures/security-overview__status.svg",
-    "w": 660,
-    "h": 404
+    "w": 780,
+    "h": 456
   },
   {
     "file": "sillytavern-format.js",
@@ -556,8 +556,8 @@
     "title": "four codecs, one folder",
     "caption": "The SillyTavern folder default-exports four adapters (src/formats/sillytavern/index.ts). Each detects its own wire shape and maps to its own entity kind. The character reader scores 0.9 so a more specific reader (RoleCall, 1.0) wins the same card.",
     "svg": "docs/generated/figures/sillytavern-format__codecs.svg",
-    "w": 810,
-    "h": 234
+    "w": 960,
+    "h": 276
   },
   {
     "file": "sillytavern-format.js",

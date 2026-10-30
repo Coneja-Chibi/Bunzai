@@ -2,7 +2,7 @@
  * ST sampler sets and system prompts through the real import path (the Library drop): /api/inspect
  * reads the file, /api/studio/save-bundle shelves it, and the stored preset carries the mapped
  * fields. Reasoning templates land as presets, instruct and context as prompt formats.
- * Fixtures: samples/sillytavern/templates/ (verbatim copies from a real ST data folder).
+ * Fixtures: samples/sillytavern/templates/ (ST-shaped settings with synthetic prompt prose).
  */
 import { beforeAll, describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
@@ -94,7 +94,7 @@ describe("ST sampler sets and system prompts import", () => {
     const stored = (await store.read("preset", saved.primary.id)) as { body: { prompts: { id: string; content: string }[] } } | null;
     expect(stored?.body.prompts.map((p) => p.id)).toContain("charDescription");
     expect(stored?.body.prompts[0]!.id).toBe("main");
-    expect(stored?.body.prompts[0]!.content).toStartWith("You are an expert actor");
+    expect(stored?.body.prompts[0]!.content).toStartWith("You are an expert narrator");
     await rm(dir, { recursive: true, force: true });
   });
 

@@ -55,8 +55,11 @@ const DAMAGED = (): Buffer => {
 
 /** Seal a vault under the identity-file backend, creating that key file as a side effect. */
 async function seedIdentityVault(apiKey: string): Promise<void> {
-  const body = JSON.stringify({ providers: [{ id: "p1", kind: "anthropic", model: "m", apiKey }], activeId: "p1" });
-  const payload = await identityFileBackend.seal(body, {});
+  await seedIdentityVaultBody({ providers: [{ id: "p1", kind: "anthropic", model: "m", apiKey }], activeId: "p1" });
+}
+
+async function seedIdentityVaultBody(body: unknown): Promise<void> {
+  const payload = await identityFileBackend.seal(JSON.stringify(body), {});
   await mkdir(dir(), { recursive: true });
   await writeFile(VAULT_PATH(), `${JSON.stringify({ v: 1, backend: "identity-file", payload })}\n`);
 }
@@ -152,3 +155,41 @@ test("a healthy vault reports no notice and keeps its providers", async () => {
   expect(vault.notice).toBeUndefined();
   expect(vault.providers.map((p) => p.apiKey)).toEqual(["sk-fine"]);
 });
+
+for (const [name, bytes] of [
+  ["truncated JSON", "{\"v\":1"],
+  ["an invalid envelope", JSON.stringify({ v: 2, backend: "identity-file", payload: "kept-for-recovery" })],
+  ["a missing envelope", "null"],
+] as const) {
+  test(`a present vault with ${name} refuses reads and saves without replacing its bytes`, async () => {
+    await mkdir(dir(), { recursive: true });
+    await writeFile(VAULT_PATH(), bytes);
+    const kit = await freshVault();
+    await expect(kit.readVault()).rejects.toThrow(/vault/i);
+    await expect(kit.saveProvider({ kind: "local", model: "fixture" })).rejects.toThrow(/vault/i);
+    expect(await readFile(VAULT_PATH(), "utf8")).toBe(bytes);
+  });
+}
+
+test("a vault read error is not treated as a new empty vault", async () => {
+  await mkdir(VAULT_PATH(), { recursive: true });
+  const kit = await freshVault();
+  await expect(kit.readVault()).rejects.toThrow(/vault/i);
+  await expect(kit.saveProvider({ kind: "local", model: "fixture" })).rejects.toThrow(/vault/i);
+  expect(await readdir(VAULT_PATH())).toEqual([]);
+});
+
+for (const [name, body] of [
+  ["an invalid decrypted object", null],
+  ["a damaged provider beside a healthy provider", { providers: [{ kind: "local", model: "fixture" }, { apiKey: "recoverable-fixture" }], activeId: null }],
+  ["a damaged Spotify link", { providers: [], activeId: null, spotify: { refreshToken: 42 } }],
+] as const) {
+  test(`a vault containing ${name} refuses to discard data on a later save`, async () => {
+    await seedIdentityVaultBody(body);
+    const original = await readFile(VAULT_PATH(), "utf8");
+    const kit = await freshVault();
+    await expect(kit.readVault()).rejects.toThrow(/vault/i);
+    await expect(kit.saveProvider({ kind: "local", model: "fixture" })).rejects.toThrow(/vault/i);
+    expect(await readFile(VAULT_PATH(), "utf8")).toBe(original);
+  });
+}

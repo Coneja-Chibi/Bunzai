@@ -26,7 +26,7 @@ To bring one in, drag the file onto the Library and drop it anywhere in the room
 
 ## What comes across cleanly
 
-Importing loses nothing. Bunzai keeps a complete copy of the original card, then lifts the parts you actually work with into fields you can see and edit directly:
+Bunzai keeps the original card data alongside the fields you can edit directly:
 
 - Name, tagline, and description
 - Casting card details: full name, title, age, and pronouns
@@ -47,7 +47,7 @@ The card's picture is kept too, and Bunzai shows it as the piece's portrait. So 
 
 This is the honest part, and it is simple once you see the rule.
 
-A same-app round-trip keeps everything. Import a RoleCall card, edit it, and export it back to RoleCall, and you get everything back, down to the byte, because Bunzai kept the original card and only re-wrote the fields you changed.
+A same-format export preserves the original card's field values and applies your edits. It does not promise an identical file: JSON formatting and the output container can change. Check the export receipt for unsupported fields when choosing a different format.
 
 Converting to a different app is where things drop. Only the shared character crosses over. RoleCall's private extras, the casting card and the presentation layer built for RoleCall's own casting-card view, are left behind on purpose.
 
@@ -80,7 +80,7 @@ Bunzai writes RoleCall cards as `.json`. RoleCall reads a `.json` card the same 
 
 ## Common questions
 
-- **Will my card come back exactly as it was?** Yes, if you export it back to RoleCall. Same app in, same app out, nothing lost.
+- **Will my card come back exactly as it was?** Exporting to RoleCall preserves the original field values alongside your edits. The output file can use different formatting or a different container, so it need not have identical bytes.
 - **I imported a `.png`. Do I get a `.png` back?** Bunzai writes cards as `.json`. RoleCall reads a `.json` card the same as a picture, so it loads fine, you just get a file instead of an image.
 - **Does my character's picture come with it?** Bunzai keeps the card art and shows it as the piece's portrait, and it holds onto the original file you imported.
 - **What about my casting card and presentation colors?** They stay with the RoleCall card and are not copied into another app's file, because Bunzai does not move one app's private layer into another.

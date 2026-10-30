@@ -1,8 +1,7 @@
 /**
  * What every model pass shares (RoleCall's PassCommonChrome, OutputModeToggle, FailureMode and the sliders,
  * PostProductionPanel.tsx:1578-1750, 2377-2440): its model (a Kit connection and model, or the scene's), temperature, the cross-message
- * context, whether thinking is cut from its input, how it answers, and what a failure does. RoleCall's "apply your AI-output regex scripts
- * to input" is not here: Bunzai's regex has no such placement, so there is nothing for it to do.
+ * context, optional input regex processing, thinking removal, output mode, and failure handling.
  */
 import type { JSX } from "react";
 import { Button, Card } from "../../../components/button";
@@ -61,7 +60,7 @@ export function OutputModeToggle({ value, onChange }: { value: OutputMode | unde
       <span className="fc-sub"><b>Output mode</b></span>
       <div className="pg-opts">
         <Card kind="choice" selected={active === "tool-call"} aria-pressed={active === "tool-call"} onClick={() => onChange("tool-call")} heading="Tool call (default)"
-          subtitle="Model is required to call a structured function with the refined body and a typed changelog as separate fields. Output shape is enforced by the API's tool-call layer. Every modern provider supports this; it's the most reliable mode." />
+          subtitle="Requests a structured function call with the refined body and changelog as separate fields. Requires a connection and model that support tool calls; malformed or missing output follows the failure setting." />
         <Card kind="choice" selected={active === "tagged"} aria-pressed={active === "tagged"} onClick={() => onChange("tagged")} heading="Tagged (legacy)"
           subtitle={<>Model returns a plain-text reply containing <code>[CHANGELOG]</code> and <code>[REFINED]</code> sections that we parse. Use only if your provider doesn't honor tool calls: markers can drift and the parser can lose output.</>} />
       </div>

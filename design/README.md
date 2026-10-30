@@ -1,6 +1,9 @@
 # Design
 
-Design studies for Bunzai. Nothing here ships; the app is `src/ui/`.
+Design studies for Bunzai. These are proposals and historical comparisons, not release documentation.
+Some retain earlier names, placeholder data, discarded wording, and unimplemented flows. Screenshots
+may show outdated security or installation advice; use the current [user guides](../docs/guide/README.md)
+and [security reference](../docs/reference/security/README.md). The app is `src/ui/`.
 
 ## Layout
 

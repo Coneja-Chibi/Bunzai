@@ -126,7 +126,8 @@ export function createSnapshotStore(opts: SnapshotStoreOptions) {
   const plain = (reason: string): string => (/SQLITE|SQL logic|no such (table|column)|syntax error|constraint|malformed|not a database|disk I[/]O/i.test(reason) ? "it does not match this library's layout, or is damaged" : reason);
   /**
    * What a run that died leaves: a partial snapshot (written before this computer's key copies were taken out of it) or a
-   * restore's scratch copy, with their -wal and -shm. Overwritten with zeros, then removed, so no key copy stays readable.
+   * restore's scratch copy, with their -wal and -shm. Best-effort zero-fill and removal do not
+   * guarantee secure erasure on journaled filesystems, snapshots, or flash storage.
    */
   const sweepLeftovers = (): void => {
     if (!existsSync(dir)) return;

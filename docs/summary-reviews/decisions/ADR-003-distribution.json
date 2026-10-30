@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "decisions/ADR-003-distribution",
   "sourcePath": "docs/decisions/ADR-003-distribution.md",
-  "sourceHash": "sha256:d4450b0d40a1207819c77cc9602fadcc4904b608889d6b0457f887e6d06e0f06",
-  "semanticSummaryHash": "sha256:435248a3263ba29773711c0c03fcf555ebfb735a5c90c0064c7bc15cc3082738",
+  "sourceHash": "sha256:e1040bf14d0e457adaee8dd40cbfc6dc886167c39587a6db800edbb44f5ab672",
+  "semanticSummaryHash": "sha256:c92698fe9c57e1d65a8d7bd389cab6e5fba2603d0b05020bf508cd8b0a5fa187",
   "verdict": "APPROVE",
-  "reviewer": "independent-reviewer-1",
-  "notes": "Independent review: page+all H2 checked vs source; decision/format/arch H3s reviewed. Requirements and status honesty preserved; no major omission, no invented claims, no current/future blend errors. Automated page-h2 warnings are keyword noise where H2 themes are covered.",
-  "reviewedAt": "2026-07-25T15:32:55.775Z"
+  "reviewer": "public-luna-06",
+  "notes": "Independently read accepted decision and sidecar. Distribution mechanisms are described as accepted design, not proof shipped or packaged.",
+  "reviewedAt": "2026-10-30T19:27:39.462Z"
 }

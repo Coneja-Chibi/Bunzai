@@ -1,6 +1,6 @@
 # ADR-003: Distribution - single executable + self-updater; installer later
 
-**Status:** accepted
+**Status:** accepted design decision. Release mechanisms below describe the intended distribution model; they are not evidence that signing, updating, installers, or npm publication have shipped.
 
 ## Decision
 
@@ -20,15 +20,11 @@
 
 ## Why
 
-- SillyTavern's node+git install is the single most cited onboarding pain in this
-  hobby. "Download one file" is the marketing headline, so it must be the engineering
-  truth.
+- A single executable reduces setup steps and avoids requiring a separate Node or Git installation.
 - GitHub Releases: free bandwidth and the audience already lives there.
 
 ## Consequences
 
 - Release CI builds a matrix of binaries + checksums + signature on every tag.
-- Windows SmartScreen will complain about unsigned exes; buy a code-signing cert
-  when there's budget, document the "More info -> Run anyway" path until then
-  (M1 ticket).
+- Unsigned Windows executables may trigger SmartScreen. Document release provenance and available integrity checks, and disclose signing status without a blanket assurance that warnings are safe to bypass.
 - Binary size (Bun embeds its runtime, ~50-90MB) is accepted; document it.

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/formats/sillytavern",
   "sourcePath": "docs/reference/formats/sillytavern.md",
-  "sourceHash": "sha256:e16db8e1d53ad19a696f401d17b01033a72bd45c63d08485c5f8e74c84a7027d",
-  "semanticSummaryHash": "sha256:dc990e9cc1efa5873210b65da6f2dc1d07ff6f5528bc45741d2959d375f18a0a",
+  "sourceHash": "sha256:d73e341b5cc681910aae991da0e72a3e702f9e81128c981bfa8085b2a675b84c",
+  "semanticSummaryHash": "sha256:314f97caaceab47d81689e5b8829865a0e2d691f23fc116262cb90c1f7b35898",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "rename to Bunzai only",
-  "reviewedAt": "2026-10-29T20:47:49.377Z"
+  "reviewer": "public-luna-06",
+  "notes": "Read the full current sidecar and changed Markdown sections against prior baseline; visually inspected the synthetic 1x1 carrier and checked sample provenance notes. DisplayIndex statement now describes the synthetic fixture only and explicitly disclaims real-corpus observation; retained structure attribution is limited to the scaffold, with historical-repository caveat. Summary states the PNG is synthetic, not a real-corpus sample. Focused author check passed.",
+  "reviewedAt": "2026-10-30T19:32:18.620Z"
 }

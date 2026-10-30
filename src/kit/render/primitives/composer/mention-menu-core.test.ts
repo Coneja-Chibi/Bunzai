@@ -49,8 +49,7 @@ test("a group is matched and marked like any other row", () => {
 });
 
 /**
- * A real preset's name, escaped rather than typed: the repo's prose gate refuses literal emoji in
- * source, and the decoration is exactly what this test is about.
+ * Decorated Unicode name used to exercise punctuation and normalization behavior.
  */
 const MIRROR = "\u{1FA9E}✧˖°";
 const decorated = [
@@ -60,9 +59,7 @@ const decorated = [
 
 test("PUNCTUATION IN A NAME DOES NOT HIDE THE PIECE", () => {
   /**
-   * Found in a real studio. Typing `@v4` offered every other v4 preset and silently hid the one
-   * called "Paramnesia V.4", because "v.4" does not contain "v4". The piece was indexed and on
-   * screen in the Library, and unreachable from the composer - which reads as the file missing.
+   * Punctuation between a version marker and its number should not hide a matching piece.
    */
   expect(matchingPieces(decorated, "@v4").map((p) => p.id))
     .toContain("the-h-t-files-paramnesia-v-4");

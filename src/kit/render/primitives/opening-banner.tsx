@@ -111,7 +111,7 @@ const COPY = {
     '"bring in this character card from another app"',
   ],
   promises:
-    "Two promises: nothing leaves your machine until you send it, and the scripts inside your pieces stay sealed as text. Kit never runs them.",
+    "Kit sends conversation context to your selected model provider. Connection checks and external tools can also make requests. Importing scripts does not execute them.",
   ready: "Ready? /model connects a provider, /test checks it's awake, then just talk.",
   closing: "Go make something you love.",
 } as const;
@@ -242,17 +242,7 @@ export function OpeningBanner({
       ))}
 
       <box height={1} />
-      <box flexDirection="row" height={1}>
-        <text fg={theme.soft}>
-          {STAGE_CUES.promises}  Two promises: nothing <span fg={theme.text}>leaves your machine</span> until
-          you send it, and the
-        </text>
-      </box>
-      <box flexDirection="row" height={1}>
-        <text fg={theme.soft}>
-          {"    "}scripts inside your pieces stay <span fg={theme.text}>sealed as text</span>. Kit never runs them.
-        </text>
-      </box>
+      <WrapRow fg={theme.soft}>{STAGE_CUES.promises}  {COPY.promises}</WrapRow>
 
       <box height={1} />
       <box flexDirection="row" height={1}>

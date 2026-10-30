@@ -30,7 +30,7 @@ const chipClass = (tone: "plain" | "ok" | "warn"): string | undefined => (tone =
 export function proofLines(needsWords: boolean): { text: string; not?: boolean }[] {
   return [
     { text: "+ A copy is made every hour while Bunzai is open, with no pause in your work." },
-    { text: "+ Copies are encrypted exactly like your library, so a stolen copy shows nothing." },
+    { text: "+ Copies retain your library's encryption. Protect the password, recovery words, and any local key files too." },
     needsWords
       ? { text: "- Until you write your lines (recovery words), a copy only opens on this computer.", not: true }
       : { text: "+ A copy opens on a new computer with your lines (recovery words)." },

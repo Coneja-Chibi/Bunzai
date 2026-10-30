@@ -1,10 +1,8 @@
 /**
  * When a conversation is too long, and what survives being compacted.
  *
- * The failure this replaces was not subtle: sixty messages, refused, on a model with 272k of room
- * and ten percent of it used. So the first thing worth pinning is that an ordinary conversation is
- * never touched at all - a compaction that fires early costs a model call and loses detail for
- * nothing.
+ * These tests verify that conversations within budget remain intact and that compaction preserves
+ * the recent turns.
  */
 import { describe, expect, test } from "bun:test";
 import {
@@ -22,10 +20,7 @@ const sized = (tokens: number): Turn => say("x".repeat(Math.round(tokens * 3.6))
 
 describe("planCompaction", () => {
   test("A LONG CONVERSATION WELL INSIDE THE WINDOW IS LEFT ALONE", () => {
-    /**
-     * The reported bug, as a test. Sixty short messages against a 272k model is nothing, and the
-     * old rule refused the turn outright.
-     */
+    /** A short conversation should remain untouched under a large context budget. */
     const sixty = Array.from({ length: 60 }, (_, i) => say(`message ${String(i)}`));
     expect(planCompaction(sixty, 272_000).compact).toBe(false);
   });
@@ -68,11 +63,7 @@ describe("planCompaction", () => {
   });
 
   test("the share leaves room for the instruction, the brief, the tools and the reply", () => {
-    /**
-     * The budget covers the CONVERSATION only. Claude Code compacts near 95% of the whole window;
-     * this counts a fraction of it because everything else the turn carries is uncounted here, and
-     * both its users and Codex's report 95% firing too late to be useful.
-     */
+    /** Other turn content also consumes context but is not part of this conversation estimate. */
     expect(CONTEXT_SHARE).toBeLessThan(0.9);
   });
 });

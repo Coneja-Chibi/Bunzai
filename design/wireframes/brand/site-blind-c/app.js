@@ -133,7 +133,7 @@
       '<div>' +
         '<p class="eyebrow">Free and open source</p>' +
         '<h1 tabindex="-1">Your characters. Your stories. <em>Your computer.</em></h1>' +
-        '<p class="lead">Bunzai is a cozy desktop app for playing and making AI roleplay characters. Bring your cards, use your own AI key, and keep everything private on your machine.</p>' +
+        '<p class="lead">Bunzai is a cozy desktop app for playing and making AI roleplay characters. Your library is stored locally and encrypted at rest; key protection depends on your setup, and some fallback configurations store a key file beside the library. AI requests send selected content to your chosen provider, and connected services receive the data needed for their features.</p>' +
         '<div class="hero-cta">' + downloadButton(true) +
           '<a class="link-arrow" href="#/try">Or try the Studio in your browser ' + icon.arrow + '</a></div>' +
         '<div class="hero-meta"><span class="chip" data-version-chip><span class="dot"></span>Checking for the latest version</span>' +
@@ -162,14 +162,14 @@
       '<div class="acts">' +
         act("Act one", "Play scenes", "Chat with any character. Swipe for another reply, or branch the story into takes and try a different path.", "#/features/scenes", "Tour Scenes") +
         act("Act two", "Make things", "Characters, lorebooks and presets, each with an editor that shows what you're doing as you type.", "#/features/workbench", "Tour the Workbench") +
-        act("Act three", "Keep your library", "Everything you import or make, as portrait cards. Private, encrypted, and yours to export any time.", "#/features/library", "Tour the Library") +
+        act("Act three", "Keep your library", "Everything you import or make, as portrait cards. Stored locally and encrypted at rest; key protection depends on your setup. Export any time.", "#/features/library", "Tour the Library") +
       '</div>' +
     '</div></section>' +
 
     '<section class="section"><div class="wrap">' +
       '<div class="promise">' +
         '<div><strong>Free, for real</strong><p>No account, no plan, no ads. The code is open for anyone to read.</p></div>' +
-        '<div><strong>Stays on your computer</strong><p>Your library is stored privately and encrypted on your own machine.</p></div>' +
+        '<div><strong>Stored on your computer</strong><p>No Bunzai account. AI requests send selected content to your chosen provider, and connected services receive the data needed for their features. Key protection depends on your setup; some fallback configurations store a key file beside the library.</p></div>' +
         '<div><strong>Bring your cards</strong><p>Imports from SillyTavern, RoleCall, Chub and other apps.</p></div>' +
         '<div><strong>Never locked in</strong><p>Export to 11 other apps\' formats whenever you like.</p></div>' +
       '</div>' +
@@ -342,8 +342,7 @@
         '<a class="other current" href="#/try"><div><strong>No install</strong><span>Try the Studio in your browser</span></div>' + icon.arrow + '</a>' +
       '</div></div></div>' +
       '<div class="note"><h3>If Windows says it doesn\'t recognize the app</h3>' +
-        '<p>Bunzai is new, so Windows may show a blue box that says it protected your PC. That is normal for new apps. To continue:</p>' +
-        '<ol><li>Click <strong>More info</strong>.</li><li>Click <strong>Run anyway</strong>.</li></ol>' +
+        '<p>This Windows build is unsigned, so Windows may show a reputation warning. The warning does not establish whether a file is safe. Check the release page for a checksum for this exact file and compare it if one is published. If no checksum is available or it does not match, do not open the download; build from source instead.</p>' +
         '<p style="margin:12px 0 0">You only need to do this once. On first launch, Bunzai adds itself to your Start menu so it is easy to find again.</p></div>' +
       '</section>';
   }

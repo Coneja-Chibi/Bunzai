@@ -19,11 +19,7 @@ preset_verify engine=sillytavern preset=samples/sillytavern/fixtures/minimal.pre
 
 A fixture that stops resolving is a broken fixture, so keep them clean.
 
-## Why these three, and not more
+## Why these three
 
-They were chosen from a survey of 22 community presets, which found 24 distinct block categories.
-Most of those categories are variations on the three ideas here: claim a slot, write state, read state
-back. The survey's own finding was that in a variable-driven preset the majority of blocks emit
-nothing at all - they write a named slot, and one assembler renders the result. A preset of that kind
-is closer to a small program than to an ordered list of system messages, which is worth knowing before
-reading one.
+The examples cover direct prompt text, variable writes and reads, and optional settings. They are
+small teaching cases, not evidence of how often those patterns occur in community presets.

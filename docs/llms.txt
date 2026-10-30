@@ -6,7 +6,7 @@
 
 - [ADR-001: Runtime - Bun + TypeScript, Node-compatible core](docs/decisions/ADR-001-runtime.md): **Status:** accepted
 - [ADR-002: License, AGPL-3.0-or-later](docs/decisions/ADR-002-license.md): **Status:** accepted
-- [ADR-003: Distribution - single executable + self-updater; installer later](docs/decisions/ADR-003-distribution.md): **Status:** accepted
+- [ADR-003: Distribution - single executable + self-updater; installer later](docs/decisions/ADR-003-distribution.md): **Status:** accepted design decision. Release mechanisms below describe the intended distribution model; they are not evidence that signing, updating, installers, or npm publication have shipped.
 - [ADR-005: Canonical superset model + escrow envelope](docs/decisions/ADR-005-canonical-model.md): **Status:** accepted
 - [ADR-006: AI - BYOK + local, and an agent built for weak models](docs/decisions/ADR-006-ai-and-agent.md): **Status:** accepted
 - [ADR-007: Renderer policy (shell vanilla, per-app freedom, chat surfaces re-evaluated at spec time)](docs/decisions/ADR-007-renderer-policy.md): **Status:** accepted · 2026-07-05 **Context owners:** the shell (`src/ui/`), every app folder, the future Table Read and agent surfaces
@@ -128,7 +128,7 @@
 - [bunzai documentation](docs/reference/README.md): This is the reference documentation for **bunzai**, the Vaudeville Studios converter for AI-roleplay content. It is **docs-as-code**: it lives in the repo, is versioned with the code, and is kept true by
 - [Scene state](docs/reference/scene-state.md): What a scene remembers beyond its text, kept so that every way of changing the shown history (a new version of a reply, choosing a version, cutting, restoring, forking) leaves it where the history says. A piece of state is a
 - [Safe archive handling: .charx and .byaf](docs/reference/security/archives.md): How bunzai bounds a .charx or .byaf ZIP before and after inflation to resist a zip bomb, and where entry names are (and are not yet) checked for path traversal before they can become a filesystem write or a re-exported archive path.
-- [Security threat model and defense layers](docs/reference/security/README.md): The assets bunzai protects, the untrusted inputs it faces, and each defense layer with its honest tested or scaffolded status.
+- [Security threat model and defense layers](docs/reference/security/README.md): Bunzai's trust boundaries, their authoritative implementation references, and the limits of current verification.
 - [ReDoS defense in the regex engine](docs/reference/security/regex-safety.md): Bunzai screens regex structure before matching and bounds replacement and trace allocations, while Studio execution adds a terminable worker. Static screening does not guarantee a native match finishes promptly.
 - [Remote access: Tailscale and LAN](docs/reference/security/remote-access.md): How bunzai lets you reach the studio from another device over a private Tailscale link or the local network, and the gates that keep everyone else out. Two listeners (trusted loopback, untrusted sidecar-fed), an owner-only Tailscale gate, and a connect-code + per-device-approval LAN gate. Off by default; driven entirely from Settings, never a terminal.
 - [Safe rendering: sanitizing card HTML and CSS](docs/reference/security/safe-rendering.md): Specifies exactly what DOMPurify allows and strips on the two surfaces that render card-authored HTML and CSS, the sealed iframe and scoped CSP the riskier surface adds on top, and what is proven only at the string level versus what is not measured at all.

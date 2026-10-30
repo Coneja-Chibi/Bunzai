@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "decisions/ADR-001-runtime",
   "sourcePath": "docs/decisions/ADR-001-runtime.md",
-  "sourceHash": "sha256:15c2e3188c6c0523fe2c8d312dfa690b0ef683b7e5dbdab9ed2509a7e09d4b9a",
-  "semanticSummaryHash": "sha256:794b1cb8a57620f17f2cbe85e59d685b9321e008c0cdab1bafd03ad15370986f",
+  "sourceHash": "sha256:0a4d2bbb8f1d561c2172f7a8d53c44f8816a05db53705a956cc39d7db340f465",
+  "semanticSummaryHash": "sha256:d3fcf35164546fb6eaf1a9e663132a3ffd40199ad6c840fc7f8e8a2a98e81b89",
   "verdict": "APPROVE",
-  "reviewer": "independent-reviewer-1",
-  "notes": "Independent review: page+all H2 checked vs source; decision/format/arch H3s reviewed. Requirements and status honesty preserved; no major omission, no invented claims, no current/future blend errors. Automated page-h2 warnings are keyword noise where H2 themes are covered.",
-  "reviewedAt": "2026-07-25T15:32:55.392Z"
+  "reviewer": "public-luna-06",
+  "notes": "Independently read accepted decision and sidecar. Summary preserves decision status and does not imply all planned runtime details are release evidence.",
+  "reviewedAt": "2026-10-30T19:27:39.591Z"
 }

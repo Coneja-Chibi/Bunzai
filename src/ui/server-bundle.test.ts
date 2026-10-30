@@ -319,7 +319,7 @@ describe("exporting through the route", () => {
    * was real, listed in the dialog, and impossible to select. That is exactly the class of bug a
    * route-level test pins and an adapter-level one cannot: every adapter test passed the whole time.
    */
-  const carrier = readFileSync("samples/sillytavern/characters/Seraphina.png");
+  const carrier = readFileSync("samples/sillytavern/characters/synthetic-character.png");
 
   const card = (): unknown => {
     const body = dataToBody({ name: "Vera", description: "A keeper." } as never);

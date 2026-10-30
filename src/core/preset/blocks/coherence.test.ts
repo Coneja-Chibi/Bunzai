@@ -123,15 +123,7 @@ describe("the catalog", () => {
     }
   });
 
-  test("prevalence is recorded for every pattern, out of the 13 surveyed", () => {
-    // Without it a reader cannot tell a near-universal convention from one author's idea.
-    for (const pattern of BLOCK_PATTERNS) {
-      expect(pattern.prevalence).toBeGreaterThan(0);
-      expect(pattern.prevalence).toBeLessThanOrEqual(13);
-    }
-  });
-
-  test("the silent majority is representable, since that is the survey's headline", () => {
+  test("non-emitting blocks are distinguished from rendered blocks", () => {
     expect(silentPatterns().length).toBeGreaterThan(0);
     expect(findPattern("variable-init")!.emits).toBe("nothing");
     expect(findPattern("assembler")!.emits).toBe("text");

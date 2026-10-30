@@ -1,6 +1,6 @@
 /**
- * Risu regex codec tests: the four R1-must checks - field mapping, editrequest->request, omitted-type honesty, <cbs> flags stored
- * verbatim, and byte-exact round-trip on real fixture rows.
+ * Risu regex codec tests: field mapping, editrequest->request, omitted-type honesty, <cbs> flags stored
+ * verbatim, and exact round-trip on constructed fixture rows.
  */
 import { describe, test, expect } from "bun:test";
 import { readFileSync } from "node:fs";
@@ -117,7 +117,7 @@ describe("<cbs>-bearing flags stored verbatim, never compiled (R1 must #2)", () 
   });
 });
 
-describe("byte-exact round-trip on real fixture rows (R1 must #6)", () => {
+describe("exact round-trip on constructed fixture rows (R1 must #6)", () => {
   test("unedited fixture rows re-emit identical to the source array", () => {
     const rules = regexRowsToRules(FIXTURE.rows);
     const out = rulesToRegexRows(rules, FIXTURE.rows);

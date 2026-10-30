@@ -1,20 +1,9 @@
 /**
  * Where a card's embedded lorebook lives after import, and which copy is the live one.
  *
- * REPORTED FROM THE FIELD (GeBo, 2026-08-07): "a kit gets confused if the card was imported with an
- * embedded lorebook and you update it. The embedded one in the character seems to stay outdated and
- * the lorebook is now standalone... It seems to correctly update on export, but kit is still seeing
- * the old data if it loads the character."
- *
- * There are genuinely two copies after import, and that is CORRECT rather than the bug. The first
- * remedy tried here was deleting the character's copy, and an existing test caught why that is
- * wrong: emitBundle called without resolved lorebooks has nothing else to re-embed from, so
- * removing it turns "the caller did not resolve the refs" into a card that silently exports with no
- * lore at all. See convert.test.ts, "preserves the twin when lorebook resolution was not supplied".
- *
- * So the embedded copy stays, as the export fallback, and the rule these pin is which copy is
- * AUTHORITATIVE: the standalone book behind knowledgeRefs. The reading half of the fix is in
- * kit/tools/read-stale-book.test.ts, where the stale copy was being handed to a model.
+ * Import retains the embedded copy as an export fallback when linked books were not resolved.
+ * Readers use the standalone book referenced by knowledgeRefs as the authoritative copy.
+ * The companion read-stale-book test covers resolving that reference for the model.
  */
 import { describe, expect, test } from "bun:test";
 import { readPieces } from "./convert";

@@ -19,8 +19,8 @@ afterAll(async () => { await rm(root, { recursive: true, force: true }); });
 
 // An imported PNG card, as the library holds one: its art only in the source carrier.
 const CARD = sillytavern.toCanonical({
-  bytes: new Uint8Array(readFileSync("samples/sillytavern/characters/Seraphina.png")),
-  filename: "Seraphina.png",
+  bytes: new Uint8Array(readFileSync("samples/sillytavern/characters/synthetic-character.png")),
+  filename: "synthetic-character.png",
 }) as unknown as KitEntity;
 
 const bridge: KitBridge = {

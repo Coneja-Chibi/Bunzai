@@ -12,7 +12,7 @@ import { asText } from "../_fixtures/as-text";
 import { readFileSync } from "node:fs";
 import { characterAdapter as sillytavern } from "../sillytavern/index";
 
-const SERAPHINA = new Uint8Array(readFileSync("samples/sillytavern/characters/Seraphina.png"));
+const SYNTHETIC_CARD_PNG = new Uint8Array(readFileSync("samples/sillytavern/characters/synthetic-character.png"));
 
 const DATA = {
   name: "Vera",
@@ -86,7 +86,7 @@ test("the lorebook codec writes the same ST world info the ST codec writes", () 
 
 test("an imported PNG card exports with its own pixels when no portrait was set", () => {
   // The Studio stores an imported card's art only as the source carrier, not in body.media.
-  const imported = sillytavern.toCanonical({ bytes: SERAPHINA, filename: "Seraphina.png" });
+  const imported = sillytavern.toCanonical({ bytes: SYNTHETIC_CARD_PNG, filename: "synthetic-character.png" });
   expect(imported.body.media.portrait).toBeUndefined();
   const out = janitor.fromCanonical(imported);
   expect(Object.keys(textChunks(out.bytes!))).toEqual(["chara"]);
