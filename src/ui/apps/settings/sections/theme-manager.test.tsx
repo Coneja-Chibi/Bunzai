@@ -13,6 +13,7 @@ type Item = Record<string, unknown>;
 const entry = (over: Item): Item => ({ id: "theater", name: "Theater", version: "1.0.0", digest: "d", builtIn: true, enabled: true, requestedScopes: [], grantedScopes: [], difference: 0, swatch: [], ...over });
 const REASON = "invalid theme package: appearance must have exactly surfaces, palette";
 let catalog: Item[] = [];
+let inspectError = "";
 let calls: { path: string; method: string; body: unknown }[] = [];
 let root: Root;
 let host: HTMLElement;
@@ -32,6 +33,10 @@ beforeAll(() => {
           let out: unknown = { ok: true };
           if (path === "/api/themes/packages") out = catalog;
           else if (path === "/api/themes/examples") out = [{ id: "bunzai.theme.encore", name: "Encore", version: "1.0.0", digest: "x", requestedScopes: [] }];
+          else if (path === "/api/themes/inspect") {
+            out = inspectError ? { error: inspectError } : { challenge: "review-token", preview: { id: "bunzai.theme.test", name: "Test theme", version: "1.0.0", digest: "digest", derivedScopes: ["appearance.palette"] } };
+            return new Response(JSON.stringify(out), { status: inspectError ? 409 : 200, headers: { "content-type": "application/json" } });
+          }
           else if (path === "/api/themes/remove") catalog = catalog.filter((i) => i.id !== (body as { id: string }).id);
           return new Response(JSON.stringify(out), { status: 200, headers: { "content-type": "application/json" } }) as unknown as Response;
         },
@@ -44,7 +49,7 @@ beforeAll(() => {
   proto["detachEvent"] ??= () => undefined;
 });
 afterAll(() => installed.teardown());
-beforeEach(() => { installed.reinstall(); calls = []; prefSets.length = 0; });
+beforeEach(() => { installed.reinstall(); calls = []; inspectError = ""; prefSets.length = 0; });
 
 const prefSets: unknown[][] = [];
 const ctx = { prefs: { get: () => "theater", set: (...args: unknown[]) => { prefSets.push(args); } }, appearance: { get: () => ({ themeId: "theater" }), onChange: () => () => undefined, invalidate: () => undefined, refresh: async () => undefined } } as never;
@@ -122,5 +127,45 @@ describe("theme package cards", () => {
     expect(opened).toBe(1);
     flushSync(() => root.unmount());
     host.remove();
+  });
+});
+
+
+describe("theme file inspection", () => {
+  async function select(input: HTMLInputElement, flushSync: Awaited<ReturnType<typeof mount>>) {
+    Object.defineProperty(input, "files", { configurable: true, value: [{ name: "theme.json", size: 2, text: async () => "{}" }] });
+    // Simulate a selected path, including the browser's clearing behavior.
+    let value = "C:/fakepath/theme.json";
+    Object.defineProperty(input, "value", { configurable: true, get: () => value, set: (next: string) => { value = next; } });
+    flushSync(() => input.dispatchEvent(new dom.window.Event("change", { bubbles: true })));
+    await new Promise((r) => setTimeout(r, 30));
+    flushSync(() => undefined);
+  }
+  test("a valid inspection shows the approval review and resets the picker for the same file", async () => {
+    catalog = [entry({})];
+    const flushSync = await mount();
+    try {
+      const input = host.querySelector<HTMLInputElement>("input[type=file]")!;
+      await select(input, flushSync);
+      expect(host.querySelector('[aria-label="Theme approval review"]')?.textContent).toContain("Review Test theme 1.0.0");
+      expect(byText("Approve and install")).toBeDefined();
+      expect(calls.some((c) => c.path === "/api/themes/install")).toBe(false);
+      expect(input.value).toBe("");
+    } finally { flushSync(() => root.unmount()); host.remove(); }
+  });
+  test("a rejected file explains the failure beside the picker and can be selected again", async () => {
+    catalog = [entry({})]; inspectError = "invalid theme package";
+    const flushSync = await mount();
+    try {
+      const input = host.querySelector<HTMLInputElement>("input[type=file]")!;
+      await select(input, flushSync);
+      const feedback = host.querySelector('[role="status"][aria-live="polite"]');
+      expect(feedback?.textContent).toContain("invalid theme package");
+      expect(feedback?.compareDocumentPosition(host.querySelector('[aria-label="Installed and bundled theme packages"]')!)! & dom.window.Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      expect(host.querySelector('[aria-label="Theme approval review"]')).toBeNull();
+      expect(input.value).toBe("");
+      await select(input, flushSync);
+      expect(calls.filter((c) => c.path === "/api/themes/inspect").length).toBe(2);
+    } finally { flushSync(() => root.unmount()); host.remove(); }
   });
 });

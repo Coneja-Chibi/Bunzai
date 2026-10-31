@@ -145,8 +145,9 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
     </p>
     <div className={styles.file}>
       <Button size="sm" disabled={busy} onClick={() => fileInput.current?.click()}>Inspect a theme package</Button>
-      <input ref={fileInput} hidden type="file" aria-label="Inspect a theme package JSON" accept="application/json,.json" disabled={busy} onChange={(event) => void inspectFile(event.currentTarget.files?.[0])} />
+      <input ref={fileInput} hidden type="file" aria-label="Inspect a theme package JSON" accept="application/json,.json" disabled={busy} onChange={(event) => { const file = event.currentTarget.files?.[0]; event.currentTarget.value = ""; void inspectFile(file); }} />
     </div>
+    {note && <p className={styles.state} role="status" aria-live="polite">{note}</p>}
     {examples.filter((example) => !catalog.some((item) => item.id === example.id && item.enabled)).map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (example) =>
       <div className={styles.example} key={example.id}>
         <div><strong>{example.name}</strong><span>Shipped example · not active</span></div>
@@ -204,6 +205,5 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
         <Button size="sm" variant="quiet" disabled={busy} onClick={() => setRestoreReview(null)}>Cancel</Button>
       </div>
     </div>}
-    {note && <p className={styles.state} role="status">{note}</p>}
   </section>;
 }

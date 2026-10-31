@@ -1586,7 +1586,7 @@ models come from that endpoint; changing the address or context cancels the prev
 failures are visible, a successful retry clears them, and manual model IDs remain available. Saving or
 closing the form cancels its lookup. Scenes and Kit send through the same native provider implementation.
 
-Appearance also holds the Stage lights row (`sections/stage-lights-row.tsx`: Moving, Still or Off, pref `ui.stageLights`; see the title screen above), and Theme packages (`sections/theme-manager.tsx`): the lock line, then the requested appearance, the Inspect a theme package button (opens a file picker for a package JSON), and one card per bundled or installed package with a color strip of its palette, its grants, and a Request button (marked Requested on the chosen one). A request applies only when the host confirms the package's current permission.
+Appearance also holds the Stage lights row (`sections/stage-lights-row.tsx`: Moving, Still or Off, pref `ui.stageLights`; see the title screen above), and Theme packages (`sections/theme-manager.tsx`): the lock line, then the requested appearance, the Inspect a theme package button (opens a file picker for a package JSON), with inspection feedback directly beneath it and repeat selection of the same file supported, and one card per bundled or installed package with a color strip of its palette, its grants, and a Request button (marked Requested on the chosen one). A request applies only when the host confirms the package's current permission.
 
 Security (`sections/security.tsx`, dialogs in `security-flows.tsx`) is the approved in-between
 wireframe 04: the design system's stat tiles under the page head, a mono proof block of what the encryption does
@@ -1781,3 +1781,5 @@ replace addressed summaries, and matching stream echoes clear only their own ext
 Lorebook, regex and persona metadata publish completed reads in batches, fenced by exact summary
 identity and library lifetime. Locking invalidates pending reads. These paths are independently
 source-reviewed; focused public-boundary fixture results are recorded in delivery evidence, and live proof remains pending.
+
+Paper’s manuscript scene layout keeps a 160 × 224 px portrait in a separate column beside the flexible message body; narrow panes use an 80 × 112 px portrait. The screenplay text fills the available body width without scrolling across the portrait. No decorative margin rule runs behind the text.

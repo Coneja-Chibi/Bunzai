@@ -1,0 +1,135 @@
+{
+  "manifest": {
+    "schemaVersion": 2,
+    "id": "bunzai.theme.prismatic-journal",
+    "version": "2.1.0",
+    "name": "Prismatic Journal",
+    "requests": [
+      "appearance.accent",
+      "appearance.palette",
+      "appearance.shape",
+      "appearance.styles",
+      "appearance.surfaces",
+      "appearance.type"
+    ],
+    "appearance": {
+      "surfaces": {
+        "shell.nav": "index-rail",
+        "shell.title": "title-page",
+        "shell.status": "chip",
+        "library.grid": "sticker-wall",
+        "library.card": "sticker-card",
+        "scenes.list": "save-file-slots",
+        "ui.dialog": "curtain-card",
+        "ui.toast": "bubble",
+        "ui.empty": "no-data-panel",
+        "ui.panel": "bracket-frame",
+        "ui.meter": "segmented",
+        "ui.icons": "line-ink",
+        "ui.toolbar": "sticker-shelf",
+        "library.decks": "inventory-tabs",
+        "ui.section-header": "banner-tag",
+        "ui.tabs": "pill-row",
+        "ui.label-type": "rounded-sentence",
+        "scene.layout": "chat-thread",
+        "scene.message": "bubble",
+        "scene.composer": "chat-input",
+        "scene.swipes": "dots",
+        "scene.wings": "drawer",
+        "scene.hud": "chips",
+        "scene.reasoning": "slab-note",
+        "editor.frame": "two-pane",
+        "editor.fields": "cards",
+        "settings.shape": "big-toggles",
+        "app.room": "ledger-rail",
+        "ui.controls": "sticker"
+      },
+      "palette": {
+        "surface": {
+          "well": "#e8e0d5",
+          "base": "#fff8ec",
+          "sunken": "#f2e8d9",
+          "field": "#fffef8",
+          "panel": "#fffdf5",
+          "raised": "#f9eddc",
+          "ink": "#e8ddca"
+        },
+        "line": {
+          "strong": "#654057",
+          "line": "#d6c4bd",
+          "track": "#dbcac1",
+          "control": "#725269",
+          "focus": "#5f24b5"
+        },
+        "text": {
+          "text": "#241a22",
+          "soft": "#3c2b38",
+          "dim": "#514051",
+          "faint": "#5c4c5a",
+          "onTint": "#1c1824",
+          "onDeep": "#ffffff"
+        },
+        "roles": {
+          "brand": {
+            "fill": "#f7a8dd",
+            "text": "#9f125f",
+            "deep": "#871047"
+          },
+          "action": {
+            "fill": "#9edbff",
+            "text": "#085d8d",
+            "deep": "#075279"
+          },
+          "select": {
+            "fill": "#d1b3ff",
+            "text": "#6339a5",
+            "deep": "#54308c"
+          },
+          "ok": {
+            "fill": "#b7e987",
+            "text": "#376d0e",
+            "deep": "#2c610b"
+          },
+          "warn": {
+            "fill": "#ffcf77",
+            "text": "#82500a",
+            "deep": "#714000"
+          },
+          "danger": {
+            "fill": "#ffa6a1",
+            "text": "#a12a2e",
+            "deep": "#8f202b"
+          },
+          "info": {
+            "fill": "#9fe8de",
+            "text": "#086d68",
+            "deep": "#075b58"
+          }
+        }
+      },
+      "type": {
+        "display": "fraunces",
+        "body": "atkinson",
+        "mono": "plex-mono",
+        "scale": 1,
+        "ui": "atkinson"
+      },
+      "shape": {
+        "frame": "bracket",
+        "frameWidth": 2,
+        "density": "comfortable",
+        "motion": "snappy",
+        "chrome": "bunzai"
+      },
+      "accent": {
+        "follows": "locked"
+      },
+      "marks": {}
+    },
+    "assets": [],
+    "styles": "styles.css"
+  },
+  "assets": {
+    "styles.css": "html[data-surface-scene-layout=\"chat-thread\"] .scs .scroll { background-image: none !important; }\nhtml[data-surface-scene-layout=\"chat-thread\"] .scs .bgm { background: radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--bk-role-brand) 22%, transparent), transparent 38%), radial-gradient(circle at 85% 65%, color-mix(in srgb, var(--bk-role-info) 24%, transparent), transparent 42%), var(--bk-surface-well); }\nhtml[data-surface-scene-message=\"bubble\"] .scs .msg:not(.user) .bub { border-left: 4px solid var(--bk-role-brand-deep); }\nhtml[data-surface-scene-message=\"bubble\"] .scs .msg.user .bub { border-left: 4px solid var(--bk-role-action-deep); }\n\n\n/* Prismatic navigation paint on Bunzai's persistent bottom dock. */\n[data-part=\"shell.nav\"] nav { background: #281a3b; border-color: #785e88; }\n[data-part=\"shell.nav.tile\"] { color: #fff8f5; }\n[data-part=\"shell.nav.tile\"]:hover { background: #48305d; }\n[data-part=\"shell.nav.tile\"][aria-current=\"page\"] { background: var(--bk-role-brand); color: #281a3b; }\n/* Sticker cards keep their artwork, with a light label and dark readable ink. */\nhtml[data-surface-library-card=\"sticker-card\"] .lib.rc .rcard {\n  --stage-card: #241a22;\n  --stage-soft: #3c2b38;\n  --stage-text-dim: #514051;\n}\nhtml[data-surface-library-card=\"sticker-card\"] .lib.rc .rcbody,\nhtml[data-surface-library-card=\"sticker-card\"] .lib.rc .rahead,\nhtml[data-surface-library-card=\"sticker-card\"] .lib.rc .rpbody,\nhtml[data-surface-library-card=\"sticker-card\"] .lib.rc .rrbody,\nhtml[data-surface-library-card=\"sticker-card\"] .lib.rc .rabody {\n  background: var(--bk-surface-panel);\n  color: var(--bk-text);\n}\nhtml[data-surface-library-card=\"sticker-card\"] .lib.rc .rcard .rcgenre {\n  background: var(--bk-role-brand);\n  color: var(--bk-role-brand-deep);\n}\nhtml[data-surface-library-card=\"sticker-card\"] .lib.rc .rcard .rcbody .rfoot {\n  --stage-text-dim: #514051;\n}\n"
+  }
+}
