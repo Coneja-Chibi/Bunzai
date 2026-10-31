@@ -17,6 +17,11 @@ export const AI_MODEL_STYLE = `
 .scs .mwrap:hover>[aria-pressed],.scs .mwrap>[aria-pressed]:focus-visible,.scs .mwrap>[aria-pressed="true"]{opacity:1}
 .scs .mwrap>[aria-pressed="true"]{color:var(--stage-warn)}
 .scs .ms-list{padding:16px}
+.scs .ms-list>.in{position:relative}
+.scs .ms-list .mvr{position:absolute;top:0;left:0;width:100%;box-sizing:border-box;padding-bottom:8px}
+.scs .mwrap{display:flex;align-items:center;gap:8px}
+.scs .mwrap>[data-control="row"]{flex:1;min-width:0}
+.scs .mwrap>[aria-pressed]{flex-shrink:0}
 .scs .grp-hd{display:flex;align-items:center;gap:8px;margin-bottom:12px;font:600 var(--rc-text-sm)/1.25rem var(--font-ui);color:var(--rc-zinc-400)}
 .scs .grp-hd .rule{flex:1;height:1px;background:var(--rc-zinc-800)}
 .scs .grp-hd.sel{color:var(--w)}.scs .grp-hd.sel .rule{background:color-mix(in srgb,var(--w) 30%,transparent)}
