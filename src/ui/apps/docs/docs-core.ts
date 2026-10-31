@@ -171,7 +171,7 @@ function rewriteDocLinks(markdown: string, current: DocRecord, docs: DocRecord[]
       const hash = anchor ? `#${anchor}` : "";
       return `[${label}](/docs/${encodeURIComponent(target.id)}${hash}${tail})`;
     }
-    const github = `https://github.com/Coneja-Chibi/Bunzai/blob/Mainstage/${resolved}`;
+    const github = `https://github.com/Vaudeville-Studios/Bunzai/blob/Mainstage/${resolved}`;
     return `[${label}](${github}${anchor ? `#${anchor}` : ""}${tail})`;
   });
 }

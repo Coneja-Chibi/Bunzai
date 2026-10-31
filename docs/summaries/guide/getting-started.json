@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "guide/getting-started",
   "sourcePath": "docs/guide/getting-started.md",
-  "sourceHash": "sha256:98c6cec2ace6a8e11c589a876cae160b3efe0933e892740ec075429a9b37e22b",
+  "sourceHash": "sha256:53a1982a574c9c313c6f0a42d27a309c4e199d0e3336a1e96ca98179c91a5696",
   "summary": "Getting started covers release or source installation, the one-time first-run wizard, everyday Dock rooms, specialist catalog apps, and the Library's import and blank-character paths. Release builds are the shortest install; source use requires Bun 1.3+, clone, install, and bun run dev for the primary loopback server at 127.0.0.1:8321. Optional remote listeners stay off until enabled. The studio folder defaults to Documents/Bunzai Studio or a custom bunzai ui path. Wizard asks theme, one or more kinds to make, publish targets, and a palette or custom accent; Skip all uses defaults. Settings retains theme, the first selected kind as the initial Library deck, publish targets, and accent rather than the complete ordered make selection. Dock rooms are Workbench, Library, and Press with Settings pinned below; Docs and CSS Workshop are catalog tools. Import receipts write only checked pieces, while Start fresh creates, saves, and opens a blank character.",
   "topics": [
     "release or Bun source install",
@@ -18,7 +18,7 @@
       "slug": "the-short-version",
       "title": "The short version",
       "level": 2,
-      "sourceHash": "sha256:7b293dffee9ed2710e21e95b75c3b576acc26a6c98013e98b405a0b8c33c1659",
+      "sourceHash": "sha256:bdc3ac72fbf2f31db6608d45554bf42dd3dcdfb870f6fc7ffd8404899dc8483a",
       "summary": "Download a platform build from GitHub Releases, or install Bun 1.3+, clone Bunzai, and run bun install for source use. Open the app or use bun run dev for the primary loopback address at 127.0.0.1:8321. Studio JSON defaults under Documents/Bunzai Studio or a custom path. Complete or skip the wizard, then import through the Library door or create a blank character through Start fresh.",
       "topics": [
         "release or Bun install",

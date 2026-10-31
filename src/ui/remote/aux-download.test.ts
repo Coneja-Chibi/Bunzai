@@ -23,7 +23,7 @@ import {
 } from "./aux-download";
 import { installAuxSidecar, auxSidecarPath, removeAuxSidecar, auxSidecarInstalled, readAuxMarker } from "./aux-install";
 
-const REPO = "Coneja-Chibi/Bunzai";
+const REPO = "Vaudeville-Studios/Bunzai";
 const payload = new TextEncoder().encode("pretend this is 31MB of Go");
 const digest = createHash("sha256").update(payload).digest("hex");
 const pin = (over: Partial<SidecarPin> = {}): SidecarPin => ({
@@ -46,7 +46,7 @@ const ASSET_HOST = "https://release-assets.githubusercontent.com/x/y?sig=abc";
 describe("the URL is built, never interpolated blindly", () => {
   test("points at the release asset on github.com", () => {
     expect(auxAssetUrl(REPO, pin())).toBe(
-      "https://github.com/Coneja-Chibi/Bunzai/releases/download/v0.1.26/sidecar-windows-x64.exe",
+      "https://github.com/Vaudeville-Studios/Bunzai/releases/download/v0.1.26/sidecar-windows-x64.exe",
     );
   });
 

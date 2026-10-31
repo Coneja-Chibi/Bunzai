@@ -14,10 +14,10 @@ Getting started is four things: install Bunzai, run the first-run wizard once, l
 ## The short version
 
 1. **Install Bunzai.** Download the build for your platform from
-   [Releases](https://github.com/Coneja-Chibi/Bunzai/releases). To run from source instead, install
+   [Releases](https://github.com/Vaudeville-Studios/Bunzai/releases). To run from source instead, install
    Bun 1.3+ and use:
    ```bash
-   git clone https://github.com/Coneja-Chibi/Bunzai
+   git clone https://github.com/Vaudeville-Studios/Bunzai
    cd Bunzai
    bun install
    ```

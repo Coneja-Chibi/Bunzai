@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:5ff5122a34a97b1ccd22949ec0d0697c61d84f80b9d1605ec97c4861249bd047",
-  "semanticSummaryHash": "sha256:2471cc4437c7ddd3a9779739b15c77f887c2bf434644b187371cff96ea426fc0",
+  "sourceHash": "sha256:27f1fe1d8c28de39b037b53165faab93a18aa4187c1cfe7dbad4dcb82f39ece4",
+  "semanticSummaryHash": "sha256:cf5f743cc83e3c8051cf65573b1de104950595e70f9145f263cc813e744eb7fb",
   "verdict": "APPROVE",
   "reviewer": "/root/landing_review",
-  "notes": "Reviewed the staged Browser Studio documentation delta and changed page/section summaries against the staged gallery inventory, new Scenes and editor images, GitHub header links, route-correct canonical metadata, native branded Open Graph PNG and prior approved baseline. The homepage shows Paper as its only theme example and excludes node boards. Star repo navigates to GitHub without account mutation. Static preview tags are independent of JavaScript; external preview caches are explicitly outside site control. This is not a fresh audit of unchanged UI documentation. Independently reran 20 focused site tests; all passed. No deployment or independent live-browser proof is claimed.",
-  "reviewedAt": "2026-10-31T07:05:17.859Z"
+  "notes": "Independently reviewed the complete staged repository-owner migration diff and these changed document sources against their existing semantic summaries and approved baseline. Live source, release APIs, helper pins, documentation links, README and Pages canonical/preview URLs now point to Vaudeville-Studios/Bunzai. The staged helper migration changes repository location only, preserving digests and download validation. Historical design prototypes retain old URLs and are outside published build inputs. Summary meaning remains unchanged and staged hashes validate. This receipt does not claim transfer authorization review, live deployment proof or a new audit of unchanged documentation.",
+  "reviewedAt": "2026-10-31T07:15:11.185Z"
 }

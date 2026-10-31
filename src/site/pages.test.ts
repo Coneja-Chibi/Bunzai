@@ -38,6 +38,6 @@ test('the auditorium links to a separate info page with product details and exis
   expect(home).toContain('media/shot-theme-paper.png');
   expect(home).not.toContain('media/shot-theme-rolecall.png');
   expect(home).not.toContain('media/shot-theme-theater.png');
-  expect(home).toContain('property="og:image" content="https://coneja-chibi.github.io/Bunzai/media/bunzai-preview.png"');
-  expect(home).toContain('property="og:url" content="https://coneja-chibi.github.io/Bunzai/"');
+  expect(home).toContain('property="og:image" content="https://vaudeville-studios.github.io/Bunzai/media/bunzai-preview.png"');
+  expect(home).toContain('property="og:url" content="https://vaudeville-studios.github.io/Bunzai/"');
 });

@@ -101,6 +101,9 @@ fork the canonical model or maintain a second set of format conversions.
 The public website opens on a static Bunzai title inside an illustrated movie auditorium
 (`src/site/auditorium.ts`). Its owner-requested cutout-style room artwork is
 `docs/media/cinema-auditorium.png`; the generation prompt and provenance sit beside it.
+The public repository belongs to Vaudeville-Studios; Pages publishes at
+`https://vaudeville-studios.github.io/Bunzai/`. Repository actions, release requests, downloads,
+documentation source links and canonical preview URLs use that organization-owned location.
 Clicking Begin the showing dims the room and pushes the camera toward the screen
 before revealing the first product screenshot. Reduced motion opens directly without the camera
 movement. The prototype curtain film remains available to the design studies, not the homepage.

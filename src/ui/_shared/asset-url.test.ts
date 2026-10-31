@@ -9,7 +9,7 @@ let installed: InstalledDom;
 
 beforeAll(() => {
   installed = installDom("<!doctype html><html><head></head><body></body></html>", {
-    url: "https://coneja-chibi.github.io/Bunzai/"
+    url: "https://vaudeville-studios.github.io/Bunzai/"
   });
   dom = installed.dom;
 });
@@ -18,7 +18,7 @@ afterAll(() => installed.teardown());
 describe("asset URLs", () => {
   test("preserves a static project path", () => {
     expect(assetUrl("docs/media/example.png")).toBe(
-      "https://coneja-chibi.github.io/Bunzai/docs/media/example.png",
+      "https://vaudeville-studios.github.io/Bunzai/docs/media/example.png",
     );
   });
 
@@ -32,7 +32,7 @@ describe("asset URLs", () => {
     meta.content = "browser";
     dom.window.document.head.append(meta);
     expect(docAssetUrl("docs/media/example.png")).toBe(
-      "https://coneja-chibi.github.io/Bunzai/docs/media/example.png",
+      "https://vaudeville-studios.github.io/Bunzai/docs/media/example.png",
     );
     meta.remove();
   });

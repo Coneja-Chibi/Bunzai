@@ -26,7 +26,7 @@ if (!tag || !/^[A-Za-z0-9._-]+$/.test(tag)) {
   process.exit(2);
 }
 
-const repo = "Coneja-Chibi/Bunzai";
+const repo = "Vaudeville-Studios/Bunzai";
 const base = `https://github.com/${repo}/releases/download/${tag}`;
 
 console.log(`reading ${base}/SHA256SUMS`);

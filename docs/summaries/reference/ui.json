@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:5ff5122a34a97b1ccd22949ec0d0697c61d84f80b9d1605ec97c4861249bd047",
+  "sourceHash": "sha256:27f1fe1d8c28de39b037b53165faab93a18aa4187c1cfe7dbad4dcb82f39ece4",
   "summary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Its public landing is a cutout auditorium with click-to-enter dimming and zoom, a photographed tour of scenes and editors, distinct descriptions and full-resolution links. Paper is its single theme example. Node-board slides are excluded. Repository links and static Open Graph metadata support sharing. Reduced motion and interaction suspend animation. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting, restorable Trash and composed book-cover presentation. Workbench provides canonical editors, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros, streaming, picture/list layouts, favorites and participant forms. The Context wing combines Prompt Inspector and Memory. Press owns staged export, linked riders, delivery and loss reporting. Settings derives its sections from folders and provides stage-light choices. One button family owns clickable controls. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, inert scripts and sanitized marks. The installed velvet landing supplies real Now Playing data, Dock navigation, a proscenium and capped lights and fog. Verification claims distinguish fixture, live and packaged evidence.",
   "topics": [
     "Kit conversational terminal",
@@ -54,7 +54,7 @@
       "slug": "browser-studio",
       "title": "Browser Studio",
       "level": 2,
-      "sourceHash": "sha256:a142c0c6e01bff167fcde6178e8948f2f095f6a2ec683d5af7cbe1a73f8b956e",
+      "sourceHash": "sha256:9a7bdfbbed23494f9f5d68a761eabf8c6153d302faea7576d6ff54e83fd2b89a",
       "summary": "GitHub Pages publishes the public website at its root and the React Studio under studio/. The landing is a cutout auditorium with click-to-enter dimming and zoom, real Scenes and editor screenshots, distinct descriptions and full-resolution links. Paper is the single theme example; node boards are excluded. Header links open GitHub for starring or browsing. Static Open Graph metadata provides canonical URLs and a branded PNG preview; external preview caches remain outside site control. Motion respects interaction, visibility and reduced motion. A separate info page holds details, guides, releases and downloads. Browser Studio reuses discovered apps, setup, adapters, inspect/export actions and documentation without a separate conversion model. Pieces, preferences, previews and portraits remain in memory for the current load; export before reload. Its library gate opens unlocked. Kit, MCP, remote controls, updates, engine checkouts, Lumiverse archives and script execution require the installed app. Static Pages cannot supply the isolated execution origin required by ADR-009.",
       "topics": [
         "GitHub Pages Studio",

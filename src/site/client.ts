@@ -13,7 +13,7 @@ import { runPremiere } from './premiere';
 import { runSceneExamples } from './scene-example';
 import { runScreening } from './screening';
 
-const REPO = "https://github.com/Coneja-Chibi/Bunzai";
+const REPO = "https://github.com/Vaudeville-Studios/Bunzai";
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, text?: string, cls?: string): HTMLElementTagNameMap[K] => {
   const node = document.createElement(tag);
@@ -67,7 +67,7 @@ async function fillReleases(): Promise<void> {
   if (lists.length === 0 && versions.length === 0) return;
   let releases: ReleaseInfo[] = [];
   try {
-    const res = await fetch("https://api.github.com/repos/Coneja-Chibi/Bunzai/releases?per_page=20", {
+    const res = await fetch("https://api.github.com/repos/Vaudeville-Studios/Bunzai/releases?per_page=20", {
       headers: { Accept: "application/vnd.github+json" },
     });
     if (res.ok) releases = readReleasesList(await res.json());

@@ -6,7 +6,7 @@
 
 **All the Worlds: Your Stage.**
 
-[Download Bunzai](https://github.com/Coneja-Chibi/Bunzai/releases) · [Getting started](docs/guide/getting-started.md)
+[Download Bunzai](https://github.com/Vaudeville-Studios/Bunzai/releases) · [Getting started](docs/guide/getting-started.md)
 
 </div>
 
@@ -17,11 +17,11 @@ Your library lives on your computer. Choose a local model or connect an AI provi
 - **Play** with your characters in chat scenes.
 - **Bring your work along.** Import files from other roleplay apps and export for the platforms you use.
 
-Bunzai is in active development. Expect rough edges, and please [report bugs](https://github.com/Coneja-Chibi/Bunzai/issues).
+Bunzai is in active development. Expect rough edges, and please [report bugs](https://github.com/Vaudeville-Studios/Bunzai/issues).
 
 ## Get started
 
-[Download a release](https://github.com/Coneja-Chibi/Bunzai/releases) and follow the [setup guide](docs/guide/getting-started.md).
+[Download a release](https://github.com/Vaudeville-Studios/Bunzai/releases) and follow the [setup guide](docs/guide/getting-started.md).
 
 Want to run from source or contribute? See [Contributing](CONTRIBUTING.md).
 For supported import and export formats, see [Format support](docs/FORMAT-SUPPORT.md).

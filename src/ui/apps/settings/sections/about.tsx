@@ -13,8 +13,8 @@ import { Button } from "../../../components/button";
 import { SettingsRow, type SettingsSection } from "../section-contract";
 import styles from "../styles.module.css";
 
-const REPO_PAGE = "https://github.com/Coneja-Chibi/Bunzai";
-const RELEASES_PAGE = "https://github.com/Coneja-Chibi/Bunzai/releases";
+const REPO_PAGE = "https://github.com/Vaudeville-Studios/Bunzai";
+const RELEASES_PAGE = "https://github.com/Vaudeville-Studios/Bunzai/releases";
 
 function AboutSection({ ctx }: { ctx: AppContext }): JSX.Element {
   const [installed, setInstalled] = useState("");

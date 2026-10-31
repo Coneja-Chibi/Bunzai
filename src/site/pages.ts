@@ -14,8 +14,8 @@ export interface Page {
   readonly html: string;
 }
 
-const REPO = "https://github.com/Coneja-Chibi/Bunzai";
-const SITE = 'https://coneja-chibi.github.io/Bunzai/';
+const REPO = "https://github.com/Vaudeville-Studios/Bunzai";
+const SITE = 'https://vaudeville-studios.github.io/Bunzai/';
 const LATEST = `${REPO}/releases/latest/download/`;
 
 type Section = "home" | "info" | "tour" | "guides" | "news" | "download" | "none";

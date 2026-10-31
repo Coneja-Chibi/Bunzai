@@ -8,7 +8,7 @@
 import { json } from "./server-security";
 import { fetchUpdateApi } from "./_shared/update-fetch";
 
-const RELEASES_LIST_API = "https://api.github.com/repos/Coneja-Chibi/Bunzai/releases";
+const RELEASES_LIST_API = "https://api.github.com/repos/Vaudeville-Studios/Bunzai/releases";
 const PER_PAGE = 30;
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
