@@ -1783,3 +1783,11 @@ identity and library lifetime. Locking invalidates pending reads. These paths ar
 source-reviewed; focused public-boundary fixture results are recorded in delivery evidence, and live proof remains pending.
 
 Paper’s manuscript scene layout keeps a 160 × 224 px portrait in a separate column beside the flexible message body; narrow panes use an 80 × 112 px portrait. The screenplay text fills the available body width without scrolling across the portrait. No decorative margin rule runs behind the text.
+
+
+New scenes created with the external rp-core integration expose an **rp-core** right wing for
+Director and Memory settings and their saved state. Existing scenes retain their previous engine.
+The Control Booth character navigator offers **Export scene**, exporting the host transcript and
+frozen cast as JSON, rather than the complete rp-core journal. Linked scenes refuse unsupported
+legacy transcript and setup mutations; native Ollama and OpenAI-chat compatible providers are
+supported. External-core sources live in the `vendor/rp-core` submodule.

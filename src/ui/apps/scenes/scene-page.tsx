@@ -42,7 +42,7 @@ import { ZoomArt } from "./scene-portrait-zoom";
 import { CHAR_TONE, USER_TONE, useSceneAccents } from "./scene-accents";
 import { DeleteTakeDialog, ForkDialog, TakesControl } from "./scene-takes";
 import { WingPanel, WingRails } from "./scene-wings";
-import { wingOf, propWings } from "./scene-wing-data";
+import { CORE_WING, wingOf, propWings } from "./scene-wing-data";
 import { WingSlot } from "./scene-wing-frame";
 import { useWingShell } from "./use-wing-shell";
 import { SwapLine } from "./cast/swap-line";
@@ -477,7 +477,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
         </header>
         {chat}
       </div>
-      <WingRails open={wing} onToggle={(id) => setWing(wing === id ? null : id)} extra={propWings(registeredProps, propsOn)} />
+      <WingRails open={wing} onToggle={(id) => setWing(wing === id ? null : id)} extra={[...(scene?.core ? [CORE_WING] : []), ...propWings(registeredProps, propsOn)]} />
       {wing && <><div className="wback" aria-hidden="true" /><div data-part="scene.paused"><Tile kind="icon" size="lg" label="Close the wing" icon={<Ic name="lucide:pause" size={26} />} caption="SCENE PAUSED" onClick={() => setWing(null)} /></div></>}
       {(["l", "r"] as const).map((sd) => (
         <WingSlot key={sd} side={sd} open={side === sd}>{wing && side === sd && wingBody(wing)}</WingSlot>

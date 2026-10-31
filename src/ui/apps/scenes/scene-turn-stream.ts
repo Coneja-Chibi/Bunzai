@@ -10,6 +10,15 @@ import type { TurnEvent } from "../../../studio/scene-turn";
 const LAST = new Set<TurnEvent["type"]>(["done", "stopped", "failed", "conflict"]);
 
 export async function readSceneTurn(response: Response, onEvent: (event: TurnEvent) => void): Promise<void> {
+  if (!response.ok) {
+    let message = `The turn could not start (HTTP ${response.status}).`;
+    try {
+      const body: unknown = await response.json();
+      if (body && typeof body === "object" && "error" in body && typeof body.error === "string") message = body.error;
+    } catch { /* A non-JSON refusal still has the status above. */ }
+    onEvent({ type: "failed", category: "api_error", code: "turn_start_failed", message, draft: "" });
+    return;
+  }
   const ended = await readSse(response, (v): v is TurnEvent => typedEvent(v), (e) => LAST.has(e.type), onEvent);
   if (!ended) {
     onEvent({ type: "failed", category: "api_error", code: "service_unavailable", message: "This page lost the reply as it was being written. It keeps going in the background; reopen the scene to see it.", draft: "" });

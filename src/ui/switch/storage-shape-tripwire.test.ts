@@ -38,6 +38,7 @@ async function shapeFiles(): Promise<string[]> {
     // Where the library lives: the database's migrations, and the pieces, the Studio's own documents,
     // and Kit's transcripts inside it.
     "src/stage/store/sqlite/migrations.ts",
+    "src/stage/store/sqlite/core-record-store.ts",
     "src/stage/store/sqlite/migration-18-parts.ts",
     "src/stage/store/sqlite/migration-19-blobs.ts",
     "src/stage/store/sqlite/migration-20-derived.ts",
@@ -468,7 +469,11 @@ async function shapeFiles(): Promise<string[]> {
 // Existing pieces remain readable. Older builds cannot read new kinds. Final Cut active saved Agents move
 // to canonical pieces with complete original escrow, verified exact identity and revision-guarded edits.
 // Downgrade remains one-way for those new pieces; the existing v0.1.42 storage-change fence covers this release.
-const PINNED_SHAPE_HASH = "82a96da9fb0d90b894bed6eae16a3e17a483032d05edb885c92fedee25e9bea4";
+// 2026-10-31: migration 47 adds sealed external rp-core session/entry tables and links.
+// Migrations 1-46 retain their identities; existing scenes stay on the legacy engine.
+// An older build refuses a database at migration 47, as for every unknown migration.
+// The submodule commit and record-store representation pin the new journal format.
+const PINNED_SHAPE_HASH = "0017aaae7db9c9a673f31a83e7bd51c2270ef34885f7c739a60210f64b8c69cd";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");

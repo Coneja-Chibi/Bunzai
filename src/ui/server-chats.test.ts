@@ -45,6 +45,19 @@ test("list, rename, delete, and bad input", async () => {
   expect((await handler(apiReq(`/api/chats/open?id=${chat.id}`))).status).toBe(404);
 });
 
+test("scene export preserves the frozen cast and each take's text", async () => {
+  const { store, handler, post } = await rig();
+  await store.save(vera);
+  const chat = (await (await post("/api/chats/start", { characterId: "vera" })).json()) as { id: string };
+  await post("/api/chats/send", { chatId: chat.id, content: "Hi Vera", greetingIndex: 0, expectedVersion: 1 });
+  const response = await handler(apiReq(`/api/chats/export?id=${chat.id}`));
+  expect(response.status).toBe(200);
+  expect(response.headers.get("content-disposition")).toContain("attachment");
+  const lines = (await response.text()).trim().split("\n").map((line) => JSON.parse(line) as Record<string, unknown>);
+  expect(lines[0]).toMatchObject({ type: "bunzai.scene/1", snapshot: { character: { id: "vera" } } });
+  expect(lines.filter((line) => line["type"] === "message").map((line) => (line["message"] as { swipes: { content: string }[] }).swipes[0]!.content)).toEqual(["Hello {{user}}.", "Hi Vera"]);
+});
+
 const PNG = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
 
 test("a scene keeps its frozen cast: a later card edit changes neither its name nor its art (spec rule 10)", async () => {

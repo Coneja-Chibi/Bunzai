@@ -99,7 +99,9 @@
     "scan:boundaries": "bun run scripts/hooks/stage-boundary.ts",
     "scan:virtualizers": "bun run scripts/hooks/virtualizer-boundary.ts",
     "scan:theme-keys": "bun run scripts/hooks/theme-keys.ts",
-    "scan:parts": "bun run scripts/hooks/part-names.ts"
+    "scan:parts": "bun run scripts/hooks/part-names.ts",
+    "rp-core:update": "git submodule update --init --remote --recursive vendor/rp-core && bun install --force",
+    "rp-core:init": "git submodule update --init --recursive vendor/rp-core && bun install"
   },
   "engines": {
     "bun": ">=1.3.14"
@@ -154,7 +156,8 @@
     "wasmoon": "1.16.0",
     "webview-bun": "^2.4.0",
     "zod": "^4.6.7",
-    "zustand": "^5.0.14"
+    "zustand": "^5.0.14",
+    "rp-core": "file:vendor/rp-core"
   },
   "overrides": {
     "qs": "^6.17.1",

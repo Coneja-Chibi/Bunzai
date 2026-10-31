@@ -7,6 +7,9 @@
  * Every panel is drawn in a WingFrame (scene-wing-frame.tsx) and resizes from its edge (wing-resize-edge.tsx).
  */
 import type { JSX, ReactNode } from "react";
+import { CoreWing } from "./scene-core-wing";
+import type { OpenScene } from "../../../studio/scenes";
+import type { AppContext } from "../../app-contract";
 import { Ic } from "../../_shared/ic";
 import { WorldWing } from "./scene-world-wing";
 import { AiTabs } from "./scene-ai-tabs";
@@ -19,10 +22,10 @@ import { PropWingBody, type PropWingHost } from "./scene-prop-wing";
 import { WingFrame } from "./scene-wing-frame";
 import type { WingResize } from "./wing-resize-edge";
 
-export { WINGS } from "./scene-wing-data";
+export { WINGS, CORE_WING } from "./scene-wing-data";
 export { WingRails } from "./scene-wing-rail";
 
-export function WingPanel({ id, tab, bare, single, castPanel, booth, ai, aiGeneration, stage, prompting, world, props, finalCut, context, resize, propWing }: {
+export function WingPanel({ id, tab, bare, single, castPanel, booth, ai, aiGeneration, stage, prompting, world, props, finalCut, context, core, resize, propWing }: {
   id: string;
   /** The tab to open on (a Messenger program, messenger/programs.ts). */
   tab?: string;
@@ -31,6 +34,7 @@ export function WingPanel({ id, tab, bare, single, castPanel, booth, ai, aiGener
   /** Draw only `tab`'s body, without the wing's tab bar or crumb (a Messenger section). */
   single?: boolean;
   context?: ContextProps; castPanel?: JSX.Element; booth?: JSX.Element; ai?: JSX.Element; aiGeneration?: JSX.Element; stage?: StageProps; prompting?: { panel: JSX.Element }; world?: { panel: JSX.Element; compendium: JSX.Element; meta: string };
+  core?: { ctx: AppContext; scene: OpenScene };
   props?: { panel: JSX.Element; meta: string };
   finalCut?: { panel: JSX.Element };
   /** The wing's drag edge; a panel drawn without one (a test, a closed slot) has none. */
@@ -44,6 +48,7 @@ export function WingPanel({ id, tab, bare, single, castPanel, booth, ai, aiGener
   const frame = (extra: string | undefined, body: ReactNode): JSX.Element => bare
     ? <div className={`wing-panel ${wing.side}${extra ? ` ${extra}` : ""}`} data-wing={wing.id}>{body}</div>
     : <WingFrame wing={wing} {...(extra ? { extra } : {})} {...(resize ? { resize } : {})}>{body}</WingFrame>;
+  if (id === "core" && core?.scene.core) return frame("core-wing", <CoreWing {...core} />);
   if (prop && propWing) return frame("prop-wing", <PropWingBody prop={prop} state={propWing} />);
   if (id === "cast" && castPanel) return frame("cast-wing", <><ThemeSlot id="scene.wing.cast" />{castPanel}</>);
   if (id === "booth" && booth) return frame(undefined, <><ThemeSlot id="scene.wing.booth" /><nav className="fold">{crumb}</nav>{booth}</>);

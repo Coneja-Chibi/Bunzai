@@ -1,11 +1,6 @@
-/**
- * Scene routes (/api/chats/*) over the open library's ChatStore through src/studio/scenes.ts: list,
- * start, open, the frozen portrait, send, edit, rename, delete; cuts and their restore; takes (switch,
- * fork, rename, delete); moving a scene to the latest card and back; and the scene half of the Trash.
- * The turn routes (a reply streamed, Stop, the AI wing's picker) live in server-chats-turn.ts; opening
- * a scene first keeps any reply a crash cut off (turn-loop rule 4). Bodies are parsed once behind the shared caps; storage failures fold through studioErr, so a locked
- * library answers 423 and a stale version 409, like every Studio route.
- */
+/** Scene HTTP routes over the open library; turn streaming and core ownership have dedicated modules. */
+import { ownChatRequest } from "./server-chat-owned";
+import { coreWriteGuard } from "./server-core-guard";
 import { bodyOf, isRecord, str } from "../core/guards";
 import { sceneRuntimeFor } from "./server-scene-runtime";
 import { countText } from "../core/tokens";
@@ -14,7 +9,8 @@ import { playedBody } from "../entities/character/variant";
 import type { PersonaBody } from "../entities/persona/schema";
 import type { Chat, ChatOpening, ChatProps, ChatStore, JsonObject } from "../stage/contracts/chat-store";
 import type { SettingsStoreLike, StudioStoreLike } from "../studio/contracts";
-import { libraryChatsFor, libraryStateFor } from "../studio/library-content";
+import { libraryChatsFor, libraryFor, libraryStateFor } from "../studio/library-content";
+import { createCoreSceneSession, reconcileCoreScene, sendCoreScene } from "../studio/core-scene";
 import { lorebookReader, resolveBooks, type ReadLorebook } from "../studio/scene-lore";
 import { presetReader } from "../studio/scene-turn-load";
 import { StudioLockedError } from "../studio/errors";
@@ -27,6 +23,7 @@ import {
   deleteTake,
   forkScene,
   frozenCharacter,
+  greetingsOf,
   hideInScene,
   listScenes,
   olderSceneMessages,
@@ -75,6 +72,7 @@ import { handleTrackerRefreshRoute } from "./server-chats-tracker-refresh";
 import { handleForecastRoute } from "./server-chats-forecast";
 import { handleLinkedRoute } from "./server-chats-links";
 import { handleTurnRoute } from "./server-chats-turn";
+import { handleCoreSettings, handleCoreRead } from "./server-chats-core-settings";
 import { compendiumDepsFor, compendiumDepsOf, handleCompendiumRoute } from "./server-chats-compendium";
 import { filingsOfVersion, filingsUnderCut, undoWithCut } from "../studio/compendium-hooks";
 import { busy } from "../studio/compendium-queue";
@@ -254,11 +252,34 @@ const WRITES: Record<string, (chats: ChatStore, store: StudioStoreLike, b: Body,
     const take = await chats.restoreBranch(str(b["id"]));
     return take ? json(take) : err("the Trash no longer holds that take", 404);
   },
-  "/api/chats/start": async (chats, store, b, settings) => json(await startSceneWithNotes(chats, store, settings, str(b["characterId"])).then(({ chat, notes }) => (notes.length > 0 ? { ...chat, startNotes: notes } : chat))),
+  "/api/chats/start": async (chats, store, b, settings) => {
+    const { chat, notes } = await startSceneWithNotes(chats, store, settings, str(b["characterId"]));
+    const records = libraryFor(store.studioPath())?.core;
+    if (records) await createCoreSceneSession(chats, records, store.studioPath(), chat.id);
+    return json(notes.length ? { ...chat, startNotes: notes } : chat);
+  },
+
   "/api/chats/send": async (chats, store, b) => {
     const { greetingIndex, expectedVersion } = b;
     if (typeof greetingIndex !== "number" || typeof expectedVersion !== "number" || typeof b["content"] !== "string") return err("expected { chatId, content, greetingIndex, expectedVersion }");
-    return scene(await sendToScene(chats, store, { chatId: str(b["chatId"]), content: str(b["content"]), greetingIndex, expectedVersion }));
+    const chatId = str(b["chatId"]);
+    const records = libraryFor(store.studioPath())?.core;
+    const core = records ? await records.sceneFor(chatId) : null;
+    if (core) {
+      const chat = await chats.getChat(chatId);
+      if (!chat || chat.activeBranchId !== core.branchId) return err("this take is not connected to rp-core yet", 409);
+      const branch = (await chats.listBranches(chatId)).find((take) => take.id === core.branchId);
+      if (branch?.version !== expectedVersion) return err("the scene changed; reload it and try again", 409);
+      if (!str(b["content"]).trim()) return err("a message needs some text");
+      if (await chats.countMessages(core.branchId) === 0) {
+        const snapshot = await chats.castSnapshot(chatId);
+        const greetings = snapshot ? greetingsOf(snapshot.character) : [];
+        if (greetings.length > 0 && (!Number.isInteger(greetingIndex) || !greetings[greetingIndex])) return err("that greeting does not exist");
+      }
+    }
+    if (records && core) await sendCoreScene(chats, chatId, records, store.studioPath(), core.sessionId, str(b["content"]), greetingIndex);
+    const sent = await sendToScene(chats, store, { chatId, content: str(b["content"]), greetingIndex, expectedVersion });
+    return scene(sent && core ? { ...sent, core: true } : sent);
   },
   "/api/chats/edit": async (chats, _store, b) => {
     const { content, expectedVersion } = b;
@@ -304,7 +325,7 @@ const WRITES: Record<string, (chats: ChatStore, store: StudioStoreLike, b: Body,
   },
 };
 
-export async function handleChatRoute(req: Request, url: URL, store: StudioStoreLike, settings: SettingsStoreLike, session = ""): Promise<Response> {
+async function handleChatRouteOwned(req: Request, url: URL, store: StudioStoreLike, settings: SettingsStoreLike, session = ""): Promise<Response> {
   const p = url.pathname;
   try {
     const chats = requireChats(libraryChatsFor(store.studioPath()));
@@ -327,15 +348,22 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
       const loadouts = await handleLoadoutRoute(req, url, chats, state, null);
       if (loadouts) return loadouts;
       if (p === "/api/chats/list") return json(await listScenes(chats, store));
+      const coreRead = await handleCoreRead(url, chats, libraryFor(store.studioPath())?.core, store.studioPath());
+      if (coreRead) return coreRead;
       if (p === "/api/chats/summary-search") return json({ ids: await searchSummaries(chats, url.searchParams.get("q") ?? "") });
       if (p === "/api/chats/trash") return json(await sceneTrash(chats));
       if (p === "/api/chats/portrait") return portraitResponse(await frozenCharacter(chats, url.searchParams.get("id") ?? ""));
       if (p === "/api/chats/open") {
         const id = url.searchParams.get("id") ?? "";
-        await resumeScene(sceneRuntimeFor(chats), chats, id);
+        const records = libraryFor(store.studioPath())?.core;
+        const core = records ? await records.sceneFor(id) : null;
+        if (records && core) await reconcileCoreScene(chats, id, core.branchId, records, store.studioPath(), core.sessionId);
+        else await resumeScene(sceneRuntimeFor(chats), chats, id);
+
         // A receipt left in flight with nothing running in this process (no pass in the scene lane, no Standardize run) is a crash's (rule 39); one being worked on now is left alone.
         if (!busy(id) && lockedBooks(id).length === 0) await chats.sweepReceipts(id);
-        return scene(await openScene(chats, store, id));
+        const opened = await openScene(chats, store, id);
+        return scene(opened && core ? { ...opened, core: true } : opened);
       }
       if (p === "/api/chats/page") {
         const chatId = url.searchParams.get("id") ?? "";
@@ -422,6 +450,10 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
     if (req.method !== "POST") return err("not found", 404);
     const b = await body(req);
     if (b instanceof Response) return b;
+    const records = libraryFor(store.studioPath())?.core;
+    if (p === "/api/chats/core-settings") return handleCoreSettings(b, chats, records, store.studioPath());
+    const refusal = await coreWriteGuard(p, b, records);
+    if (refusal) return refusal;
     const turn = await handleTurnRoute(req, url, chats, state, readPreset, readLorebook, b, store, filingDeps, settings);
     if (turn) return turn;
     const filing = await handleCompendiumRoute(req, url, chats, filingDeps, b);
@@ -460,4 +492,8 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
   } catch (e) {
     return studioErr(e);
   }
+}
+
+export function handleChatRoute(req: Request, url: URL, store: StudioStoreLike, settings: SettingsStoreLike, session = ""): Promise<Response> {
+  return ownChatRequest(store, () => handleChatRouteOwned(req, url, store, settings, session));
 }

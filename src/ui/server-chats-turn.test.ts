@@ -6,11 +6,14 @@
  */
 import { afterAll, afterEach, beforeAll, expect, setDefaultTimeout, test } from "bun:test";
 import { randomUUID } from "node:crypto";
+import { Engine } from "rp-core";
 import { rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { CANONICAL_SCHEMA_VERSION } from "../core/canonical";
 import { saveProvider } from "../kit/providers/vault";
+import { libraryFor } from "../studio/library-content";
+import { openCoreScene } from "../studio/core-scene";
 import { chatRouteRig as rig, cleanupChatRouteRigs, vera } from "./fake-server-chats-rig";
 import { apiReq } from "./server-test-rig";
 
@@ -88,9 +91,115 @@ async function readyScene() {
   const r = await rig();
   await r.store.save(vera);
   const chat = (await (await r.post("/api/chats/start", { characterId: "vera" })).json()) as { id: string };
-  const sent = (await (await r.post("/api/chats/send", { chatId: chat.id, content: "Any storms?", greetingIndex: 0, expectedVersion: 1 })).json()) as { branchVersion: number };
+  const send = await r.post("/api/chats/send", { chatId: chat.id, content: "Any storms?", greetingIndex: 0, expectedVersion: 1 });
+  if (send.status !== 200) throw new Error(`${send.status}: ${await send.text()}`);
+  const sent = (await send.json()) as { branchVersion: number };
   return { ...r, chatId: chat.id, version: sent.branchVersion };
 }
+
+test("new core scene sends through rp-core and keeps the reply in Bunzai", async () => {
+  const r = await rig({ core: true });
+  await r.store.save(vera);
+  const chat = (await (await r.post("/api/chats/start", { characterId: "vera" })).json()) as { id: string };
+  const send = await r.post("/api/chats/send", { chatId: chat.id, content: "Any storms?", greetingIndex: 0, expectedVersion: 1 });
+  if (send.status !== 200) throw new Error(`${send.status}: ${await send.text()}`);
+  const sent = (await send.json()) as { branchVersion: number };
+  expect((await r.post("/api/chats/connection", { chatId: chat.id, connection: { id: localId, model: "qwen3" } })).status).toBe(200);
+  const response = await r.post("/api/chats/turn", { chatId: chat.id, kind: "reply", expectedVersion: sent.branchVersion });
+  if (response.status !== 200) throw new Error(`${response.status}: ${await response.text()}`);
+  const result = await events(response);
+  expect(result.map((e) => e.type)).toEqual(["start", "text", "done"]);
+  const open = (await (await r.handler(apiReq(`/api/chats/open?id=${chat.id}`))).json()) as { messages: { role: string; swipes: { content: string }[] }[] };
+  expect(open.messages.at(-1)).toMatchObject({ role: "assistant", swipes: [{ content: "It might." }] });
+  const first = (await (await r.handler(apiReq(`/api/chats/open?id=${chat.id}`))).json()) as { branchVersion: number };
+  expect((await events(await r.post("/api/chats/turn", { chatId: chat.id, kind: "swipe", expectedVersion: first.branchVersion }))).at(-1)?.type).toBe("done");
+  const swiped = (await (await r.handler(apiReq(`/api/chats/open?id=${chat.id}`))).json()) as { branchVersion: number; messages: { transcript?: { swipeCount: number } }[] };
+  expect(swiped.messages.at(-1)?.transcript?.swipeCount).toBe(2);
+  const next = (await (await r.post("/api/chats/send", { chatId: chat.id, content: "Then what?", greetingIndex: 0, expectedVersion: swiped.branchVersion })).json()) as { branchVersion: number };
+  expect((await events(await r.post("/api/chats/turn", { chatId: chat.id, kind: "reply", expectedVersion: next.branchVersion }))).at(-1)?.type).toBe("done");
+});
+
+test("core scene exposes its own Director and memory view, while an old scene does not", async () => {
+  const r = await rig({ core: true });
+  await r.store.save(vera);
+  const chat = (await (await r.post("/api/chats/start", { characterId: "vera" })).json()) as { id: string };
+  const open = (await (await r.handler(apiReq(`/api/chats/open?id=${chat.id}`))).json()) as { core?: true };
+  expect(open.core).toBe(true);
+  const snapshot = (await (await r.handler(apiReq(`/api/chats/core-state?chatId=${chat.id}`))).json()) as { director: unknown; memory: { total: number; items: unknown[] } };
+  expect(snapshot.director).toBeNull();
+  expect(snapshot.memory).toMatchObject({ total: 0, items: [] });
+  const records = libraryFor(r.store.studioPath())!.core!;
+  const linked = (await records.sceneFor(chat.id))!;
+  const engine = await Engine.openWithRecordStore({ home: r.store.studioPath(), recordStore: records, lane: "manual" });
+  const session = await engine.session(linked.sessionId);
+  await session.memoryAdd({ title: "Storm warning", content: "The harbor closes at dusk." });
+  await engine.close();
+  const remembered = (await (await r.handler(apiReq(`/api/chats/core-state?chatId=${chat.id}`))).json()) as { memory: { total: number; items: { name: string; render: string }[] } };
+  expect(remembered.memory.total).toBe(1);
+  expect(remembered.memory.items[0]?.name).toBe("Storm warning");
+  expect(remembered.memory.items[0]?.render).toContain("harbor closes at dusk");
+  const sent = await r.post("/api/chats/send", { chatId: chat.id, content: "Any storms?", greetingIndex: 0, expectedVersion: 1 });
+  expect((await sent.json() as { core?: true }).core).toBe(true);
+  expect((await r.post("/api/chats/core-settings", { chatId: chat.id, feature: "director", enabled: true })).status).toBe(200);
+  expect((await r.post("/api/chats/core-settings", { chatId: chat.id, feature: "memory", enabled: false })).status).toBe(200);
+  const switched = (await (await r.handler(apiReq(`/api/chats/core-state?chatId=${chat.id}`))).json()) as { directorEnabled: boolean; memoryEnabled: boolean };
+  expect(switched).toMatchObject({ directorEnabled: true, memoryEnabled: false });
+  expect((await r.post("/api/chats/core-settings", { chatId: chat.id, feature: "director", enabled: "yes" })).status).toBe(400);
+  const old = await rig({ core: false });
+  await old.store.save(vera);
+  const legacy = (await (await old.post("/api/chats/start", { characterId: "vera" })).json()) as { id: string };
+  expect((await (await old.handler(apiReq(`/api/chats/open?id=${legacy.id}`))).json() as { core?: true }).core).toBeUndefined();
+});
+
+test("new core scene's prompt inspector answers the rp-core review gate", async () => {
+  const r = await rig({ core: true });
+  await r.store.save(vera);
+  const chat = (await (await r.post("/api/chats/start", { characterId: "vera" })).json()) as { id: string };
+  const sent = (await (await r.post("/api/chats/send", { chatId: chat.id, content: "Any storms?", greetingIndex: 0, expectedVersion: 1 })).json()) as { branchVersion: number };
+  await r.post("/api/chats/connection", { chatId: chat.id, connection: { id: localId, model: "qwen3" } });
+  const seen = await readEvents(await r.post("/api/chats/turn", { chatId: chat.id, kind: "reply", expectedVersion: sent.branchVersion, inspect: true }), (event) => {
+    if (event.type === "review") void r.post("/api/chats/review", { chatId: chat.id, turnId: event.turnId, kind: "send", edits: {} });
+  });
+  expect(seen.map((event) => event.type)).toEqual(["start", "review", "text", "done"]);
+});
+
+test("an unsupported edit is refused before it can diverge from rp-core", async () => {
+  const r = await rig({ core: true });
+  await r.store.save(vera);
+  const chat = (await (await r.post("/api/chats/start", { characterId: "vera" })).json()) as { id: string };
+  const sent = (await (await r.post("/api/chats/send", { chatId: chat.id, content: "Any storms?", greetingIndex: 0, expectedVersion: 1 })).json()) as { branchVersion: number; messages: { id: string; swipes: { id: string }[] }[] };
+  const user = sent.messages.at(-1)!;
+  expect((await r.post("/api/chats/edit", { messageId: user.id, swipeId: user.swipes[0]!.id, content: "A different question", expectedVersion: sent.branchVersion })).status).toBe(501);
+  const open = (await (await r.handler(apiReq(`/api/chats/open?id=${chat.id}`))).json()) as { messages: { swipes: { content: string }[] }[] };
+  expect(open.messages.at(-1)?.swipes[0]?.content).toBe("Any storms?");
+});
+
+test("opening a core scene restores an answer committed before its UI projection", async () => {
+  const r = await rig({ core: true });
+  await r.store.save(vera);
+  const chat = (await (await r.post("/api/chats/start", { characterId: "vera" })).json()) as { id: string };
+  await r.post("/api/chats/send", { chatId: chat.id, content: "Any storms?", greetingIndex: 0, expectedVersion: 1 });
+  const pick = { id: localId, model: "qwen3" };
+  await r.post("/api/chats/connection", { chatId: chat.id, connection: pick });
+  const records = libraryFor(r.store.studioPath())!.core!;
+  const link = (await records.sceneFor(chat.id))!;
+  const { engine, session } = await openCoreScene(records, r.store.studioPath(), link.sessionId, pick);
+  const turn = await session.runTurn({ kind: "reply", expectedVersion: await session.version() });
+  for await (const _ of turn.events) { /* drain */ }
+  expect(await turn.result).toMatchObject({ type: "done" });
+  await engine.close();
+  const open = (await (await r.handler(apiReq(`/api/chats/open?id=${chat.id}`))).json()) as { messages: { role: string; swipes: { content: string }[] }[] };
+  expect(open.messages.at(-1)).toMatchObject({ role: "assistant", swipes: [{ content: "It might." }] });
+});
+
+test("a stale or invalid first send never advances the core journal", async () => {
+  const r = await rig({ core: true });
+  await r.store.save(vera);
+  const chat = (await (await r.post("/api/chats/start", { characterId: "vera" })).json()) as { id: string };
+  expect((await r.post("/api/chats/send", { chatId: chat.id, content: "Hi", greetingIndex: 0, expectedVersion: 0 })).status).toBe(409);
+  expect((await r.post("/api/chats/send", { chatId: chat.id, content: "Hi", greetingIndex: 99, expectedVersion: 1 })).status).toBe(400);
+  expect((await r.post("/api/chats/send", { chatId: chat.id, content: "Hi", greetingIndex: 0, expectedVersion: 1 })).status).toBe(200);
+});
 
 test("the wing lists saved connections without keys, and a subscription sign-in says why scenes cannot use it", async () => {
   const { handler } = await rig();

@@ -74,6 +74,7 @@ export function BoothNavigator({ ctx, scene, art }: { ctx: AppContext; scene: Op
       {str(identity["tagline"]) && <span className="bth-tagline">{str(identity["tagline"])}</span>}
       {tags.length > 0 && <span className="bth-tags">{tags.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (t) => <span className="bth-tag" key={t}>{t}</span>)}</span>}
       <div className="bth-change"><Button size="sm" icon="lucide:search" aria-label="Open character navigator" aria-expanded={open} onClick={() => setOpen(true)}>Change Character</Button></div>
+      <a className="bth-change" href={`/api/chats/export?id=${encodeURIComponent(scene.chat.id)}`} download>Export scene</a>
       {open && <CharacterLibrary ctx={ctx} currentId={scene.chat.cast.character.id} onClose={() => setOpen(false)} />}
     </section>
   );

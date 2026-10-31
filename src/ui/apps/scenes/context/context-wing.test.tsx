@@ -15,14 +15,14 @@ beforeAll(() => {
 afterAll(() => installed.teardown());
 
 const scene = { chat: { id: "c1" }, messages: [], snapshot: { character: { body: { identity: { name: "Vera" } } } } } as unknown as OpenScene;
-const ctx = { api: { getSceneTrace: async () => null, getSceneForecast: async () => { throw new Error("not asked"); }, getSceneSummary: async () => ({ settings: {}, text: null, through: 0, at: null, total: 0, error: null, running: false }), sceneConnections: async () => [], getSceneVariables: async () => ({ local: [], global: [] }) }, prefs: { get: () => undefined, set: () => undefined } } as unknown as AppContext;
+const ctx = { api: { getSceneTrace: async () => null, getSceneForecast: async () => { throw new Error("not asked"); }, getSceneSummary: async () => ({ settings: {}, text: null, through: 0, at: null, total: 0, error: null, running: false }), getCoreSceneState: async () => ({ directorEnabled: true, director: { turn: 2, ok: true, state: { pacing: { currentMood: "tense" }, arcs: [{ id: "a", title: "The harbor", status: "active" }] }, directive: { narrativeGoal: "Reach the docks" } }, memory: { total: 1, offset: 0, items: [{ ref: "C1", type: "note", name: "Storm warning", origin: "session", retired: false, render: "The harbor closes at dusk." }], queued: 0, running: false, parked: 0 } }), sceneConnections: async () => [], getSceneVariables: async () => ({ local: [], global: [] }) }, prefs: { get: () => undefined, set: () => undefined } } as unknown as AppContext;
 
-async function mount(): Promise<{ host: HTMLElement; done(): void }> {
+async function mount(open = scene): Promise<{ host: HTMLElement; done(): void }> {
   const [{ flushSync }, { createRoot }, { WingPanel }] = await Promise.all([import("react-dom"), import("react-dom/client"), import("../scene-wings")]);
   const el = dom.window.document.createElement("div");
   dom.window.document.body.appendChild(el);
   const root = createRoot(el);
-  flushSync(() => root.render(<WingPanel id="context" context={{ ctx, scene, onChat: () => undefined }} />));
+  flushSync(() => root.render(<WingPanel id="context" context={{ ctx, scene: open, onChat: () => undefined }} />));
   return { host: el, done: () => flushSync(() => root.unmount()) };
 }
 const tabs = (el: HTMLElement, label: string): string[] => [...el.querySelectorAll(`[role="tablist"][aria-label="${label}"] [role="tab"]`)].map((b) => b.textContent ?? "");
@@ -54,6 +54,11 @@ describe("Context wing shell", () => {
     expect(m.host.textContent).not.toContain("What the AI was sent");
     click("Prompt Inspector");
     expect(m.host.querySelector('[role="tablist"][aria-label="Prompt Inspector"] [aria-selected="true"]')?.textContent).toContain("Next send");
+    m.done();
+  });
+  test("a linked scene keeps Context focused on its own inspector and memory", async () => {
+    const m = await mount({ ...scene, core: true });
+    expect(tabs(m.host, "Context sections")).toEqual(["Prompt Inspectorhistory / review", "Memory"]);
     m.done();
   });
   test("Review is a fourth tile, not a tab; with no paused turn the wing says so in RoleCall's words and Close puts it away", async () => {

@@ -12,6 +12,7 @@ import type { SummarySettingsPatch, Chat, ChatBackdrop, ChatCompendiumPatch, Cha
 import type { DraftInput } from "../studio/scene-draft";
 import type { SummaryState } from "../studio/scene-summary";
 import type { DirectorEdit, DirectorPanel } from "../studio/scene-director-edit";
+import type { CoreSceneState } from "../studio/core-inspect";
 import type { DirectorSettingsPatch } from "../stage/contracts/director-types";
 import type { DramaturgApi } from "./app-contract-dramaturg";
 import type { TrackerItemInput } from "../studio/scene-tracker-item";
@@ -191,6 +192,10 @@ export interface ScenesApi extends DramaturgApi {
   tryFormula(chatId: string, text: string, signal?: AbortSignal): Promise<FormulaTry>;
   /** The Context wing's Memory tab: the saved summary settings, the active take's text and how far it reaches, and whether a run is going. */
   getSceneSummary(chatId: string): Promise<ChatSummaryState>;
+  /** Read-only Director and Compendium state from the linked rp-core session. */
+  getCoreSceneState(chatId: string, offset?: number): Promise<CoreSceneState>;
+  /** Persist a linked rp-core session's Director or Compendium switch. */
+  setCoreSceneFeature(chatId: string, feature: "director" | "memory", enabled: boolean): Promise<CoreSceneState>;
   /** Changes the summary settings (ChatStore rule 45; a key given as null goes back to its default) and answers the new state. */
   setSceneSummarySettings(chatId: string, patch: SummarySettingsPatch): Promise<ChatSummaryState>;
   /** Saves the person's own summary text for the active take. */

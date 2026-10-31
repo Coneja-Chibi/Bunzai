@@ -27,10 +27,10 @@ export const vera = testCharacter("vera", [], {
   alternateGreetings: ["Evening."],
 });
 
-export async function chatRouteRig() {
+export async function chatRouteRig(options: { core?: boolean } = {}) {
   const root = await mkdtemp(join(tmpdir(), "bunzai-chats-route-"));
   roots.push(root);
-  const library = createLibrary(root, { vault: fakeComputer(), sessionsDir: join(root, "sessions") });
+  const library = createLibrary(root, { vault: fakeComputer(), sessionsDir: join(root, "sessions"), coreSceneIntegration: options.core === true });
   libraries.push(library);
   await library.open();
   const store = new StudioStore(root);
