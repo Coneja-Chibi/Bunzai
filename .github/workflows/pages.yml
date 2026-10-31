@@ -23,7 +23,8 @@ jobs:
         with:
           bun-version-file: .bun-version
       - run: bun install --frozen-lockfile
-      - run: bun run verify:ci
+      # The complete app verification runs in ci.yml; Pages checks its own site before building.
+      - run: bun test src/site
       - run: bun run build:pages
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
