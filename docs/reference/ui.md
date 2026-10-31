@@ -1785,6 +1785,7 @@ source-reviewed; focused public-boundary fixture results are recorded in deliver
 Paper’s manuscript scene layout keeps a 160 × 224 px portrait in a separate column beside the flexible message body; narrow panes use an 80 × 112 px portrait. The screenplay text fills the available body width without scrolling across the portrait. No decorative margin rule runs behind the text.
 
 
+The shared scene panel assembler passes the linked session to the rp-core wing in both chat layouts.
 New scenes created with the external rp-core integration expose an **rp-core** right wing for
 Director and Memory settings and their saved state. Existing scenes retain their previous engine.
 The Control Booth character navigator offers **Export scene**, exporting the host transcript and

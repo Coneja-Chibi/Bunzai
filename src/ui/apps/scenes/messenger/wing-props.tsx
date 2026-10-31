@@ -80,6 +80,7 @@ export function wingPanels(a: WingArgs, tab?: string, single = false): WingPanel
     stage: { prefs: ctx.prefs, colors: sceneColors(scene), onSet: (key, value) => { ctx.prefs.set(key, value); a.repaint(); }, backdrop: <BackdropRow ctx={ctx} chat={scene.chat} cardPinned={a.cardPinned} onChat={onChat} />, host: { ctx, scene, propsOn: a.propsOn, request: a.stageRequest, onChat } },
     finalCut: { panel: <FinalCutWing ctx={ctx} chat={scene.chat} onChanged={onChat} {...initial} /> },
     context: { ctx, scene, onChat },
+    core: { ctx, scene },
     props: { panel: <PropsWing list={registeredProps} load={propsState.load} onToggle={propsState.toggle} onRetry={propsState.reload} prefs={ctx.prefs} host={{ ctx, chat: scene.chat, onChat }} />, meta: propsTabMeta(registeredProps, propsState.load) },
   };
 }

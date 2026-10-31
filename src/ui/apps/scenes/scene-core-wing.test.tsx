@@ -64,3 +64,10 @@ test("Director seeds show their hint and payoff rather than a numbered placehold
   flushSync(() => root.unmount());
   host.remove();
 });
+
+test("the scene panel assembler passes the linked session to its wing", async () => {
+  const { wingPanels } = await import("./messenger/wing-props");
+  const linked = { ...scene, snapshot: { character: { body: {} } }, chat: { ...scene.chat, cast: { character: {} } } } as unknown as OpenScene;
+  const args = { ctx, scene: linked, registeredProps: [], propsState: { load: { state: "ready", on: [] } }, loreBooks: null } as unknown as import("./messenger/wing-props").WingArgs;
+  expect(wingPanels(args).core).toEqual({ ctx, scene: linked });
+});
