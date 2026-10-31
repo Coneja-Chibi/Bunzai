@@ -367,6 +367,7 @@
 | `scene.context.promptbook` | `div` | `src/ui/apps/scenes/context/this-turn-call.tsx` |
 | `scene.context.this-turn` | `div` | `src/ui/apps/scenes/context/this-turn.tsx` |
 | `scene.context.toast` | `div` | `src/ui/apps/scenes/context/context-wing.tsx` |
+| `scene.core` | `div` | `src/ui/apps/scenes/scene-core-wing.tsx` |
 | `scene.correct` | `div` | `src/ui/apps/scenes/scene-correct.tsx` |
 | `scene.director` | `div` | `src/ui/apps/scenes/props/story-director/director-panel.tsx` |
 | `scene.director.action` | `Button` | `src/ui/apps/scenes/props/story-director/tab-story.tsx` |

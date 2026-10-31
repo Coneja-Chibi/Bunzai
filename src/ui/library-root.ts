@@ -27,6 +27,7 @@ import { StudioStore } from "../studio/store";
 import { createColdReadService } from "../stage/store/cold-read-service";
 import { sqliteStateStore } from "../stage/store/sqlite/state-store";
 import { sqliteChatStore } from "../stage/store/sqlite-chat-store";
+import { sqliteCoreRecordStore } from "../stage/store/sqlite/core-record-store";
 import type { ContentStore, DocumentBackend } from "../stage/contracts/content-store";
 import type { StateStore } from "../stage/contracts/state-store";
 import type { CellCipher } from "../stage/crypto/cell-cipher";
@@ -90,11 +91,11 @@ const removeDatabaseFiles = (file: string): void => {
  * (below), never inline with `createContentStore` here, so building the stores never itself competes
  * with boot.
  */
-const storesOf = (database: StageDatabase, cipher: CellCipher, file: string, keyring: ReturnType<typeof createKeyring>): LibraryStores & { backend: DocumentBackend; closeColdReads(): void } => {
+const storesOf = (database: StageDatabase, cipher: CellCipher, file: string, keyring: ReturnType<typeof createKeyring>, coreSceneIntegration = true): LibraryStores & { backend: DocumentBackend; closeColdReads(): void } => {
   const backend = sqliteDocumentBackend(database, cipher);
   const coldReads = createColdReadService({ database, path: file, cipher, keyring });
   return {
-    content: createContentStore(backend, Date.now, { coldFill: coldReads.fill }), state: sqliteStateStore(database, cipher), chats: sqliteChatStore(database, cipher),
+    content: createContentStore(backend, Date.now, { coldFill: coldReads.fill }), state: sqliteStateStore(database, cipher), chats: sqliteChatStore(database, cipher), ...(coreSceneIntegration ? { core: sqliteCoreRecordStore(database, cipher) } : {}),
     importCompleted: async (pieceCount) => { if (pieceCount > 1000) await database.optimize(); },
     backend, closeColdReads: coldReads.close,
   };
@@ -218,6 +219,7 @@ export interface OpenOptions {
   keyring?: Parameters<typeof createKeyring>[2];
   /** CLI inspection skips normal open-time imports, Trash purge, and summary work. */
   skipOpenMaintenance?: boolean;
+  coreSceneIntegration?: boolean; // test seam for scenes created before the core integration
   /** Fired after every unlock reached through the returned keyring (not the initial auto-unlock
    *  above, which the caller already awaits directly). `createLibrary` is the only caller that
    *  passes one. */
@@ -272,7 +274,7 @@ export async function openLibrary(studioDir: string, options: OpenOptions = {}):
     let search: LibrarySearch | undefined;
     let removeStores = () => {};
     let removeSessions = () => {};
-    stores = storesOf(database, cipher, file, keyring);
+    stores = storesOf(database, cipher, file, keyring, options.coreSceneIntegration ?? true);
     releases.push(() => stores?.closeColdReads());
     assets = createLibraryAssets(stores.content, cipher, keyring);
     releases.push(() => assets?.close());
@@ -328,7 +330,6 @@ export type LibraryPhase =
   | { phase: "failed"; reason: string; noRoom?: boolean }
   | { phase: "locked" }
   | { phase: "unlocked" };
-
 export interface LibraryHandle {
   readonly studioDir: string;
   /** Opens the library (importing a plain folder first). Once; only in the process that serves the window. */

@@ -261,6 +261,8 @@ export const api: AppContext["api"] = {
   getSceneTrace: async (chatId, messageId) =>
     apiFetchJson(`/api/chats/trace?chatId=${encodeURIComponent(chatId)}${messageId ? `&messageId=${encodeURIComponent(messageId)}` : ""}`, { requireToken: false }),
   getSceneSummary: async (chatId) => apiFetchJson(`/api/chats/summary?chatId=${encodeURIComponent(chatId)}`, { requireToken: false }),
+  getCoreSceneState: async (chatId, offset = 0) => apiFetchJson(`/api/chats/core-state?chatId=${encodeURIComponent(chatId)}&offset=${offset}`, { requireToken: false }),
+  setCoreSceneFeature: async (chatId, feature, enabled) => postJson("/api/chats/core-settings", { chatId, feature, enabled }),
   setSceneSummarySettings: async (chatId, patch) => postJson("/api/chats/summary-settings", { chatId, patch }),
   saveSceneSummary: async (chatId, text) => postJson("/api/chats/summary", { chatId, text }),
   getSceneDirector: async (chatId, opts) => apiFetchJson(`/api/chats/director?chatId=${encodeURIComponent(chatId)}${opts?.at ? `&at=${encodeURIComponent(opts.at)}` : ""}`, { requireToken: false }),

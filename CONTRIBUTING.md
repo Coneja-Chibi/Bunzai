@@ -53,7 +53,19 @@ a public issue.
 ## Setup
 
 ```bash
+git submodule update --init --recursive
 bun install
 bun test        # the suite
 bun run dev     # the studio, loopback only
 ```
+
+
+## External roleplay core
+
+`vendor/rp-core` is a Git submodule from `https://github.com/LeviTheWeasel/rp-core.git`, tracking `main`.
+Bunzai installs it through `file:vendor/rp-core`; its source history stays in that repository.
+Use `bun run rp-core:init` after a checkout without submodules. Use `bun run rp-core:update` to fetch
+upstream main and reinstall the local package, including changes with an unchanged package version.
+Run the scene integration tests before committing the new submodule pointer and `bun.lock` together.
+Normal recursive checkout and CI use the committed pointer for reproducible builds; upstream changes
+become available through the update command, never by silently changing a release build.

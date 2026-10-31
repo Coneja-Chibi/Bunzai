@@ -456,5 +456,30 @@ export const MIGRATIONS: readonly Migration[] = [
   MIGRATION_43_SCENE_STATE,
   MIGRATION_44_VERSION_WRITES,
   MIGRATION_45_GLOBAL_OPS,
-  MIGRATION_46_DRAMATURG,
+  MIGRATION_46_DRAMATURG,  {
+    id: 47,
+    name: "rp-core journals",
+    sql: `
+      CREATE TABLE IF NOT EXISTS core_sessions (
+        id TEXT PRIMARY KEY,
+        header_cell TEXT NOT NULL,
+        title_cell TEXT,
+        updated_at TEXT NOT NULL,
+        lease_owner TEXT,
+        lease_until INTEGER
+      );
+      CREATE TABLE IF NOT EXISTS core_entries (
+        session_id TEXT NOT NULL REFERENCES core_sessions(id) ON DELETE CASCADE,
+        seq INTEGER NOT NULL,
+        entry_cell TEXT NOT NULL,
+        PRIMARY KEY (session_id, seq)
+      );
+      CREATE TABLE IF NOT EXISTS core_scene_links (
+        chat_id TEXT PRIMARY KEY REFERENCES chats(id) ON DELETE CASCADE,
+        session_id TEXT NOT NULL UNIQUE REFERENCES core_sessions(id) ON DELETE CASCADE,
+        branch_id TEXT NOT NULL REFERENCES branches(id) ON DELETE CASCADE
+      );
+    `,
+  },
+
 ];

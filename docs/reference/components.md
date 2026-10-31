@@ -198,6 +198,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | ControlsBody | src/ui/apps/scenes/messenger/settings/scene/memory-rows.tsx | ({ env }: { env: SceneEnv }) | How summaries run: automatic or manual, how often, with which model and window, and the manual run. |  |
 | CopyableBand | src/ui/agent/kit-bands.tsx | ({ className, text, onNotice, onClick, children, }: { className: string; text?: string; onNotice?: (message: string) ... | A band with a copy corner. |  |
 | CoreGroup | src/ui/apps/scenes/generation/core-group.tsx | ({ env, params, searching }: { env: GenerationEnv; params: readonly ParamDef[]; searching: boolean }) | The Core cards that match the search (all of them when it is blank). |  |
+| CoreWing | src/ui/apps/scenes/scene-core-wing.tsx | ({ ctx, scene }: { ctx: AppContext; scene: OpenScene }) |  |  |
 | CorrectionTools | src/ui/apps/scenes/scene-correct.tsx | ({ api, chatId, message, selection, onApply, onClose }: { api: Pick<ScenesApi, "runSceneDraft" \| "listGuides">; chatI... |  |  |
 | CorruptionPanel | src/ui/apps/scenes/props/trackers/corruption/corruption-panel.tsx | ({ ctx, chat, onChat, popOut }: PopoutContext) |  |  |
 | Creature | src/ui/apps/scenes/compendium/cells/cells-featured.tsx | ({ m, onOpen }: { m: BookModel } & Open) |  |  |
@@ -910,7 +911,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | WatchNote | src/ui/agent/kit-widgets.tsx | ({ kinds }: { kinds: readonly string[] }) | The watcher: something changed in the studio that Kit did not do. |  |
 | WebView | src/ui/apps/workbench/lore/web-view.tsx | ({ body, onSelect, onFallbackCards }: WebViewProps) |  | .wrap .filters .svg .edge .edgeDim .node .nodeDim .label ... |
 | WingFrame | src/ui/apps/scenes/scene-wing-frame.tsx | ({ wing, extra, resize, children }: { wing: Wing; extra?: string; resize?: WingResize; children: ReactNode }) |  |  |
-| WingPanel | src/ui/apps/scenes/scene-wings.tsx | ({ id, tab, bare, single, castPanel, booth, ai, aiGeneration, stage, prompting, world, props, finalCut, context, resi... |  |  |
+| WingPanel | src/ui/apps/scenes/scene-wings.tsx | ({ id, tab, bare, single, castPanel, booth, ai, aiGeneration, stage, prompting, world, props, finalCut, context, core... |  |  |
 | WingRails | src/ui/apps/scenes/scene-wing-rail.tsx | ({ open, onToggle, extra = [] }: { open: string \| null; onToggle(id: string): void; extra?: readonly Wing[] }) |  |  |
 | WingResizeEdge | src/ui/apps/scenes/wing-resize-edge.tsx | (props: WingResize & { side: "l" \| "r"; label: string }) |  |  |
 | WingSlot | src/ui/apps/scenes/scene-wing-frame.tsx | ({ side, open, children }: { side: "l" \| "r"; open: boolean; children?: ReactNode }) | One side's box for the open wing. Its width is the scene root's `--wing-w`; the rail reads its `data-*` to place its labels. |  |

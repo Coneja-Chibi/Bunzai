@@ -6,7 +6,7 @@ export default variantCss("scene.message", "screenplay", `
 & .badge,& .msg.user .badge{float:none;position:absolute;top:.35rem;right:0;margin:0;border:0;background:none;box-shadow:none;padding:0;font-size:.8125rem;color:var(--text-dim)}
 & .bub,& .msg.user .bub{background:none;border:0;padding:0;border-radius:0}
 & .bub.live{box-shadow:none;border:0}
-& .prose{font:400 1.0625rem/1.75 var(--font-body);max-width:31rem;margin:0 auto;color:var(--text)}
+& .prose{font:400 1.0625rem/1.75 var(--font-body);max-width:none;margin:0 auto;color:var(--text)}
 & .prose q{color:inherit}
 & .prose em{color:var(--text-soft)}
 & .prose p+p{margin-top:1rem}

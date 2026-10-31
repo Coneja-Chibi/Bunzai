@@ -1,0 +1,4 @@
+[submodule "vendor/rp-core"]
+	path = vendor/rp-core
+	url = https://github.com/LeviTheWeasel/rp-core.git
+	branch = main

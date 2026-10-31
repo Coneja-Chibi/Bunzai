@@ -7,6 +7,7 @@
  * folder or to another library. No entry at all also refuses.
  */
 import type { ChatStore } from "../stage/contracts/chat-store";
+import type { CoreSceneRecords } from "../stage/store/sqlite/core-record-store";
 import type { ContentStore } from "../stage/contracts/content-store";
 import type { StateStore } from "../stage/contracts/state-store";
 import type { createAssetThumbnails } from "../stage/store/asset-thumbnails";
@@ -16,6 +17,7 @@ export interface LibraryStores {
   content: ContentStore;
   state: StateStore;
   chats: ChatStore;
+  core?: CoreSceneRecords;
   thumbnails?: ReturnType<typeof createAssetThumbnails>;
   /** Large completed imports may refresh planner statistics; memory libraries intentionally no-op. */
   importCompleted?: (pieceCount: number) => Promise<void>;

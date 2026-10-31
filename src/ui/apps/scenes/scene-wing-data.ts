@@ -41,4 +41,7 @@ export function propWings(list: readonly SceneProp[], on: readonly string[] | nu
   return list.flatMap((p) => p.rail && p.panel && on?.includes(p.id) ? [{ id: propWingId(p.id), side: "r" as const, label: p.name, blurb: p.rail.blurb, detail: p.rail.blurb, icon: p.icon, tone: p.tone, width: p.panel.width ?? 500 }] : []);
 }
 
-export const wingOf = (id: string | null, extra?: readonly Wing[]): Wing | undefined => WINGS.find((w) => w.id === id) ?? extra?.find((w) => w.id === id);
+export const wingOf = (id: string | null, extra?: readonly Wing[]): Wing | undefined => (id === CORE_WING.id ? CORE_WING : WINGS.find((w) => w.id === id)) ?? extra?.find((w) => w.id === id);
+
+/** The linked external engine settings wing. */
+export const CORE_WING: Wing = { id: "core", side: "r", label: "rp-core", blurb: "Director and memory in rp-core", detail: "Configure the linked rp-core session.", icon: "lucide:cpu", tone: "var(--stage-warn)", width: 720 };

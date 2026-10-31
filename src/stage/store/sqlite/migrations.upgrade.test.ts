@@ -35,7 +35,7 @@ test("the list is numbered 1 to n and holds the real health check at 24, never a
   expect(MIGRATIONS.some((m) => /reserved|placeholder/i.test(m.name))).toBe(false);
   expect(MIGRATIONS[24]!.id).toBe(25);
   expect(MIGRATIONS[25]!.id).toBe(26);
-  expect(MIGRATIONS.at(-1)!.id).toBe(46);
+  expect(MIGRATIONS.at(-1)!.id).toBe(47);
 });
 
 test("a database from before migration 24 upgrades cleanly through 24, 25 and 26", () => {
@@ -300,4 +300,17 @@ test("migration 46 adds dramaturg_threads: existing scenes have none, and a purg
   d.statement("INSERT INTO dramaturg_threads (chat_id, revision, cell) VALUES ('c1', 1, 'x')").run();
   d.statement("DELETE FROM chats WHERE id = 'c1'").run();
   expect(d.statement("SELECT count(*) AS n FROM dramaturg_threads").get()).toEqual({ n: 0 });
+});
+
+
+test("migration 47 adds external core journals without replacing migrations 44 to 46", () => {
+  const path = file();
+  const old = reopen(path, 46);
+  const history = names(old);
+  old.close(); open.pop();
+  const upgraded = reopen(path);
+  expect(names(upgraded).slice(0, 46)).toEqual(history);
+  expect(columns(upgraded, "core_sessions")).toContain("header_cell");
+  expect(columns(upgraded, "core_entries")).toContain("entry_cell");
+  expect(columns(upgraded, "core_scene_links")).toContain("branch_id");
 });

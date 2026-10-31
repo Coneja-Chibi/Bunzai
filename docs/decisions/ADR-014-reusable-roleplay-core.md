@@ -18,3 +18,24 @@ Hosts may schedule background work through `afterEvent`; the returned promise mu
 - Cross-process recovery requires durable ownership/leases. SQLite transaction serialization alone does not identify whether a checkpoint belongs to a live process. No claim of safe simultaneous independent desktop/CLI library owners is made.
 - The API bundles for the browser and executes a scripted turn in Node. These checks do not establish packaged-platform or published-package behavior.
 - Broader co-developer patch reconciliation remains separate work under the same integration plan. Old repository ancestry remains excluded.
+
+
+## Owner-authorized amendment, 2026-10-31
+
+The owner requested porting Bunraku commits `5f23a8a7` and `e191f864` and explicitly approved their
+separate-engine behavior. New scenes use the external `LeviTheWeasel/rp-core` engine; existing scenes
+continue through the canonical Bunzai runtime above. `vendor/rp-core` is a main-tracking Git submodule,
+installed as a local package, not copied into the host source tree. Each committed host version pins
+one upstream commit; `bun run rp-core:update` advances it for review and verification.
+
+Migration 47 adds encrypted core journal tables and scene links without rewriting migrations 44-46.
+Linked scenes support send, reply, continue, swipe, review, stop, Director/Memory switches and scene
+export. Unsupported transcript edits and legacy scene configuration writes are refused before they
+can diverge from the engine journal. Providers currently support OpenAI-chat compatible connections
+and native Ollama; other native adapters are explicitly refused. Legacy presets, lore/regex and
+tracker configuration are not automatically transferred to the external engine.
+
+Scene export contains the host scene projection and frozen cast, not a complete backup of the
+external engine journal or compendium. Old scenes are not migrated to the external engine.
+The host tracks external streaming tasks through library shutdown and isolates running sessions
+by ChatStore, while the record store enforces database-backed session leases.

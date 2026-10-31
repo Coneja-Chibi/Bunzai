@@ -1,7 +1,7 @@
 /**
  * Dependency license firewall: fail if a runtime/dev dep is AGPL, GPL, SSPL, or Elastic, or if a
  * production dependency is not open source ("SEE LICENSE IN", UNLICENSED, all rights reserved).
- * Product is AGPL-3.0-or-later; dependencies must stay MIT/Apache/BSD/ISC/etc.
+ * Product is AGPL-3.0-or-later; dependencies stay MIT/Apache/BSD/ISC/etc., except the owner-approved AGPL rp-core submodule.
  * A proprietary package may ride only in "optionalDependencies" AND on OPTIONAL_PROPRIETARY, so it is
  * never bundled into a release (see --external in scripts/build-desktop.ts).
  * Run: bun run scripts/license-audit.ts
@@ -45,7 +45,7 @@ export function auditLicenses(
         continue;
       }
       rows.push({ name, license, scope });
-      if (FORBIDDEN.test(license)) bad.push({ name, license, why: "forbidden copyleft or restricted license" });
+      if (FORBIDDEN.test(license) && !(name === "rp-core" && license === "AGPL-3.0-or-later")) bad.push({ name, license, why: "forbidden copyleft or restricted license" });
       else if (scope !== "dev" && PROPRIETARY.test(license)) {
         if (scope === "prod") bad.push({ name, license, why: "proprietary production dependency (move it to optionalDependencies only if it is allowlisted)" });
         else if (!OPTIONAL_PROPRIETARY.has(name)) bad.push({ name, license, why: "proprietary optional dependency is not on the allowlist" });
@@ -102,5 +102,5 @@ if (import.meta.main) {
     process.exit(2);
   }
 
-  console.log("\nOK: no AGPL/GPL/SSPL/Elastic dependencies, and no proprietary production dependency.\n");
+  console.log("\nOK: no restricted direct dependencies beyond the approved AGPL rp-core engine, and no proprietary production dependency.\n");
 }

@@ -140,6 +140,8 @@ export interface TakeSummary extends Branch {
 
 export interface OpenScene {
   chat: Chat;
+  /** This scene's turns and Compendium are owned by the linked rp-core journal. */
+  core?: true;
   /** The frozen cast without its art or source file, which the page never reads (the portrait route serves the art). */
   snapshot: CastSnapshot;
   hasPortrait: boolean;

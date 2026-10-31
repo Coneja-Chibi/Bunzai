@@ -19,3 +19,9 @@ test("a stream that ends before its last event says the page lost the reply, not
   await readSceneTurn(streamOf([frame({ type: "start", turnId: "t", kind: "reply", messageId: null })]), (e) => seen.push(e));
   expect(seen.at(-1)).toMatchObject({ type: "failed", message: expect.stringContaining("reopen the scene") });
 });
+
+test("a turn refused before streaming shows the server's error instead of claiming the page lost a reply", async () => {
+  const seen: TurnEvent[] = [];
+  await readSceneTurn(Response.json({ error: "this provider needs a native rp-core adapter" }, { status: 500 }), (event) => seen.push(event));
+  expect(seen).toEqual([{ type: "failed", category: "api_error", code: "turn_start_failed", message: "this provider needs a native rp-core adapter", draft: "" }]);
+});
