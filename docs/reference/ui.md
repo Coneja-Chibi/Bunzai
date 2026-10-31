@@ -101,20 +101,26 @@ fork the canonical model or maintain a second set of format conversions.
 The public website opens on a static Bunzai title inside an illustrated movie auditorium
 (`src/site/auditorium.ts`). Its owner-requested cutout-style room artwork is
 `docs/media/cinema-auditorium.png`; the generation prompt and provenance sit beside it.
-Clicking Begin the showing or Pictures dims the room and pushes the camera toward the screen
+Clicking Begin the showing dims the room and pushes the camera toward the screen
 before revealing the first product screenshot. Reduced motion opens directly without the camera
 movement. The prototype curtain film remains available to the design studies, not the homepage.
 Native title content and pictures sit inside the artwork's empty screen. Each picture pairs with
 live text explaining the feature and the pictured view, plus a link to its tour page. Pictures
 crossfade and their descriptions slide into place; reduced motion removes these transitions.
-The picture inventory derives from the existing feature tour, including RoleCall, Theater and Paper
-Library captures. The node-board and GirliePop slides are excluded at the owner's request. Each
-Library view and theme has picture-specific explanatory copy, with
+The picture inventory derives from the existing feature tour: Scenes, an opening scene, character,
+lorebook and preset editors, the Library, the Press and Paper as its single theme example.
+Node boards and other theme slides are excluded at the owner's request. Each picture has its own
+explanatory copy, with
 previous/next, picture buttons, arrow/Home/End keys,
 and an explicit slideshow pause. Automatic playback starts only after entry, pauses while
 hovered/focused, offscreen, in hidden tabs, or under reduced motion, and uses cancellable timers.
 Inactive pictures are inert. The separate `info.html` page holds the
 feature tour, local-library/provider explanation, guides, release feed and download links.
+The landing header links to GitHub through Star repo and Open repo, alongside Download. Star repo
+opens GitHub, where the visitor can choose to star it; it does not change their account automatically.
+Static Open Graph metadata includes a canonical page URL and a branded 1200 by 630 PNG preview,
+captured from the native auditorium title. Preview tags are checked in the HTML without requiring
+JavaScript; appearance in an external app depends on that app's preview fetching and cache.
 The site build writes both page styles and the shared theme/font assets. Focused fixture checks
 cover entry, navigation, reduced motion and playback cancellation. The title, click-to-enter,
 dimmed room and enlarged showing were checked in the running desktop preview. The stacked picture

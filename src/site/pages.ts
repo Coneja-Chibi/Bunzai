@@ -7,6 +7,7 @@ import type { Guide } from "./guides";
 import { infoBody } from "./info";
 import { auditoriumBody } from './auditorium';
 import { CAST, tourBody } from "./tour";
+import { icSvg } from '../ui/_shared/ic-svg';
 
 export interface Page {
   readonly path: string;
@@ -14,6 +15,7 @@ export interface Page {
 }
 
 const REPO = "https://github.com/Coneja-Chibi/Bunzai";
+const SITE = 'https://coneja-chibi.github.io/Bunzai/';
 const LATEST = `${REPO}/releases/latest/download/`;
 
 type Section = "home" | "info" | "tour" | "guides" | "news" | "download" | "none";
@@ -38,6 +40,14 @@ function frame({ title, description, up, section, body }: Frame): string {
 <meta name="description" content="${description}">
 <meta property="og:title" content="${title}">
 <meta property="og:description" content="${description}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bunzai">
+<meta property="og:image" content="${SITE}media/bunzai-preview.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bunzai. Every story deserves a stage, on a crimson cinema screen.">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0a0a0b">
 <link rel="icon" href="${up}favicon.ico">
 <link rel="stylesheet" href="${up}site.css">
@@ -50,7 +60,7 @@ ${section === 'info' ? `<link rel="stylesheet" href="${up}info.css">` : ''}
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header"><div class="wrap"><nav class="nav" aria-label="Main">
 <a class="brand" href="${up}index.html"><span class="brand-symbol"><img src="${up}media/bunzai-mark.png" width="64" height="64" alt=""></span>Bunzai<span class="brand-stop">.</span></a>
-${link('info', `${up}info.html`, 'Info')}${section === 'home' ? `<a class="link" href="#screening">Pictures</a>` : `${link("tour", `${up}tour/scenes.html`, "Tour")}${link("guides", `${up}guides/index.html`, "Guides")}${link("news", `${up}news.html`, "What's new")}<a class="link" href="${up}studio/">Try it</a>`}
+${section === 'home' ? `<a class="link repo-star" href="${REPO}" target="_blank" rel="noopener" aria-label="Star Bunzai on GitHub" title="Open GitHub to star Bunzai"><span aria-hidden="true">${icSvg('lucide:star')}</span>Star repo</a><a class="link" href="${REPO}" target="_blank" rel="noopener">Open repo</a>` : `${link('info', `${up}info.html`, 'Info')}${link("tour", `${up}tour/scenes.html`, "Tour")}${link("guides", `${up}guides/index.html`, "Guides")}${link("news", `${up}news.html`, "What's new")}<a class="link" href="${up}studio/">Try it</a>`}
 <a class="btn" href="${up}download.html">Download</a>
 </nav></div></header>
 <main id="main">
@@ -167,5 +177,8 @@ export function sitePages(guides: readonly Guide[]): Page[] {
     path: `tour/${m.id}.html`,
     html: frame({ title: `${m.name}: Bunzai`, description: m.card, up: "../", section: "tour", body: tourBody(m) }),
   }));
-  return [home(), info(), download(), news(), notFound(), ...tour, ...guidePages(guides)];
+  return [home(), info(), download(), news(), notFound(), ...tour, ...guidePages(guides)].map(page => {
+    const canonical = new URL(page.path === 'index.html' ? '' : page.path, SITE).href;
+    return { ...page, html: page.html.replace('</head>', `<link rel="canonical" href="${canonical}">\n<meta property="og:url" content="${canonical}">\n</head>`) };
+  });
 }

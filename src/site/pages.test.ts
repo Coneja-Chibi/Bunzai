@@ -24,8 +24,20 @@ test('the auditorium links to a separate info page with product details and exis
   for (const destination of ['download.html', 'studio/', 'guides/getting-started.html', 'guides/importing.html', 'news.html']) {
     expect(info).toContain(`href="${destination}"`);
   }
-  expect(info).toContain('A scripted preview. No AI connection needed.');
+  expect(info).toContain('src="media/shot-scenes.png"');
   expect(info).toContain('Playing scenes needs the installed app.');
   expect(home).not.toContain('ren-cutout');
   expect(home).not.toContain('journey.html');
+  expect(home).toContain('aria-label="Star Bunzai on GitHub"');
+  expect(home).toContain('>Open repo</a>');
+  expect(home).not.toContain('>Info</a>');
+  expect(home).not.toContain('>Pictures</a>');
+  expect(home).toContain('media/shot-scene-chat.png');
+  expect(home).toContain('media/shot-scenes.png');
+  expect(home).toContain('media/shot-preset.png');
+  expect(home).toContain('media/shot-theme-paper.png');
+  expect(home).not.toContain('media/shot-theme-rolecall.png');
+  expect(home).not.toContain('media/shot-theme-theater.png');
+  expect(home).toContain('property="og:image" content="https://coneja-chibi.github.io/Bunzai/media/bunzai-preview.png"');
+  expect(home).toContain('property="og:url" content="https://coneja-chibi.github.io/Bunzai/"');
 });

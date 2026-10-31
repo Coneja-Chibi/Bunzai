@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:90f9d2a37426586522fe975b181e034272d5392c1e93c9c013d269204d685288",
-  "semanticSummaryHash": "sha256:b53cf7257743518613ea012b47c740a6dc1b639996595ecc7098f1e5a5044fc2",
+  "sourceHash": "sha256:5ff5122a34a97b1ccd22949ec0d0697c61d84f80b9d1605ec97c4861249bd047",
+  "semanticSummaryHash": "sha256:2471cc4437c7ddd3a9779739b15c77f887c2bf434644b187371cff96ea426fc0",
   "verdict": "APPROVE",
   "reviewer": "/root/landing_review",
-  "notes": "Reviewed the staged Browser Studio auditorium addition and changed page/section summaries against the staged website inventory, slideshow, motion controls, full-resolution links, build integration and prior approved baseline. This is not a fresh audit of unchanged UI documentation. Confirmed node-board and GirliePop slides are excluded from the homepage inventory; shared light renderer retains its default stage behavior. Independently reran the focused site suite: 20 passed. No deployment or live-browser proof is claimed by this receipt.",
-  "reviewedAt": "2026-10-31T06:14:02.738Z"
+  "notes": "Reviewed the staged Browser Studio documentation delta and changed page/section summaries against the staged gallery inventory, new Scenes and editor images, GitHub header links, route-correct canonical metadata, native branded Open Graph PNG and prior approved baseline. The homepage shows Paper as its only theme example and excludes node boards. Star repo navigates to GitHub without account mutation. Static preview tags are independent of JavaScript; external preview caches are explicitly outside site control. This is not a fresh audit of unchanged UI documentation. Independently reran 20 focused site tests; all passed. No deployment or independent live-browser proof is claimed.",
+  "reviewedAt": "2026-10-31T07:05:17.859Z"
 }

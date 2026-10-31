@@ -33,8 +33,8 @@ test('movie pictures advance, wrap, support keyboard navigation and exclude inac
   expect(current().dataset.title).toBe('The opening title');
   f.advance();
   expect(f.doc.querySelector('.auditorium')!.getAttribute('data-screening-state')).toBe('showing');
-  expect(current().dataset.title).toBe('The Workbench');
-  expect(f.doc.querySelector<HTMLOutputElement>('[data-screening-title]')!.value).toBe('The Workbench');
+  expect(current().dataset.title).toBe('Scenes');
+  expect(f.doc.querySelector<HTMLOutputElement>('[data-screening-title]')!.value).toBe('Scenes');
   f.doc.querySelector<HTMLButtonElement>('[data-screen-step="-1"]')!.click();
   expect(current().dataset.title).toBe('The opening title');
   const stage = f.doc.querySelector<HTMLElement>('[data-screening]')!;

@@ -4,6 +4,8 @@ body[data-page="home"] .site-header { position: absolute; inset: 0 0 auto; width
 body[data-page="home"] .site-header .wrap { max-width: none; padding-inline: 3%; }
 body[data-page="home"] .nav { padding-block: 16px; }
 body[data-page="home"] .nav .link { font-size: 14px; }
+.repo-star { gap: 6px; white-space: nowrap; }
+.repo-star svg { display: block; }
 body[data-page="home"] .nav .btn { padding: 10px 20px; font-size: 14px; }
 body[data-page="home"] > .wrap { display: none; }
 .cinema-accessible-title { /* clone-ok: standalone website cannot import a Studio control's scoped screen-reader utility. */ position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -75,11 +77,11 @@ body[data-page="home"] > .wrap { display: none; }
   .screen-title a { margin-top: 13px; }
 }
 @media (max-width: 720px) {
-  body[data-page="home"] .nav { flex-wrap: nowrap; gap: 16px; padding-block: 12px; }
-  body[data-page="home"] .nav .brand { font-size: 21px; gap: 6px; }
-  body[data-page="home"] .brand-symbol { width: 25px; }
-  body[data-page="home"] .nav .link { font-size: 13px; }
-  body[data-page="home"] .nav .btn { padding: 8px 12px; min-height: 36px; font-size: 13px; }
+  body[data-page="home"] .nav { flex-wrap: wrap; gap: 8px; padding-block: 12px; }
+  body[data-page="home"] .nav .brand { font-size: 19px; gap: 4px; }
+  body[data-page="home"] .brand-symbol { width: 22px; }
+  body[data-page="home"] .nav .link { font-size: 12px; }
+  body[data-page="home"] .nav .btn { padding: 8px 10px; min-height: 36px; font-size: 12px; }
   .auditorium { --cinema-height: max(100svh, 860px); }
   .auditorium:not([data-screening-state="ready"]) .cinema-shell { transform: none; }
   .cinema-screen { left: 50%; translate: -50% 0; top: calc(var(--cinema-height) * .12); width: 92vw; height: calc(var(--cinema-height) * .55); }

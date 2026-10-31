@@ -25,7 +25,7 @@ export interface Member {
 
 export const CAST: readonly Member[] = [
   {
-    id: "scenes", browser: false, name: "Scenes", role: "play", color: "pink",
+    id: "scenes", browser: false, name: "Scenes", role: "play", color: "pink", galleryShots: 2,
     card: "Play out a story with any character. Branch it, rewind it, keep every take.",
     title: "Play a scene with any character.",
     intro: "Start a scene from a character in your Library and talk. Replies come from your own AI connection and write themselves in as they arrive.",
@@ -37,12 +37,15 @@ export const CAST: readonly Member[] = [
       ["Card updates, on your terms", "When a character gets a newer version, the scene offers it, and can go back to the old one."],
       ["Nothing lost by accident", "Deleted scenes wait in the Trash for 3 days, and cut messages for 1 day."],
     ],
-    shots: [],
+    shots: [
+      ["shot-scenes.png", "The Scenes page: your stories and recent takes", { title: "Find the story you want to return to.", intro: "Scenes brings your stories together, with character artwork, recent activity and a Continue action. Browse your collection, switch between pictures and a list, or pick up where you left off." }],
+      ["shot-scene-chat.png", "Inside a scene: Your Personal Knight's opening message", { title: "Step into the conversation.", intro: "A character's opening sets the scene. Write your next line, choose your AI connection and let the story unfold. The pictured scene shows its opening message before a model is connected." }],
+    ],
     guides: [],
     note: "Scenes need the installed app and an AI connection. The browser version cannot play them yet.",
   },
   {
-    id: "workbench", browser: true, name: "The Workbench", role: "make", color: "peach",
+    id: "workbench", browser: true, name: "The Workbench", role: "make", color: "peach", galleryShots: 3,
     card: "Build characters, lorebooks, personas, presets and more, each with its own editor.",
     title: "Where every piece gets made.",
     intro: "Send a piece to the Workbench and it opens in the editor made for its kind: character, lorebook, persona, regex set, preset, or pack.",
@@ -53,7 +56,7 @@ export const CAST: readonly Member[] = [
       ["Regex sets", "Write find-and-replace rules, set where and in what order they run, and check what a rule does before you save it."],
       ["Presets", "The full preset editor: every prompt, its order, and its samplers."],
     ],
-    shots: [["shot-workbench.png", "A character on the Workbench"], ["shot-lorebook.png", "Editing a lorebook"], ["shot-persona.png", "A persona"]],
+    shots: [["shot-workbench.png", "A character on the Workbench"], ["shot-lorebook.png", "Editing Aridia's world knowledge", { title: "Build the world behind the dialogue.", intro: "Edit a lorebook's entries, keywords and placement. Keep locations, factions and character knowledge in focused pieces that your scenes can draw on." }], ["shot-preset.png", "Editing a writing preset", { title: "Shape how the story is written.", intro: "Arrange the prompt, edit its instructions and tune generation settings in the preset editor. Reuse a writing setup across scenes instead of rebuilding it each time." }], ["shot-persona.png", "A persona"]],
     guides: [["editing", "Edit a piece"], ["lorebooks", "Build a lorebook"], ["personas", "Create and manage personas"], ["regex", "Edit a regex set"]],
   },
   {
@@ -96,15 +99,15 @@ export const CAST: readonly Member[] = [
     note: "Playing a Promptbook needs the installed app and an AI connection. The pictured example uses the scene's model; no model calls were made for these captures.",
   },
   {
-    id: "themes", browser: true, name: "Themes", role: "dress", color: "lilac", galleryShots: 3,
+    id: "themes", browser: true, name: "Themes", role: "dress", color: "lilac", galleryShots: 1,
     card: "One studio. A different atmosphere.",
     title: "Make the studio feel like yours.",
     intro: "Change the studio's palette, typography and supported layouts. These are real captures of the same library in RoleCall, Theater and Paper.",
     points: [["Four bundled looks", "Switch themes in Settings, then keep working with the same pieces."], ["Your accent", "Choose a color for your studio."], ["Motion choices", "Keep stage lights moving, make them still, or turn them off."]],
     shots: [
+      ["shot-theme-paper.png", "Paper: light pages and a catalog layout", { title: "Paper. A lighter place to work.", intro: "Warm paper tones, serif lettering and a catalog layout give the Library a quieter feel. Switch themes in Settings without moving or recreating your collection." }],
       ["shot-theme-rolecall.png", "RoleCall: dark surfaces and colored deck accents", { title: "RoleCall. The dark studio.", intro: "Dark panels, crisp borders and colored deck accents keep the focus on your collection. This is the RoleCall Library with the same characters used throughout this tour." }],
       ["shot-theme-theater.png", "Theater: an art-forward Library", { title: "Theater. Put your cast on display.", intro: "The Theater theme gives artwork a leading role, with a dark backdrop and a Library layout built around your cast. Your pieces stay the same as you change the atmosphere." }],
-      ["shot-theme-paper.png", "Paper: light pages and a catalog layout", { title: "Paper. A lighter place to work.", intro: "Warm paper tones, serif lettering and a catalog layout give the Library a quieter feel. Switch themes in Settings without moving or recreating your collection." }],
     ],
     guides: [],
   },
