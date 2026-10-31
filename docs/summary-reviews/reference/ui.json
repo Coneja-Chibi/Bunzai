@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:5a13350e00101b0031040508e51a2d5c6e10d38f39d0024e8d2acfe6acca4713",
-  "semanticSummaryHash": "sha256:edf3e3dc57b041bcbec44d4d7f008ef0795ac5f466d33c9b2de08c9a904aa921",
+  "sourceHash": "sha256:90f9d2a37426586522fe975b181e034272d5392c1e93c9c013d269204d685288",
+  "semanticSummaryHash": "sha256:b53cf7257743518613ea012b47c740a6dc1b639996595ecc7098f1e5a5044fc2",
   "verdict": "APPROVE",
-  "reviewer": "public-luna-06",
-  "notes": "Reviewed full sidecar and changed source section against previously reviewed approved baseline, not a fresh whole-page reread. Privacy ledger is scoped to recorded calls/usage and explicitly excludes connection checks, tools, and failures without usage; greeting identifies provider/context and connected-service request boundary.",
-  "reviewedAt": "2026-10-30T19:27:40.371Z"
+  "reviewer": "/root/landing_review",
+  "notes": "Reviewed the staged Browser Studio auditorium addition and changed page/section summaries against the staged website inventory, slideshow, motion controls, full-resolution links, build integration and prior approved baseline. This is not a fresh audit of unchanged UI documentation. Confirmed node-board and GirliePop slides are excluded from the homepage inventory; shared light renderer retains its default stage behavior. Independently reran the focused site suite: 20 passed. No deployment or live-browser proof is claimed by this receipt.",
+  "reviewedAt": "2026-10-31T06:14:02.738Z"
 }

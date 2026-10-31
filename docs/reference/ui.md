@@ -98,6 +98,45 @@ account and sends no Studio data to a Bunzai server. A browser runtime supplies 
 `/api/*` client contract from in-process stores and the shared inspect/export engine; it does not
 fork the canonical model or maintain a second set of format conversions.
 
+The public website opens on a static Bunzai title inside an illustrated movie auditorium
+(`src/site/auditorium.ts`). Its owner-requested cutout-style room artwork is
+`docs/media/cinema-auditorium.png`; the generation prompt and provenance sit beside it.
+Clicking Begin the showing or Pictures dims the room and pushes the camera toward the screen
+before revealing the first product screenshot. Reduced motion opens directly without the camera
+movement. The prototype curtain film remains available to the design studies, not the homepage.
+Native title content and pictures sit inside the artwork's empty screen. Each picture pairs with
+live text explaining the feature and the pictured view, plus a link to its tour page. Pictures
+crossfade and their descriptions slide into place; reduced motion removes these transitions.
+The picture inventory derives from the existing feature tour, including RoleCall, Theater and Paper
+Library captures. The node-board and GirliePop slides are excluded at the owner's request. Each
+Library view and theme has picture-specific explanatory copy, with
+previous/next, picture buttons, arrow/Home/End keys,
+and an explicit slideshow pause. Automatic playback starts only after entry, pauses while
+hovered/focused, offscreen, in hidden tabs, or under reduced motion, and uses cancellable timers.
+Inactive pictures are inert. The separate `info.html` page holds the
+feature tour, local-library/provider explanation, guides, release feed and download links.
+The site build writes both page styles and the shared theme/font assets. Focused fixture checks
+cover entry, navigation, reduced motion and playback cancellation. The title, click-to-enter,
+dimmed room and enlarged showing were checked in the running desktop preview. The stacked picture
+and description were checked at 390px; mobile keeps the screen in view without the desktop zoom.
+The Press, Library and theme captures use 3000px PNGs rendered from a closer 1000px
+layout at three times the density; the Workbench uses a 3840px capture of its 1280px desktop grid.
+Promptbook pictures focus on the board and its toolbar, captured at three times the density.
+Captures exclude the open-piece strip. Pictures occupy more of the screen and open their original
+PNG in a separate tab through Enlarge image. They show the owner's normal Library. The saved example Promptbook,
+**Example - The Midnight Express**, has seven phases for situation, clues, suspect intentions, alibi
+checks, the reply, continuity and open threads, with explicit hand-offs and a player-agency Script Sheet.
+It was created and photographed through the running Studio without making model calls. RoleCall
+was restored after photographing the bundled themes. This proves editing and presentation, not a
+completed AI run of that example.
+
+Website redesign studies live under `design/wireframes/bunzai-site-2026/`, separate from the
+published site. They reuse the Velvet Premiere theme, proscenium and capped light/fog renderer.
+The customized overture adapts Vaudeville's original production cards and accelerating words,
+then plays the supplied curtain film. An exploratory CSS multiplane camera connects stage,
+scene and studio at different depths. Chat replies and prompt stacks are explicitly scripted
+design examples. These are local proposals, not shipped interface or deployment claims.
+
 Every mutable browser store is intentionally memory-backed. Pieces, collections, settings,
 Workbench state, previews, and portraits last only for the current page load. Bunzai does not
 write them to localStorage, sessionStorage, IndexedDB, a service worker, or a remote account.

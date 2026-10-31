@@ -3,6 +3,8 @@
  * here describes shipped behavior as docs/reference/ui.md and docs/guide/ record it; when the app
  * changes, this copy changes with it. Screenshots are the real ones in docs/media.
  */
+type Shot = readonly [file: string, caption: string, copy?: { readonly title: string; readonly intro: string }];
+
 export interface Member {
   readonly id: string;
   readonly name: string;
@@ -12,7 +14,9 @@ export interface Member {
   readonly title: string;
   readonly intro: string;
   readonly points: readonly (readonly [string, string])[];
-  readonly shots: readonly (readonly [string, string])[];
+  readonly shots: readonly Shot[];
+  /** Number of these screenshots included in the auditorium tour. */
+  readonly galleryShots?: number;
   readonly guides: readonly (readonly [string, string])[];
   readonly note?: string;
   /** True when the browser Studio has it too (docs/reference/ui.md, Browser Studio). */
@@ -53,7 +57,7 @@ export const CAST: readonly Member[] = [
     guides: [["editing", "Edit a piece"], ["lorebooks", "Build a lorebook"], ["personas", "Create and manage personas"], ["regex", "Edit a regex set"]],
   },
   {
-    id: "library", browser: true, name: "The Library", role: "keep", color: "butter",
+    id: "library", browser: true, name: "The Library", role: "keep", color: "butter", galleryShots: 2,
     card: "Every character, lorebook and persona you own, in one tidy place.",
     title: "Everything you own, on the shelves.",
     intro: "The Library is the browse room: decks for each kind of piece, with live counts, in rows or a grid. It is also the door your files come in through.",
@@ -64,7 +68,7 @@ export const CAST: readonly Member[] = [
       ["Send anywhere", "Stage one piece or many and send them to the Workbench or the Press together."],
       ["Kept private", "Your library lives on your computer, encrypted, in your Documents folder."],
     ],
-    shots: [["shot-library.png", "The Library"], ["shot-import-drop.png", "Dropping a file in"]],
+    shots: [["shot-library.png", "Characters in the RoleCall Library"], ["shot-library-lorebooks.png", "Lorebook covers with aligned titles and metadata", { title: "Give your worlds a place to live.", intro: "Lorebooks hold the places, people and rules behind a story. Browse your books by cover, see their entry counts, then open one to edit the knowledge your scenes draw on." }], ["shot-import-drop.png", "Dropping a file in"]],
     guides: [["getting-started", "Get started"], ["importing", "Import a file"], ["library", "Browse the Library"]],
   },
   {
@@ -80,6 +84,29 @@ export const CAST: readonly Member[] = [
     ],
     shots: [["shot-press.png", "The Press"], ["shot-export-honesty.png", "What will drop, before it does"], ["shot-convert.png", "Converting a card"]],
     guides: [["exporting", "Export a piece"], ["converting", "Convert a card"], ["platforms", "Notes for other apps"]],
+  },
+  {
+    id: "promptbooks", browser: true, name: "Promptbooks", role: "direct", color: "sky", galleryShots: 0,
+    card: "Give your story a workflow of its own.",
+    title: "Plan the scene. Write it. Keep the thread.",
+    intro: "A Promptbook organizes instructions into phases. The Midnight Express example reads the situation, plans clues and character intentions, checks the alibi, writes the scene, then records continuity and open threads.",
+    points: [["Reusable phases", "Keep instructions and hand-offs together in one library piece."], ["Two board levels", "See the whole workflow or the prompt blocks inside a phase."], ["Check before playing", "Rehearse phase conditions without making a model call."]],
+    shots: [["shot-promptbook-nodes.png", "The Midnight Express: planning, story and continuity phases"], ["shot-promptbook-blocks.png", "Inside a Promptbook phase: its ordered prompt blocks", { title: "Direct the details of each phase.", intro: "Each phase has its own prompt stack. Arrange instructions and context blocks, switch them on or off, and control what the model receives for that step of the story." }]],
+    guides: [],
+    note: "Playing a Promptbook needs the installed app and an AI connection. The pictured example uses the scene's model; no model calls were made for these captures.",
+  },
+  {
+    id: "themes", browser: true, name: "Themes", role: "dress", color: "lilac", galleryShots: 3,
+    card: "One studio. A different atmosphere.",
+    title: "Make the studio feel like yours.",
+    intro: "Change the studio's palette, typography and supported layouts. These are real captures of the same library in RoleCall, Theater and Paper.",
+    points: [["Four bundled looks", "Switch themes in Settings, then keep working with the same pieces."], ["Your accent", "Choose a color for your studio."], ["Motion choices", "Keep stage lights moving, make them still, or turn them off."]],
+    shots: [
+      ["shot-theme-rolecall.png", "RoleCall: dark surfaces and colored deck accents", { title: "RoleCall. The dark studio.", intro: "Dark panels, crisp borders and colored deck accents keep the focus on your collection. This is the RoleCall Library with the same characters used throughout this tour." }],
+      ["shot-theme-theater.png", "Theater: an art-forward Library", { title: "Theater. Put your cast on display.", intro: "The Theater theme gives artwork a leading role, with a dark backdrop and a Library layout built around your cast. Your pieces stay the same as you change the atmosphere." }],
+      ["shot-theme-paper.png", "Paper: light pages and a catalog layout", { title: "Paper. A lighter place to work.", intro: "Warm paper tones, serif lettering and a catalog layout give the Library a quieter feel. Switch themes in Settings without moving or recreating your collection." }],
+    ],
+    guides: [],
   },
   {
     id: "agent", browser: false, name: "The Agent", role: "help", color: "sky",
@@ -112,7 +139,7 @@ export const CAST: readonly Member[] = [
 ];
 
 const point = ([title, text]: readonly [string, string]): string => `<li><b>${title}.</b> ${text}</li>`;
-const shot = ([file, caption]: readonly [string, string], media: string): string =>
+const shot = ([file, caption]: Shot, media: string): string =>
   `<figure class="shot"><img src="${media}${file}" alt="${caption}" loading="lazy"><figcaption>${caption}</figcaption></figure>`;
 
 /** A small drawn stand-in for rooms the docs have no screenshot of. */
@@ -126,12 +153,15 @@ function sketch(m: Member): string {
 <div class="note" style="--c:var(--${m.color});margin:0 20px 20px">${line[2]} <b>Yes</b> or <b>Not now</b></div></div>`;
 }
 
-export const SCENE_WINDOW = `<div class="win">
-<div class="bar"><i></i><i></i><i></i><span style="margin-left:8px">THE LIGHTHOUSE &middot; TAKE 2</span></div>
-<div class="msg" style="--c:var(--pink)"><div class="av"></div><div><b>Vera</b><p>You came up the stairs without a lantern. Brave, or a little foolish?</p></div></div>
-<div class="msg you" style="--c:var(--sky)"><div class="av"></div><div><b>You</b><p>A little of both.</p></div></div>
-<div class="msg" style="--c:var(--pink)"><div class="av"></div><div><b>Vera</b><p>Then sit. The storm holds till midnight, and I have tea.</p></div></div>
-<div class="typing"><i></i><i></i><i></i></div></div>`;
+export const SCENE_WINDOW = `<div class="win scene-example" data-scene-example>
+<div class="bar"><span class="scene-room">SCENES</span><span>THE LIGHTHOUSE &middot; TAKE 2</span><span class="example-label">EXAMPLE CONVERSATION</span></div>
+<div class="scene-toolbar"><span>Midnight. The lighthouse.</span><button type="button" data-reading-mode aria-pressed="false">Manuscript view</button></div>
+<div class="scene-transcript" role="log" aria-label="Example conversation" aria-live="polite">
+<div class="msg" style="--c:var(--pink)"><div class="av" aria-hidden="true">V</div><div><b>Vera</b><p>You came up the stairs without a lantern. Brave, or a little foolish?</p></div></div>
+<div class="msg you" style="--c:var(--sky)"><div class="av" aria-hidden="true">Y</div><div><b>You</b><p>A little of both.</p></div></div>
+<div class="msg" style="--c:var(--pink)"><div class="av" aria-hidden="true">V</div><div><b>Vera</b><p>Then sit. The storm holds till midnight, and I have tea.</p></div></div></div>
+<form class="scene-composer"><input name="line" maxlength="600" aria-label="Your line in the example conversation" placeholder="Write your next line…" autocomplete="off"><button class="btn" type="submit">Continue example <span aria-hidden="true">↗</span></button></form>
+<div class="example-foot"><span>A scripted preview. No AI connection needed.</span><button type="button" data-scene-reset>Reset</button></div></div>`;
 
 /** One picture of a member for the home page's reel: its first screenshot, or the drawn stand-in. */
 export function visual(m: Member): string {
