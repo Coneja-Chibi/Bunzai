@@ -77,8 +77,8 @@ describe("reading SHA256SUMS", () => {
 
 describe("the committed module it writes", () => {
   test("exports the two names the app reads, with the digests inside", () => {
-    const src = sidecarPinsModule(pinsFromChecksums(realistic, TAG), "Coneja-Chibi/Bunzai", TAG);
-    expect(src).toContain('export const SIDECAR_REPO = "Coneja-Chibi/Bunzai"');
+    const src = sidecarPinsModule(pinsFromChecksums(realistic, TAG), "Vaudeville-Studios/Bunzai", TAG);
+    expect(src).toContain('export const SIDECAR_REPO = "Vaudeville-Studios/Bunzai"');
     expect(src).toContain("export const SIDECAR_PINS: SidecarPins = {");
     expect(src).toContain(H("d"));
   });

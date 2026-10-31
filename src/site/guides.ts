@@ -13,7 +13,7 @@ export interface Guide {
   readonly html: string;
 }
 
-const BLOB = "https://github.com/Coneja-Chibi/Bunzai/blob/Mainstage/";
+const BLOB = "https://github.com/Vaudeville-Studios/Bunzai/blob/Mainstage/";
 const BASE = "https://repo.invalid/";
 
 /** docs/guide/lorebooks.md -> "lorebooks", docs/guide/platforms/risu.md -> "platforms-risu", README -> its folder. */

@@ -7,8 +7,8 @@
  */
 import { isRecord, numOr } from "../../core/guards";
 
-export const RELEASES_API = "https://api.github.com/repos/Coneja-Chibi/Bunzai/releases/latest";
-export const RELEASES_PAGE = "https://github.com/Coneja-Chibi/Bunzai/releases";
+export const RELEASES_API = "https://api.github.com/repos/Vaudeville-Studios/Bunzai/releases/latest";
+export const RELEASES_PAGE = "https://github.com/Vaudeville-Studios/Bunzai/releases";
 
 export interface LatestRelease {
   version: string;

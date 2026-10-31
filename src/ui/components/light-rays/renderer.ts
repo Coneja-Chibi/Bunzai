@@ -8,7 +8,7 @@ import { FOG_FRAGMENT } from "./fog-shader";
 const STILL_SECONDS = 4;
 
 /** `animate` false draws ONE frame (and one more after each resize), with no loop and no pointer follow. */
-export function startLightRays(canvas: HTMLCanvasElement, followMouse: boolean, mouseInfluence: number, withFog = true, animate = true): (() => void) | null {
+export function startLightRays(canvas: HTMLCanvasElement, followMouse: boolean, mouseInfluence: number, withFog = true, animate = true, rig: 'stage' | 'house' | 'projector' = 'stage'): (() => void) | null {
   let renderer: Renderer;
   try { renderer = new Renderer({ canvas, alpha: true, premultipliedAlpha: true, depth: false, antialias: false, dpr: 1, powerPreference: "low-power", autoClear: false }); }
   catch { return null; }
@@ -44,9 +44,10 @@ export function startLightRays(canvas: HTMLCanvasElement, followMouse: boolean, 
       return new Mesh(gl, { geometry, program });
     };
     // Uniforms and ray shaders come from Vaudeville's LightRays component.
-    const rays = ["--premiere-rose", "--premiere-violet"].map(token => make(FRAGMENT, {
+    const colors = rig === 'stage' ? ["--premiere-rose", "--premiere-violet"] : rig === 'house' ? ["--premiere-gold", "--premiere-gold"] : ["--premiere-text"];
+    const rays = colors.map(token => make(FRAGMENT, {
       iTime: { value: 0 }, iResolution: { value: [1, 1] }, rayPos: { value: [0, 0] }, rayDir: { value: [0, 1] },
-      raysColor: { value: rgb(token) }, raysSpeed: { value: .25 }, lightSpread: { value: .10 }, rayLength: { value: 3 },
+      raysColor: { value: rgb(token) }, raysSpeed: { value: .25 }, lightSpread: { value: rig === 'projector' ? .24 : .10 }, rayLength: { value: 3 },
       pulsating: { value: 0 }, fadeDistance: { value: 1 }, saturation: { value: 1 }, mousePos: { value: [.5, .5] },
       mouseInfluence: { value: 0 }, noiseAmount: { value: .015 }, distortion: { value: .03 }, isStatic: { value: 0 },
     }));
@@ -78,9 +79,10 @@ export function startLightRays(canvas: HTMLCanvasElement, followMouse: boolean, 
       canvas.style.width = "100%";
       canvas.style.height = "100%";
       const ratio = width / height;
-      const anchors = ratio >= 2 ? [.28, .71] : ratio <= .8 ? [.26, .72] : [.35, .68];
+      const anchors = rig === 'house' ? [.07, .93] : rig === 'projector' ? [.5] : ratio >= 2 ? [.28, .71] : ratio <= .8 ? [.26, .72] : [.35, .68];
       meshes.forEach(mesh => { mesh.program.uniforms.iResolution.value = [canvas.width, canvas.height]; });
       rays.forEach((mesh, index) => { mesh.program.uniforms.rayPos.value = [anchors[index]! * canvas.width, -.2 * canvas.height]; });
+      if (rig === 'house') rays.forEach((mesh, index) => { mesh.program.uniforms.rayDir.value = [index === 0 ? .4 : -.4, 1]; });
       if (!animate && !gl.isContextLost()) paint(STILL_SECONDS);
     };
     let previous = 0;

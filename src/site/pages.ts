@@ -4,24 +4,21 @@
  * Links are relative (`up` climbs out of a subfolder) because Pages serves the site under /Bunzai/.
  */
 import type { Guide } from "./guides";
-import { reel } from "./reel";
-import { CAST, SCENE_WINDOW, tourBody } from "./tour";
+import { infoBody } from "./info";
+import { auditoriumBody } from './auditorium';
+import { CAST, tourBody } from "./tour";
+import { icSvg } from '../ui/_shared/ic-svg';
 
 export interface Page {
   readonly path: string;
   readonly html: string;
 }
 
-const REPO = "https://github.com/Coneja-Chibi/Bunzai";
+const REPO = "https://github.com/Vaudeville-Studios/Bunzai";
+const SITE = 'https://vaudeville-studios.github.io/Bunzai/';
 const LATEST = `${REPO}/releases/latest/download/`;
 
-const LOGO = `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
-<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
-<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
-<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
-<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol></defs></svg>`;
-
-type Section = "home" | "tour" | "guides" | "news" | "download" | "none";
+type Section = "home" | "info" | "tour" | "guides" | "news" | "download" | "none";
 
 interface Frame {
   readonly title: string;
@@ -43,18 +40,29 @@ function frame({ title, description, up, section, body }: Frame): string {
 <meta name="description" content="${description}">
 <meta property="og:title" content="${title}">
 <meta property="og:description" content="${description}">
-<meta name="theme-color" content="#1a1620">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bunzai">
+<meta property="og:image" content="${SITE}media/bunzai-preview.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bunzai. Every story deserves a stage, on a crimson cinema screen.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0a0a0b">
 <link rel="icon" href="${up}favicon.ico">
 <link rel="stylesheet" href="${up}site.css">
+${section === "home" ? `<link rel="stylesheet" href="${up}home.css">` : ""}
+${section === 'info' ? `<link rel="stylesheet" href="${up}info.css">` : ''}
 </head>
-<body>
-${LOGO}
+<body data-page="${section}">
+
+
 <a class="skip" href="#main">Skip to content</a>
-<div class="wrap"><nav class="nav" aria-label="Main">
-<a class="brand" href="${up}index.html"><svg width="36" height="36" aria-hidden="true"><use href="#bun"/></svg>bunzai</a>
-${link("tour", `${up}tour/scenes.html`, "Tour")}${link("guides", `${up}guides/index.html`, "Guides")}${link("news", `${up}news.html`, "What's new")}<a class="link" href="${up}studio/">Try it</a>
+<header class="site-header"><div class="wrap"><nav class="nav" aria-label="Main">
+<a class="brand" href="${up}index.html"><span class="brand-symbol"><img src="${up}media/bunzai-mark.png" width="64" height="64" alt=""></span>Bunzai<span class="brand-stop">.</span></a>
+${section === 'home' ? `<a class="link repo-star" href="${REPO}" target="_blank" rel="noopener" aria-label="Star Bunzai on GitHub" title="Open GitHub to star Bunzai"><span aria-hidden="true">${icSvg('lucide:star')}</span>Star repo</a><a class="link" href="${REPO}" target="_blank" rel="noopener">Open repo</a>` : `${link('info', `${up}info.html`, 'Info')}${link("tour", `${up}tour/scenes.html`, "Tour")}${link("guides", `${up}guides/index.html`, "Guides")}${link("news", `${up}news.html`, "What's new")}<a class="link" href="${up}studio/">Try it</a>`}
 <a class="btn" href="${up}download.html">Download</a>
-</nav></div>
+</nav></div></header>
 <main id="main">
 ${body}
 </main>
@@ -75,42 +83,12 @@ const ticket = (up: string): string => `<div class="ticket">
 <small><span data-version>latest</span> &middot; Mac and Linux run from the terminal</small>
 </div>`;
 
-const HOME_GUIDES: readonly (readonly [string, string, string])[] = [
-  ["getting-started", "Get started", "Install, set up, bring your first file in."],
-  ["importing", "Bring your characters", "Import cards from other apps."],
-  ["lorebooks", "Lorebooks, gently", "Keep your world straight."],
-  ["faq", "Questions people ask", "Where files live, what converts keep."],
-];
-
 function home(): Page {
-  const body = `<div class="wrap"><header class="hero">
-<div>
-<div class="act"><b>Act I</b> &middot; hello</div>
-<h1>A little theater for your <em>stories</em>.</h1>
-<p>Make characters, build their worlds, and play scenes with an AI provider you choose. Your library is stored locally and encrypted at rest; key protection depends on your setup, and some fallback configurations store a key file beside the library. AI requests send selected content to your chosen provider, and connected services receive the data needed for their features. Bunzai has no account or telemetry service.</p>
-<div class="row"><a class="btn" href="download.html">Get Bunzai</a><a class="btn ghost" href="studio/">Try it in your browser</a></div>
-<p class="small" style="margin:18px 0 0">Free and open source &middot; Windows, Mac, Linux &middot; <span data-version>latest</span></p>
-</div>
-<div class="peek"><svg class="bun" aria-hidden="true"><use href="#bun"/></svg>${SCENE_WINDOW}</div>
-</header></div>
-<div class="dots"></div>
-${reel()}
-<div class="wrap">
-<section class="s"><div class="pair">
-<div><div class="act"><b>Act III</b> &middot; what's new</div><h2>Fresh from rehearsal.</h2>
-<ul class="news" data-news data-limit="3"><li><div class="v"></div><div><p>Loading the latest releases.</p></div></li></ul>
-<a class="more" href="news.html">Every release &rarr;</a></div>
-<div id="get"><div class="act"><b>Act IV</b> &middot; your ticket</div>${ticket("")}</div>
-</div></section>
-<section class="s tight"><div class="act"><b>Act V</b> &middot; guides</div><h2>New here? Start with these.</h2>
-<div class="grid-links">${HOME_GUIDES.map(([slug, title, text]) => `<a href="guides/${slug}.html"><div><h3>${title}</h3><p>${text}</p></div><span>&rarr;</span></a>`).join("")}</div>
-</section>
-</div>
-<section class="try-band"><div class="wrap try"><div><div class="act"><b>Encore</b></div>
-<h2>Not sure yet? <em>Look around</em> right here.</h2>
-<p class="lede">The Studio runs in your browser too. Import a card, edit it, convert it, download it. Nothing is saved there, so download what you make before you close the tab.</p></div>
-<a class="btn" href="studio/">Open the Studio</a></div></section>`;
-  return { path: "index.html", html: frame({ title: "Bunzai: a little theater for your stories", description: "Make characters, build their worlds, and play scenes with an AI provider you choose. Free and open source, with locally stored library data.", up: "", section: "home", body }) };
+  return { path: "index.html", html: frame({ title: "Bunzai | All the worlds. Your stage.", description: "Make characters, build their worlds, and play scenes with an AI provider you choose. Free and open source.", up: "", section: "home", body: auditoriumBody() }) };
+}
+
+function info(): Page {
+  return { path: 'info.html', html: frame({ title: 'About Bunzai | Your stories. Your studio.', description: 'Characters, worlds, scenes and the tools behind them. Get to know Bunzai.', up: '', section: 'info', body: infoBody(ticket('')) }) };
 }
 
 function download(): Page {
@@ -199,5 +177,8 @@ export function sitePages(guides: readonly Guide[]): Page[] {
     path: `tour/${m.id}.html`,
     html: frame({ title: `${m.name}: Bunzai`, description: m.card, up: "../", section: "tour", body: tourBody(m) }),
   }));
-  return [home(), download(), news(), notFound(), ...tour, ...guidePages(guides)];
+  return [home(), info(), download(), news(), notFound(), ...tour, ...guidePages(guides)].map(page => {
+    const canonical = new URL(page.path === 'index.html' ? '' : page.path, SITE).href;
+    return { ...page, html: page.html.replace('</head>', `<link rel="canonical" href="${canonical}">\n<meta property="og:url" content="${canonical}">\n</head>`) };
+  });
 }

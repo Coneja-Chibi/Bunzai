@@ -19,7 +19,7 @@ const REAL_BODY = [
   "- **Windows warns once**: SmartScreen shows the unsigned warning, click Run anyway.",
   "- The `bunzai-*` files are terminal tools; double-clicking one flashes a console and closes.",
   "",
-  "**Changes**: https://github.com/Coneja-Chibi/Bunzai/compare/v0.1.10...v0.1.11",
+  "**Changes**: https://github.com/Vaudeville-Studios/Bunzai/compare/v0.1.10...v0.1.11",
   "",
   "## Commits",
   FENCE + "commits",

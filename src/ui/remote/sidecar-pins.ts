@@ -23,7 +23,7 @@
 import type { SidecarPins } from "./aux-download";
 
 /** The repository the pinned assets are published from. */
-export const SIDECAR_REPO = "Coneja-Chibi/Bunzai";
+export const SIDECAR_REPO = "Vaudeville-Studios/Bunzai";
 
 /**
  * Pinned helpers, keyed by `${process.platform}-${process.arch}`.

@@ -19,7 +19,7 @@ import { openPath } from "../server-security";
 import type { SwitchAction } from "./manager";
 
 const RELEASE_TAG_API = (tag: string): string =>
-  `https://api.github.com/repos/Coneja-Chibi/Bunzai/releases/tags/${tag}`;
+  `https://api.github.com/repos/Vaudeville-Studios/Bunzai/releases/tags/${tag}`;
 const MAX_DOWNLOAD_BYTES = 250 * 1024 * 1024;
 const DOWNLOAD_TIMEOUT_MS = 5 * 60 * 1000;
 const MAX_REDIRECTS = 5;
